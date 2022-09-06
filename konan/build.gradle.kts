@@ -15,6 +15,7 @@ kotlin {
   mingwX64()
   macosArm64()
   macosX64()
+  androidNativeX86()
 
   targets.withType<KotlinNativeTarget>().all {
     compilations["main"].apply {

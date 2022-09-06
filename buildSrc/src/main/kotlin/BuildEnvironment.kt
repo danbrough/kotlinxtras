@@ -23,7 +23,7 @@ object BuildEnvironment {
     "konan.dir", "${System.getProperty("user.home")}/.konan"
   )
   
-  val androidNdkDir: File by ProjectProperties.createProperty("android.ndk.dir")
+  val androidNdkDir: File by ProjectProperties.createProperty("android.ndk.dir", konanDir.resolve("dependencies/target-toolchain-2-linux-android_ndk").absolutePath)
   
   val androidNdkApiVersion: Int by ProjectProperties.createProperty("android.ndk.api.version", "23")
   

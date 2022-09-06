@@ -11,7 +11,7 @@ object OpenSSL {
     project.rootProject.file("openssl/build/openssl/$TAG/$platformName")
   
   fun KonanTarget.opensslPrefix(project: Project): File =
-    project.rootProject.file("libs/$platformName/openssl/$TAG")
+    project.rootProject.file("libs/openssl/$TAG/$platformName")
   
   val KonanTarget.opensslPlatform: String
     get() = when (this) {

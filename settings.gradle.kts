@@ -18,3 +18,4 @@ rootProject.name = "kotlinxtras"
 
 include(":konan")
 include(":openssl")
+include(":curl")

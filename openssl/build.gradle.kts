@@ -99,9 +99,14 @@ fun buildTask(target: org.jetbrains.kotlin.konan.target.KonanTarget): TaskProvid
 kotlin {
   linuxX64()
   linuxArm32Hfp()
+  linuxArm64()
+
+  val buildAll  = tasks.create("buildAll")
 
   targets.withType(KotlinNativeTarget::class).all {
 
-    buildTask(konanTarget)
+    buildTask(konanTarget).also {
+      buildAll.dependsOn(it)
+    }
   }
 }
