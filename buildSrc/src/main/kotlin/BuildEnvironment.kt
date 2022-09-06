@@ -28,6 +28,24 @@ object BuildEnvironment {
   val androidNdkApiVersion: Int by ProjectProperties.createProperty("android.ndk.api.version", "23")
   
   private val buildPathEnvironment: String by ProjectProperties.createProperty("build.path")
+
+
+  fun KotlinMultiplatformExtension.declareNativeTargets(){
+    //comment out platforms you don't need
+    androidNativeX86()
+    androidNativeX64()
+    androidNativeArm32()
+    androidNativeArm64()
+
+
+    linuxX64()
+    linuxArm64()
+    linuxArm32Hfp()
+
+    macosX64()
+    macosArm64()
+
+  }
   
 
 
@@ -55,7 +73,8 @@ object BuildEnvironment {
       KonanTarget.ANDROID_ARM64 -> "aarch64-linux-android"
       KonanTarget.ANDROID_X64 -> "x86_64-linux-android"
       KonanTarget.ANDROID_X86 -> "i686-linux-android"
-      KonanTarget.MACOS_X64 -> "darwin64-x86_64-cc"
+      KonanTarget.MACOS_X64 -> "x86_64-apple-darwin"
+      KonanTarget.MACOS_ARM64 -> "aarch64-apple-darwin"
       KonanTarget.MINGW_X64 -> "x86_64-w64-mingw32"
 /*      KonanTarget.IOS_ARM32 -> TODO()
       KonanTarget.IOS_ARM64 -> TODO()
@@ -64,7 +83,7 @@ object BuildEnvironment {
       KonanTarget.LINUX_ARM32_HFP -> TODO()
       KonanTarget.LINUX_MIPS32 -> TODO()
       KonanTarget.LINUX_MIPSEL32 -> TODO()
-      KonanTarget.MACOS_ARM64 -> TODO()
+
 
       KonanTarget.MINGW_X86 -> TODO()
       KonanTarget.TVOS_ARM64 -> TODO()

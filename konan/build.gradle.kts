@@ -1,3 +1,4 @@
+import BuildEnvironment.declareNativeTargets
 import BuildEnvironment.platformName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
@@ -9,13 +10,7 @@ kotlin {
 
   val nativeMain by sourceSets.creating {}
 
-  linuxX64()
-  linuxArm32Hfp()
-  linuxArm64()
-  mingwX64()
-  macosArm64()
-  macosX64()
-  androidNativeX86()
+  declareNativeTargets()
 
   targets.withType<KotlinNativeTarget>().all {
     compilations["main"].apply {
@@ -29,7 +24,7 @@ kotlin {
     }
 
     tasks.create(konanTarget.platformName){
-      dependsOn("linkHelloWorldDebugExecutable${konanTarget.platformName.capitalize()}")
+      dependsOn("compileKotlin${konanTarget.platformName.capitalize()}")
     }
   }
 }

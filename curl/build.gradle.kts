@@ -3,6 +3,7 @@ import BuildEnvironment.hostTriplet
 import BuildEnvironment.platformName
 import BuildEnvironment.registerTarget
 import BuildEnvironment.konanDepsTask
+import BuildEnvironment.declareNativeTargets
 
 import Curl.curlPrefix
 import OpenSSL.opensslPlatform
@@ -132,10 +133,8 @@ fun buildTask(target: KonanTarget): Exec {
 }
 
 kotlin {
-  linuxX64()
-  linuxArm64()
-  linuxArm32Hfp()
-  androidNativeX86()
+
+  declareNativeTargets()
   
   val commonMain by sourceSets.getting {
     dependencies {

@@ -7,6 +7,7 @@ import OpenSSL.opensslPrefix
 import OpenSSL.opensslSrcDir
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import BuildEnvironment.declareNativeTargets
 
 plugins {
   kotlin("multiplatform")
@@ -97,9 +98,7 @@ fun buildTask(target: org.jetbrains.kotlin.konan.target.KonanTarget): TaskProvid
   }
 }
 kotlin {
-  linuxX64()
-  linuxArm32Hfp()
-  linuxArm64()
+  declareNativeTargets()
 
   val buildAll  = tasks.create("buildAll")
 
