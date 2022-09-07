@@ -99,7 +99,7 @@ fun configureTask(target: KonanTarget): Exec {
       "./configure",
       "--host=${target.hostTriplet}",
       "--with-ssl=${target.opensslPrefix(project)}",
-      "--with-ca-path=/etc/security/cacerts;/etc/ca-certificates:/etc/ssl/certs",
+      "--with-ca-path=/data/cacerts:/etc/security/cacerts:/etc/ca-certificates:/etc/ssl/certs",
       "--prefix=${target.curlPrefix(project)}",
 
       
