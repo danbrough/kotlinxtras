@@ -4,10 +4,11 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
 import java.io.File
 
 object BuildEnvironment {
@@ -249,8 +250,12 @@ object BuildEnvironment {
     "MAKE" to "make -j4",
   ).apply {
     val path = buildPathEnvironment.split(File.pathSeparatorChar).toMutableList()
-  
-    
+
+    val konanTarget = this@buildEnvironment
+      println("SETTING ANDROID_NDK_HOME to ${ androidNdkDir.absolutePath}")
+      put("ANDROID_NDK_HOME", androidNdkDir.absolutePath)
+
+
     when (this@buildEnvironment) {
       
       KonanTarget.LINUX_ARM32_HFP -> {

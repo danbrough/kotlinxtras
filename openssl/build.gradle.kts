@@ -100,12 +100,41 @@ fun buildTask(target: org.jetbrains.kotlin.konan.target.KonanTarget): TaskProvid
 kotlin {
   declareNativeTargets()
 
-  val buildAll  = tasks.create("buildAll")
+
+  val nativeTest by sourceSets.creating {
+    dependencies {
+   //   implementation(Dependencies.klog)
+    }
+  }
+
+  val buildAll = tasks.create("buildAll")
 
   targets.withType(KotlinNativeTarget::class).all {
 
+
     buildTask(konanTarget).also {
       buildAll.dependsOn(it)
+    }
+/*
+    compilations["main"].apply {
+      cinterops.create("openssl") {
+        packageName("libopenssl")
+        defFile = project.file("src/openssl.def")
+        includeDirs(konanTarget.opensslPrefix(project).resolve("include").also {
+          println("USING include path: $it for target $konanTarget")
+        })
+        extraOpts(
+          listOf(
+            "-libraryPath",
+            konanTarget.opensslPrefix(project).resolve("lib"),
+            "-verbose"
+          )
+        )
+      }
+    }*/
+
+    compilations["test"].apply {
+      defaultSourceSet.dependsOn(nativeTest)
     }
   }
 }
