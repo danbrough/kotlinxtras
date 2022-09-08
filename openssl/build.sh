@@ -10,6 +10,10 @@ export ANDROID_API=$API
 export CFLAGS="-D__ANDROID_API__=$API"
 #export LD_FLAGS="-lm -lc -ldl"
 
+if [ -z "$KONAN_DATA_DIR" ]; then
+  export KONAN_DATA_DIR="$HOME/.konan"
+fi
+
 export CC=clang
 export CFLAGS="-O3  -Wno-macro-redefined -Wno-deprecated-declarations"
 
