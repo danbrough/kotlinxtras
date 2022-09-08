@@ -1,3 +1,6 @@
 [submodule "repos/openssl"]
 	path = repos/openssl
 	url = git@github.com:danbrough/openssl.git
+[submodule "repos/ktor"]
+	path = repos/ktor
+	url = git@github.com:/danbrough/ktor.git
