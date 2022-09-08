@@ -28,6 +28,7 @@ tasks.create("thang"){
 
 allprojects {
   repositories {
+   // maven(Dependencies.SONA_STAGING)
     mavenCentral()
   }
 
