@@ -14,16 +14,16 @@ plugins {
   `maven-publish`
 }
 
-val opensslGitDir = project.file("src/openssl.git")
+val opensslGitDir = rootProject.file("repos/openssl")
 
 val srcClone by tasks.registering(Exec::class) {
   commandLine(
     BuildEnvironment.gitBinary,
     "clone",
-    "--bare",
     OpenSSL.GIT_SRC,
     opensslGitDir
   )
+
   outputs.dir(opensslGitDir)
   onlyIf {
     !opensslGitDir.exists()
