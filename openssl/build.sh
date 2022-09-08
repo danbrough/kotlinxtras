@@ -9,9 +9,14 @@ API=21
 export ANDROID_API=$API
 export CFLAGS="-D__ANDROID_API__=$API"
 #export LD_FLAGS="-lm -lc -ldl"
+unset IS_MAC
+if [ `uname` = "Darwin" ]; then
+	export IS_MAC=1
+fi
 
 if [ -z "$KONAN_DATA_DIR" ]; then
   export KONAN_DATA_DIR="$HOME/.konan"
+  echo set KONAN_DATA_DIR to "$KONAN_DATA_DIR"
 fi
 
 export CC=clang
@@ -31,8 +36,12 @@ function configure_ndk() {
 
 function configure_kotlin() {
   #export ANDROID_NDK_HOME=/mnt/files/sdk/android/ndk/25.0.8775105
-  export ANDROID_NDK_HOME=$KONAN_DATA_DIR/dependencies/target-toolchain-2-linux-android_ndk
-  export PATH=$ANDROID_NDK_HOME/bin:$PATH
+  if [ $IS_MAC ]; then 
+  export ANDROID_NDK_HOME="$KONAN_DATA_DIR/dependencies/target-toolchain-2-osx-android_ndk"
+  else
+  export ANDROID_NDK_HOME="$KONAN_DATA_DIR/dependencies/target-toolchain-2-linux-android_ndk"
+  fi
+  export PATH="$ANDROID_NDK_HOME/bin:$PATH"
   export KONAN_BUILD=1
 }
 
