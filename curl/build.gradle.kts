@@ -22,30 +22,19 @@ plugins {
   `maven-publish`
 }
 
-val curlGitDir = project.file("src/curl.git")
+val curlGitDir = rootProject.file("repos/curl")
 
-val srcClone by tasks.registering(Exec::class) {
-  commandLine(
-    BuildEnvironment.gitBinary,
-    "clone",
-    "--bare",
-    "https://github.com/curl/curl.git",
-    curlGitDir
-  )
-  outputs.dir(curlGitDir)
-  onlyIf {
-    !curlGitDir.exists()
-  }
-}
 
 fun srcPrepare(target: KonanTarget): Exec =
   tasks.create("srcPrepare${target.platformName.capitalize()}", Exec::class) {
     val srcDir = target.curlSrcDir(project)
-    dependsOn(srcClone)
     outputs.dir(srcDir)
     commandLine(
-      BuildEnvironment.gitBinary, "clone", "--branch", Curl.TAG, curlGitDir, srcDir
+      BuildEnvironment.gitBinary, "clone", curlGitDir, srcDir
     )
+    onlyIf {
+      !srcDir.exists()
+    }
   }
 
 
@@ -79,6 +68,7 @@ fun configureTask(target: KonanTarget): Exec {
 
     //to ensure the konan tools are available
     dependsOn(target.konanDepsTask(project))
+    dependsOn(rootProject.project("openssl").getTasksByName("build${target.platformName.capitalized()}",false).first())
 
     val srcDir = target.curlSrcDir(project)
     workingDir(srcDir)
@@ -110,7 +100,7 @@ fun configureTask(target: KonanTarget): Exec {
 
 
 fun buildTask(target: KonanTarget): Exec {
-  
+
   val srcConfigure = configureTask(target)
   
   return tasks.create("build${target.platformName.capitalize()}", Exec::class) {
@@ -145,10 +135,18 @@ kotlin {
   val posixMain by sourceSets.creating {
     dependsOn(commonMain)
   }
-  
+
+  val buildAll by tasks.creating
+
+
+
   targets.withType(KotlinNativeTarget::class).all {
-    
-    buildTask(konanTarget)
+
+    if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily ) {
+      buildTask(konanTarget).also {
+        buildAll.dependsOn(it)
+      }
+    }
     
     compilations["main"].apply {
       defaultSourceSet.dependsOn(posixMain)

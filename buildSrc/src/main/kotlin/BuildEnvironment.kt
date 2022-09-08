@@ -43,13 +43,14 @@ object BuildEnvironment {
     androidNativeArm32()
     androidNativeArm64()
 
-
     linuxX64()
     linuxArm64()
     linuxArm32Hfp()
 
     macosX64()
     macosArm64()
+
+    //TODO mingwX64()
 
   }
 

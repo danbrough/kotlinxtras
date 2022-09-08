@@ -103,7 +103,7 @@ kotlin {
 
   val nativeTest by sourceSets.creating {
     dependencies {
-   //   implementation(Dependencies.klog)
+      //   implementation(Dependencies.klog)
     }
   }
 
@@ -111,9 +111,10 @@ kotlin {
 
   targets.withType(KotlinNativeTarget::class).all {
 
-
-    buildTask(konanTarget).also {
-      buildAll.dependsOn(it)
+    if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily) {
+      buildTask(konanTarget).also {
+        buildAll.dependsOn(it)
+      }
     }
 /*
     compilations["main"].apply {

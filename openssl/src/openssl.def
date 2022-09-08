@@ -2,7 +2,8 @@
 #staticLibraries =  libcrypto.a libssl.a
 headers = openssl/ssl.h openssl/err.h openssl/bio.h openssl/evp.h
 linkerOpts = -ldl -lc -lm -lssl -lcrypto
-compilerOpts =  -Wno-macro-redefined -Wno-deprecated-declarations  -Wno-incompatible-pointer-types-discards-qualifiers -fPIC -D__ANDROID_API__=21
+compilerOpts.android = -D__ANDROID_API__=21
+compilerOpts =  -Wno-macro-redefined -Wno-deprecated-declarations  -Wno-incompatible-pointer-types-discards-qualifiers -fPIC
 #compilerOpts = -static
 
 linkerOpts.linux_x64 =   -L libs/openssl/OpenSSL_1_1_1q/linuxX64/lib
