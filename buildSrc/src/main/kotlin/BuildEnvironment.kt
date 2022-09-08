@@ -254,7 +254,7 @@ object BuildEnvironment {
     "CFLAGS" to "-O3 -pthread -Wno-macro-redefined -Wno-deprecated-declarations ",//-DOPENSSL_SMALL_FOOTPRINT=1",
     "MAKE" to "make -j4",
   ).apply {
-    val path = buildPathEnvironment.split(File.pathSeparatorChar).toMutableList()
+    val path = buildPathEnvironment.split(':').toMutableList()
 
     this["KONAN_BUILD"] = 1
 
