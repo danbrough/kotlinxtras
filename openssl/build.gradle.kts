@@ -38,7 +38,7 @@ fun srcPrepare(target: org.jetbrains.kotlin.konan.target.KonanTarget): Exec =
       !srcDir.exists()
     }
     commandLine(
-      BuildEnvironment.gitBinary, "clone", "--branch", OpenSSL.TAG, opensslGitDir, srcDir
+      BuildEnvironment.gitBinary, "clone", "--branch", OpenSSL.BRANCH, opensslGitDir, srcDir
     )
   }
 
