@@ -6,7 +6,7 @@ import BuildEnvironment.platformName
 object OpenSSL {
   
   const val TAG = "new" //"OpenSSL_1_1_1q"
-  const val GIT_SOURCE = "https://github.com/danbrough/openssl"
+  const val GIT_SRC = "https://github.com/danbrough/openssl"
   
   fun KonanTarget.opensslSrcDir(project: Project): File =
     project.rootProject.file("openssl/build/openssl/$TAG/$platformName")
