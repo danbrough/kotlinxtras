@@ -12,26 +12,31 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import java.io.File
 
 object BuildEnvironment {
-  
+
   val goBinary: String by ProjectProperties.createProperty("go.binary", "/usr/bin/go")
-  
+
   val gitBinary: String by ProjectProperties.createProperty("git.binary", "/usr/bin/git")
 
-  val buildCacheDir: File by ProjectProperties.createProperty("build.cache","build/cache")
+  val buildCacheDir: File by ProjectProperties.createProperty("build.cache", "build/cache")
 
-  
+
   val konanDir: File by ProjectProperties.createProperty(
     "konan.dir", "${System.getProperty("user.home")}/.konan"
   )
-  
-  val androidNdkDir: File by ProjectProperties.createProperty("android.ndk.dir", konanDir.resolve("dependencies/target-toolchain-2-linux-android_ndk").absolutePath)
-  
+
+  val androidNdkDir: File by ProjectProperties.createProperty(
+    "android.ndk.dir", konanDir.resolve(
+      if (hostIsMac) "dependencies/target-toolchain-2-osx-android_ndk" else
+        "dependencies/target-toolchain-2-linux-android_ndk"
+    ).absolutePath
+  )
+
   val androidNdkApiVersion: Int by ProjectProperties.createProperty("android.ndk.api.version", "23")
-  
+
   private val buildPathEnvironment: String by ProjectProperties.createProperty("build.path")
 
 
-  fun KotlinMultiplatformExtension.declareNativeTargets(){
+  fun KotlinMultiplatformExtension.declareNativeTargets() {
     //comment out platforms you don't need
     androidNativeX86()
     androidNativeX64()
@@ -47,7 +52,6 @@ object BuildEnvironment {
     macosArm64()
 
   }
-  
 
 
   val KonanTarget.platformName: String
@@ -64,7 +68,7 @@ object BuildEnvironment {
       return name.split("_").joinToString("") { it.capitalize() }.decapitalize()
     }
 
-  
+
   val KonanTarget.hostTriplet: String
     get() = when (this) {
       KonanTarget.LINUX_ARM64 -> "aarch64-unknown-linux-gnu"
@@ -97,9 +101,9 @@ object BuildEnvironment {
       KonanTarget.WATCHOS_X64 -> TODO()
       KonanTarget.WATCHOS_X86 -> TODO()*/
       else -> TODO("Add hostTriple for $this")
-      
+
     }
-  
+
   val KonanTarget.androidLibDir: String?
     get() = when (this) {
       KonanTarget.ANDROID_ARM32 -> "armeabi-v7a"
@@ -108,14 +112,14 @@ object BuildEnvironment {
       KonanTarget.ANDROID_X86 -> "x86"
       else -> null
     }
-  
+
   val KonanTarget.sharedLibExtn: String
     get() = when {
       family.isAppleFamily -> "dylib"
       family == Family.MINGW -> "dll"
       else -> "so"
     }
-  
+
   val hostTarget: KonanTarget
     get() {
       val osName = System.getProperty("os.name")
@@ -125,7 +129,7 @@ object BuildEnvironment {
         "arm64", "aarch64" -> Architecture.ARM64
         else -> throw Error("Unknown os.arch value: $osArch")
       }
-      
+
       return when {
         osName == "Linux" -> {
           when (hostArchitecture) {
@@ -134,7 +138,7 @@ object BuildEnvironment {
             else -> null
           }
         }
-        
+
         osName.startsWith("Mac") -> {
           when (hostArchitecture) {
             Architecture.X64 -> KonanTarget.MACOS_X64
@@ -142,7 +146,7 @@ object BuildEnvironment {
             else -> null
           }
         }
-        
+
         osName.startsWith("Windows") -> {
           when (hostArchitecture) {
             Architecture.X64 -> KonanTarget.MINGW_X64
@@ -152,11 +156,11 @@ object BuildEnvironment {
         else -> null
       } ?: throw Error("Unknown build host: $osName:$osArch")
     }
-  
+
   val hostIsMac: Boolean
     get() = hostTarget.family.isAppleFamily
-  
-  
+
+
   val nativeTargets: List<KonanTarget>
     get() =
       if (ProjectProperties.IDE_ACTIVE)
@@ -174,8 +178,8 @@ object BuildEnvironment {
           KonanTarget.ANDROID_X64,
           KonanTarget.ANDROID_X86,
         )
-  
-  
+
+
   fun KotlinMultiplatformExtension.registerTarget(
     konanTarget: KonanTarget, conf: KotlinNativeTarget.() -> Unit = {}
   ): KotlinNativeTarget {
@@ -184,7 +188,7 @@ object BuildEnvironment {
       presets.getByName(konanTarget.platformName) as KotlinTargetPreset<KotlinNativeTarget>
     return targetFromPreset(preset, konanTarget.platformName, conf)
   }
-  
+
   val androidToolchainDir by lazy {
     //androidNdkDir.resolve("toolchains/llvm/prebuilt/linux-x86_64").also {
     androidNdkDir.also {
@@ -193,7 +197,7 @@ object BuildEnvironment {
       }
     }
   }
-  
+
   /*  fun KotlinMultiplatformExtension.registerNativeTargets(conf: KotlinNativeTarget.() -> Unit) {
       nativeTargets.forEach {
         registerTarget(it, conf)
@@ -206,8 +210,8 @@ object BuildEnvironment {
     }?.let { it.resolve("bin") }
       ?: throw Error("Failed to locate clang folder in ${konanDir}/dependencies")
   }
-  
-  
+
+
   /*
   see:   go/src/go/build/syslist.go
   const goosList = "aix android darwin dragonfly freebsd hurd illumos
@@ -226,7 +230,7 @@ object BuildEnvironment {
       Family.WASM -> null
       Family.ZEPHYR -> null
     }
-  
+
   val KonanTarget.goArch: String
     get() = when (architecture) {
       Architecture.ARM64 -> "arm64"
@@ -237,7 +241,7 @@ object BuildEnvironment {
       Architecture.MIPSEL32 -> "mipsle" //TODO: confirm this
       Architecture.WASM32 -> "wasm"
     }
-  
+
   fun KonanTarget.buildEnvironment(): MutableMap<String, *> = mutableMapOf(
     "CGO_ENABLED" to 1, "GOARM" to 7, "GOOS" to goOS, "GOARCH" to goArch,
     "GOBIN" to buildCacheDir.resolve("$name/bin"),
@@ -252,26 +256,26 @@ object BuildEnvironment {
     val path = buildPathEnvironment.split(File.pathSeparatorChar).toMutableList()
 
     val konanTarget = this@buildEnvironment
-      println("SETTING ANDROID_NDK_HOME to ${ androidNdkDir.absolutePath}")
-      put("ANDROID_NDK_HOME", androidNdkDir.absolutePath)
+    println("SETTING ANDROID_NDK_HOME to ${androidNdkDir.absolutePath}")
+    put("ANDROID_NDK_HOME", androidNdkDir.absolutePath)
 
 
     when (this@buildEnvironment) {
-      
+
       KonanTarget.LINUX_ARM32_HFP -> {
         val clangArgs =
           "--target=$hostTriplet --gcc-toolchain=$konanDir/dependencies/arm-unknown-linux-gnueabihf-gcc-8.3.0-glibc-2.19-kernel-4.9-2 --sysroot=$konanDir/dependencies/arm-unknown-linux-gnueabihf-gcc-8.3.0-glibc-2.19-kernel-4.9-2/arm-unknown-linux-gnueabihf/sysroot "
         this["CC"] = "clang $clangArgs"
         this["CXX"] = "clang++ $clangArgs"
       }
-      
+
       KonanTarget.LINUX_ARM64 -> {
         val clangArgs =
           "--target=$hostTriplet --gcc-toolchain=$konanDir/dependencies/aarch64-unknown-linux-gnu-gcc-8.3.0-glibc-2.25-kernel-4.9-2 --sysroot=$konanDir/dependencies/aarch64-unknown-linux-gnu-gcc-8.3.0-glibc-2.25-kernel-4.9-2/aarch64-unknown-linux-gnu/sysroot"
         this["CC"] = "clang $clangArgs"
         this["CXX"] = "clang++ $clangArgs"
       }
-      
+
       KonanTarget.LINUX_X64 -> {
         val clangArgs =
           "--target=$hostTriplet --gcc-toolchain=$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2 --sysroot=$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/x86_64-unknown-linux-gnu/sysroot"
@@ -280,15 +284,15 @@ object BuildEnvironment {
 /*        this["RANLIB"] =
           "$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/x86_64-unknown-linux-gnu/bin/ranlib"*/
       }
-      
+
       KonanTarget.MACOS_X64 -> {
         this["CC"] = "gcc"
         this["CXX"] = "g++"
       }
-      
-      
+
+
       KonanTarget.MINGW_X64 -> {
-        
+
         /*  export HOST=x86_64-w64-mingw32
   export GOOS=windows
   export CFLAGS="$CFLAGS -pthread"
@@ -311,13 +315,13 @@ object BuildEnvironment {
         /*this["CROSS_PREFIX"] = "${platform.host}-"
         val toolChain = "$konanDir/dependencies/msys2-mingw-w64-x86_64-1"
         this["PATH"] = "$toolChain/bin:${this["PATH"]}"*/
-        
+
         this["CC"] = "x86_64-w64-mingw32-gcc"
         this["CXX"] = "x86_64-w64-mingw32-g++"
-        
-        
+
+
       }
-      
+
       KonanTarget.ANDROID_X64, KonanTarget.ANDROID_X86, KonanTarget.ANDROID_ARM64, KonanTarget.ANDROID_ARM32 -> {
         path.add(0, androidToolchainDir.resolve("bin").absolutePath)
         this["CC"] = "$hostTriplet${androidNdkApiVersion}-clang"
@@ -326,15 +330,15 @@ object BuildEnvironment {
         this["RANLIB"] = "llvm-ranlib"
       }
     }
-    
+
     path.add(0, konanDir.resolve("dependencies/llvm-11.1.0-linux-x64-essentials/bin").absolutePath)
     this["PATH"] = path.joinToString(File.pathSeparator)
   }
 
 
-  fun KonanTarget.konanDepsTask(project: Project): Task
-   = project.rootProject.project("konan").getTasksByName(platformName,true).firstOrNull()
-    ?: throw Error("Need to add support for $platformName to konan project")
+  fun KonanTarget.konanDepsTask(project: Project): Task =
+    project.rootProject.project("konan").getTasksByName(platformName, true).firstOrNull()
+      ?: throw Error("Need to add support for $platformName to konan project")
 }
   
   

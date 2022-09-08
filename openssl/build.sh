@@ -1,9 +1,9 @@
 #!/bin/bash
 
 cd "$(dirname "$0")"
-
-TARGET=android-x86_64
-export PREFIX="/opt/kotlinxtras/libs/openssl/OpenSSL_1_1_1q/androidNativeX64"
+#android-arm64
+TARGET=android-arm64
+export PREFIX="/opt/kotlinxtras/libs/openssl/OpenSSL_1_1_1q/androidNativeArm64"
 
 API=21
 export ANDROID_API=$API
