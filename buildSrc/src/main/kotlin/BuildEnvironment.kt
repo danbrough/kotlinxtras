@@ -255,6 +255,8 @@ object BuildEnvironment {
   ).apply {
     val path = buildPathEnvironment.split(File.pathSeparatorChar).toMutableList()
 
+    this["KONAN_BUILD"] = 1
+
     val konanTarget = this@buildEnvironment
     println("SETTING ANDROID_NDK_HOME to ${androidNdkDir.absolutePath}")
     put("ANDROID_NDK_HOME", androidNdkDir.absolutePath)
