@@ -21,7 +21,7 @@ val srcClone by tasks.registering(Exec::class) {
     BuildEnvironment.gitBinary,
     "clone",
     "--bare",
-    "https://github.com/openssl/openssl",
+    OpenSSL.GIT_SRC,
     opensslGitDir
   )
   outputs.dir(opensslGitDir)
