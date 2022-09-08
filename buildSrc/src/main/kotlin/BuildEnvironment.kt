@@ -31,7 +31,7 @@ object BuildEnvironment {
     ).absolutePath
   )
 
-  val androidNdkApiVersion: Int by ProjectProperties.createProperty("android.ndk.api.version", "23")
+  val androidNdkApiVersion: Int by ProjectProperties.createProperty("android.ndk.api.version", "21")
 
   private val buildPathEnvironment: String by ProjectProperties.createProperty("build.path")
 
