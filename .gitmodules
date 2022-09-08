@@ -4,6 +4,3 @@
 [submodule "repos/ktor"]
 	path = repos/ktor
 	url = git@github.com:/danbrough/ktor.git
-[submodule "repos/curl"]
-	path = repos/curl
-	url = https://github.com/curl/curl.git
