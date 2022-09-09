@@ -19,24 +19,35 @@ repositories {
 
 
 kotlin {
+
+
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
 
-  sourceSets {
 
-    val commonMain by getting {
-      dependencies{
-        implementation(Dependencies.klog)
-        implementation("org.danbrough.ktor:ktor-client-curl:2.1.0")
-      }
+  val commonMain by sourceSets.getting {
+    dependencies {
+      implementation(Dependencies.klog)
+      implementation("org.danbrough.ktor:ktor-client-core:_")
+      implementation("org.danbrough.ktor:ktor-client-curl:_")
+      implementation("org.danbrough.kotlinx:kotlinx-coroutines-core:_")
     }
+  }
+
+
+  val nativeMain by sourceSets.creating {
+    dependsOn(commonMain)
   }
 
   targets.withType<KotlinNativeTarget>().all {
 
+    compilations["main"].apply {
+      defaultSourceSet.dependsOn(nativeMain)
+    }
+
     binaries {
-      executable("demo1"){
+      executable("demo1") {
         entryPoint = "demo1.main"
       }
     }
