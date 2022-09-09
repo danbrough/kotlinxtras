@@ -11,3 +11,7 @@
 [submodule "repos/curl"]
 	path = repos/curl
 	url = https://github.com/curl/curl.git
+[submodule "repos/kotlinx.serialization"]
+	path = repos/kotlinx.serialization
+	url = git@github.com:danbrough/kotlinx.serialization.git
+	branch = danbroid-v1.4.0
