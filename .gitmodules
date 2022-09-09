@@ -15,3 +15,7 @@
 	path = repos/kotlinx.serialization
 	url = git@github.com:danbrough/kotlinx.serialization.git
 	branch = danbroid-v1.4.0
+[submodule "repos/kotlinx.atomicfu"]
+	path = repos/kotlinx.atomicfu
+	url = git@github.com:danbrough/kotlinx.atomicfu.git
+	branch = dan-0.17.3
