@@ -27,7 +27,7 @@ dependencies {
 }
 ```
 
-The tweaked repos will be git submodules under the (repo)[./repo] folder.
+The tweaked repos will be git submodules under the [repo](./repo) folder.
 So you can clone those, compare with upstream, roll your own.
 Due to the need for absolute hard-coded paths in cinterop def files this repo will need to be checked out at /usr/local/kotlinxtras
 for building custom packages.
