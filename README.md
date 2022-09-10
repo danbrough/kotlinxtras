@@ -38,9 +38,10 @@ Static compilation will be another option.
 
 ## Status
 
-Scripts are in place for cross compiling openssl and curl.
+Scripts are in place for cross compiling openssl and curl using the konan compilers.
 Okio,serialization,coroutines,atomic-fu,and kotlinx-datetime are working.
-Ktor is in progress but I have got a demo running on linuxArm32Hfp using ktor-client-curl.
+Ktor is in progress but I have got a demo running using ktor-client-curl.
+That will be in the [demos](./demos) folder.
 
 
 
