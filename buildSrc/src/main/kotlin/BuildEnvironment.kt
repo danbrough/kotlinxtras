@@ -338,7 +338,7 @@ object BuildEnvironment {
 
 
   fun KonanTarget.konanDepsTask(project: Project): Task =
-    project.rootProject.project("konan").getTasksByName(platformName, true).firstOrNull()
+    project.rootProject.project("konandeps").getTasksByName(platformName, true).firstOrNull()
       ?: throw Error("Need to add support for $platformName to konan project")
 }
   
