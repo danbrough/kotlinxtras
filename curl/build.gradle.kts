@@ -50,9 +50,6 @@ fun autoconfTask(target: KonanTarget): Exec {
     commandLine("autoreconf", "-fi")
     val configureFile = srcDir.resolve("configure")
     outputs.file(configureFile)
-    doFirst {
-      print("RUNNING AUTOCONF")
-    }
     onlyIf {
       !configureFile.exists()
     }
