@@ -18,10 +18,10 @@ private val log = klog.klog("demo1") {
   messageFormatter = KMessageFormatters.verbose.colored
 }
 
-suspend fun runClient(engine: HttpClientEngine) {
+suspend fun runClient(engine: HttpClientEngine,url:String) {
   val client = HttpClient(engine)
   try {
-    val response = client.get("http://example.com")
+    val response = client.get(url)
     log.debug(response.bodyAsText())
   } finally {
     // To prevent IllegalStateException https://youtrack.jetbrains.com/issue/KTOR-1071
@@ -31,11 +31,12 @@ suspend fun runClient(engine: HttpClientEngine) {
 }
 
 fun main(args: Array<String>) {
-  log.debug("running demo1")
+  val url = if (args.size == 0) "https://example.com" else args[0]
+  log.debug("running demo1: url: $url")
 
   runBlocking {
     Platform.isMemoryLeakCheckerActive = false
 
-    runClient(Curl.create())
+    runClient(Curl.create(),url)
   }
 }

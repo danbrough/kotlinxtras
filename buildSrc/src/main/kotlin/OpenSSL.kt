@@ -5,14 +5,13 @@ import BuildEnvironment.platformName
 
 object OpenSSL {
   
-  const val BRANCH = "dan_OpenSSL_1_1_1q"
   const val GIT_SRC = "https://github.com/danbrough/openssl"
   
   fun KonanTarget.opensslSrcDir(project: Project): File =
-    project.rootProject.file("openssl/build/openssl/$BRANCH/$platformName")
+    project.rootProject.file("openssl/build/openssl/$platformName")
   
   fun KonanTarget.opensslPrefix(project: Project): File =
-    project.rootProject.file("libs/openssl/$BRANCH/$platformName")
+    project.rootProject.file("libs/openssl//$platformName")
   
   val KonanTarget.opensslPlatform: String
     get() = when (this) {

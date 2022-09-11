@@ -16,24 +16,11 @@ plugins {
 
 val opensslGitDir = rootProject.file("repos/openssl")
 
-val srcClone by tasks.registering(Exec::class) {
-  commandLine(
-    BuildEnvironment.gitBinary,
-    "clone",
-    OpenSSL.GIT_SRC,
-    opensslGitDir
-  )
 
-  outputs.dir(opensslGitDir)
-  onlyIf {
-    !opensslGitDir.exists()
-  }
-}
 
 fun srcPrepare(target: org.jetbrains.kotlin.konan.target.KonanTarget): Exec =
   tasks.create("srcPrepare${target.platformName.capitalize()}", Exec::class) {
     val srcDir = target.opensslSrcDir(project)
-    dependsOn(srcClone)
     onlyIf {
       !srcDir.exists()
     }
