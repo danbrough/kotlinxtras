@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 plugins {
   kotlin("multiplatform") apply false
-  //id("io.github.gradle-nexus.publish-plugin")
+  id("io.github.gradle-nexus.publish-plugin")
   `maven-publish`
   signing
 }
@@ -55,7 +55,11 @@ publishing {
       setOf(
         KonanTarget.LINUX_ARM32_HFP,
         KonanTarget.LINUX_ARM64,
-        KonanTarget.LINUX_X64
+        KonanTarget.LINUX_X64,
+        KonanTarget.ANDROID_X86,
+        KonanTarget.ANDROID_X64,
+        KonanTarget.ANDROID_ARM32,
+        KonanTarget.ANDROID_ARM64,
       ).forEach { target ->
         create<MavenPublication>("$libName${target.platformName.capitalized()}Binaries") {
           artifactId = name
@@ -65,6 +69,16 @@ publishing {
     }
   }
 }
+
+nexusPublishing {
+  repositories {
+    sonatype {
+      nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+      snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+    }
+  }
+}
+
 
 
 allprojects {
@@ -92,11 +106,16 @@ allprojects {
 
       publications.all {
         if (this !is MavenPublication) return@all
+
+        signing {
+          sign(this@all)
+        }
+
         pom {
 
 
           name.set("KotlinXtras")
-          description.set("Kotlin IPFS client api and embedded node")
+          description.set("Common kotlin packages with linux arm and android native support")
           url.set("https://github.com/danbrough/kotlinxtras/")
 
 
@@ -108,9 +127,9 @@ allprojects {
           }
 
           scm {
-            connection.set("scm:git:git@github.com:danbrough/kipfs.git")
-            developerConnection.set("scm:git:git@github.com:danbrough/kipfs.git")
-            url.set("https://github.com/danbrough/kipfs/")
+            connection.set("scm:git:git@github.com:danbrough/kotlinxtras.git")
+            developerConnection.set("scm:git:git@github.com:danbrough/kotlinxtras.git")
+            url.set("https://github.com/danbrough/kotlinxtras/")
           }
 
           issueManagement {

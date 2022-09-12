@@ -8,6 +8,8 @@ import OpenSSL.opensslSrcDir
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import BuildEnvironment.declareNativeTargets
+import org.jetbrains.kotlin.konan.target.KonanTarget
+
 
 plugins {
   kotlin("multiplatform")
@@ -18,7 +20,7 @@ val opensslGitDir = rootProject.file("repos/openssl")
 
 
 
-fun srcPrepare(target: org.jetbrains.kotlin.konan.target.KonanTarget): Exec =
+fun srcPrepare(target: KonanTarget): Exec =
   tasks.create("srcPrepare${target.platformName.capitalize()}", Exec::class) {
     val srcDir = target.opensslSrcDir(project)
     onlyIf {
@@ -30,7 +32,7 @@ fun srcPrepare(target: org.jetbrains.kotlin.konan.target.KonanTarget): Exec =
   }
 
 
-fun configureTask(target: org.jetbrains.kotlin.konan.target.KonanTarget): Exec {
+fun configureTask(target: KonanTarget): Exec {
 
   val srcPrepare = srcPrepare(target)
 
@@ -47,14 +49,16 @@ fun configureTask(target: org.jetbrains.kotlin.konan.target.KonanTarget): Exec {
       "--prefix=${target.opensslPrefix(project)}",
       //"no-tests","no-ui-console", "--prefix=${target.opensslPrefix(project)}"
     )
-    if (target.family == org.jetbrains.kotlin.konan.target.Family.ANDROID) args += "-D__ANDROID_API__=${BuildEnvironment.androidNdkApiVersion} "
-    else if (target.family == org.jetbrains.kotlin.konan.target.Family.MINGW) args += "--cross-compile-prefix=${target.hostTriplet}-"
+    if (target.family == org.jetbrains.kotlin.konan.target.Family.ANDROID)
+      args += "-D__ANDROID_API__=${BuildEnvironment.androidNdkApiVersion} "
+    else if (target.family == org.jetbrains.kotlin.konan.target.Family.MINGW)
+      args += "--cross-compile-prefix=${target.hostTriplet}-"
     commandLine(args)
   }
 }
 
 
-fun buildTask(target: org.jetbrains.kotlin.konan.target.KonanTarget): TaskProvider<*> {
+fun buildTask(target: KonanTarget): TaskProvider<*> {
   val configureTask = configureTask(target)
 
 
@@ -68,8 +72,6 @@ fun buildTask(target: org.jetbrains.kotlin.konan.target.KonanTarget): TaskProvid
     //to ensure the konan tools are available
     dependsOn(target.konanDepsTask(project))
 
-
-    //tasks.getAt("buildAll").dependsOn(this)
     workingDir(target.opensslSrcDir(project))
     outputs.files(fileTree(target.opensslPrefix(project)) {
       include("lib/*.a", "lib/*.so", "lib/*.h", "lib/*.dylib")
@@ -78,10 +80,8 @@ fun buildTask(target: org.jetbrains.kotlin.konan.target.KonanTarget): TaskProvid
     group = BasePlugin.BUILD_GROUP
     commandLine("make", "install_sw")
     doLast {
-      println("STATUS: $status")
       target.opensslSrcDir(project).deleteRecursively()
     }
-
   }
 }
 kotlin {
@@ -103,23 +103,6 @@ kotlin {
         buildAll.dependsOn(it)
       }
     }
-/*
-    compilations["main"].apply {
-      cinterops.create("openssl") {
-        packageName("libopenssl")
-        defFile = project.file("src/openssl.def")
-        includeDirs(konanTarget.opensslPrefix(project).resolve("include").also {
-          println("USING include path: $it for target $konanTarget")
-        })
-        extraOpts(
-          listOf(
-            "-libraryPath",
-            konanTarget.opensslPrefix(project).resolve("lib"),
-            "-verbose"
-          )
-        )
-      }
-    }*/
 
     compilations["test"].apply {
       defaultSourceSet.dependsOn(nativeTest)

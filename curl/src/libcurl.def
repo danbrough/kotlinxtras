@@ -4,11 +4,15 @@ linkerOpts =  -lz -lssl -lcrypto -lcurl
 staticLibraries.linux = libcurl.a
 staticLibraries.android = libcurl.a
 
-compilerOpts.linux_arm64 = -I/usr/local/kotlinxtras/libs/curl/linuxArm64/include
+compilerOpts.linux_arm64 = -I/usr/local/kotlinxtras/libs/curl/linuxArm64/include \
+        -Ibuild/libs/openssl/linuxArm64/include
+
 libraryPaths.linux_arm64 = /usr/local/kotlinxtras/libs/curl/linuxArm64/lib \
             /usr/local/kotlinxtras/libs/openssl/linuxArm64/lib
+
 linkerOpts.linux_arm64 = -L/usr/local/kotlinxtras/libs/curl/linuxArm64/lib \
-            -L/usr/local/kotlinxtras/libs/openssl/linuxArm64/lib
+            -L/usr/local/kotlinxtras/libs/openssl/linuxArm64/lib \
+            -Lbuild/libs/openssl/linuxArm64/lib
 
 compilerOpts.linux_arm32_hfp = -I/usr/local/kotlinxtras/libs/curl/linuxArm32Hfp/include
 libraryPaths.linux_arm32_hfp = /usr/local/kotlinxtras/libs/curl/linuxArm32Hfp/lib \

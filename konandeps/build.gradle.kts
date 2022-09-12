@@ -17,11 +17,7 @@ kotlin {
       defaultSourceSet.dependsOn(nativeMain)
     }
 
-    binaries {
-      executable("helloWorld") {
-
-      }
-    }
+    binaries.executable("helloWorld")
 
     tasks.create(konanTarget.platformName){
       dependsOn("compileKotlin${konanTarget.platformName.capitalize()}")

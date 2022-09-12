@@ -20,12 +20,10 @@ repositories {
 
 kotlin {
 
-
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
   androidNativeX86()
-
 
   val commonMain by sourceSets.getting {
     dependencies {
@@ -34,7 +32,6 @@ kotlin {
       implementation(libs.curl)
     }
   }
-
 
   val nativeMain by sourceSets.creating {
     dependsOn(commonMain)
