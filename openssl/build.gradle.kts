@@ -13,12 +13,31 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
   kotlin("multiplatform")
- // `maven-publish`
+  `maven-publish`
 }
 
 val opensslGitDir = rootProject.file("repos/openssl")
 
 
+val generateOpensslDef by tasks.creating {
+  inputs.file("src/openssl_header.def")
+  outputs.file("src/openssl.def")
+  doFirst {
+    val outputFile = outputs.files.files.first()
+    println("Generating $outputFile")
+
+    outputFile.printWriter().use { output->
+      output.println(inputs.files.files.first().readText())
+      kotlin.targets.withType<KotlinNativeTarget>().forEach {
+        val konanTarget = it.konanTarget
+        output.println("compilerOpts.${konanTarget.name} = -Ibuild/libs/openssl/${konanTarget.platformName}/include \\")
+        output.println("\t-I/usr/local/kotlinxtras/libs/openssl/${konanTarget.platformName}/include ")
+        output.println("linkerOpts.${konanTarget.name} = -Lbuild/libs/openssl/${konanTarget.platformName}/lib \\")
+        output.println("\t-L/usr/local/kotlinxtras/libs/openssl/${konanTarget.platformName}/lib ")
+      }
+    }
+  }
+}
 
 fun srcPrepare(target: KonanTarget): Exec =
   tasks.create("srcPrepare${target.platformName.capitalize()}", Exec::class) {
@@ -88,11 +107,8 @@ kotlin {
   declareNativeTargets()
 
 
-  val nativeTest by sourceSets.creating {
-    dependencies {
-      //   implementation(Dependencies.klog)
-    }
-  }
+  val nativeTest by sourceSets.creating
+  val nativeMain by sourceSets.creating
 
   val buildAll = tasks.create("buildAll")
 
@@ -102,6 +118,16 @@ kotlin {
       buildTask(konanTarget).also {
         buildAll.dependsOn(it)
       }
+    }
+
+    compilations["main"].apply {
+      cinterops.create("libopenssl"){
+        packageName("libopenssl")
+        defFile("src/openssl.def")
+        tasks.getByName(interopProcessingTaskName).dependsOn(generateOpensslDef)
+      }
+
+      defaultSourceSet.dependsOn(nativeMain)
     }
 
     compilations["test"].apply {

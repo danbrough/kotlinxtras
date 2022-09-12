@@ -6,13 +6,40 @@ compilerOpts.android = -D__ANDROID_API__=21
 compilerOpts =  -Wno-macro-redefined -Wno-deprecated-declarations  -Wno-incompatible-pointer-types-discards-qualifiers -fPIC
 #compilerOpts = -static
 
-linkerOpts.linux_x64 =   -L libs/openssl/linuxX64/lib
-linkerOpts.linux_arm64 = -L libs/openssl/linuxArm64/lib -L build/libs/op
-linkerOpts.linux_arm32_hfp = -L libs/openssl/linuxArm32Hfp/lib
 
-
-linkerOpts.android_x86 = -L libs/openssl/androidNativeX86/lib
-linkerOpts.android_x64 = -L libs/openssl/androidNativeX64/lib
-linkerOpts.android_arm32 = -L libs/openssl/androidNativeArm32/lib
-linkerOpts.android_arm64 = -L libs/openssl/androidNativeArm64/lib
-
+compilerOpts.android_arm32 = -Ibuild/libs/openssl/androidNativeArm32/include \
+	-I/usr/local/kotlinxtras/libs/openssl/androidNativeArm32/include 
+linkerOpts.android_arm32 = -Lbuild/libs/openssl/androidNativeArm32/lib \
+	-L/usr/local/kotlinxtras/libs/openssl/androidNativeArm32/lib 
+compilerOpts.android_arm64 = -Ibuild/libs/openssl/androidNativeArm64/include \
+	-I/usr/local/kotlinxtras/libs/openssl/androidNativeArm64/include 
+linkerOpts.android_arm64 = -Lbuild/libs/openssl/androidNativeArm64/lib \
+	-L/usr/local/kotlinxtras/libs/openssl/androidNativeArm64/lib 
+compilerOpts.android_x64 = -Ibuild/libs/openssl/androidNativeX64/include \
+	-I/usr/local/kotlinxtras/libs/openssl/androidNativeX64/include 
+linkerOpts.android_x64 = -Lbuild/libs/openssl/androidNativeX64/lib \
+	-L/usr/local/kotlinxtras/libs/openssl/androidNativeX64/lib 
+compilerOpts.android_x86 = -Ibuild/libs/openssl/androidNativeX86/include \
+	-I/usr/local/kotlinxtras/libs/openssl/androidNativeX86/include 
+linkerOpts.android_x86 = -Lbuild/libs/openssl/androidNativeX86/lib \
+	-L/usr/local/kotlinxtras/libs/openssl/androidNativeX86/lib 
+compilerOpts.linux_arm32_hfp = -Ibuild/libs/openssl/linuxArm32Hfp/include \
+	-I/usr/local/kotlinxtras/libs/openssl/linuxArm32Hfp/include 
+linkerOpts.linux_arm32_hfp = -Lbuild/libs/openssl/linuxArm32Hfp/lib \
+	-L/usr/local/kotlinxtras/libs/openssl/linuxArm32Hfp/lib 
+compilerOpts.linux_arm64 = -Ibuild/libs/openssl/linuxArm64/include \
+	-I/usr/local/kotlinxtras/libs/openssl/linuxArm64/include 
+linkerOpts.linux_arm64 = -Lbuild/libs/openssl/linuxArm64/lib \
+	-L/usr/local/kotlinxtras/libs/openssl/linuxArm64/lib 
+compilerOpts.linux_x64 = -Ibuild/libs/openssl/linuxX64/include \
+	-I/usr/local/kotlinxtras/libs/openssl/linuxX64/include 
+linkerOpts.linux_x64 = -Lbuild/libs/openssl/linuxX64/lib \
+	-L/usr/local/kotlinxtras/libs/openssl/linuxX64/lib 
+compilerOpts.macos_arm64 = -Ibuild/libs/openssl/macosArm64/include \
+	-I/usr/local/kotlinxtras/libs/openssl/macosArm64/include 
+linkerOpts.macos_arm64 = -Lbuild/libs/openssl/macosArm64/lib \
+	-L/usr/local/kotlinxtras/libs/openssl/macosArm64/lib 
+compilerOpts.macos_x64 = -Ibuild/libs/openssl/macosX64/include \
+	-I/usr/local/kotlinxtras/libs/openssl/macosX64/include 
+linkerOpts.macos_x64 = -Lbuild/libs/openssl/macosX64/lib \
+	-L/usr/local/kotlinxtras/libs/openssl/macosX64/lib 

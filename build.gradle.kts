@@ -107,9 +107,10 @@ allprojects {
     publications.all {
       if (this !is MavenPublication) return@all
 
-      signing {
-        sign(this@all)
-      }
+      if (project.hasProperty("signPublications"))
+        signing {
+          sign(this@all)
+        }
 
       pom {
 
