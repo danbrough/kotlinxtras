@@ -28,11 +28,6 @@ allprojects {
 
 
 
-enum class LibJarType {
-  INCLUDES, SHARED, STATIC
-}
-
-
 val binariesGroup = "binaries"
 
 fun createLibraryJar(target: KonanTarget, libName: String): Jar {
@@ -48,55 +43,13 @@ fun createLibraryJar(target: KonanTarget, libName: String): Jar {
     include("lib/*.dll")
     include("lib/*.dylib")
     include("lib/*.a")
-    /*when(jarType){
-      Build_gradle.LibJarType.INCLUDES -> include("**")
-      Build_gradle.LibJarType.SHARED -> include("*.so", "*.dll", "*.dylib")
-      Build_gradle.LibJarType.STATIC -> include("*.a")
-    }*/
 
     destinationDirectory.set(project.buildDir.resolve("jars"))
   }
 }
 
 
-/*fun createLibraryJars(target: KonanTarget, libName: String) {
-  val jarsTask = tasks.create("${libName}${target.platformName.capitalized()}Jars"){
-    group = binariesGroup
-  }
-  LibJarType.values().forEach { jarType->
-    createLibraryJar(target,libName,jarType).also {
-      jarsTask.dependsOn(it)
-    }
-  }
-}*/
-
-/*
-setOf("curl","openssl").forEach { libName ->
-  setOf(KonanTarget.LINUX_ARM32_HFP,KonanTarget.LINUX_ARM64,KonanTarget.LINUX_X64).forEach {target->
-    createLibraryJars(target, libName)
-  }
-}
-*/
-/*
-
-nexusPublishing {
-  repositories {
-    sonatype {
-      nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-      snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-    }
-  }
-}
-*/
-
-
 publishing {
-  repositories {
-    maven(project.buildDir.resolve("m2")) {
-      name = "m2"
-    }
-    maven(Dependencies.SONA_STAGING)
-  }
   publications {
     setOf("curl", "openssl").forEach { libName ->
       setOf(
@@ -111,12 +64,72 @@ publishing {
       }
     }
   }
-
-
 }
 
-if (project.hasProperty("signPublications"))
+
+allprojects {
+
+
+  apply<SigningPlugin>()
+/*
   signing {
     sign(publishing.publications)
-  }
+  }*/
+  group = ProjectProperties.projectGroup
+  version = ProjectProperties.buildVersionName
 
+  afterEvaluate {
+    extensions.findByType(PublishingExtension::class) ?: return@afterEvaluate
+
+    publishing {
+
+
+      repositories {
+        maven(project.buildDir.resolve("m2")) {
+          name = "m2"
+        }
+      }
+
+      publications.all {
+        if (this !is MavenPublication) return@all
+        pom {
+
+
+          name.set("KotlinXtras")
+          description.set("Kotlin IPFS client api and embedded node")
+          url.set("https://github.com/danbrough/kotlinxtras/")
+
+
+          licenses {
+            license {
+              name.set("Apache-2.0")
+              url.set("https://opensource.org/licenses/Apache-2.0")
+            }
+          }
+
+          scm {
+            connection.set("scm:git:git@github.com:danbrough/kipfs.git")
+            developerConnection.set("scm:git:git@github.com:danbrough/kipfs.git")
+            url.set("https://github.com/danbrough/kipfs/")
+          }
+
+          issueManagement {
+            system.set("GitHub")
+            url.set("https://github.com/danbrough/kotlinxtras/issues")
+          }
+
+          developers {
+            developer {
+              id.set("danbrough")
+              name.set("Dan Brough")
+              email.set("dan@danbrough.org")
+              organizationUrl.set("https://github.com/danbrough")
+            }
+          }
+        }
+
+      }
+    }
+
+  }
+}

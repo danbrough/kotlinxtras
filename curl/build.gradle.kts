@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.konan.target.Family
 
 plugins {
   kotlin("multiplatform")
-  `maven-publish`
+  //`maven-publish`
 }
 
 val curlGitDir = rootProject.file("repos/curl")
@@ -125,7 +125,7 @@ kotlin {
   
   val commonMain by sourceSets.getting {
     dependencies {
-      implementation(Dependencies.klog)
+      implementation(libs.klog)
     }
   }
   

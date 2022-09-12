@@ -11,7 +11,7 @@ import BuildEnvironment.declareNativeTargets
 
 plugins {
   kotlin("multiplatform")
-  `maven-publish`
+ // `maven-publish`
 }
 
 val opensslGitDir = rootProject.file("repos/openssl")
