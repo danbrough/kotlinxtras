@@ -12,6 +12,7 @@ kotlin = "1.7.10"
 
 [libraries]
 
-klog = "org.danbrough:klog:0.0.1-beta07"
+klog = "org.danbrough:klog:0.0.1-beta06"
+##                     ⬆ :0.0.1-beta07"
 
 kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }

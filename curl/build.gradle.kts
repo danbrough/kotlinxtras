@@ -151,15 +151,6 @@ kotlin {
         defFile(project.file("src/libcurl.def"))
       }
     }
-
-
-    binaries{
-      sharedLib("curl") {
-
-      }
-    }
-
-
   }
   
   

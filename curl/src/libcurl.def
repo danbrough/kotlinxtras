@@ -1,6 +1,6 @@
 
 headers = curl/curl.h
-linkerOpts =  -lz -lm -ldl -lc  -lssl -lcrypto -lcurl
+linkerOpts =  -lz -lssl -lcrypto -lcurl
 staticLibraries.linux = libcurl.a
 staticLibraries.android = libcurl.a
 
