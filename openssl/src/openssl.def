@@ -6,13 +6,13 @@ compilerOpts.android = -D__ANDROID_API__=21
 compilerOpts =  -Wno-macro-redefined -Wno-deprecated-declarations  -Wno-incompatible-pointer-types-discards-qualifiers -fPIC
 #compilerOpts = -static
 
-linkerOpts.linux_x64 =   -L libs/openssl/OpenSSL_1_1_1q/linuxX64/lib
-linkerOpts.linux_arm64 = -L libs/openssl/OpenSSL_1_1_1q/linuxArm64/lib
-linkerOpts.linux_arm32_hfp = -L libs/openssl/OpenSSL_1_1_1q/linuxArm32Hfp/lib
+linkerOpts.linux_x64 =   -L libs/openssl/linuxX64/lib
+linkerOpts.linux_arm64 = -L libs/openssl/linuxArm64/lib -L build/libs/op
+linkerOpts.linux_arm32_hfp = -L libs/openssl/linuxArm32Hfp/lib
 
 
-linkerOpts.android_x86 = -L libs/openssl/OpenSSL_1_1_1q/androidNativeX86/lib
-linkerOpts.android_x64 = -L libs/openssl/OpenSSL_1_1_1q/androidNativeX64/lib
-linkerOpts.android_arm32 = -L libs/openssl/OpenSSL_1_1_1q/androidNativeArm32/lib
-linkerOpts.android_arm64 = -L libs/openssl/OpenSSL_1_1_1q/androidNativeArm64/lib
+linkerOpts.android_x86 = -L libs/openssl/androidNativeX86/lib
+linkerOpts.android_x64 = -L libs/openssl/androidNativeX64/lib
+linkerOpts.android_arm32 = -L libs/openssl/androidNativeArm32/lib
+linkerOpts.android_arm64 = -L libs/openssl/androidNativeArm64/lib
 

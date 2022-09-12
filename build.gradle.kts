@@ -27,7 +27,6 @@ allprojects {
 }
 
 
-
 val binariesGroup = "binaries"
 
 fun createLibraryJar(target: KonanTarget, libName: String): Jar {
@@ -35,6 +34,7 @@ fun createLibraryJar(target: KonanTarget, libName: String): Jar {
 
   return tasks.create<Jar>("${jarName}Jar") {
     archiveBaseName.set(jarName)
+    dependsOn(rootProject.getTasksByName("build${target.platformName.capitalized()}", true).first())
     group = binariesGroup
     from(project.file("libs").resolve(libName).resolve(target.platformName))
 
@@ -92,62 +92,61 @@ allprojects {
   group = ProjectProperties.projectGroup
   version = ProjectProperties.buildVersionName
 
-  afterEvaluate {
-    extensions.findByType(PublishingExtension::class) ?: return@afterEvaluate
 
-    publishing {
+  extensions.findByType(PublishingExtension::class) ?: return@allprojects
+
+  publishing {
 
 
-      repositories {
-        maven(rootProject.buildDir.resolve("m2")) {
-          name = "m2"
-        }
+    repositories {
+      maven(rootProject.buildDir.resolve("m2")) {
+        name = "m2"
+      }
+    }
+
+    publications.all {
+      if (this !is MavenPublication) return@all
+
+      signing {
+        sign(this@all)
       }
 
-      publications.all {
-        if (this !is MavenPublication) return@all
+      pom {
 
-        signing {
-          sign(this@all)
+
+        name.set("KotlinXtras")
+        description.set("Common kotlin packages with linux arm and android native support")
+        url.set("https://github.com/danbrough/kotlinxtras/")
+
+
+        licenses {
+          license {
+            name.set("Apache-2.0")
+            url.set("https://opensource.org/licenses/Apache-2.0")
+          }
         }
 
-        pom {
-
-
-          name.set("KotlinXtras")
-          description.set("Common kotlin packages with linux arm and android native support")
+        scm {
+          connection.set("scm:git:git@github.com:danbrough/kotlinxtras.git")
+          developerConnection.set("scm:git:git@github.com:danbrough/kotlinxtras.git")
           url.set("https://github.com/danbrough/kotlinxtras/")
-
-
-          licenses {
-            license {
-              name.set("Apache-2.0")
-              url.set("https://opensource.org/licenses/Apache-2.0")
-            }
-          }
-
-          scm {
-            connection.set("scm:git:git@github.com:danbrough/kotlinxtras.git")
-            developerConnection.set("scm:git:git@github.com:danbrough/kotlinxtras.git")
-            url.set("https://github.com/danbrough/kotlinxtras/")
-          }
-
-          issueManagement {
-            system.set("GitHub")
-            url.set("https://github.com/danbrough/kotlinxtras/issues")
-          }
-
-          developers {
-            developer {
-              id.set("danbrough")
-              name.set("Dan Brough")
-              email.set("dan@danbrough.org")
-              organizationUrl.set("https://github.com/danbrough")
-            }
-          }
         }
 
+        issueManagement {
+          system.set("GitHub")
+          url.set("https://github.com/danbrough/kotlinxtras/issues")
+        }
+
+        developers {
+          developer {
+            id.set("danbrough")
+            name.set("Dan Brough")
+            email.set("dan@danbrough.org")
+            organizationUrl.set("https://github.com/danbrough")
+          }
+        }
       }
+
     }
 
   }
