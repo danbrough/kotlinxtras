@@ -85,7 +85,7 @@ allprojects {
 
 
       repositories {
-        maven(project.buildDir.resolve("m2")) {
+        maven(rootProject.buildDir.resolve("m2")) {
           name = "m2"
         }
       }

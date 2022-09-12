@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.konan.target.Family
 
 plugins {
   kotlin("multiplatform")
-  //`maven-publish`
+  `maven-publish`
 }
 
 val curlGitDir = rootProject.file("repos/curl")
@@ -136,7 +136,6 @@ kotlin {
   val buildAll by tasks.creating
 
 
-
   targets.withType(KotlinNativeTarget::class).all {
 
     if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily ) {
@@ -147,7 +146,20 @@ kotlin {
     
     compilations["main"].apply {
       defaultSourceSet.dependsOn(posixMain)
+      cinterops.create("curl"){
+        packageName("libcurl")
+        defFile(project.file("src/libcurl.def"))
+      }
     }
+
+
+    binaries{
+      sharedLib("curl") {
+
+      }
+    }
+
+
   }
   
   
