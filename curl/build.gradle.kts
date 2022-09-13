@@ -178,11 +178,11 @@ val generateCInteropsDef by tasks.creating {
       output.println(inputs.files.files.first().readText())
       kotlin.targets.withType<KotlinNativeTarget>().forEach {
         val konanTarget = it.konanTarget
-        output.println("compilerOpts.${konanTarget.name} = -Ibuild/libs/curl/${konanTarget.platformName}/include \\")
+        output.println("compilerOpts.${konanTarget.name} = -Ibuild/kotlinxtras/curl/${konanTarget.platformName}/include \\")
         output.println("\t-I/usr/local/kotlinxtras/libs/curl/${konanTarget.platformName}/include ")
-        output.println("linkerOpts.${konanTarget.name} = -Lbuild/libs/curl/${konanTarget.platformName}/lib \\")
+        output.println("linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/curl/${konanTarget.platformName}/lib \\")
         output.println("\t-L/usr/local/kotlinxtras/libs/curl/${konanTarget.platformName}/lib ")
-        output.println("libraryPaths.${konanTarget.name} = build/libs/curl/${konanTarget.platformName}/lib \\")
+        output.println("libraryPaths.${konanTarget.name} = build/kotlinxtras/curl/${konanTarget.platformName}/lib \\")
         output.println("\t/usr/local/kotlinxtras/libs/curl/${konanTarget.platformName}/lib ")
       }
     }
