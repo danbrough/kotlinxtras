@@ -39,9 +39,9 @@ fun srcPrepare(target: KonanTarget): Exec =
 
 
 fun autoconfTask(target: KonanTarget): Exec {
-  
+
   val srcPrepareTask = srcPrepare(target)
-  
+
   return tasks.create("srcAutoconf${target.platformName.capitalize()}", Exec::class) {
     dependsOn(srcPrepareTask)
     val srcDir = target.curlSrcDir(project)
@@ -57,15 +57,18 @@ fun autoconfTask(target: KonanTarget): Exec {
 }
 
 fun configureTask(target: KonanTarget): Exec {
-  
+
   val srcAutoconf = autoconfTask(target)
-  
+
   return tasks.create("configure${target.platformName.capitalize()}", Exec::class) {
     dependsOn(srcAutoconf)
 
     //to ensure the konan tools are available
     dependsOn(target.konanDepsTask(project))
-    dependsOn(rootProject.project("openssl").getTasksByName("build${target.platformName.capitalized()}",false).first())
+    dependsOn(
+      rootProject.project("openssl")
+        .getTasksByName("build${target.platformName.capitalized()}", false).first()
+    )
 
     val srcDir = target.curlSrcDir(project)
     workingDir(srcDir)
@@ -75,13 +78,13 @@ fun configureTask(target: KonanTarget): Exec {
       println("RUNNING $commandLine")
     }
     //dependsOn("openssl:build${target.platformNameCapitalized}")
-  
+
     val makefile = srcDir.resolve("Makefile")
     outputs.file(makefile)
     onlyIf {
       !makefile.exists()
     }
-    
+
     val args = listOf(
       "./configure",
       "--host=${target.hostTriplet}",
@@ -89,8 +92,8 @@ fun configureTask(target: KonanTarget): Exec {
       "--with-ca-path=/data/cacerts:/etc/security/cacerts:/etc/ca-certificates:/etc/ssl/certs",
       "--prefix=${target.curlPrefix(project)}",
 
-      
-    )
+
+      )
     commandLine(args)
   }
 }
@@ -99,21 +102,28 @@ fun configureTask(target: KonanTarget): Exec {
 fun buildTask(target: KonanTarget): Exec {
 
   val srcConfigure = configureTask(target)
-  
+
   return tasks.create("build${target.platformName.capitalize()}", Exec::class) {
-    dependsOn(srcConfigure)
+
+
     val srcDir = target.curlSrcDir(project)
+
+    val curlPrefixDir = target.curlPrefix(project)
+
+
+      dependsOn(srcConfigure)
+
+
     workingDir(srcDir)
     environment(target.buildEnvironment())
     doFirst {
       println("building : $target")
     }
-    
-    val curlPrefixDir = target.curlPrefix(project)
+
     outputs.dir(curlPrefixDir)
-    
+
     val args = listOf(
-      "make","install"
+      "make", "install"
     )
     commandLine(args)
   }
@@ -122,13 +132,14 @@ fun buildTask(target: KonanTarget): Exec {
 kotlin {
 
   declareNativeTargets()
-  
+
   val commonMain by sourceSets.getting {
     dependencies {
       implementation(libs.klog)
+      implementation(project(":openssl"))
     }
   }
-  
+
   val posixMain by sourceSets.creating {
     dependsOn(commonMain)
   }
@@ -138,20 +149,46 @@ kotlin {
 
   targets.withType(KotlinNativeTarget::class).all {
 
-    if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily ) {
+    if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily) {
       buildTask(konanTarget).also {
         buildAll.dependsOn(it)
       }
     }
-    
+
     compilations["main"].apply {
       defaultSourceSet.dependsOn(posixMain)
-      cinterops.create("curl"){
+      cinterops.create("curl") {
         packageName("libcurl")
-        defFile(project.file("src/libcurl.def"))
+        defFile("src/libcurl.def")
       }
     }
   }
-  
-  
+
+
+}
+
+
+val generateCInteropsDef by tasks.creating {
+  inputs.file("src/libcurl_header.def")
+  outputs.file("src/libcurl.def")
+  doFirst {
+    val outputFile = outputs.files.files.first()
+    println("Generating $outputFile")
+    outputFile.printWriter().use { output ->
+      output.println(inputs.files.files.first().readText())
+      kotlin.targets.withType<KotlinNativeTarget>().forEach {
+        val konanTarget = it.konanTarget
+        output.println("compilerOpts.${konanTarget.name} = -Ibuild/libs/curl/${konanTarget.platformName}/include \\")
+        output.println("\t-I/usr/local/kotlinxtras/libs/curl/${konanTarget.platformName}/include ")
+        output.println("linkerOpts.${konanTarget.name} = -Lbuild/libs/curl/${konanTarget.platformName}/lib \\")
+        output.println("\t-L/usr/local/kotlinxtras/libs/curl/${konanTarget.platformName}/lib ")
+        output.println("libraryPaths.${konanTarget.name} = build/libs/curl/${konanTarget.platformName}/lib \\")
+        output.println("\t/usr/local/kotlinxtras/libs/curl/${konanTarget.platformName}/lib ")
+      }
+    }
+  }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>() {
+  dependsOn(generateCInteropsDef)
 }

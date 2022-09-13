@@ -1,10 +1,6 @@
 import BuildEnvironment.platformName
-import Curl.curlPrefix
 import org.gradle.configurationcache.extensions.capitalized
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 plugins {
   kotlin("multiplatform") apply false
@@ -114,11 +110,9 @@ allprojects {
 
       pom {
 
-
         name.set("KotlinXtras")
         description.set("Common kotlin packages with linux arm and android native support")
         url.set("https://github.com/danbrough/kotlinxtras/")
-
 
         licenses {
           license {

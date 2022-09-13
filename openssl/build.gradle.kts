@@ -8,6 +8,7 @@ import OpenSSL.opensslSrcDir
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import BuildEnvironment.declareNativeTargets
+import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 
@@ -19,7 +20,7 @@ plugins {
 val opensslGitDir = rootProject.file("repos/openssl")
 
 
-val generateOpensslDef by tasks.creating {
+val generateCInteropsDef by tasks.creating {
   inputs.file("src/openssl_header.def")
   outputs.file("src/openssl.def")
   doFirst {
@@ -82,17 +83,22 @@ fun buildTask(target: KonanTarget): TaskProvider<*> {
 
 
   return tasks.register("build${target.platformName.capitalized()}", Exec::class) {
-    target.opensslPrefix(project).resolve("lib/libssl.a").exists().also {
-      isEnabled = !it
-      configureTask.isEnabled = !it
-    }
-    dependsOn(configureTask.name)
+    val installDir = target.opensslPrefix(project)
 
+   if (!installDir.exists())
+      dependsOn(configureTask)
+
+
+    onlyIf{
+      !installDir.exists()
+    }
     //to ensure the konan tools are available
     dependsOn(target.konanDepsTask(project))
 
     workingDir(target.opensslSrcDir(project))
-    outputs.files(fileTree(target.opensslPrefix(project)) {
+
+
+    outputs.files(fileTree(installDir) {
       include("lib/*.a", "lib/*.so", "lib/*.h", "lib/*.dylib")
     })
     environment(target.buildEnvironment())
@@ -124,7 +130,7 @@ kotlin {
       cinterops.create("libopenssl"){
         packageName("libopenssl")
         defFile("src/openssl.def")
-        tasks.getByName(interopProcessingTaskName).dependsOn(generateOpensslDef)
+
       }
 
       defaultSourceSet.dependsOn(nativeMain)
@@ -134,4 +140,8 @@ kotlin {
       defaultSourceSet.dependsOn(nativeTest)
     }
   }
+}
+
+tasks.withType<CInteropProcess>(){
+  dependsOn(generateCInteropsDef)
 }

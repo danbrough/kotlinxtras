@@ -1,57 +1,60 @@
 
 headers = curl/curl.h
 linkerOpts =  -lz -lssl -lcrypto -lcurl
-staticLibraries.linux = libcurl.a
-staticLibraries.android = libcurl.a
+#staticLibraries.linux = libcurl.a
+#staticLibraries.android = libcurl.a
 
-compilerOpts.linux_arm64 = -I/usr/local/kotlinxtras/libs/curl/linuxArm64/include \
-        -Ibuild/libs/openssl/linuxArm64/include -I build/libs/curl/linuxArm64/include
-
-libraryPaths.linux_arm64 = /usr/local/kotlinxtras/libs/curl/linuxArm64/lib \
-            /usr/local/kotlinxtras/libs/openssl/linuxArm64/lib
-
-linkerOpts.linux_arm64 = -L/usr/local/kotlinxtras/libs/curl/linuxArm64/lib \
-            -L/usr/local/kotlinxtras/libs/openssl/linuxArm64/lib \
-            -Lbuild/libs/openssl/linuxArm64/lib -Lbuild/libs/curl/linuxArm64/lib
-
-compilerOpts.linux_arm32_hfp = -I/usr/local/kotlinxtras/libs/curl/linuxArm32Hfp/include \
-        -Ibuild/libs/openssl/linuxArm32Hfp/include -I build/libs/curl/linuxArm32Hfp/include
-
-libraryPaths.linux_arm32_hfp = /usr/local/kotlinxtras/libs/curl/linuxArm32Hfp/lib \
-            /usr/local/kotlinxtras/libs/openssl/linuxArm32Hfp/lib
-linkerOpts.linux_arm32_hfp = -L/usr/local/kotlinxtras/libs/curl/linuxArm32Hfp/lib \
-            -L/usr/local/kotlinxtras/libs/openssl/linuxArm32Hfp/lib
-
-compilerOpts.linux_x64 = -I/usr/local/kotlinxtras/libs/curl/linuxX64/include \
-        -Ibuild/libs/openssl/linuxX64/include -I build/libs/curl/linuxX64/include
-
-libraryPaths.linux_x64 = /usr/local/kotlinxtras/libs/curl/linuxX64/lib \
-            /usr/local/kotlinxtras/libs/openssl/linuxX64/lib
-linkerOpts.linux_x64 = -L/usr/local/kotlinxtras/libs/curl/linuxX64/lib \
-            -L/usr/local/kotlinxtras/libs/openssl/linuxX64/lib
-
-compilerOpts.android_x86 = -I/usr/local/kotlinxtras/libs/curl/androidNativeX86/include \
-
-libraryPaths.android_x86 = /usr/local/kotlinxtras/libs/curl/androidNativeX86/lib \
-            /usr/local/kotlinxtras/libs/openssl/androidNativeX86/lib
-linkerOpts.android_x86 = -L/usr/local/kotlinxtras/libs/curl/androidNativeX86/lib \
-            -L/usr/local/kotlinxtras/libs/openssl/androidNativeX86/lib
-
-compilerOpts.android_x64 = -I/usr/local/kotlinxtras/libs/curl/androidNativeX64/include
-libraryPaths.android_x64 = /usr/local/kotlinxtras/libs/curl/androidNativeX64/lib \
-            /usr/local/kotlinxtras/libs/openssl/androidNativeX64/lib
-linkerOpts.android_x64 = -L/usr/local/kotlinxtras/libs/curl/androidNativeX64/lib \
-            -L/usr/local/kotlinxtras/libs/openssl/androidNativeX64/lib
-
-
-compilerOpts.android_arm32 = -I/usr/local/kotlinxtras/libs/curl/androidNativeArm32/include
-libraryPaths.android_arm32= /usr/local/kotlinxtras/libs/curl/androidNativeArm32/lib \
-            /usr/local/kotlinxtras/libs/openssl/androidNativeArm32/lib
-linkerOpts.android_arm32 = -L/usr/local/kotlinxtras/libs/curl/androidNativeArm32/lib \
-            -L/usr/local/kotlinxtras/libs/openssl/androidNativeArm32/lib
-
-compilerOpts.android_arm64 = -I/usr/local/kotlinxtras/libs/curl/androidNativeArm64/include
-libraryPaths.android_arm64 = /usr/local/kotlinxtras/libs/curl/androidNativeArm64/lib \
-            /usr/local/kotlinxtras/libs/openssl/androidNativeArm64/lib
-linkerOpts.android_arm64 = -L/usr/local/kotlinxtras/libs/curl/androidNativeArm64/lib \
-            -L/usr/local/kotlinxtras/libs/openssl/androidNativeArm64/lib
+compilerOpts.android_arm32 = -Ibuild/libs/curl/androidNativeArm32/include \
+	-I/usr/local/kotlinxtras/libs/curl/androidNativeArm32/include 
+linkerOpts.android_arm32 = -Lbuild/libs/curl/androidNativeArm32/lib \
+	-L/usr/local/kotlinxtras/libs/curl/androidNativeArm32/lib 
+libraryPaths.android_arm32 = build/libs/curl/androidNativeArm32/lib \
+	/usr/local/kotlinxtras/libs/curl/androidNativeArm32/lib 
+compilerOpts.android_arm64 = -Ibuild/libs/curl/androidNativeArm64/include \
+	-I/usr/local/kotlinxtras/libs/curl/androidNativeArm64/include 
+linkerOpts.android_arm64 = -Lbuild/libs/curl/androidNativeArm64/lib \
+	-L/usr/local/kotlinxtras/libs/curl/androidNativeArm64/lib 
+libraryPaths.android_arm64 = build/libs/curl/androidNativeArm64/lib \
+	/usr/local/kotlinxtras/libs/curl/androidNativeArm64/lib 
+compilerOpts.android_x64 = -Ibuild/libs/curl/androidNativeX64/include \
+	-I/usr/local/kotlinxtras/libs/curl/androidNativeX64/include 
+linkerOpts.android_x64 = -Lbuild/libs/curl/androidNativeX64/lib \
+	-L/usr/local/kotlinxtras/libs/curl/androidNativeX64/lib 
+libraryPaths.android_x64 = build/libs/curl/androidNativeX64/lib \
+	/usr/local/kotlinxtras/libs/curl/androidNativeX64/lib 
+compilerOpts.android_x86 = -Ibuild/libs/curl/androidNativeX86/include \
+	-I/usr/local/kotlinxtras/libs/curl/androidNativeX86/include 
+linkerOpts.android_x86 = -Lbuild/libs/curl/androidNativeX86/lib \
+	-L/usr/local/kotlinxtras/libs/curl/androidNativeX86/lib 
+libraryPaths.android_x86 = build/libs/curl/androidNativeX86/lib \
+	/usr/local/kotlinxtras/libs/curl/androidNativeX86/lib 
+compilerOpts.linux_arm32_hfp = -Ibuild/libs/curl/linuxArm32Hfp/include \
+	-I/usr/local/kotlinxtras/libs/curl/linuxArm32Hfp/include 
+linkerOpts.linux_arm32_hfp = -Lbuild/libs/curl/linuxArm32Hfp/lib \
+	-L/usr/local/kotlinxtras/libs/curl/linuxArm32Hfp/lib 
+libraryPaths.linux_arm32_hfp = build/libs/curl/linuxArm32Hfp/lib \
+	/usr/local/kotlinxtras/libs/curl/linuxArm32Hfp/lib 
+compilerOpts.linux_arm64 = -Ibuild/libs/curl/linuxArm64/include \
+	-I/usr/local/kotlinxtras/libs/curl/linuxArm64/include 
+linkerOpts.linux_arm64 = -Lbuild/libs/curl/linuxArm64/lib \
+	-L/usr/local/kotlinxtras/libs/curl/linuxArm64/lib 
+libraryPaths.linux_arm64 = build/libs/curl/linuxArm64/lib \
+	/usr/local/kotlinxtras/libs/curl/linuxArm64/lib 
+compilerOpts.linux_x64 = -Ibuild/libs/curl/linuxX64/include \
+	-I/usr/local/kotlinxtras/libs/curl/linuxX64/include 
+linkerOpts.linux_x64 = -Lbuild/libs/curl/linuxX64/lib \
+	-L/usr/local/kotlinxtras/libs/curl/linuxX64/lib 
+libraryPaths.linux_x64 = build/libs/curl/linuxX64/lib \
+	/usr/local/kotlinxtras/libs/curl/linuxX64/lib 
+compilerOpts.macos_arm64 = -Ibuild/libs/curl/macosArm64/include \
+	-I/usr/local/kotlinxtras/libs/curl/macosArm64/include 
+linkerOpts.macos_arm64 = -Lbuild/libs/curl/macosArm64/lib \
+	-L/usr/local/kotlinxtras/libs/curl/macosArm64/lib 
+libraryPaths.macos_arm64 = build/libs/curl/macosArm64/lib \
+	/usr/local/kotlinxtras/libs/curl/macosArm64/lib 
+compilerOpts.macos_x64 = -Ibuild/libs/curl/macosX64/include \
+	-I/usr/local/kotlinxtras/libs/curl/macosX64/include 
+linkerOpts.macos_x64 = -Lbuild/libs/curl/macosX64/lib \
+	-L/usr/local/kotlinxtras/libs/curl/macosX64/lib 
+libraryPaths.macos_x64 = build/libs/curl/macosX64/lib \
+	/usr/local/kotlinxtras/libs/curl/macosX64/lib 
