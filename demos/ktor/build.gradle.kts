@@ -26,9 +26,9 @@ kotlin {
   val commonMain by sourceSets.getting {
     dependencies {
       implementation(Dependencies.klog)
-      implementation("org.danbrough.ktor:ktor-client-core:_")
-      implementation("org.danbrough.ktor:ktor-client-curl:_")
-      implementation("org.danbrough.kotlinx:kotlinx-coroutines-core:_")
+      implementation(libs.ktor.client.core)
+      implementation(libs.ktor.client.curl)
+      implementation(libs.kotlinx.coroutines.core)
     }
   }
 
