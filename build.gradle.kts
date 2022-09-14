@@ -7,9 +7,10 @@ plugins {
   id("io.github.gradle-nexus.publish-plugin")
   `maven-publish`
   signing
+  id("KotlinXtras")
 }
 
-ProjectProperties.init(project)
+
 
 group = ProjectProperties.projectGroup
 version = ProjectProperties.buildVersionName
@@ -22,23 +23,8 @@ allprojects {
   }
 }
 
-val binaryTargets = setOf(
-  KonanTarget.LINUX_ARM32_HFP,
-  KonanTarget.LINUX_ARM64,
-  KonanTarget.LINUX_X64,
-  KonanTarget.ANDROID_X86,
-  KonanTarget.ANDROID_X64,
-  KonanTarget.ANDROID_ARM32,
-  KonanTarget.ANDROID_ARM64,
-)
 
-val binariesTaskGroup = "binaries"
 val binariesDir = project.buildDir.resolve("binaries")
-
-//download all zipped binaries and extract into the libs directory.
-val unzipAll:Task  by tasks.creating{
-  group = binariesTaskGroup
-}
 
 fun createLibraryJar(target: KonanTarget, libName: String): Jar {
   val jarName = "$libName${target.platformName.capitalized()}Binaries"
@@ -46,7 +32,7 @@ fun createLibraryJar(target: KonanTarget, libName: String): Jar {
   return tasks.create<Jar>("zip${jarName.capitalized()}") {
     archiveBaseName.set(jarName)
     dependsOn(rootProject.getTasksByName("build${target.platformName.capitalized()}", true).first())
-    group = binariesTaskGroup
+    group = KotlinXtras_gradle.KotlinXtras.binariesTaskGroup
     from(project.fileTree("libs/$libName/${target.platformName}")){
       include("include/**","lib/*.so","lib/*.a","lib/*.dll","lib/*.dylib")
     }
@@ -56,37 +42,10 @@ fun createLibraryJar(target: KonanTarget, libName: String): Jar {
 }
 
 
-val preCompiled: Configuration by configurations.creating {
-  isTransitive = false
-}
-
-dependencies {
-  setOf("openssl", "curl").forEach { libName ->
-    binaryTargets.forEach { target ->
-      preCompiled("org.danbrough.kotlinxtras:$libName${target.platformName.capitalized()}:0.0.1-beta01")
-    }
-  }
-}
-
-
-preCompiled.resolvedConfiguration.resolvedArtifacts.forEach { artifact->
-  tasks.register<Copy>("unzip${artifact.name.capitalized()}") {
-    group = binariesTaskGroup
-    from(zipTree(artifact.file).matching {
-      exclude("**/META-INF")
-      exclude("**/META-INF/*")
-    })
-    into("libs")
-  }.also {
-    unzipAll.dependsOn(it)
-  }
-}
-
-
 publishing {
   publications {
     setOf("curl", "openssl").forEach { libName ->
-      binaryTargets.forEach { target ->
+      KotlinXtras_gradle.KotlinXtras.binaryTargets.forEach { target ->
         create<MavenPublication>("$libName${target.platformName.capitalized()}") {
           artifactId = name
           artifact(createLibraryJar(target, libName))
@@ -95,6 +54,7 @@ publishing {
     }
   }
 }
+
 
 nexusPublishing {
   repositories {

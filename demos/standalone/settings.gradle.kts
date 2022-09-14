@@ -14,5 +14,5 @@ plugins {
 
 
 
-rootProject.name = "binary_deps"
+rootProject.name = "standalone"
 
