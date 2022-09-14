@@ -10,9 +10,6 @@ plugins {
 ProjectProperties.init(project)
 
 repositories {
-  maven(project.file("../../build/m2")) {
-    name = "m2"
-  }
   maven(Dependencies.SONA_STAGING)
   mavenCentral()
 }
