@@ -22,7 +22,7 @@ allprojects {
   }
 }
 
-val binaryTargets =  setOf(
+val binaryTargets = setOf(
   KonanTarget.LINUX_ARM32_HFP,
   KonanTarget.LINUX_ARM64,
   KonanTarget.LINUX_X64,
@@ -35,54 +35,58 @@ val binaryTargets =  setOf(
 val binariesTaskGroup = "binaries"
 val binariesDir = project.buildDir.resolve("binaries")
 
+//download all zipped binaries and extract into the libs directory.
+val unzipAll:Task  by tasks.creating{
+  group = binariesTaskGroup
+}
+
 fun createLibraryJar(target: KonanTarget, libName: String): Jar {
   val jarName = "$libName${target.platformName.capitalized()}Binaries"
 
-  return tasks.create<Jar>("${jarName}Jar") {
+  return tasks.create<Jar>("zip${jarName.capitalized()}") {
     archiveBaseName.set(jarName)
     dependsOn(rootProject.getTasksByName("build${target.platformName.capitalized()}", true).first())
     group = binariesTaskGroup
-    from(project.file("libs").resolve(libName).resolve(target.platformName))
-
-    include("include/**")
-    include("lib/*.so")
-    include("lib/*.dll")
-    include("lib/*.dylib")
-    include("lib/*.a")
-
+    from(project.fileTree("libs/$libName/${target.platformName}")){
+      include("include/**","lib/*.so","lib/*.a","lib/*.dll","lib/*.dylib")
+    }
+    into("$libName/${target.platformName}")
     destinationDirectory.set(binariesDir)
   }
 }
 
 
-val preCompiled:Configuration by configurations.creating{
+val preCompiled: Configuration by configurations.creating {
   isTransitive = false
 }
 
 dependencies {
-  setOf("openssl","curl").forEach { libName->
-    binaryTargets.forEach { target->
+  setOf("openssl", "curl").forEach { libName ->
+    binaryTargets.forEach { target ->
       preCompiled("org.danbrough.kotlinxtras:$libName${target.platformName.capitalized()}:0.0.1-beta01")
     }
   }
 }
 
 
-
- // println("ARTIFACTS: ${configurations["preCompiled"].files}")
-
-/*tasks.create<Copy>("extract${libName.capitalized()}${target.platformName.capitalized()}Binaries"){
-  group = binariesTaskGroup
-
-  into(project.buildDir.resolve("downloads"))
-}*/
+preCompiled.resolvedConfiguration.resolvedArtifacts.forEach { artifact->
+  tasks.register<Copy>("unzip${artifact.name.capitalized()}") {
+    group = binariesTaskGroup
+    from(zipTree(artifact.file).matching {
+      exclude("**/META-INF")
+      exclude("**/META-INF/*")
+    })
+    into("libs")
+  }.also {
+    unzipAll.dependsOn(it)
+  }
+}
 
 
 publishing {
   publications {
     setOf("curl", "openssl").forEach { libName ->
-
-     binaryTargets.forEach { target ->
+      binaryTargets.forEach { target ->
         create<MavenPublication>("$libName${target.platformName.capitalized()}") {
           artifactId = name
           artifact(createLibraryJar(target, libName))
