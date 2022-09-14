@@ -35,15 +35,12 @@ fun srcPrepare(target: KonanTarget): Exec =
     onlyIf {
       !srcDir.exists()
     }
+
   }
 
 
-fun autoconfTask(target: KonanTarget): Exec {
-
-  val srcPrepareTask = srcPrepare(target)
-
-  return tasks.create("srcAutoconf${target.platformName.capitalize()}", Exec::class) {
-    dependsOn(srcPrepareTask)
+fun autoconfTask(target: KonanTarget)=tasks.register("srcAutoconf${target.platformName.capitalize()}", Exec::class) {
+    dependsOn("srcPrepare${target.platformName.capitalize()}")
     val srcDir = target.curlSrcDir(project)
     workingDir(srcDir)
     environment(target.buildEnvironment())
@@ -54,28 +51,23 @@ fun autoconfTask(target: KonanTarget): Exec {
       !configureFile.exists()
     }
   }
-}
 
-fun configureTask(target: KonanTarget): Exec {
 
-  val srcAutoconf = autoconfTask(target)
+fun configureTask(target: KonanTarget)= tasks.register("srcConfigure${target.platformName.capitalize()}", Exec::class) {
+    dependsOn("srcAutoconf${target.platformName.capitalize()}")
 
-  return tasks.create("configure${target.platformName.capitalize()}", Exec::class) {
-    dependsOn(srcAutoconf)
+
 
     //to ensure the konan tools are available
     dependsOn(target.konanDepsTask(project))
-    dependsOn(
-      rootProject.project("openssl")
-        .getTasksByName("build${target.platformName.capitalized()}", false).first()
-    )
+    dependsOn(":openssl:build${target.platformName.capitalized()}")
 
     val srcDir = target.curlSrcDir(project)
     workingDir(srcDir)
     environment(target.buildEnvironment())
     doFirst {
-      println("ENVIRONMENT: ${environment}")
-      println("RUNNING $commandLine")
+     // println("ENVIRONMENT: ${environment}")
+      println("CONFIGURING  $commandLine ........................................")
     }
     //dependsOn("openssl:build${target.platformNameCapitalized}")
 
@@ -96,38 +88,28 @@ fun configureTask(target: KonanTarget): Exec {
       )
     commandLine(args)
   }
-}
 
 
-fun buildTask(target: KonanTarget): Exec {
 
-  val srcConfigure = configureTask(target)
-
-  return tasks.create("build${target.platformName.capitalize()}", Exec::class) {
-
-
+fun buildTask(target: KonanTarget)=tasks.register("build${target.platformName.capitalize()}", Exec::class) {
+    dependsOn("srcConfigure${target.platformName.capitalize()}")
     val srcDir = target.curlSrcDir(project)
-
     val curlPrefixDir = target.curlPrefix(project)
 
-
-      dependsOn(srcConfigure)
-
-
-    workingDir(srcDir)
-    environment(target.buildEnvironment())
     doFirst {
       println("building : $target")
     }
+    outputs.file(curlPrefixDir.resolve("include/curl/curl.h"))
 
-    outputs.dir(curlPrefixDir)
+    onlyIf {
+      !it.outputs.files.files.first().exists()
+    }
+    workingDir(srcDir)
+    environment(target.buildEnvironment())
 
-    val args = listOf(
-      "make", "install"
-    )
-    commandLine(args)
+    commandLine("make","install")
   }
-}
+
 
 kotlin {
 
@@ -150,6 +132,9 @@ kotlin {
   targets.withType(KotlinNativeTarget::class).all {
 
     if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily) {
+      srcPrepare(konanTarget)
+      autoconfTask(konanTarget)
+      configureTask(konanTarget)
       buildTask(konanTarget).also {
         buildAll.dependsOn(it)
       }
@@ -168,7 +153,7 @@ kotlin {
 }
 
 
-val generateCInteropsDef by tasks.creating {
+ tasks.register("generateCInteropsDef") {
   inputs.file("src/libcurl_header.def")
   outputs.file("src/libcurl.def")
   doFirst {
@@ -190,5 +175,7 @@ val generateCInteropsDef by tasks.creating {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>() {
-  dependsOn(generateCInteropsDef)
+  dependsOn("generateCInteropsDef")
+  if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily)
+    dependsOn("build${konanTarget.platformName.capitalized()}")
 }

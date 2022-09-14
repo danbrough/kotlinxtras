@@ -1,6 +1,8 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 
 plugins {
   kotlin("multiplatform")
@@ -10,10 +12,9 @@ val SONA_STAGING = "https://s01.oss.sonatype.org/content/groups/staging/"
 val SONA_SNAPSHOTS = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
 
 repositories {
-  maven(project.file("../../build/m2")) {
-    name = "m2"
-  }
-  //maven(SONA_STAGING)
+  //for kotlinxtras pre-releases
+  maven(SONA_STAGING)
+  //for kotlinxtras final releases
   mavenCentral()
 }
 
@@ -39,6 +40,7 @@ kotlin {
 
   val linuxArm64Main by sourceSets.getting {
     dependencies {
+
       implementation(libs.curllinuxarm64binaries)
     }
   }
@@ -55,6 +57,10 @@ kotlin {
       }
     }
   }
+}
+
+tasks.withType<KotlinNativeCompile>().forEach {
+
 }
 
 

@@ -22,8 +22,18 @@ allprojects {
   }
 }
 
+val binaryTargets =  setOf(
+  KonanTarget.LINUX_ARM32_HFP,
+  KonanTarget.LINUX_ARM64,
+  KonanTarget.LINUX_X64,
+  KonanTarget.ANDROID_X86,
+  KonanTarget.ANDROID_X64,
+  KonanTarget.ANDROID_ARM32,
+  KonanTarget.ANDROID_ARM64,
+)
 
-val binariesGroup = "binaries"
+val binariesTaskGroup = "binaries"
+val binariesDir = project.buildDir.resolve("binaries")
 
 fun createLibraryJar(target: KonanTarget, libName: String): Jar {
   val jarName = "$libName${target.platformName.capitalized()}Binaries"
@@ -31,7 +41,7 @@ fun createLibraryJar(target: KonanTarget, libName: String): Jar {
   return tasks.create<Jar>("${jarName}Jar") {
     archiveBaseName.set(jarName)
     dependsOn(rootProject.getTasksByName("build${target.platformName.capitalized()}", true).first())
-    group = binariesGroup
+    group = binariesTaskGroup
     from(project.file("libs").resolve(libName).resolve(target.platformName))
 
     include("include/**")
@@ -40,24 +50,40 @@ fun createLibraryJar(target: KonanTarget, libName: String): Jar {
     include("lib/*.dylib")
     include("lib/*.a")
 
-    destinationDirectory.set(project.buildDir.resolve("jars"))
+    destinationDirectory.set(binariesDir)
   }
 }
+
+
+val preCompiled:Configuration by configurations.creating{
+  isTransitive = false
+}
+
+dependencies {
+  setOf("openssl","curl").forEach { libName->
+    binaryTargets.forEach { target->
+      preCompiled("org.danbrough.kotlinxtras:$libName${target.platformName.capitalized()}:0.0.1-beta01")
+    }
+  }
+}
+
+
+
+ // println("ARTIFACTS: ${configurations["preCompiled"].files}")
+
+/*tasks.create<Copy>("extract${libName.capitalized()}${target.platformName.capitalized()}Binaries"){
+  group = binariesTaskGroup
+
+  into(project.buildDir.resolve("downloads"))
+}*/
 
 
 publishing {
   publications {
     setOf("curl", "openssl").forEach { libName ->
-      setOf(
-        KonanTarget.LINUX_ARM32_HFP,
-        KonanTarget.LINUX_ARM64,
-        KonanTarget.LINUX_X64,
-        KonanTarget.ANDROID_X86,
-        KonanTarget.ANDROID_X64,
-        KonanTarget.ANDROID_ARM32,
-        KonanTarget.ANDROID_ARM64,
-      ).forEach { target ->
-        create<MavenPublication>("$libName${target.platformName.capitalized()}Binaries") {
+
+     binaryTargets.forEach { target ->
+        create<MavenPublication>("$libName${target.platformName.capitalized()}") {
           artifactId = name
           artifact(createLibraryJar(target, libName))
         }
@@ -81,10 +107,7 @@ allprojects {
 
 
   apply<SigningPlugin>()
-/*
-  signing {
-    sign(publishing.publications)
-  }*/
+
   group = ProjectProperties.projectGroup
   version = ProjectProperties.buildVersionName
 
@@ -141,8 +164,6 @@ allprojects {
           }
         }
       }
-
     }
-
   }
 }

@@ -20,48 +20,45 @@ plugins {
 val opensslGitDir = rootProject.file("repos/openssl")
 
 
-val generateCInteropsDef by tasks.creating {
-  inputs.file("src/openssl_header.def")
-  outputs.file("src/openssl.def")
-  doFirst {
-    val outputFile = outputs.files.files.first()
-    println("Generating $outputFile")
+ tasks.register("generateCInteropsDef") {
+   inputs.file("src/openssl_header.def")
+   outputs.file("src/openssl.def")
+   doFirst {
+     val outputFile = outputs.files.files.first()
+     println("Generating $outputFile")
 
-    outputFile.printWriter().use { output->
-      output.println(inputs.files.files.first().readText())
-      kotlin.targets.withType<KotlinNativeTarget>().forEach {
-        val konanTarget = it.konanTarget
-        output.println("compilerOpts.${konanTarget.name} = -Ibuild/kotlinxtras/openssl/${konanTarget.platformName}/include \\")
-        output.println("\t-I/usr/local/kotlinxtras/libs/openssl/${konanTarget.platformName}/include ")
-        output.println("linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/openssl/${konanTarget.platformName}/lib \\")
-        output.println("\t-L/usr/local/kotlinxtras/libs/openssl/${konanTarget.platformName}/lib ")
-      }
-    }
-  }
-}
+     outputFile.printWriter().use { output ->
+       output.println(inputs.files.files.first().readText())
+       kotlin.targets.withType<KotlinNativeTarget>().forEach {
+         val konanTarget = it.konanTarget
+         output.println("compilerOpts.${konanTarget.name} = -Ibuild/kotlinxtras/openssl/${konanTarget.platformName}/include \\")
+         output.println("\t-I/usr/local/kotlinxtras/libs/openssl/${konanTarget.platformName}/include ")
+         output.println("linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/openssl/${konanTarget.platformName}/lib \\")
+         output.println("\t-L/usr/local/kotlinxtras/libs/openssl/${konanTarget.platformName}/lib ")
+       }
+     }
+   }
+ }
 
-fun srcPrepare(target: KonanTarget): Exec =
-  tasks.create("srcPrepare${target.platformName.capitalize()}", Exec::class) {
+fun srcPrepare(target: KonanTarget) =
+  tasks.register("srcPrepare${target.platformName.capitalize()}", Exec::class) {
     val srcDir = target.opensslSrcDir(project)
     onlyIf {
       !srcDir.exists()
     }
-    commandLine(
-      BuildEnvironment.gitBinary, "clone", opensslGitDir, srcDir
-    )
+    commandLine(BuildEnvironment.gitBinary, "clone", opensslGitDir, srcDir)
   }
 
 
-fun configureTask(target: KonanTarget): Exec {
-
-  val srcPrepare = srcPrepare(target)
-
-  return tasks.create("configure${target.platformName.capitalize()}", Exec::class) {
-    dependsOn(srcPrepare)
-    workingDir(target.opensslSrcDir(project))
+fun configureTask(target: KonanTarget) =
+  tasks.register("srcConfigure${target.platformName.capitalize()}", Exec::class) {
+    dependsOn("srcPrepare${target.platformName.capitalized()}")
+    val srcDir = target.opensslSrcDir(project)
+    workingDir(srcDir)
     environment(target.buildEnvironment())
+    outputs.file(srcDir.resolve("Makefile"))
     doFirst {
-      println("ENVIRONMENT: $environment")
+      println("OpenSSL Configure $target ..")
     }
     val args = mutableListOf(
       "./Configure", target.opensslPlatform,
@@ -75,40 +72,37 @@ fun configureTask(target: KonanTarget): Exec {
       args += "--cross-compile-prefix=${target.hostTriplet}-"
     commandLine(args)
   }
-}
 
 
-fun buildTask(target: KonanTarget): TaskProvider<*> {
-  val configureTask = configureTask(target)
+fun buildTask(target: KonanTarget) =
+  tasks.register("build${target.platformName.capitalized()}", Exec::class) {
+    dependsOn("srcConfigure${target.platformName.capitalized()}")
 
-
-  return tasks.register("build${target.platformName.capitalized()}", Exec::class) {
     val installDir = target.opensslPrefix(project)
 
-   if (!installDir.exists())
-      dependsOn(configureTask)
+    //if (!installDir.exists())
 
 
-    onlyIf{
+    //outputs.file(installDir.resolve("include/openssl/ssl.h"))
+    /*onlyIf{
       !installDir.exists()
-    }
+    }*/
     //to ensure the konan tools are available
     dependsOn(target.konanDepsTask(project))
 
     workingDir(target.opensslSrcDir(project))
 
 
-    outputs.files(fileTree(installDir) {
-      include("lib/*.a", "lib/*.so", "lib/*.h", "lib/*.dylib")
-    })
+    outputs.file(installDir.resolve("include/openssl/ssl.h"))
     environment(target.buildEnvironment())
     group = BasePlugin.BUILD_GROUP
     commandLine("make", "install_sw")
-    doLast {
+    /*doLast {
       target.opensslSrcDir(project).deleteRecursively()
-    }
+    }*/
   }
-}
+
+
 kotlin {
   declareNativeTargets()
 
@@ -116,21 +110,20 @@ kotlin {
   val nativeTest by sourceSets.creating
   val nativeMain by sourceSets.creating
 
-  val buildAll = tasks.create("buildAll")
-
   targets.withType(KotlinNativeTarget::class).all {
 
+
     if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily) {
-      buildTask(konanTarget).also {
-        buildAll.dependsOn(it)
-      }
+      srcPrepare(konanTarget)
+      configureTask(konanTarget)
+      buildTask(konanTarget)
     }
 
     compilations["main"].apply {
-      cinterops.create("libopenssl"){
+
+      cinterops.create("libopenssl") {
         packageName("libopenssl")
         defFile("src/openssl.def")
-
       }
 
       defaultSourceSet.dependsOn(nativeMain)
@@ -142,6 +135,6 @@ kotlin {
   }
 }
 
-tasks.withType<CInteropProcess>(){
-  dependsOn(generateCInteropsDef)
+tasks.withType<CInteropProcess>() {
+  dependsOn("generateCInteropsDef")
 }

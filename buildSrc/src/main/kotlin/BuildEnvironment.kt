@@ -2,6 +2,7 @@
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 import org.jetbrains.kotlin.konan.target.Architecture
@@ -337,9 +338,8 @@ object BuildEnvironment {
   }
 
 
-  fun KonanTarget.konanDepsTask(project: Project): Task =
-    project.rootProject.project("konandeps").getTasksByName(platformName, true).firstOrNull()
-      ?: throw Error("Need to add support for $platformName to konan project")
+  fun KonanTarget.konanDepsTask(project: Project):String = ":konandeps:$platformName"
+
 }
   
   

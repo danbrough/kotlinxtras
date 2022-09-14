@@ -9,6 +9,8 @@ io-github-gradle-nexus-publish-plugin = { id = "io.github.gradle-nexus.publish-p
 [versions]
 
 kotlin = "1.7.10"
+##  ⬆ = "1.7.20-Beta"
+##  ⬆ = "1.7.20-RC"
 
 [libraries]
 

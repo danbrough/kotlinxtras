@@ -14,5 +14,5 @@ plugins {
 
 
 
-rootProject.name = "binaries_demo"
+rootProject.name = "binary_deps"
 
