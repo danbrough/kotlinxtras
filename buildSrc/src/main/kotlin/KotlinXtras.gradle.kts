@@ -18,6 +18,7 @@ plugins {
 ProjectProperties.init(project)
 
 repositories {
+
   maven(Dependencies.SONA_STAGING)
 }
 

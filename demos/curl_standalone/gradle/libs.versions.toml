@@ -4,6 +4,8 @@
 
 org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version = "1.7.10" }
 
+org-danbrough-kotlinxtras-properties = { id = "org.danbrough.kotlinxtras.properties", version = "0.0.1-alpha05" }
+
 [versions]
 
 kotlin = "1.7.10"

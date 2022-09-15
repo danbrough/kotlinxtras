@@ -1,6 +1,11 @@
 pluginManagement {
 
   repositories {
+
+    maven("../../build/m2") {
+      name = "m2"
+    }
+
     gradlePluginPortal()
     mavenCentral()
     google()
@@ -14,5 +19,5 @@ plugins {
 
 
 
-rootProject.name = "standalone"
+rootProject.name = "curl_standalone"
 

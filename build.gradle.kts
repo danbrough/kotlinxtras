@@ -6,8 +6,8 @@ plugins {
   kotlin("multiplatform") apply false
   id("io.github.gradle-nexus.publish-plugin")
   `maven-publish`
-  signing
   id("KotlinXtras")
+  signing
 }
 
 
@@ -33,8 +33,8 @@ fun createLibraryJar(target: KonanTarget, libName: String): Jar {
     archiveBaseName.set(jarName)
     dependsOn(rootProject.getTasksByName("build${target.platformName.capitalized()}", true).first())
     group = KotlinXtras_gradle.KotlinXtras.binariesTaskGroup
-    from(project.fileTree("libs/$libName/${target.platformName}")){
-      include("include/**","lib/*.so","lib/*.a","lib/*.dll","lib/*.dylib")
+    from(project.fileTree("libs/$libName/${target.platformName}")) {
+      include("include/**", "lib/*.so", "lib/*.a", "lib/*.dll", "lib/*.dylib")
     }
     into("$libName/${target.platformName}")
     destinationDirectory.set(binariesDir)
@@ -70,10 +70,15 @@ nexusPublishing {
 allprojects {
 
 
+  if (name == "thang") return@allprojects
+
   apply<SigningPlugin>()
 
+  println("configuring $name  group: $group version:$version")
+
   group = ProjectProperties.projectGroup
-  version = ProjectProperties.buildVersionName
+  if (version == "unspecified")
+    version = ProjectProperties.buildVersionName
 
 
   extensions.findByType(PublishingExtension::class) ?: return@allprojects

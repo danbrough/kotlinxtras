@@ -2,14 +2,27 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   kotlin("multiplatform")
+  id("org.danbrough.kotlinxtras.properties") 
 }
 
 apply<KotlinXtrasPlugin>()
 
+projectProperties {
+  message = "Dude!"
+}
+
+
 repositories {
-  maven("https://s01.oss.sonatype.org/content/groups/staging/")
+
+  maven("../../build/m2") {
+    name = "m2"
+  }
+
+  //maven("https://s01.oss.sonatype.org/content/groups/staging/")
   mavenCentral()
 }
+
+
 
 kotlin {
 
