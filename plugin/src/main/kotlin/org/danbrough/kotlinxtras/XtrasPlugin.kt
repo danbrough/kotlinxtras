@@ -60,7 +60,7 @@ fun Project.configurePrecompiledBinaries() {
     deps.forEach { binDep ->
       supportedTargets.forEach { target ->
         val binDepLib =
-          "org.danbrough.kotlinxtras:${binDep.name}${target.platformName.capitalized()}:${binDep.version}"
+          "org.danbrough.kotlinxtras:${binDep.name}${target.platformName.capitalized()}Binaries:${binDep.version}"
         project.logger.log(LogLevel.INFO, "Adding binary support with $binDepLib")
         preCompiled(binDepLib)
       }
@@ -82,7 +82,7 @@ fun Project.configurePrecompiledBinaries() {
     deps.forEach { dep ->
       project.tasks.withType(KotlinNativeCompile::class).forEach {
         val konanTarget = KonanTarget.predefinedTargets[it.target]!!
-        it.dependsOn("unzip${dep.name.capitalized()}${konanTarget.platformName.capitalized()}")
+        it.dependsOn("unzip${dep.name.capitalized()}${konanTarget.platformName.capitalized()}Binaries")
       }
     }
   }

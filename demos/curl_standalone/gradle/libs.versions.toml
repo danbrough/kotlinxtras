@@ -4,11 +4,13 @@
 
 org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version = "1.7.10" }
 
-org-danbrough-kotlinxtras-xtras = { id = "org.danbrough.kotlinxtras.xtras", version = "0.0.1-alpha16" }
+org-danbrough-kotlinxtras-xtras = { id = "org.danbrough.kotlinxtras.xtras", version = "0.0.1-alpha17" }
 
 [versions]
 
 kotlin = "1.7.10"
+##  ⬆ = "1.7.20-Beta"
+##  ⬆ = "1.7.20-RC"
 
 [libraries]
 
@@ -18,38 +20,38 @@ kotlinx-coroutines-core = "org.danbrough.kotlinx:kotlinx-coroutines-core:1.6.4"
 
 kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }
 
-curl = "org.danbrough.kotlinxtras:curl:0.0.1-beta01"
+curl = "org.danbrough.kotlinxtras:curl:curl-7_85_0"
 
-openssllinuxarm32hfp = "org.danbrough.kotlinxtras:opensslLinuxArm32Hfp:0.0.1-beta01"
-
-openssllinuxarm64 = "org.danbrough.kotlinxtras:opensslLinuxArm64:0.0.1-beta01"
-
-openssllinuxx64 = "org.danbrough.kotlinxtras:opensslLinuxX64:0.0.1-beta01"
-
-opensslandroidnativex86 = "org.danbrough.kotlinxtras:opensslAndroidNativeX86:0.0.1-beta01"
-
-opensslandroidnativex64 = "org.danbrough.kotlinxtras:opensslAndroidNativeX64:0.0.1-beta01"
-
-opensslandroidnativearm32 = "org.danbrough.kotlinxtras:opensslAndroidNativeArm32:0.0.1-beta01"
-
-opensslandroidnativearm64 = "org.danbrough.kotlinxtras:opensslAndroidNativeArm64:0.0.1-beta01"
-
-curllinuxarm32hfp = "org.danbrough.kotlinxtras:curlLinuxArm32Hfp:0.0.1-beta01"
-
-curllinuxarm64 = "org.danbrough.kotlinxtras:curlLinuxArm64:0.0.1-beta01"
-
-curllinuxx64 = "org.danbrough.kotlinxtras:curlLinuxX64:0.0.1-beta01"
-
-curlandroidnativex86 = "org.danbrough.kotlinxtras:curlAndroidNativeX86:0.0.1-beta01"
-
-curlandroidnativex64 = "org.danbrough.kotlinxtras:curlAndroidNativeX64:0.0.1-beta01"
-
-curlandroidnativearm32 = "org.danbrough.kotlinxtras:curlAndroidNativeArm32:0.0.1-beta01"
-
-curlandroidnativearm64 = "org.danbrough.kotlinxtras:curlAndroidNativeArm64:0.0.1-beta01"
-
-openssl = "org.danbrough.kotlinxtras:openssl:0.0.1-beta01"
+openssl = "org.danbrough.kotlinxtras:openssl:OpenSSL_1_1_1q"
 
 kotlin-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-compiler-embeddable", version.ref = "kotlin" }
 
 kotlin-klib-commonizer-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-klib-commonizer-embeddable", version.ref = "kotlin" }
+
+curllinuxx64binaries = "org.danbrough.kotlinxtras:curlLinuxX64Binaries:curl-7_85_0"
+
+curllinuxarm64binaries = "org.danbrough.kotlinxtras:curlLinuxArm64Binaries:curl-7_85_0"
+
+curllinuxarm32hfpbinaries = "org.danbrough.kotlinxtras:curlLinuxArm32HfpBinaries:curl-7_85_0"
+
+curlandroidnativearm64binaries = "org.danbrough.kotlinxtras:curlAndroidNativeArm64Binaries:curl-7_85_0"
+
+curlandroidnativearm32binaries = "org.danbrough.kotlinxtras:curlAndroidNativeArm32Binaries:curl-7_85_0"
+
+curlandroidnativex64binaries = "org.danbrough.kotlinxtras:curlAndroidNativeX64Binaries:curl-7_85_0"
+
+curlandroidnativex86binaries = "org.danbrough.kotlinxtras:curlAndroidNativeX86Binaries:curl-7_85_0"
+
+openssllinuxx64binaries = "org.danbrough.kotlinxtras:opensslLinuxX64Binaries:OpenSSL_1_1_1q"
+
+openssllinuxarm64binaries = "org.danbrough.kotlinxtras:opensslLinuxArm64Binaries:OpenSSL_1_1_1q"
+
+openssllinuxarm32hfpbinaries = "org.danbrough.kotlinxtras:opensslLinuxArm32HfpBinaries:OpenSSL_1_1_1q"
+
+opensslandroidnativearm64binaries = "org.danbrough.kotlinxtras:opensslAndroidNativeArm64Binaries:OpenSSL_1_1_1q"
+
+opensslandroidnativearm32binaries = "org.danbrough.kotlinxtras:opensslAndroidNativeArm32Binaries:OpenSSL_1_1_1q"
+
+opensslandroidnativex64binaries = "org.danbrough.kotlinxtras:opensslAndroidNativeX64Binaries:OpenSSL_1_1_1q"
+
+opensslandroidnativex86binaries = "org.danbrough.kotlinxtras:opensslAndroidNativeX86Binaries:OpenSSL_1_1_1q"

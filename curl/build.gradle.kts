@@ -20,6 +20,10 @@ version = "curl-7_85_0"
 
 val curlGitDir = rootProject.file("repos/curl")
 
+
+val KonanTarget.curlNotBuilt: Boolean
+  get() = !curlPrefix(project).resolve("include/curl/curl.h").exists()
+
 fun srcPrepare(target: KonanTarget): Exec =
   tasks.create("srcPrepare${target.platformName.capitalize()}", Exec::class) {
     val srcDir = target.curlSrcDir(project)
@@ -27,9 +31,7 @@ fun srcPrepare(target: KonanTarget): Exec =
     commandLine(
       BuildEnvironment.gitBinary, "clone", curlGitDir, srcDir
     )
-    onlyIf {
-      !srcDir.exists()
-    }
+    onlyIf { target.curlNotBuilt && !srcDir.exists()}
 
   }
 
@@ -44,7 +46,7 @@ fun autoconfTask(target: KonanTarget) =
     val configureFile = srcDir.resolve("configure")
     outputs.file(configureFile)
     onlyIf {
-      !configureFile.exists()
+       target.curlNotBuilt
     }
   }
 
@@ -65,7 +67,7 @@ fun configureTask(target: KonanTarget) =
     val makefile = srcDir.resolve("Makefile")
     outputs.file(makefile)
     onlyIf {
-      !makefile.exists()
+      target.curlNotBuilt
     }
 
     val args = listOf(
@@ -93,12 +95,16 @@ fun buildTask(target: KonanTarget) =
     outputs.file(curlPrefixDir.resolve("include/curl/curl.h"))
 
     onlyIf {
-      !it.outputs.files.files.first().exists()
+      target.curlNotBuilt
     }
     workingDir(srcDir)
     environment(target.buildEnvironment())
 
     commandLine("make", "install")
+    doLast {
+      if (didWork)
+        srcDir.deleteRecursively()
+    }
   }
 
 

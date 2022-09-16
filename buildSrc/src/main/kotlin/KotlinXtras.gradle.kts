@@ -94,8 +94,6 @@ object KotlinXtras {
         version = versionName
         artifact(jarTask)
       }
-
-
     }
   }
 
