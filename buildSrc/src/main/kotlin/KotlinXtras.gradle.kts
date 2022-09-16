@@ -10,7 +10,7 @@ plugins {
 ProjectProperties.init(project)
 
 repositories {
-  maven(Dependencies.SONA_STAGING)
+  maven( "https://s01.oss.sonatype.org/content/groups/staging/")
 }
 
 
@@ -18,35 +18,6 @@ repositories {
 val unzipAll: Task by tasks.creating {
   group = KotlinXtras.binariesTaskGroup
 }
-
-
-//val preCompiled: Configuration by configurations.creating {
-//  isTransitive = false
-//}
-//
-//dependencies {
-//  setOf("openssl", "curl").forEach { libName ->
-//    binaryTargets.forEach { target ->
-//      preCompiled("org.danbrough.kotlinxtras:$libName${target.platformName.capitalized()}:0.0.1-beta01")
-//    }
-//  }
-//}
-//
-//
-//preCompiled.resolvedConfiguration.resolvedArtifacts.forEach { artifact ->
-//  tasks.register<Copy>("unzip${artifact.name.capitalized()}") {
-//    group = KotlinXtras.binariesTaskGroup
-//    from(zipTree(artifact.file).matching {
-//      exclude("**/META-INF")
-//      exclude("**/META-INF/*")
-//    })
-//    into("libs")
-//  }.also {
-//    unzipAll.dependsOn(it)
-//  }
-//}
-
-
 
 
 object KotlinXtras {

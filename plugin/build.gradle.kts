@@ -7,7 +7,6 @@ plugins {
 }
 
 group = "org.danbrough.kotlinxtras"
-version = "0.0.1-alpha17"
 
 java {
   dependencies {
@@ -28,14 +27,6 @@ gradlePlugin {
     }
   }
 }
-
-
-/*
-task sourceJar(type: Jar) {
-  classifier 'sources'
-  from sourceSets.main.allJava
-}
-*/
 
 
 tasks.dokkaHtml.configure {

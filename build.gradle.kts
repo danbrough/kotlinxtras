@@ -20,39 +20,10 @@ version = ProjectProperties.buildVersionName
 
 allprojects {
   repositories {
-    maven(Dependencies.SONA_STAGING)
+    maven( "https://s01.oss.sonatype.org/content/groups/staging/")
     mavenCentral()
   }
 }
-
-
-/*afterEvaluate {
-  project.rootProject.project("curl").version.toString()
-  project.rootProject.project("openssl").version.toString()
-  val curlVersion = project.rootProject.project("curl").version.toString()
-  val opensslVersion  = project.rootProject.project("openssl").version.toString()
-  println("Curl version: $curlVersion openssl: $opensslVersion")
-
-  publishing {
-    publications {
-
-        KotlinXtras_gradle.KotlinXtras.binaryTargets.forEach { target ->
-          create<MavenPublication>("curl${target.platformName.capitalized()}") {
-            artifactId = name
-            version = curlVersion
-            artifact(createLibraryJar(target, "curl"))
-          }
-          create<MavenPublication>("openssl${target.platformName.capitalized()}") {
-            artifactId = name
-            version = opensslVersion
-            artifact(createLibraryJar(target, "openssl"))
-          }
-        }
-
-    }
-  }
-}*/
-
 
 nexusPublishing {
   repositories {
@@ -62,7 +33,6 @@ nexusPublishing {
     }
   }
 }
-
 
 
 allprojects {
