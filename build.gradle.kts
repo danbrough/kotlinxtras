@@ -24,10 +24,6 @@ allprojects {
 }
 
 
-
-
-
-
 /*afterEvaluate {
   project.rootProject.project("curl").version.toString()
   project.rootProject.project("openssl").version.toString()
@@ -69,60 +65,67 @@ nexusPublishing {
 
 allprojects {
 
+
   apply<SigningPlugin>()
 
-  group = ProjectProperties.projectGroup
-  if (version == "unspecified")
-    version = ProjectProperties.buildVersionName
+  afterEvaluate {
+
+    group = ProjectProperties.projectGroup
+    if (version == "unspecified")
+      version = ProjectProperties.buildVersionName
 
 
-  extensions.findByType(PublishingExtension::class) ?: return@allprojects
-
-  publishing {
-    repositories {
-      maven(rootProject.buildDir.resolve("m2")) {
-        name = "m2"
-      }
+    extensions.findByType(PublishingExtension::class) ?: run {
+      println("PROJECT $name has no publishing")
+      return@afterEvaluate
     }
 
-    publications.all {
-      if (this !is MavenPublication) return@all
-
-      if (project.hasProperty("signPublications"))
-        signing {
-          sign(this@all)
+    publishing {
+      repositories {
+        maven(rootProject.buildDir.resolve("m2")) {
+          name = "m2"
         }
+      }
 
-      pom {
+      publications.all {
+        if (this !is MavenPublication) return@all
 
-        name.set("KotlinXtras")
-        description.set("Common kotlin packages with linux arm and android native support")
-        url.set("https://github.com/danbrough/kotlinxtras/")
-
-        licenses {
-          license {
-            name.set("Apache-2.0")
-            url.set("https://opensource.org/licenses/Apache-2.0")
+        if (project.hasProperty("signPublications"))
+          signing {
+            sign(this@all)
           }
-        }
 
-        scm {
-          connection.set("scm:git:git@github.com:danbrough/kotlinxtras.git")
-          developerConnection.set("scm:git:git@github.com:danbrough/kotlinxtras.git")
+        pom {
+
+          name.set("KotlinXtras")
+          description.set("Common kotlin packages with linux arm and android native support")
           url.set("https://github.com/danbrough/kotlinxtras/")
-        }
 
-        issueManagement {
-          system.set("GitHub")
-          url.set("https://github.com/danbrough/kotlinxtras/issues")
-        }
+          licenses {
+            license {
+              name.set("Apache-2.0")
+              url.set("https://opensource.org/licenses/Apache-2.0")
+            }
+          }
 
-        developers {
-          developer {
-            id.set("danbrough")
-            name.set("Dan Brough")
-            email.set("dan@danbrough.org")
-            organizationUrl.set("https://github.com/danbrough")
+          scm {
+            connection.set("scm:git:git@github.com:danbrough/kotlinxtras.git")
+            developerConnection.set("scm:git:git@github.com:danbrough/kotlinxtras.git")
+            url.set("https://github.com/danbrough/kotlinxtras/")
+          }
+
+          issueManagement {
+            system.set("GitHub")
+            url.set("https://github.com/danbrough/kotlinxtras/issues")
+          }
+
+          developers {
+            developer {
+              id.set("danbrough")
+              name.set("Dan Brough")
+              email.set("dan@danbrough.org")
+              organizationUrl.set("https://github.com/danbrough")
+            }
           }
         }
       }
