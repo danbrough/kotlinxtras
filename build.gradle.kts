@@ -8,7 +8,9 @@ plugins {
   `maven-publish`
   id("KotlinXtras")
   signing
+  id("org.jetbrains.dokka") apply false
 }
+
 
 
 
@@ -76,7 +78,7 @@ allprojects {
 
 
     extensions.findByType(PublishingExtension::class) ?: run {
-      println("PROJECT $name has no publishing")
+      //println("PROJECT $name has no publishing")
       return@afterEvaluate
     }
 

@@ -1,3 +1,4 @@
+import org.danbrough.kotlinxtras.Repositories
 import org.danbrough.kotlinxtras.configurePrecompiledBinaries
 import org.danbrough.kotlinxtras.platformName
 import org.gradle.configurationcache.extensions.capitalized
@@ -13,11 +14,8 @@ plugins {
 
 repositories {
 
-  maven("../../build/m2") {
-    name = "m2"
-  }
+  maven(Repositories.SONA_STAGING)
 
-  //maven("https://s01.oss.sonatype.org/content/groups/staging/")
   mavenCentral()
 
 }
