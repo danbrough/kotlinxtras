@@ -1,9 +1,0 @@
-
-
-linkerOptions.linux_arm32_hfp =  -L/home/dan/workspace/kotlinxtras/libs/curl/curl-7_85_0/linuxArm32Hfp/lib \
-    -L/home/dan/workspace/kotlinxtras/libs/openssl/dan_OpenSSL_1_1_1q/linuxArm32Hfp/lib/
-
-linkerOptions.linux_arm64 = -lssl -lcrypto -lcurl -L/home/dan/workspace/kotlinxtras/libs/openssl/dan_OpenSSL_1_1_1q/linuxArm64/lib/ \
-    -L/home/dan/workspace/kotlinxtras/libs/curl/curl-7_85_0/linuxArm64/lib
-
-

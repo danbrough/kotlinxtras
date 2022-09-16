@@ -7,6 +7,8 @@ org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform"
 [versions]
 
 kotlin = "1.7.10"
+##  ⬆ = "1.7.20-Beta"
+##  ⬆ = "1.7.20-RC"
 
 [libraries]
 

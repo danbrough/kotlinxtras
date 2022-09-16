@@ -1,16 +1,12 @@
-import BuildEnvironment.platformName
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
   kotlin("multiplatform")
 }
 
-ProjectProperties.init(project)
 
 repositories {
-  maven(Dependencies.SONA_STAGING)
+  maven("https://s01.oss.sonatype.org/content/groups/staging/")
   mavenCentral()
 }
 
@@ -25,7 +21,7 @@ kotlin {
 
   val commonMain by sourceSets.getting {
     dependencies {
-      implementation(Dependencies.klog)
+      implementation(libs.klog)
       implementation(libs.ktor.client.core)
       implementation(libs.ktor.client.curl)
       implementation(libs.kotlinx.coroutines.core)
