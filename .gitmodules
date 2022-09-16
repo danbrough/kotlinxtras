@@ -18,3 +18,6 @@
 	path = repos/kotlinx.coroutines
 	url = git@github.com:danbrough/kotlinx.coroutines.git
 	branch = danbroid-1.6.4
+[submodule "repos/openssl"]
+	path = repos/openssl
+	url = git@github.com:danbrough/openssl.git
