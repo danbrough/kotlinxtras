@@ -24,36 +24,36 @@ allprojects {
 }
 
 
-val binariesDir = project.buildDir.resolve("binaries")
-
-fun createLibraryJar(target: KonanTarget, libName: String): Jar {
-  val jarName = "$libName${target.platformName.capitalized()}Binaries"
-
-  return tasks.create<Jar>("zip${jarName.capitalized()}") {
-    archiveBaseName.set(jarName)
-    dependsOn(rootProject.getTasksByName("build${target.platformName.capitalized()}", true).first())
-    group = KotlinXtras_gradle.KotlinXtras.binariesTaskGroup
-    from(project.fileTree("libs/$libName/${target.platformName}")) {
-      include("include/**", "lib/*.so", "lib/*.a", "lib/*.dll", "lib/*.dylib")
-    }
-    into("$libName/${target.platformName}")
-    destinationDirectory.set(binariesDir)
-  }
-}
 
 
-publishing {
-  publications {
-    setOf("curl", "openssl").forEach { libName ->
-      KotlinXtras_gradle.KotlinXtras.binaryTargets.forEach { target ->
-        create<MavenPublication>("$libName${target.platformName.capitalized()}") {
-          artifactId = name
-          artifact(createLibraryJar(target, libName))
+
+
+/*afterEvaluate {
+  project.rootProject.project("curl").version.toString()
+  project.rootProject.project("openssl").version.toString()
+  val curlVersion = project.rootProject.project("curl").version.toString()
+  val opensslVersion  = project.rootProject.project("openssl").version.toString()
+  println("Curl version: $curlVersion openssl: $opensslVersion")
+
+  publishing {
+    publications {
+
+        KotlinXtras_gradle.KotlinXtras.binaryTargets.forEach { target ->
+          create<MavenPublication>("curl${target.platformName.capitalized()}") {
+            artifactId = name
+            version = curlVersion
+            artifact(createLibraryJar(target, "curl"))
+          }
+          create<MavenPublication>("openssl${target.platformName.capitalized()}") {
+            artifactId = name
+            version = opensslVersion
+            artifact(createLibraryJar(target, "openssl"))
+          }
         }
-      }
+
     }
   }
-}
+}*/
 
 
 nexusPublishing {
@@ -69,12 +69,7 @@ nexusPublishing {
 
 allprojects {
 
-
-  if (name == "thang") return@allprojects
-
   apply<SigningPlugin>()
-
-  println("configuring $name  group: $group version:$version")
 
   group = ProjectProperties.projectGroup
   if (version == "unspecified")
@@ -84,8 +79,6 @@ allprojects {
   extensions.findByType(PublishingExtension::class) ?: return@allprojects
 
   publishing {
-
-
     repositories {
       maven(rootProject.buildDir.resolve("m2")) {
         name = "m2"

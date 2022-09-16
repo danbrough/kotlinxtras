@@ -8,6 +8,7 @@ import OpenSSL.opensslSrcDir
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import BuildEnvironment.declareNativeTargets
+import KotlinXtras_gradle.KotlinXtras.configureBinarySupport
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -16,6 +17,8 @@ plugins {
   kotlin("multiplatform")
   `maven-publish`
 }
+
+version = "OpenSSL_1_1_1q"
 
 val opensslGitDir = rootProject.file("repos/openssl")
 
@@ -80,18 +83,9 @@ fun buildTask(target: KonanTarget) =
 
     val installDir = target.opensslPrefix(project)
 
-    //if (!installDir.exists())
-
-
-    //outputs.file(installDir.resolve("include/openssl/ssl.h"))
-    /*onlyIf{
-      !installDir.exists()
-    }*/
-    //to ensure the konan tools are available
     dependsOn(target.konanDepsTask(project))
 
     workingDir(target.opensslSrcDir(project))
-
 
     outputs.file(installDir.resolve("include/openssl/ssl.h"))
     environment(target.buildEnvironment())
@@ -138,3 +132,5 @@ kotlin {
 tasks.withType<CInteropProcess>() {
   dependsOn("generateCInteropsDef")
 }
+
+project.configureBinarySupport()

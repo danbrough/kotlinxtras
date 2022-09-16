@@ -1,15 +1,14 @@
+import org.danbrough.kotlinxtras.configurePrecompiledBinaries
+import org.danbrough.kotlinxtras.platformName
+import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
   kotlin("multiplatform")
-  id("org.danbrough.kotlinxtras.properties") 
+  id("org.danbrough.kotlinxtras.xtras")
 }
 
-apply<KotlinXtrasPlugin>()
-
-projectProperties {
-  message = "Dude!"
-}
 
 
 repositories {
@@ -20,8 +19,12 @@ repositories {
 
   //maven("https://s01.oss.sonatype.org/content/groups/staging/")
   mavenCentral()
+
 }
 
+xtras {
+  autoExtractBinaries = true
+}
 
 
 kotlin {
@@ -34,20 +37,20 @@ kotlin {
   val commonMain by sourceSets.getting {
     dependencies {
       implementation(libs.klog)
+
       implementation(libs.kotlinx.coroutines.core)
       implementation(libs.curl)
+      implementation(libs.openssl)
+
     }
   }
-
   val nativeMain by sourceSets.creating {
     dependsOn(commonMain)
   }
 
   targets.withType<KotlinNativeTarget>().all {
 
-    compilations["main"].apply {
-      defaultSourceSet.dependsOn(nativeMain)
-    }
+    compilations["main"].defaultSourceSet.dependsOn(nativeMain)
 
     binaries {
       executable("demo1") {
@@ -55,10 +58,11 @@ kotlin {
       }
     }
   }
+
 }
 
 
 
-
-
-
+afterEvaluate{
+  project.configurePrecompiledBinaries()
+}

@@ -1,29 +1,24 @@
 import BuildEnvironment.buildEnvironment
-import BuildEnvironment.hostTriplet
-import BuildEnvironment.platformName
-import BuildEnvironment.registerTarget
-import BuildEnvironment.konanDepsTask
 import BuildEnvironment.declareNativeTargets
-
+import BuildEnvironment.hostTriplet
+import BuildEnvironment.konanDepsTask
+import BuildEnvironment.platformName
 import Curl.curlPrefix
-import OpenSSL.opensslPlatform
-import OpenSSL.opensslPrefix
-import OpenSSL.opensslSrcDir
 import Curl.curlSrcDir
+import KotlinXtras_gradle.KotlinXtras.configureBinarySupport
+import OpenSSL.opensslPrefix
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.Family
 
 plugins {
   kotlin("multiplatform")
   `maven-publish`
 }
 
-val curlGitDir = rootProject.file("repos/curl")
+version = "curl-7_85_0"
 
+val curlGitDir = rootProject.file("repos/curl")
 
 fun srcPrepare(target: KonanTarget): Exec =
   tasks.create("srcPrepare${target.platformName.capitalize()}", Exec::class) {
@@ -39,7 +34,8 @@ fun srcPrepare(target: KonanTarget): Exec =
   }
 
 
-fun autoconfTask(target: KonanTarget)=tasks.register("srcAutoconf${target.platformName.capitalize()}", Exec::class) {
+fun autoconfTask(target: KonanTarget) =
+  tasks.register("srcAutoconf${target.platformName.capitalize()}", Exec::class) {
     dependsOn("srcPrepare${target.platformName.capitalize()}")
     val srcDir = target.curlSrcDir(project)
     workingDir(srcDir)
@@ -53,9 +49,9 @@ fun autoconfTask(target: KonanTarget)=tasks.register("srcAutoconf${target.platfo
   }
 
 
-fun configureTask(target: KonanTarget)= tasks.register("srcConfigure${target.platformName.capitalize()}", Exec::class) {
+fun configureTask(target: KonanTarget) =
+  tasks.register("srcConfigure${target.platformName.capitalize()}", Exec::class) {
     dependsOn("srcAutoconf${target.platformName.capitalize()}")
-
 
 
     //to ensure the konan tools are available
@@ -65,11 +61,6 @@ fun configureTask(target: KonanTarget)= tasks.register("srcConfigure${target.pla
     val srcDir = target.curlSrcDir(project)
     workingDir(srcDir)
     environment(target.buildEnvironment())
-    doFirst {
-     // println("ENVIRONMENT: ${environment}")
-      println("CONFIGURING  $commandLine ........................................")
-    }
-    //dependsOn("openssl:build${target.platformNameCapitalized}")
 
     val makefile = srcDir.resolve("Makefile")
     outputs.file(makefile)
@@ -90,8 +81,8 @@ fun configureTask(target: KonanTarget)= tasks.register("srcConfigure${target.pla
   }
 
 
-
-fun buildTask(target: KonanTarget)=tasks.register("build${target.platformName.capitalize()}", Exec::class) {
+fun buildTask(target: KonanTarget) =
+  tasks.register("build${target.platformName.capitalize()}", Exec::class) {
     dependsOn("srcConfigure${target.platformName.capitalize()}")
     val srcDir = target.curlSrcDir(project)
     val curlPrefixDir = target.curlPrefix(project)
@@ -107,7 +98,7 @@ fun buildTask(target: KonanTarget)=tasks.register("build${target.platformName.ca
     workingDir(srcDir)
     environment(target.buildEnvironment())
 
-    commandLine("make","install")
+    commandLine("make", "install")
   }
 
 
@@ -118,7 +109,7 @@ kotlin {
   val commonMain by sourceSets.getting {
     dependencies {
       implementation(libs.klog)
-      implementation(project(":openssl"))
+      api(project(":openssl"))
     }
   }
 
@@ -153,7 +144,7 @@ kotlin {
 }
 
 
- tasks.register("generateCInteropsDef") {
+tasks.register("generateCInteropsDef") {
   inputs.file("src/libcurl_header.def")
   outputs.file("src/libcurl.def")
   doFirst {
@@ -179,3 +170,5 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>() {
   if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily)
     dependsOn("build${konanTarget.platformName.capitalized()}")
 }
+
+project.configureBinarySupport()

@@ -1,8 +1,3 @@
-[submodule "repos/openssl"]
-	path = repos/openssl
-	url = git@github.com:danbrough/openssl.git
-	branch = dan_OpenSSL_1_1_1q
-
 [submodule "repos/ktor"]
 	path = repos/ktor
 	url = git@github.com:/danbrough/ktor.git

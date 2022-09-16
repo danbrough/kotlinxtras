@@ -4,7 +4,7 @@
 
 org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version = "1.7.10" }
 
-org-danbrough-kotlinxtras-properties = { id = "org.danbrough.kotlinxtras.properties", version = "0.0.1-alpha05" }
+org-danbrough-kotlinxtras-xtras = { id = "org.danbrough.kotlinxtras.xtras", version = "0.0.1-alpha16" }
 
 [versions]
 
@@ -47,3 +47,9 @@ curlandroidnativex64 = "org.danbrough.kotlinxtras:curlAndroidNativeX64:0.0.1-bet
 curlandroidnativearm32 = "org.danbrough.kotlinxtras:curlAndroidNativeArm32:0.0.1-beta01"
 
 curlandroidnativearm64 = "org.danbrough.kotlinxtras:curlAndroidNativeArm64:0.0.1-beta01"
+
+openssl = "org.danbrough.kotlinxtras:openssl:0.0.1-beta01"
+
+kotlin-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-compiler-embeddable", version.ref = "kotlin" }
+
+kotlin-klib-commonizer-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-klib-commonizer-embeddable", version.ref = "kotlin" }
