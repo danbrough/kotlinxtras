@@ -6,9 +6,10 @@ Common Kotlin packages with support for linux_arm32_hfp, linux_arm64 and Android
 ## Description
 
 This repo is intended to serve as a hub for tweaking common kotlin libraries for unsupported platforms.
-In particular the non linuxX64 platforms get neglected as well as the android native targets.
-Precompiled versions will be published at `mavenCentral()` under [my repository](https://repo.maven.apache.org/maven2/org/danbrough/).
-They might take a while to get there so pre-releases can be found in [the sonatype staging section](https://s01.oss.sonatype.org/content/groups/staging/org/danbrough/kipfs/).
+In particular the non linuxX64 platforms get neglected as well as the android native targets.  
+Precompiled versions will be published at `mavenCentral()` under [my repository](https://repo.maven.apache.org/maven2/org/danbrough/).  
+They might take a while to get there so pre-releases can be found in [the sonatype staging section](https://s01.oss.sonatype.org/content/groups/staging/org/danbrough/).>org.danbrough.kotlinx</groupId>
+<artifactId>kotlinx-serialization-core</artifactId>
 
 To use them in your projects just add: 
 
@@ -23,6 +24,7 @@ repositories {
 //and change "org.jetbrains.kotlinx" to "org.danbrough.kotlinx"
 dependencies {
   implementation("org.danbrough.kotlinx:kotlinx-coroutines-core:1.6.4")
+  implementation("org.danbrough.kotlinx:kotlinx-serialization-core:1.3.3")
   // ..etc 
 }
 ```
@@ -38,7 +40,7 @@ Static compilation will be another option.
 
 ## Status
 
-Scripts are in place for cross compiling openssl and curl using the konan compilers.
+Scripts are in place for cross compiling openssl and curl using the konan compilers.  
 Okio,serialization,coroutines,atomic-fu,kotlinx-datetime and ktor are working.
 
 Example projects are in the [demos](./demos) folder.
