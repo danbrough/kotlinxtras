@@ -1,34 +1,36 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.danbrough.kotlinxtras.configurePrecompiledBinaries
+import org.danbrough.kotlinxtras.Repositories
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
   kotlin("multiplatform")
+  id("org.danbrough.kotlinxtras.xtras")
 }
 
-val SONA_STAGING = "https://s01.oss.sonatype.org/content/groups/staging/"
-val SONA_SNAPSHOTS = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
 
 repositories {
-  maven(SONA_STAGING)
+  maven(Repositories.SONA_STAGING)
   mavenCentral()
 }
 
 
 kotlin {
 
+
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
-  androidNativeX86()
+
 
   val commonMain by sourceSets.getting {
     dependencies {
       implementation(libs.klog)
+      implementation(libs.ktor.client.core)
+      implementation(libs.ktor.client.curl)
       implementation(libs.kotlinx.coroutines.core)
-      implementation(libs.curl)
     }
   }
+
 
   val nativeMain by sourceSets.creating {
     dependsOn(commonMain)
@@ -50,6 +52,9 @@ kotlin {
 
 
 
+afterEvaluate{
+  project.configurePrecompiledBinaries()
+}
 
 
 

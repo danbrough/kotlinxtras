@@ -14,8 +14,10 @@ kotlin = "1.7.10"
 
 klog = "org.danbrough:klog:0.0.1-beta07"
 
+ktor-client-core = "org.danbrough.ktor:ktor-client-core:2.1.1a"
+
+ktor-client-curl = "org.danbrough.ktor:ktor-client-curl:2.1.1a"
+
 kotlinx-coroutines-core = "org.danbrough.kotlinx:kotlinx-coroutines-core:1.6.4"
 
 kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }
-
-curl = "org.danbrough.kotlinxtras:curl:_"

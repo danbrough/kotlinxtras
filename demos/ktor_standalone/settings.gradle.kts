@@ -14,5 +14,5 @@ plugins {
 
 
 
-rootProject.name = "curl_standalone"
+rootProject.name = "ktor_standalone_demo"
 

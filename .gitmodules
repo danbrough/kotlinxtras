@@ -21,3 +21,6 @@
 [submodule "repos/openssl"]
 	path = repos/openssl
 	url = git@github.com:danbrough/openssl.git
+[submodule "repos/kotlinx.html"]
+	path = repos/kotlinx.html
+	url = git@github.com:danbrough/kotlinx.html.git
