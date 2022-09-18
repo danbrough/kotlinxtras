@@ -16,6 +16,7 @@ plugins {
 
 repositories {
 
+  //maven("../../build/m2")
   maven(Repositories.SONA_STAGING)
 
   mavenCentral()
@@ -23,7 +24,8 @@ repositories {
 }
 
 xtras {
-  autoExtractBinaries = true
+  enableCurl()
+  enableOpenSSL()
 }
 
 
@@ -48,6 +50,9 @@ kotlin {
     dependsOn(commonMain)
   }
 
+
+
+
   targets.withType<KotlinNativeTarget>().all {
 
     compilations["main"].defaultSourceSet.dependsOn(nativeMain)
@@ -62,40 +67,7 @@ kotlin {
 }
 
 afterEvaluate {
-
-  val binaryDeps: Configuration by configurations.creating {
-    isTransitive = false
-  }
-
-  val supportedTargets =
-    setOf(KonanTarget.LINUX_ARM64, KonanTarget.LINUX_ARM32_HFP, KonanTarget.LINUX_X64)
-
-
-  dependencies {
-    mapOf("curl" to "curl-7_85_0", "openssl" to "OpenSSL_1_1_1q").forEach { dep ->
-      setOf("curl", "openssl").forEach {
-        supportedTargets.forEach { target->
-          binaryDeps("org.danbrough.kotlinxtras:${dep.key}${target.platformName.capitalized()}Binaries:${dep.value}")
-        }
-        project.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile::class).forEach {
-          val konanTarget = KonanTarget.predefinedTargets[it.target]!!
-          it.dependsOn("extract${dep.key.capitalized()}${konanTarget.platformName.capitalized()}Binaries")
-        }
-      }
-    }
-  }
-
-  binaryDeps.resolvedConfiguration.resolvedArtifacts.forEach { artifact ->
-    val unZipTask = tasks.register<Copy>("extract${artifact.name.capitalized()}") {
-      group = org.danbrough.kotlinxtras.xtrasTaskGroup
-      from(zipTree(artifact.file).matching {
-        exclude("**/META-INF")
-        exclude("**/META-INF/*")
-      })
-      into(project.rootProject.buildDir.resolve("kotlinxtras"))
-    }
-  }
-
+  configurePrecompiledBinaries()
 }
 
 

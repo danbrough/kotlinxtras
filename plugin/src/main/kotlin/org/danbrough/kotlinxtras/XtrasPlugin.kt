@@ -16,12 +16,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-open class XtrasExtension {
+data class BinDep(val group: String?, val name: String, val version: String?)
 
-  var autoExtractBinaries: Boolean = true
-}
-
-val supportedTargets = listOf(
+val defaultSupportedTargets = mutableSetOf(
   KonanTarget.LINUX_X64,
   KonanTarget.LINUX_ARM64,
   KonanTarget.LINUX_ARM32_HFP,
@@ -31,16 +28,22 @@ val supportedTargets = listOf(
   KonanTarget.ANDROID_X86,
 )
 
-data class LibraryDependency(val group: String?, val name: String, val version: String?)
+open class XtrasExtension {
+  internal var binDeps: MutableSet<BinDep> = mutableSetOf()
 
-val Dependency.libraryDependency: LibraryDependency
-  get() = LibraryDependency(group, name, version)
+
+  fun enableCurl(version: String = "curl-7_85_0") {
+    binDeps.add(BinDep("org.danbrough.kotlinxtras", "curl", version))
+  }
+
+  fun enableOpenSSL(version: String = "OpenSSL_1_1_1q") {
+    binDeps.add(BinDep("org.danbrough.kotlinxtras", "openssl", version))
+  }
+}
 
 
 fun Project.configurePrecompiledBinaries() {
-
   val xtras = project.extensions.getByType(XtrasExtension::class)
-
 
   val preCompiled: Configuration by configurations.creating {
     isTransitive = false
@@ -51,17 +54,14 @@ fun Project.configurePrecompiledBinaries() {
     mavenCentral()
   }
 
-  val deps =
-    configurations.flatMap { it.incoming.dependencies }.map { it.libraryDependency }.filter {
-      it.group == "org.danbrough.kotlinxtras" &&
-          (it.name == "curl" || it.name == "openssl")
-    }.distinct()
+  val konanTargets = project.extensions.getByType<KotlinMultiplatformExtension>().targets.withType<KotlinNativeTarget>()
+    .map { it.konanTarget }.distinct()
 
   dependencies {
-    deps.forEach { binDep ->
-      supportedTargets.forEach { target ->
+    xtras.binDeps.forEach { binDep ->
+      konanTargets.forEach { target ->
         val binDepLib =
-          "org.danbrough.kotlinxtras:${binDep.name}${target.platformName.capitalized()}Binaries:${binDep.version}"
+          "${binDep.group}:${binDep.name}${target.platformName.capitalized()}Binaries:${binDep.version}"
         project.logger.log(LogLevel.INFO, "Adding binary support with $binDepLib")
         preCompiled(binDepLib)
       }
@@ -79,15 +79,12 @@ fun Project.configurePrecompiledBinaries() {
     }
   }
 
-  if (xtras.autoExtractBinaries) {
-    deps.forEach { dep ->
-      project.tasks.withType(KotlinNativeCompile::class).forEach {
-        val konanTarget = KonanTarget.predefinedTargets[it.target]!!
-        it.dependsOn("unzip${dep.name.capitalized()}${konanTarget.platformName.capitalized()}Binaries")
-      }
+  xtras.binDeps.forEach { binDep ->
+    project.tasks.withType(KotlinNativeCompile::class).forEach {
+      val konanTarget = KonanTarget.predefinedTargets[it.target]!!
+      it.dependsOn("unzip${binDep.name.capitalized()}${konanTarget.platformName.capitalized()}Binaries")
     }
   }
-
 }
 
 class XtrasPlugin : Plugin<Project> {

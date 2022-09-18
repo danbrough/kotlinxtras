@@ -50,10 +50,14 @@ kotlin {
   }
 }
 
+xtras {
+  enableCurl()
+  enableOpenSSL()
+}
 
 
 afterEvaluate{
-  project.configurePrecompiledBinaries()
+  configurePrecompiledBinaries()
 }
 
 
