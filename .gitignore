@@ -5,3 +5,8 @@ local.properties
 **/.gradle
 /libs
 /libsbak
+.kotlin
+.konan
+.cache
+.bash_history
+.ssh
