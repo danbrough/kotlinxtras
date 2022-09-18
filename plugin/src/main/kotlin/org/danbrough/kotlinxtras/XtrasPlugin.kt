@@ -36,6 +36,7 @@ data class LibraryDependency(val group: String?, val name: String, val version: 
 val Dependency.libraryDependency: LibraryDependency
   get() = LibraryDependency(group, name, version)
 
+
 fun Project.configurePrecompiledBinaries() {
 
   val xtras = project.extensions.getByType(XtrasExtension::class)
