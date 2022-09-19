@@ -35,6 +35,9 @@ kotlin {
   linuxArm64()
   linuxArm32Hfp()
   androidNativeX86()
+  androidNativeX64()
+  androidNativeArm32()
+  androidNativeArm64()
 
   val commonMain by sourceSets.getting {
     dependencies {
