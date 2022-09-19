@@ -69,7 +69,7 @@ fun Project.configurePrecompiledBinaries() {
   }
 
   preCompiled.resolvedConfiguration.resolvedArtifacts.forEach { artifact ->
-    tasks.register<Copy>("unzip${artifact.name.capitalized()}") {
+    tasks.register<Copy>("extract${artifact.name.capitalized()}") {
       group = xtrasTaskGroup
       from(zipTree(artifact.file).matching {
         exclude("**/META-INF")
@@ -82,7 +82,7 @@ fun Project.configurePrecompiledBinaries() {
   xtras.binDeps.forEach { binDep ->
     project.tasks.withType(KotlinNativeCompile::class).forEach {
       val konanTarget = KonanTarget.predefinedTargets[it.target]!!
-      it.dependsOn("unzip${binDep.name.capitalized()}${konanTarget.platformName.capitalized()}Binaries")
+      it.dependsOn("extract${binDep.name.capitalized()}${konanTarget.platformName.capitalized()}Binaries")
     }
   }
 }

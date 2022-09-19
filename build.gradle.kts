@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
   kotlin("multiplatform") apply false
-  id("io.github.gradle-nexus.publish-plugin")
+  //id("io.github.gradle-nexus.publish-plugin")
   `maven-publish`
   id("KotlinXtras")
   signing
@@ -25,14 +25,18 @@ allprojects {
   }
 }
 
+/*
 nexusPublishing {
   repositories {
     sonatype {
-      nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+      //stagingProfileId.set("98edb69227dc82")
+      //nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+      //nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/orgdanbrough-1171/"))
       snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
     }
   }
 }
+*/
 
 
 allprojects {
@@ -56,6 +60,15 @@ allprojects {
       repositories {
         maven(rootProject.buildDir.resolve("m2")) {
           name = "m2"
+        }
+
+        val sonatypeRepoId = project.properties["sonatypeRepoId"]!!.toString()
+        maven("https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/$sonatypeRepoId"){
+          name = "SonaType"
+          credentials{
+            username = project.properties["sonatypeUsername"]!!.toString()
+            password = project.properties["sonatypePassword"]!!.toString()
+          }
         }
       }
 

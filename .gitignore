@@ -10,3 +10,4 @@ local.properties
 .cache
 .bash_history
 .ssh
+/tmp
