@@ -1,0 +1,2 @@
+publishMacosArm64PublicationToSonaTypeRepository
+publishMacosX64PublicationToSonaTypeRepository
