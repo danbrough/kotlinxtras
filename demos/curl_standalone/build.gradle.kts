@@ -18,9 +18,7 @@ repositories {
 
   //maven("../../build/m2")
   maven(Repositories.SONA_STAGING)
-
   mavenCentral()
-
 }
 
 xtras {
