@@ -50,7 +50,6 @@ allprojects {
     if (version == "unspecified")
       version = ProjectProperties.buildVersionName
 
-
     extensions.findByType(PublishingExtension::class) ?: run {
       //println("PROJECT $name has no publishing")
       return@afterEvaluate

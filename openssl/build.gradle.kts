@@ -18,6 +18,7 @@ plugins {
   `maven-publish`
 }
 
+val openSSLVersion = project.properties["openssl.version"]?.toString() ?: throw Error("Gradle property openssl.version not set")
 
 val KonanTarget.openSSLNotBuilt: Boolean
   get() = !opensslPrefix(project).resolve("include/openssl/ssl.h").exists()
@@ -141,4 +142,4 @@ tasks.withType<CInteropProcess>() {
   dependsOn("generateCInteropsDef")
 }
 
-project.configureBinarySupport()
+project.configureBinarySupport(openSSLVersion)

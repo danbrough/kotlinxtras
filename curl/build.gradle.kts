@@ -18,7 +18,7 @@ plugins {
 
 
 val curlGitDir = rootProject.file("repos/curl")
-
+val curlVersion = project.properties["curl.version"]?.toString() ?: throw Error("Gradle property curl.version not set")
 
 val KonanTarget.curlNotBuilt: Boolean
   get() = !curlPrefix(project).resolve("include/curl/curl.h").exists()
@@ -176,4 +176,4 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>() {
     dependsOn("build${konanTarget.platformName.capitalized()}")
 }
 
-project.configureBinarySupport()
+project.configureBinarySupport(curlVersion)

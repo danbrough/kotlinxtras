@@ -36,38 +36,39 @@ object KotlinXtras {
   const val binariesTaskGroup = "binaries"
 
 
-  fun Project.configureBinarySupport() {
-    val libName = name
-    val versionName = version.toString()
+  fun Project.configureBinarySupport(binariesVersion:String) {
+    afterEvaluate {
+      val libName = name
 
-    publishing {
-      repositories {
-        maven(rootProject.buildDir.resolve("m2")) {
-          name = "m2"
+      publishing {
+        repositories {
+          maven(rootProject.buildDir.resolve("m2")) {
+            name = "m2"
+          }
         }
       }
-    }
 
-    val hostIsMac = BuildEnvironment.hostIsMac
-    binaryTargets.filter{it.family.isAppleFamily == hostIsMac}.forEach { target ->
+      val hostIsMac = BuildEnvironment.hostIsMac
+      binaryTargets.filter { it.family.isAppleFamily == hostIsMac }.forEach { target ->
 
-      val jarName = "$libName${target.platformName.capitalized()}"
+        val jarName = "$libName${target.platformName.capitalized()}"
 
-      val jarTask = tasks.register<Jar>("zip${jarName.capitalized()}Binaries") {
-        archiveBaseName.set(jarName)
-        dependsOn("build${target.platformName.capitalized()}")
-        group = KotlinXtras_gradle.KotlinXtras.binariesTaskGroup
-        from(rootProject.fileTree("libs/$libName/${target.platformName}")) {
-          include("include/**", "lib/*.so", "lib/*.a", "lib/*.dll", "lib/*.dylib")
+        val jarTask = tasks.register<Jar>("zip${jarName.capitalized()}Binaries") {
+          archiveBaseName.set(jarName)
+          dependsOn("build${target.platformName.capitalized()}")
+          group = KotlinXtras_gradle.KotlinXtras.binariesTaskGroup
+          from(rootProject.fileTree("libs/$libName/${target.platformName}")) {
+            include("include/**", "lib/*.so", "lib/*.a", "lib/*.dll", "lib/*.dylib")
+          }
+          into("$libName/${target.platformName}")
+          destinationDirectory.set(rootProject.buildDir.resolve("binaries"))
         }
-        into("$libName/${target.platformName}")
-        destinationDirectory.set(rootProject.buildDir.resolve("binaries"))
-      }
 
-      publishing.publications.register<MavenPublication>("$libName${target.platformName.capitalized()}Binaries") {
-        artifactId = name
-        version = versionName
-        artifact(jarTask)
+        publishing.publications.register<MavenPublication>("$libName${target.platformName.capitalized()}Binaries") {
+          artifactId = name
+          version =binariesVersion
+          artifact(jarTask)
+        }
       }
     }
   }
