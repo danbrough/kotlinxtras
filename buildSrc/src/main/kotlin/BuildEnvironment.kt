@@ -24,7 +24,7 @@ object BuildEnvironment {
 
 
   val hostIsMac:Boolean by lazy {
-    System.getProperty("os.name").startsWith("Darwin")
+    System.getProperty("os.name").startsWith("Mac")
   }
 
   val konanDir: File by ProjectProperties.createProperty(
