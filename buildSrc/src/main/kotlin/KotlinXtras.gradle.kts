@@ -48,8 +48,9 @@ object KotlinXtras {
         }
       }
 
+      println("os.name = ${System.getProperty("os.name")}")
       val hostIsMac = System.getProperty("os.name").startsWith("Darwin")
-      
+
       binaryTargets.filter { it.family.isAppleFamily == hostIsMac }.forEach { target ->
         println("adding binary support for $target")
         val jarName = "$libName${target.platformName.capitalized()}"
