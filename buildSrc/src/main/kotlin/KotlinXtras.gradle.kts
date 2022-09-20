@@ -50,7 +50,7 @@ object KotlinXtras {
 
       val hostIsMac = BuildEnvironment.hostIsMac
       binaryTargets.filter { it.family.isAppleFamily == hostIsMac }.forEach { target ->
-
+        println("adding binary support for $target")
         val jarName = "$libName${target.platformName.capitalized()}"
 
         val jarTask = tasks.register<Jar>("zip${jarName.capitalized()}Binaries") {
