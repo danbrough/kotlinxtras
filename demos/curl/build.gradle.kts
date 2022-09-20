@@ -43,7 +43,13 @@ kotlin {
     binaries {
       executable("demo1") {
         entryPoint = "demo1.main"
-        runTask?.environment("CA_CERT_PATH",file("cacert.pem"))
+        runTask?.apply {
+          properties["url"]?.also {
+            args(it.toString())
+          }
+          environment("CA_CERT_FILE",file("cacert.pem"))
+        }
+
       }
     }
   }
