@@ -18,8 +18,6 @@ plugins {
   `maven-publish`
 }
 
-version = project.properties["openssl.version"]?.toString() ?: throw Error("project property openssl.version not set")
-
 
 val KonanTarget.openSSLNotBuilt: Boolean
   get() = !opensslPrefix(project).resolve("include/openssl/ssl.h").exists()

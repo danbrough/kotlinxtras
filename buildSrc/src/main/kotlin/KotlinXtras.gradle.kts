@@ -48,7 +48,9 @@ object KotlinXtras {
       }
     }
 
-    binaryTargets.forEach { target ->
+    val hostIsMac = BuildEnvironment.hostIsMac
+    binaryTargets.filter{it.family.isAppleFamily == hostIsMac}.forEach { target ->
+
       val jarName = "$libName${target.platformName.capitalized()}"
 
       val jarTask = tasks.register<Jar>("zip${jarName.capitalized()}Binaries") {

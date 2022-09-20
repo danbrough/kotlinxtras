@@ -16,7 +16,6 @@ plugins {
   `maven-publish`
 }
 
-version = project.properties["curl.version"]?.toString() ?: throw Error("project property curl.version not set")
 
 val curlGitDir = rootProject.file("repos/curl")
 

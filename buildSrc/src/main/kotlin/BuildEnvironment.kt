@@ -21,6 +21,12 @@ object BuildEnvironment {
   val buildCacheDir: File by ProjectProperties.createProperty("build.cache", "build/cache")
 
 
+
+
+  val hostIsMac:Boolean by lazy {
+    System.getProperty("os.name").startsWith("Darwin")
+  }
+
   val konanDir: File by ProjectProperties.createProperty(
     "konan.dir", "${System.getProperty("user.home")}/.konan"
   )
@@ -122,46 +128,42 @@ object BuildEnvironment {
       else -> "so"
     }
 
-  val hostTarget: KonanTarget
-    get() {
-      val osName = System.getProperty("os.name")
-      val osArch = System.getProperty("os.arch")
-      val hostArchitecture: Architecture = when (osArch) {
-        "amd64", "x86_64" -> Architecture.X64
-        "arm64", "aarch64" -> Architecture.ARM64
-        else -> throw Error("Unknown os.arch value: $osArch")
-      }
+  val hostTarget: KonanTarget by lazy {
 
-      return when {
-        osName == "Linux" -> {
-          when (hostArchitecture) {
-            Architecture.ARM64 -> KonanTarget.LINUX_ARM64
-            Architecture.X64 -> KonanTarget.LINUX_X64
-            else -> null
-          }
-        }
-
-        osName.startsWith("Mac") -> {
-          when (hostArchitecture) {
-            Architecture.X64 -> KonanTarget.MACOS_X64
-            Architecture.ARM64 -> KonanTarget.MACOS_ARM64
-            else -> null
-          }
-        }
-
-        osName.startsWith("Windows") -> {
-          when (hostArchitecture) {
-            Architecture.X64 -> KonanTarget.MINGW_X64
-            else -> null
-          }
-        }
-        else -> null
-      } ?: throw Error("Unknown build host: $osName:$osArch")
+    val osName = System.getProperty("os.name")
+    val osArch = System.getProperty("os.arch")
+    val hostArchitecture: Architecture = when (osArch) {
+      "amd64", "x86_64" -> Architecture.X64
+      "arm64", "aarch64" -> Architecture.ARM64
+      else -> throw Error("Unknown os.arch value: $osArch")
     }
 
-  val hostIsMac: Boolean
-    get() = hostTarget.family.isAppleFamily
+    when {
+      osName == "Linux" -> {
+        when (hostArchitecture) {
+          Architecture.ARM64 -> KonanTarget.LINUX_ARM64
+          Architecture.X64 -> KonanTarget.LINUX_X64
+          else -> null
+        }
+      }
 
+      osName.startsWith("Mac") -> {
+        when (hostArchitecture) {
+          Architecture.X64 -> KonanTarget.MACOS_X64
+          Architecture.ARM64 -> KonanTarget.MACOS_ARM64
+          else -> null
+        }
+      }
+
+      osName.startsWith("Windows") -> {
+        when (hostArchitecture) {
+          Architecture.X64 -> KonanTarget.MINGW_X64
+          else -> null
+        }
+      }
+      else -> null
+    } ?: throw Error("Unknown build host: $osName:$osArch")
+  }
 
   val nativeTargets: List<KonanTarget>
     get() =
@@ -259,7 +261,7 @@ object BuildEnvironment {
 
     this["KONAN_BUILD"] = 1
 
-    this["ANDROID_NDK_HOME"] =  androidNdkDir.absolutePath
+    this["ANDROID_NDK_HOME"] = androidNdkDir.absolutePath
 
 
     when (this@buildEnvironment) {
@@ -338,10 +340,10 @@ object BuildEnvironment {
   }
 
 
-  fun KonanTarget.konanDepsTask(project: Project):String = ":konandeps:$platformName"
-
+  fun KonanTarget.konanDepsTask(project: Project): String = ":konandeps:$platformName"
 }
-  
+
+
   
 
 
