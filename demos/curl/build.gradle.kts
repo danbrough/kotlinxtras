@@ -43,11 +43,16 @@ kotlin {
     binaries {
       executable("demo1") {
         entryPoint = "demo1.main"
-        runTask!!.environment("CA_CERT_FILE",file("cacert.pem"))
+        runTask?.environment("CA_CERT_PATH",file("cacert.pem"))
       }
     }
   }
+
+
+
+
 }
+
 
 
 
