@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
       //to specify a cacert.pem file (needed on android native)
       platform.posix.getenv("CA_CERT_FILE")?.also {
         curl_easy_setopt(curl, CURLOPT_CAINFO, it)
-      }
+      }?: log.warn("Set environment CA_CERT_FILE to location of cacert.pem if there are ssl verification errors")
 
 
       val res = curl_easy_perform(curl)
