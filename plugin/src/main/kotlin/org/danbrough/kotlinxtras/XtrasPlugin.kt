@@ -26,6 +26,8 @@ val defaultSupportedTargets = mutableSetOf(
   KonanTarget.ANDROID_ARM32,
   KonanTarget.ANDROID_X64,
   KonanTarget.ANDROID_X86,
+  KonanTarget.MACOS_ARM64,
+  KonanTarget.MACOS_X64,
 )
 
 open class XtrasExtension {
