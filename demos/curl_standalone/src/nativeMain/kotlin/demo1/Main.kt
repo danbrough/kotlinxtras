@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
       curl_easy_setopt(curl, CURLOPT_URL, url)
       curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L)
 
-      //to specify a cacert.pem file (needed on android native)
+      //to specify a cacert.pem file (needed on at least android native and macos)
       platform.posix.getenv("CA_CERT_FILE")?.also {
         curl_easy_setopt(curl, CURLOPT_CAINFO, it)
       }

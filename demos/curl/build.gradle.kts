@@ -6,11 +6,9 @@ plugins {
   kotlin("multiplatform")
 }
 
-val SONA_STAGING = "https://s01.oss.sonatype.org/content/groups/staging/"
-val SONA_SNAPSHOTS = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
 
 repositories {
-  maven(SONA_STAGING)
+  maven("https://s01.oss.sonatype.org/content/groups/staging/")
   mavenCentral()
 }
 
@@ -45,6 +43,7 @@ kotlin {
     binaries {
       executable("demo1") {
         entryPoint = "demo1.main"
+        runTask!!.environment("CA_CERT_FILE",file("cacert.pem"))
       }
     }
   }
