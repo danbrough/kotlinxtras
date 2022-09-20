@@ -20,6 +20,8 @@ kotlin {
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
+  macosX64()
+  macosArm64()
 
 
   val commonMain by sourceSets.getting {
