@@ -25,7 +25,6 @@ xtras {
   enableOpenSSL()
 }
 
-val isMacHost = System.getProperty("os.name").startsWith("Mac")
 
 kotlin {
 
@@ -60,7 +59,6 @@ kotlin {
     }
 
 
-
     binaries {
       executable("demo1") {
         entryPoint = "demo1.main"
@@ -72,7 +70,7 @@ kotlin {
           environment("CA_CERT_FILE", file("cacert.pem"))
           val libPath = "${buildDir.resolve("kotlinxtras/curl/${konanTarget.platformName}/lib")}" +
           ":${buildDir.resolve("kotlinxtras/openssl/${konanTarget.platformName}/lib")}"
-          environment(if (isMacHost) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH",libPath)
+          environment(if (konanTarget.family.isAppleFamily) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH",libPath)
         }
 
       }
