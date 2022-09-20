@@ -31,17 +31,15 @@ kotlin {
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
-  androidNativeX86()
-  androidNativeX64()
-  androidNativeArm32()
-  androidNativeArm64()
+  //not bothering to support curl-client on android as yet
   macosX64()
   macosArm64()
+  //add your other apple targets
+
 
   val commonMain by sourceSets.getting {
     dependencies {
       implementation(libs.klog)
-
       implementation(libs.kotlinx.coroutines.core)
       implementation(libs.curl)
       implementation(libs.openssl)
