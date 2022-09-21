@@ -34,11 +34,11 @@ open class XtrasExtension {
   internal var binDeps: MutableSet<BinDep> = mutableSetOf()
 
 
-  fun enableCurl(version: String = "curl-7_85_0") {
+  fun enableCurl(version: String = "curl-7_85_0_a") {
     binDeps.add(BinDep("org.danbrough.kotlinxtras", "curl", version))
   }
 
-  fun enableOpenSSL(version: String = "OpenSSL_1_1_1q") {
+  fun enableOpenSSL(version: String = "OpenSSL_1_1_1q_a") {
     binDeps.add(BinDep("org.danbrough.kotlinxtras", "openssl", version))
   }
 }
