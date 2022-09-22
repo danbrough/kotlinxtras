@@ -9,9 +9,9 @@ if [ ! -z "$1" ]; then
 fi
 
 if [ "$(uname)" = "Darwin" ]; then
-  ./gradlew -PsignPublications `cat mac_targets.txt`
+  ./gradlew -PsignPublications -PpublishDocs`cat mac_targets.txt`
   exit 0
 fi
 
-./gradlew -PsignPublications  publishAllPublicationsTo${REPO}Repository
+./gradlew -PsignPublications -PpublishDocs publishAllPublicationsTo${REPO}Repository
 
