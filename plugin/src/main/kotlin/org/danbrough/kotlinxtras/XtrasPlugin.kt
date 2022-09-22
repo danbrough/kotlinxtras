@@ -5,11 +5,9 @@ package org.danbrough.kotlinxtras
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Copy
 import org.gradle.configurationcache.extensions.capitalized
-import org.gradle.internal.component.external.model.ComponentVariant
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -83,6 +81,7 @@ fun Project.configurePrecompiledBinaries() {
 
   xtras.binDeps.forEach { binDep ->
     project.tasks.withType(KotlinNativeCompile::class).forEach {
+      project.logger.log(LogLevel.INFO,"adding extract dependency on ${binDep.name} for ${it.name}")
       val konanTarget = KonanTarget.predefinedTargets[it.target]!!
       it.dependsOn("extract${binDep.name.capitalized()}${konanTarget.platformName.capitalized()}Binaries")
     }

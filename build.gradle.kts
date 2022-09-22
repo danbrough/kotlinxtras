@@ -23,6 +23,31 @@ allprojects {
     maven( "https://s01.oss.sonatype.org/content/groups/staging/")
     mavenCentral()
   }
+
+  tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
+    kotlinOptions {
+      jvmTarget = ProjectProperties.KOTLIN_JVM_VERSION
+    }
+  }
+
+  tasks.withType<JavaCompile>().all {
+    sourceCompatibility = JavaVersion.VERSION_11.toString()
+    targetCompatibility = JavaVersion.VERSION_11.toString()
+  }
+
+  tasks.withType<AbstractTestTask>() {
+    testLogging {
+      events = setOf(
+        org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED, org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED, org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
+      )
+      exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+      showStandardStreams = true
+      showStackTraces = true
+    }
+    outputs.upToDateWhen {
+      false
+    }
+  }
 }
 
 /*
@@ -57,9 +82,7 @@ allprojects {
 
     publishing {
       repositories {
-        maven(rootProject.buildDir.resolve("m2")) {
-          name = "m2"
-        }
+
 
         val sonatypeRepoId = project.properties["sonatypeRepoId"]!!.toString()
         maven("https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/$sonatypeRepoId"){

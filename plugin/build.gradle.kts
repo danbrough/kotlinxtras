@@ -8,13 +8,18 @@ plugins {
 
 group = "org.danbrough.kotlinxtras"
 
-java {
+kotlin {
   dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
     implementation(kotlin("gradle-plugin"))
+    //implementation(kotlin("stdlib"))
+    testImplementation(kotlin("test"))
+    implementation("org.danbrough:klog:_")
   }
+
 }
+
 
 
 gradlePlugin {
@@ -24,6 +29,13 @@ gradlePlugin {
       implementationClass = "org.danbrough.kotlinxtras.XtrasPlugin"
       displayName = "KotlinXtras plugin"
       description = "Cross compiled binaries for openssl,curl"
+    }
+
+    create("sonatypePlugin") {
+      id = "org.danbrough.kotlinxtras.sonatype"
+      implementationClass = "org.danbrough.kotlinxtras.SonatypePlugin"
+      displayName = "Sonatype plugin"
+      description = "Sonatype publishing support"
     }
   }
 }
@@ -53,7 +65,8 @@ publishing {
 
   publications.all {
     if (this !is MavenPublication) return@all
-    artifact(javadocJar)
+    if (project.hasProperty("publishDocs"))
+      artifact(javadocJar)
     artifact(sourcesJar)
   }
 }

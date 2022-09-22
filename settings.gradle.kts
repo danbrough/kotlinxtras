@@ -13,7 +13,6 @@ plugins {
 }
 
 
-
 rootProject.name = "kotlinxtras"
 
 include(":konandeps")
