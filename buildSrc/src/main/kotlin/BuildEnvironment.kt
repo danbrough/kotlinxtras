@@ -202,12 +202,7 @@ object BuildEnvironment {
     }
   }
 
-  /*  fun KotlinMultiplatformExtension.registerNativeTargets(conf: KotlinNativeTarget.() -> Unit) {
-      nativeTargets.forEach {
-        registerTarget(it, conf)
-      }
-    }
-    */
+
   val clangBinDir by lazy {
     File("$konanDir/dependencies").listFiles()?.first {
       it.isDirectory && it.name.contains("essentials")
@@ -331,7 +326,7 @@ object BuildEnvironment {
         this["CC"] = "$hostTriplet${androidNdkApiVersion}-clang"
         this["CXX"] = "$hostTriplet${androidNdkApiVersion}-clang++"
         this["AR"] = "llvm-ar"
-        this["RANLIB"] = "llvm-ranlib"
+        this["RANLIB"] = "ranlib"
       }
     }
 
