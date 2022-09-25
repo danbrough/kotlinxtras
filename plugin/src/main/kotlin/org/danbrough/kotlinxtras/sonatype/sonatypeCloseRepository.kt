@@ -1,6 +1,6 @@
-package org.danbrough.kotlinxtras
+package org.danbrough.kotlinxtras.sonatype
 
-import java.io.InputStreamReader
+import org.gradle.api.Project
 import java.io.PrintWriter
 import java.net.HttpURLConnection
 import java.net.URL
@@ -42,10 +42,30 @@ fun sonatypeCloseRepository(
     }
 
     println("RESPONSE: $responseCode : $responseMessage")
-    InputStreamReader(inputStream).use {
-      it.readText().also {
-        println("RESPONSE: $it")
-      }
+    if (responseCode != HttpURLConnection.HTTP_CREATED)
+      throw Error("Response code: $responseCode $responseMessage")
+
+  }
+}
+
+internal fun Project.createCloseRepoTask(extn:SonatypeExtension){
+  project.tasks.create("sonatypeCloseRepository") {task->
+    task.description =
+      "Closes the sonatype repository as specified by the ${SonatypeProperties.REPOSITORY_ID} gradle property"
+    task.group = SONATYPE_TASK_GROUP
+    task.doLast {_->
+      if (extn.stagingProfileId.isBlank()) throw Error("sonatype.stagingProfileId not set")
+      val description =
+        project.properties[SonatypeProperties.DESCRIPTION]?.toString() ?: ""
+
+      sonatypeCloseRepository(
+        extn.stagingProfileId,
+        extn.repoId,
+        description,
+        extn.username,
+        extn.password,
+        extn.sonatypeUrlBase
+      )
     }
   }
 }

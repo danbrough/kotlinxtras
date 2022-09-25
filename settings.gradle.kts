@@ -1,6 +1,7 @@
 pluginManagement {
 
   repositories {
+    maven("/usr/local/kotlinxtras/build/m2")
     gradlePluginPortal()
     mavenCentral()
     google()
@@ -9,13 +10,13 @@ pluginManagement {
 
 
 plugins {
-  id("de.fayard.refreshVersions") version "0.50.1"
+  id("de.fayard.refreshVersions") version "0.50.2"
 }
 
 
 rootProject.name = "kotlinxtras"
 
-include(":konandeps")
-include(":openssl")
-include(":curl")
+//include(":konandeps")
+//include(":openssl")
+//include(":curl")
 include(":plugin")

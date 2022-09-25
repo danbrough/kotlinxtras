@@ -6,16 +6,12 @@ plugins {
   id("org.jetbrains.dokka")
 }
 
-group = "org.danbrough.kotlinxtras"
 
 kotlin {
   dependencies {
-    implementation(gradleApi())
+    //implementation(gradleApi())
     implementation(gradleKotlinDsl())
     implementation(kotlin("gradle-plugin"))
-    //implementation(kotlin("stdlib"))
-    testImplementation(kotlin("test"))
-    implementation("org.danbrough:klog:_")
   }
 
 }
@@ -31,9 +27,16 @@ gradlePlugin {
       description = "Cross compiled binaries for openssl,curl"
     }
 
+    create("binaries") {
+      id = "org.danbrough.kotlinxtras.binaries"
+      implementationClass = "org.danbrough.kotlinxtras.binaries.BinariesPlugin"
+      displayName = "KotlinXtras binaries plugin"
+      description = "Precompiled binaries for openssl,curl for compiling against."
+    }
+
     create("sonatypePlugin") {
       id = "org.danbrough.kotlinxtras.sonatype"
-      implementationClass = "org.danbrough.kotlinxtras.SonatypePlugin"
+      implementationClass = "org.danbrough.kotlinxtras.sonatype.SonatypePlugin"
       displayName = "Sonatype plugin"
       description = "Sonatype publishing support"
     }
