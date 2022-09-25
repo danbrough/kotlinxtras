@@ -7,9 +7,10 @@ See the (curl standalone)[../curl_standalone/] for this demo that downloads prec
 
 The cacert.pem file is from: http://curl.haxx.se/ca/cacert.pem
 
-You need to specify it in the environment variable "CA_CERT_FILE" or run the demo with:  
+You need to specify it in the environment variable "CA_CERT_FILE" the path to this.  
+If it complains that libcrypt.so.1 is missing then you will need libxcrypt-compat.  
+Run the demo with:  
 ```bash 
-
 ./gradlew  runDemo1DebugExecutableMacosX64  (loads example.com) 
 # or 
 ./gradlew  runDemo1DebugExecutableMacosX64 -Purl=https://python.org

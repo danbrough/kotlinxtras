@@ -31,7 +31,10 @@ kotlin {
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
-  //not bothering to support curl-client on android as yet
+  androidNativeX86()
+  androidNativeX64()
+  androidNativeArm32()
+  androidNativeArm64()
   macosX64()
   macosArm64()
   //add your other apple targets
