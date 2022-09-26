@@ -40,6 +40,14 @@ gradlePlugin {
       displayName = "Sonatype plugin"
       description = "Sonatype publishing support"
     }
+
+
+    create("testPlugin") {
+      id = "org.danbrough.kotlinxtras.test"
+      implementationClass = "org.danbrough.kotlinxtras.TestPlugin"
+      displayName = "Test plugin"
+      description = "Test plugin support"
+    }
   }
 }
 

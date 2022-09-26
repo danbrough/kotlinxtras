@@ -24,3 +24,6 @@
 [submodule "repos/kotlinx.html"]
 	path = repos/kotlinx.html
 	url = git@github.com:danbrough/kotlinx.html.git
+[submodule "repos/sqlite"]
+	path = repos/sqlite
+	url = https://github.com/sqlite/sqlite.git

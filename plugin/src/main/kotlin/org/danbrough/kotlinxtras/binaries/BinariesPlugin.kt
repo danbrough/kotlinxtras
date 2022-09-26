@@ -106,38 +106,67 @@ fun Project.configurePrecompiledBinaries() {
   }
 }
 
-private fun Project.configureTask( task: Task) {
-  if (task is KotlinNativeCompile) {
-    println("TASK: $task target: ${task.target}")
+private fun Project.configureTask(task: Task) {
+  val extn = rootProject.extensions.getByType<BinariesExtension>()
+
+  val platformName = if (task is KotlinNativeCompile) {
+    println("KotlinNativeCompile: ${task.target}")
+    KonanTarget.predefinedTargets[task.target]?.platformName
+  } else if (task is KotlinNativeTest) {
+    println("KotlinNativeTest target: ${task.targetName}")
+    task.targetName!!
+  } else return
+
+  println("TARGET: $platformName")
+  extn.binDeps.forEach {
+    println("making task ${task.name} dependent on ${"extract${it.name.capitalized()}${platformName?.capitalized()}Binaries"}")
+    task.dependsOn("extract${it.name.capitalized()}${platformName?.capitalized()}Binaries")
   }
+
+
 }
 
-fun Project.configureBinaries(project: Project) {
-
-  project.tasks.forEach { project.configureTask( it) }
-  project.childProjects.values.forEach {
-    it.configureBinaries(it)
+fun Project.configureBinariesTaskDeps() {
+  afterEvaluate { p ->
+    p.tasks.forEach {
+      p.configureTask(it)
+    }
+    p.childProjects.values.forEach {
+      it.configureBinariesTaskDeps()
+    }
   }
-
 }
 
 class BinariesPlugin : Plugin<Project> {
 
-
   override fun apply(project: Project) {
-    val binaries = project.extensions.create("binaries", BinariesExtension::class.java)
 
-    println("DOING BINARIES STUFF")
+    if (project == project.rootProject) {
+      println("FOUND ROOT PROJECT")
+      project.extensions.create("binaries", BinariesExtension::class.java)
+      return
+    }
+
+    println("PROJECT ${project.name} TASKS: ${project.tasks.names}")
+
+    val binaries = project.rootProject.extensions.getByType<BinariesExtension>()
+
+
     val preCompiled: Configuration by project.configurations.creating {
       isTransitive = false
     }
 
+    val mppExtension =
+      project.extensions.findByType<KotlinMultiplatformExtension>() ?: return
 
-    val konanTargets = project.extensions.getByType<KotlinMultiplatformExtension>().targets.withType<KotlinNativeTarget>()
+    val konanTargets = mppExtension.targets.withType<KotlinNativeTarget>()
       .map { it.konanTarget }.distinct()
+
+    println("KONANTARGETS: $konanTargets")
 
     project.dependencies {
       binaries.binDeps.forEach { binDep ->
+        println("BIN DEP: $binDep")
         konanTargets.forEach { target ->
           val binDepLib =
             "${binDep.group}:${binDep.name}${target.platformName.capitalized()}Binaries:${binDep.version}"
@@ -147,7 +176,9 @@ class BinariesPlugin : Plugin<Project> {
       }
     }
 
+
     preCompiled.resolvedConfiguration.resolvedArtifacts.forEach { artifact ->
+      println("RESOLVED ARTIFACT: $artifact")
       project.tasks.register<Copy>("extract${artifact.name.capitalized()}") {
         group = xtrasTaskGroup
 
@@ -158,22 +189,6 @@ class BinariesPlugin : Plugin<Project> {
         into(project.rootProject.buildDir.resolve("kotlinxtras"))
       }
     }
-
-    binaries.binDeps.forEach { binDep ->
-      project.tasks.withType(KotlinNativeCompile::class).forEach {
-        project.logger.log(LogLevel.INFO,"adding extract dependency on ${binDep.name} for ${it.name}")
-        val konanTarget = KonanTarget.predefinedTargets[it.target]!!
-        it.dependsOn("extract${binDep.name.capitalized()}${konanTarget.platformName.capitalized()}Binaries")
-      }
-    }
-    /*project.extensions.getByType<KotlinMultiplatformExtension>().apply {
-      println("PROJECT $project MPP: $this")
-
-    }
-    */
-
-
-
-
   }
+
 }
