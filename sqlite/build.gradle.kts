@@ -138,9 +138,9 @@ kotlin {
 }
 
 
-/*tasks.register("generateCInteropsDef") {
-  inputs.file("src/libcurl_header.def")
-  outputs.file("src/libcurl.def")
+tasks.register("generateCInteropsDef") {
+  inputs.file("src/libsqlite_header.def")
+  outputs.file("src/libsqlite.def")
   doFirst {
     val outputFile = outputs.files.files.first()
     println("Generating $outputFile")
@@ -148,21 +148,20 @@ kotlin {
       output.println(inputs.files.files.first().readText())
       kotlin.targets.withType<KotlinNativeTarget>().forEach {
         val konanTarget = it.konanTarget
-        output.println("compilerOpts.${konanTarget.name} = -Ibuild/kotlinxtras/curl/${konanTarget.platformName}/include \\")
-        output.println("\t-I/usr/local/kotlinxtras/libs/curl/${konanTarget.platformName}/include ")
-        output.println("linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/curl/${konanTarget.platformName}/lib \\")
-        output.println("\t-L/usr/local/kotlinxtras/libs/curl/${konanTarget.platformName}/lib ")
-        output.println("libraryPaths.${konanTarget.name} = build/kotlinxtras/curl/${konanTarget.platformName}/lib \\")
-        output.println("\t/usr/local/kotlinxtras/libs/curl/${konanTarget.platformName}/lib ")
+        output.println("compilerOpts.${konanTarget.name} = -Ibuild/kotlinxtras/sqlite/${konanTarget.platformName}/include \\")
+        output.println("\t-I/usr/local/kotlinxtras/libs/sqlite/${konanTarget.platformName}/include ")
+        output.println("linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/sqlite/${konanTarget.platformName}/lib \\")
+        output.println("\t-L/usr/local/kotlinxtras/libs/sqlite/${konanTarget.platformName}/lib ")
+        output.println("libraryPaths.${konanTarget.name} = build/kotlinxtras/sqlite/${konanTarget.platformName}/lib \\")
+        output.println("\t/usr/local/kotlinxtras/libs/sqlite/${konanTarget.platformName}/lib ")
       }
     }
   }
-}*/
-/*
+}
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>() {
   dependsOn("generateCInteropsDef")
   if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily)
     dependsOn("build${konanTarget.platformName.capitalized()}")
 }
 
-project.configureBinarySupport(curlVersion)*/
+project.configureBinarySupport(sqliteVersion)

@@ -44,6 +44,7 @@ tasks.register("generateCInteropsDef") {
       }
     }
   }
+
 }
 
 fun srcPrepare(target: KonanTarget) =
@@ -140,6 +141,10 @@ kotlin {
 
 tasks.withType<CInteropProcess>() {
   dependsOn("generateCInteropsDef")
+  if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily)
+    dependsOn("build${konanTarget.platformName.capitalized()}")
 }
+
+
 
 project.configureBinarySupport(openSSLVersion)
