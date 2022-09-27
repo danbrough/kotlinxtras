@@ -16,7 +16,7 @@
 	branch = dan-0.17.3
 [submodule "repos/kotlinx.coroutines"]
 	path = repos/kotlinx.coroutines
-	url = git@github.com:danbrough/kotlinx.coroutines.git
+	url = https://github.com/danbrough/kotlinx.coroutines.git
 	branch = danbroid-1.6.4
 [submodule "repos/openssl"]
 	path = repos/openssl
