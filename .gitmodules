@@ -33,3 +33,6 @@
 [submodule "repos/stately"]
 	path = repos/stately
 	url = https://github.com/danbrough/Stately.git
+[submodule "repos/sqliter"]
+	path = repos/sqliter
+	url = https://github.com/danbrough/SQLiter.git
