@@ -1,4 +1,9 @@
+headers = sqlite3.h sqlite3ext.h
+linkerOpts = -lpthread -ldl -lsqlite3
 headers = sqlite3.h
+headerFilter = sqlite3*.h
+
+
 
 compilerOpts.android_arm32 = -Ibuild/kotlinxtras/sqlite/androidNativeArm32/include \
 	-I/usr/local/kotlinxtras/libs/sqlite/androidNativeArm32/include 
