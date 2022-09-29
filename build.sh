@@ -2,7 +2,8 @@
 
 cd $(dirname "$0")
 
-REPO="Sonatype"
+#REPO="Sonatype"
+REPO="M2"
 
 if [ ! -z "$1" ]; then
 	REPO="$1"

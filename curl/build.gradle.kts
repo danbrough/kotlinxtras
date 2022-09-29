@@ -148,7 +148,9 @@ kotlin {
 
 }
 
-
+/**
+ * Generate src/libcurl.def from src/libcurl_headers.h
+ */
 tasks.register("generateCInteropsDef") {
   inputs.file("src/libcurl_header.def")
   outputs.file("src/libcurl.def")
