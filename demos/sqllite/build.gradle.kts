@@ -1,6 +1,4 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
   kotlin("multiplatform")
@@ -45,13 +43,13 @@ kotlin {
     }
 
     binaries {
-      executable("demo1") {
+      executable("sqliteDemo1") {
         entryPoint = "demo1.main"
-//        runTask?.apply {
-//          properties["url"]?.also {
-//            args(it.toString())
-//          }
-//        }
+        runTask?.apply {
+          properties["message"]?.also {
+            args(it.toString())
+          }
+        }
       }
     }
   }
