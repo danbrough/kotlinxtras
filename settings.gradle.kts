@@ -18,7 +18,7 @@ rootProject.name = "kotlinxtras"
 
 include(":konandeps")
 
-//include(":openssl")
-//include(":curl")
+include(":openssl")
+include(":curl")
 include(":sqlite")
-//include(":plugin")
+include(":plugin")

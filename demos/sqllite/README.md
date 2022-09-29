@@ -1,5 +1,6 @@
 # Sqlite demo
 
-## Status
+```bash
 
-Not working
+
+```
