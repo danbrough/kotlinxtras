@@ -17,7 +17,7 @@
 [submodule "repos/kotlinx.coroutines"]
 	path = repos/kotlinx.coroutines
 	url = https://github.com/danbrough/kotlinx.coroutines.git
-	branch = danbroid-1.6.4
+	branch = danbrough-1.6.3-mt
 [submodule "repos/openssl"]
 	path = repos/openssl
 	url = git@github.com:danbrough/openssl.git
@@ -30,6 +30,7 @@
 [submodule "repos/sqldelight"]
 	path = repos/sqldelight
 	url = https://github.com/danbrough/sqldelight.git
+	branch = danbrough-2.0.0-alpha03
 [submodule "repos/stately"]
 	path = repos/stately
 	url = https://github.com/danbrough/Stately.git
