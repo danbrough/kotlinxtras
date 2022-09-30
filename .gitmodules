@@ -37,3 +37,4 @@
 [submodule "repos/sqliter"]
 	path = repos/sqliter
 	url = https://github.com/danbrough/SQLiter.git
+	branch = remotes/origin/danbrough-1.2.1

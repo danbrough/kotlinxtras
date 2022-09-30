@@ -19,4 +19,4 @@ upstream: https://github.com/Kotlin/kotlinx.coroutines.git
 
 upstream: https://github.com/cashapp/sqldelight.git 
 
-- branch danbrough-2.0.0-alpha03 is compiling with linux arm and android native targets.  Released to staging.
+- branch danbrough-2.0.0-alpha03 is compiling with linux arm and android native targets.  
