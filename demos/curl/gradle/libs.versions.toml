@@ -2,13 +2,11 @@
 
 [plugins]
 
-org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version = "1.7.10" }
+org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version = "1.7.20" }
 
 [versions]
 
-kotlin = "1.7.10"
-##  ⬆ = "1.7.20-Beta"
-##  ⬆ = "1.7.20-RC"
+kotlin = "1.7.20"
 
 [libraries]
 
