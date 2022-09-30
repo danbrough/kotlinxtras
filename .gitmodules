@@ -30,6 +30,7 @@
 [submodule "repos/sqldelight"]
 	path = repos/sqldelight
 	url = https://github.com/danbrough/sqldelight.git
+	branch = danbrough-2.0.0-alpha03
 [submodule "repos/stately"]
 	path = repos/stately
 	url = https://github.com/danbrough/Stately.git
