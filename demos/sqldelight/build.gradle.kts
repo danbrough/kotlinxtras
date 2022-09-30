@@ -2,11 +2,16 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   kotlin("multiplatform")
-  id("com.squareup.sqldelight")
+
+  id("app.cash.sqldelight")
 }
 
-repositories{
-  maven("../../build/m2")
+repositories {
+  maven("/usr/local/kotlinxtras/build/m2")
+  maven("https://s01.oss.sonatype.org/content/groups/staging/")
+  maven("https://www.jetbrains.com/intellij-repository/releases")
+  maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
+
   google()
   mavenCentral()
 }
@@ -16,22 +21,27 @@ kotlin {
   linuxX64()
   //linuxArm64()
 
-  val commonMain by sourceSets.getting
-  val commonTest by sourceSets.getting{
+  val commonMain by sourceSets.getting {
+    dependencies {
+      //implementation(libs.org.danbrough.sqldelight.core)
+      implementation("org.danbrough.sqldelight:runtime:2.0.0-alpha03")
+    }
+  }
+  val commonTest by sourceSets.getting {
     dependencies {
       implementation(kotlin("test"))
       implementation(libs.klog)
     }
   }
 
-  val nativeMain by sourceSets.creating{
+  val nativeMain by sourceSets.creating {
     dependencies {
       dependsOn(commonMain)
       implementation(libs.native.driver)
     }
   }
 
-  val nativeTest by sourceSets.creating{
+  val nativeTest by sourceSets.creating {
     dependencies {
       dependsOn(nativeMain)
     }
@@ -49,8 +59,8 @@ kotlin {
 
 
 
-sqldelight{
-  database("Database"){
+sqldelight {
+  database("Database") {
     packageName = "demo"
   }
 }
