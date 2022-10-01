@@ -37,17 +37,19 @@ object KotlinXtras {
 
 
   fun Project.configureBinarySupport(binariesVersion:String) {
+    publishing {
+      repositories {
+        maven(rootProject.buildDir.resolve("m2")) {
+          name = "m2"
+        }
+      }
+    }
+
+
     afterEvaluate {
       val libName = name
 
-      publishing {
-        repositories {
-          maven(rootProject.buildDir.resolve("m2")) {
-            name = "m2"
-          }
-        }
-      }
-
+      if (!project.hasProperty("publishBinaries")) return@afterEvaluate
 
       val publishBinariesToSonatypeTask = tasks.create("publish${libName.capitalized()}BinariesToSonatype"){
         group = binariesTaskGroup
