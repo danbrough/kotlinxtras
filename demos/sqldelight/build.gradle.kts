@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 plugins {
   kotlin("multiplatform")
@@ -47,13 +48,18 @@ kotlin {
     }
   }
 
-  targets.withType(KotlinNativeTarget::class).all {
+  targets.withType(KotlinNativeTarget::class) {
     compilations["main"].apply {
       defaultSourceSet.dependsOn(nativeMain)
     }
+
     compilations["test"].apply {
       defaultSourceSet.dependsOn(nativeTest)
     }
+  }
+
+  tasks.withType(KotlinNativeTest::class){
+    this.environment("LD_LIBRARY_PATH","/usr/local/kotlinxtras/libs/sqlite/linuxX64/lib/")
   }
 }
 
