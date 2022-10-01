@@ -1,12 +1,19 @@
 package demo1
 
+import co.touchlab.sqliter.DatabaseConfiguration
+import co.touchlab.sqliter.createDatabaseManager
+import co.touchlab.sqliter.withConnection
+import co.touchlab.sqliter.withStatement
 import klog.KLogWriters
 import klog.KMessageFormatters
 import klog.Level
 import klog.colored
-import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.cstr
+import kotlinx.cinterop.objcPtr
 import kotlinx.cinterop.toKString
-import libcurl.*
+import platform.posix.dirname
+import platform.posix.posix_FD_ISSET
+
 
 val log = klog.klog("demo1") {
   writer = KLogWriters.stdOut
@@ -14,6 +21,14 @@ val log = klog.klog("demo1") {
   level = Level.TRACE
 }
 
+private const val SQL_CREATE =
+  """
+    CREATE TABLE IF NOT EXISTS log(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      `time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      message VARCHAR
+    )
+  """
 
 fun main(args: Array<String>) {
   log.info("running main ..")
@@ -21,27 +36,39 @@ fun main(args: Array<String>) {
   val url = if (args.isEmpty()) "https://example.com" else args[0]
 
 
-  log.debug("connecting to $url ..")
+  dirname(".".cstr)?.toKString()?.also {
+    log.warn("DIRNAME: $it")
+  }
 
-  memScoped {
-
-    val curl = curl_easy_init()
-    if (curl != null) {
-      curl_easy_setopt(curl, CURLOPT_URL, url)
-      curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L)
-
-      //to specify a cacert.pem file (needed on android native)
-      platform.posix.getenv("CA_CERT_FILE")?.also {
-        curl_easy_setopt(curl, CURLOPT_CAINFO, it)
-      }?: log.warn("Set environment CA_CERT_FILE to location of cacert.pem if there are ssl verification errors")
-
-
-      val res = curl_easy_perform(curl)
-      if (res != CURLE_OK) {
-        log.error("curl_easy_perform() failed ${curl_easy_strerror(res)?.toKString()}\n")
+  val config = DatabaseConfiguration(
+    name = "sqliterDemo.db",
+    version = 1,
+    extendedConfig = DatabaseConfiguration.Extended(basePath = "."),
+    create = { db ->
+      db.withStatement(SQL_CREATE) {
+        execute()
+        log.trace("SQL_CREATE executed")
       }
-      curl_easy_cleanup(curl)
+    },
+    upgrade = { _, _, _ ->
+//      updateCalled.increment()
+//      println("updateCalled $updateCalled")
+    }
+  )
+
+  val dbManager = createDatabaseManager(config)
+  log.debug("created dbManager: $dbManager")
+
+
+  dbManager.withConnection {
+    //it.withStatement("SELECT * FROM log")
+    it.withStatement("SELECT * FROM LOG") {
+      val cursor = query()
+      while (cursor.next()) {
+        log.debug("MESSAGE: ${cursor.getLong(0)}")
+      }
     }
   }
+
 
 }
