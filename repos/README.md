@@ -14,6 +14,9 @@ upstream: https://github.com/Kotlin/kotlinx.coroutines.git
 ### Sqlite 3 
 - at version-3.39.3 from https://github.com/sqlite/sqlite.git
 
+### Sqliter 
+from https://github.com/touchlab/SQLiter.git
+- at danbrough-1.2.1 on https://github.com/danbrough/SQLiter.git
 
 ### SqlDelight
 

@@ -48,9 +48,18 @@ object KotlinXtras {
         }
       }
 
+
+      val publishBinariesToSonatypeTask = tasks.create("publish${libName.capitalized()}BinariesToSonatype"){
+        group = binariesTaskGroup
+      }
+      val publishBinariesToM2Task = tasks.create("publish${libName.capitalized()}BinariesToM2"){
+        group = binariesTaskGroup
+      }
+
+
       val hostIsMac = BuildEnvironment.hostIsMac
       binaryTargets.filter { it.family.isAppleFamily == hostIsMac }.forEach { target ->
-        println("adding binary support for $target")
+       // println("adding binary support for $target")
         val jarName = "$libName${target.platformName.capitalized()}"
 
         val jarTask = tasks.register<Jar>("zip${jarName.capitalized()}Binaries") {
@@ -69,6 +78,9 @@ object KotlinXtras {
           version =binariesVersion
           artifact(jarTask)
         }
+
+        publishBinariesToSonatypeTask.dependsOn("publish${libName.capitalized()}${target.platformName.capitalized()}BinariesPublicationToSonaTypeRepository")
+        publishBinariesToM2Task.dependsOn("publish${libName.capitalized()}${target.platformName.capitalized()}BinariesPublicationToM2Repository")
       }
     }
   }

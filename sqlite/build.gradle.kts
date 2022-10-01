@@ -3,10 +3,7 @@ import BuildEnvironment.declareNativeTargets
 import BuildEnvironment.hostTriplet
 import BuildEnvironment.konanDepsTask
 import BuildEnvironment.platformName
-import Curl.curlPrefix
-import Curl.curlSrcDir
 import KotlinXtras_gradle.KotlinXtras.configureBinarySupport
-import OpenSSL.opensslPrefix
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -165,3 +162,4 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>() {
 }
 
 project.configureBinarySupport(sqliteVersion)
+
