@@ -13,6 +13,7 @@ import kotlinx.cinterop.objcPtr
 import kotlinx.cinterop.toKString
 import platform.posix.dirname
 import platform.posix.posix_FD_ISSET
+import platform.posix.realpath
 
 
 val log = klog.klog("demo1") {
@@ -33,17 +34,15 @@ private const val SQL_CREATE =
 fun main(args: Array<String>) {
   log.info("running main ..")
 
-  val url = if (args.isEmpty()) "https://example.com" else args[0]
 
 
-  dirname(".".cstr)?.toKString()?.also {
-    log.warn("DIRNAME: $it")
-  }
+  val basePath = realpath(".",null)?.toKString() ?: throw Error("Failed to get current directory path")
+
 
   val config = DatabaseConfiguration(
     name = "sqliterDemo.db",
     version = 1,
-    extendedConfig = DatabaseConfiguration.Extended(basePath = "."),
+    extendedConfig = DatabaseConfiguration.Extended(basePath = basePath),
     create = { db ->
       db.withStatement(SQL_CREATE) {
         execute()
@@ -62,13 +61,26 @@ fun main(args: Array<String>) {
 
   dbManager.withConnection {
     //it.withStatement("SELECT * FROM log")
-    it.withStatement("SELECT * FROM LOG") {
+    if (args.isNotEmpty()) {
+      it.withStatement("INSERT INTO log(message) VALUES(?)"){
+        bindString(1,args[0])
+        executeInsert()
+      }
+    } else {
+      it.withStatement("INSERT INTO log(message) VALUES('Log message from ' || CURRENT_TIMESTAMP)"){
+        executeInsert()
+      }
+    }
+
+
+    it.withStatement("SELECT * FROM log") {
       val cursor = query()
       while (cursor.next()) {
-        log.debug("MESSAGE: ${cursor.getLong(0)}")
+        log.trace("${cursor.getLong(0)}:${cursor.getString(1)}\t${cursor.getString(2)}")
       }
     }
   }
+
 
 
 }
