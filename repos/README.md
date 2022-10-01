@@ -23,3 +23,10 @@ from https://github.com/touchlab/SQLiter.git
 upstream: https://github.com/cashapp/sqldelight.git 
 
 - branch danbrough-2.0.0-alpha03 is compiling with linux arm and android native targets.  
+
+### KTor 
+
+upstream: https://github.com/ktorio/ktor  
+repo: https://github.com/danbrough/ktor.git
+
+- 

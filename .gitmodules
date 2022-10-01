@@ -1,6 +1,6 @@
 [submodule "repos/ktor"]
 	path = repos/ktor
-	url = git@github.com:/danbrough/ktor.git
+	url = https://github.com/danbrough/ktor.git
 	branch = danbrough-2.1.0
 
 [submodule "repos/curl"]
