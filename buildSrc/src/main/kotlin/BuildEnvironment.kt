@@ -21,9 +21,7 @@ object BuildEnvironment {
   val buildCacheDir: File by ProjectProperties.createProperty("build.cache", "build/cache")
 
 
-
-
-  val hostIsMac:Boolean by lazy {
+  val hostIsMac: Boolean by lazy {
     System.getProperty("os.name").startsWith("Mac")
   }
 
@@ -286,7 +284,11 @@ object BuildEnvironment {
 
 
       KonanTarget.MINGW_X64 -> {
-
+//        val clangArgs =
+//          "--target=$hostTriplet --gcc-toolchain=$konanDir/dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32" +
+//              "--sysroot=$konanDir/dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32/x86_64-w64-mingw32"
+//        this["CC"] = "clang $clangArgs"
+//        this["CXX"] = "clang++ $clangArgs"
         /*  export HOST=x86_64-w64-mingw32
   export GOOS=windows
   export CFLAGS="$CFLAGS -pthread"
