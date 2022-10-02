@@ -284,9 +284,12 @@ object BuildEnvironment {
 
 
       KonanTarget.MINGW_X64 -> {
+        this["CC"] = "x86_64-w64-mingw32-gcc"
+        this["CXX"] = "x86_64-w64-mingw32-g++"
+
 //        val clangArgs =
 //          "--target=$hostTriplet --gcc-toolchain=$konanDir/dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32" +
-//              "--sysroot=$konanDir/dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32/x86_64-w64-mingw32"
+//              " --sysroot=$konanDir/dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32/x86_64-w64-mingw32"
 //        this["CC"] = "clang $clangArgs"
 //        this["CXX"] = "clang++ $clangArgs"
         /*  export HOST=x86_64-w64-mingw32
@@ -315,8 +318,7 @@ object BuildEnvironment {
         //this["CC"] = "x86_64-w64-mingw32-gcc"
         //this["CXX"] = "x86_64-w64-mingw32-g++"
 
-        this["CC"] = "x86_64-w64-mingw32-gcc"
-        this["CXX"] = "x86_64-w64-mingw32-g++"
+
       }
 
       KonanTarget.ANDROID_X64, KonanTarget.ANDROID_X86, KonanTarget.ANDROID_ARM64, KonanTarget.ANDROID_ARM32 -> {
