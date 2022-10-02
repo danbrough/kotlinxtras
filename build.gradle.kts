@@ -1,10 +1,7 @@
-import BuildEnvironment.platformName
-import org.gradle.configurationcache.extensions.capitalized
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import   org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
   kotlin("multiplatform") apply false
-  //id("io.github.gradle-nexus.publish-plugin")
   `maven-publish`
   id("KotlinXtras")
   signing
@@ -12,13 +9,12 @@ plugins {
 }
 
 
-
-
 group = ProjectProperties.projectGroup
 version = ProjectProperties.buildVersionName
 
 
 allprojects {
+
   repositories {
     maven( "https://s01.oss.sonatype.org/content/groups/staging/")
     mavenCentral()
@@ -38,7 +34,7 @@ allprojects {
   tasks.withType<AbstractTestTask>() {
     testLogging {
       events = setOf(
-        org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED, org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED, org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
+        TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED
       )
       exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
       showStandardStreams = true
@@ -50,18 +46,6 @@ allprojects {
   }
 }
 
-/*
-nexusPublishing {
-  repositories {
-    sonatype {
-      //stagingProfileId.set("98edb69227dc82")
-      //nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-      //nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/orgdanbrough-1171/"))
-      snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-    }
-  }
-}
-*/
 
 
 allprojects {

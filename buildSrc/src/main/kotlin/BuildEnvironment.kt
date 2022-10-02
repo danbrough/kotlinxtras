@@ -57,7 +57,22 @@ object BuildEnvironment {
     macosX64()
     macosArm64()
 
-    //TODO mingwX64()
+    //iosArm32()
+    iosArm64()
+    iosSimulatorArm64()
+    iosX64()
+
+    tvosArm64()
+    tvosX64()
+    tvosSimulatorArm64()
+
+    watchosArm32()
+    watchosArm64()
+    watchosX64()
+    watchosX86()
+    watchosSimulatorArm64()
+
+    mingwX64()
 
   }
 
@@ -165,25 +180,6 @@ object BuildEnvironment {
     } ?: throw Error("Unknown build host: $osName:$osArch")
   }
 
-  val nativeTargets: List<KonanTarget>
-    get() =
-      if (ProjectProperties.IDE_ACTIVE)
-        listOf(hostTarget, KonanTarget.ANDROID_X86)
-      else
-        listOf(
-          KonanTarget.LINUX_X64,
-          KonanTarget.LINUX_ARM64,
-          KonanTarget.LINUX_ARM32_HFP,
-//          KonanTarget.MINGW_X64,
-//          KonanTarget.MACOS_ARM64,
-//          KonanTarget.MACOS_X64,
-//          KonanTarget.ANDROID_ARM64,
-//          KonanTarget.ANDROID_ARM32,
-          KonanTarget.ANDROID_X64,
-          KonanTarget.ANDROID_X86,
-        )
-
-
   fun KotlinMultiplatformExtension.registerTarget(
     konanTarget: KonanTarget, conf: KotlinNativeTarget.() -> Unit = {}
   ): KotlinNativeTarget {
@@ -194,7 +190,6 @@ object BuildEnvironment {
   }
 
   val androidToolchainDir by lazy {
-    //androidNdkDir.resolve("toolchains/llvm/prebuilt/linux-x86_64").also {
     androidNdkDir.also {
       assert(it.exists()) {
         "Failed to locate ${it.absolutePath}"
@@ -315,10 +310,11 @@ object BuildEnvironment {
         val toolChain = "$konanDir/dependencies/msys2-mingw-w64-x86_64-1"
         this["PATH"] = "$toolChain/bin:${this["PATH"]}"*/
 
+        //this["CC"] = "x86_64-w64-mingw32-gcc"
+        //this["CXX"] = "x86_64-w64-mingw32-g++"
+
         this["CC"] = "x86_64-w64-mingw32-gcc"
         this["CXX"] = "x86_64-w64-mingw32-g++"
-
-
       }
 
       KonanTarget.ANDROID_X64, KonanTarget.ANDROID_X86, KonanTarget.ANDROID_ARM64, KonanTarget.ANDROID_ARM32 -> {
