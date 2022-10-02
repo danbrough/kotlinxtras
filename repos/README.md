@@ -4,6 +4,13 @@ Staging repo: https://s01.oss.sonatype.org/content/groups/staging/
 
 ## Status 
 
+### KotlinX Serialization
+
+https://github.com/danbrough/kotlinx.serialization.git  
+upstream: https://github.com/Kotlin/kotlinx.serialization
+
+
+
 ### KotlinX Coroutines
 
 https://github.com:danbrough/kotlinx.coroutines.git
