@@ -4,13 +4,12 @@
 
 org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version = "1.7.10" }
 
-org-danbrough-kotlinxtras-xtras = { id = "org.danbrough.kotlinxtras.xtras", version = "_" }
+org-danbrough-kotlinxtras-xtras = { id = "org.danbrough.kotlinxtras.xtras", version = "0.0.1-beta04" }
 
 [versions]
 
-kotlin = "1.7.10"
-##  ⬆ = "1.7.20-Beta"
-##  ⬆ = "1.7.20-RC"
+kotlin = "1.7.20"
+
 
 [libraries]
 
@@ -22,7 +21,7 @@ kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = 
 
 curl = "org.danbrough.kotlinxtras:curl:0.0.1-beta02"
 
-openssl = "org.danbrough.kotlinxtras:openssl:0.0.1-beta02"
+openssl = "org.danbrough.kotlinxtras:openssl:0.0.1-beta04"
 
 kotlin-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-compiler-embeddable", version.ref = "kotlin" }
 
