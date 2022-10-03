@@ -108,17 +108,17 @@ object BuildEnvironment {
       KonanTarget.MINGW_X86 -> "x86-w64-mingw32"
       KonanTarget.IOS_ARM32 -> "arm32-apple-darwin"
       KonanTarget.IOS_ARM64 -> "aarch64-ios-darwin"
-      //KonanTarget.IOS_SIMULATOR_ARM64 -> "aarch64-apple-darwin"
+      KonanTarget.IOS_SIMULATOR_ARM64 -> "aarch64-iossimulator-darwin"
       KonanTarget.IOS_X64 -> "x86_64-ios-darwin"
 
 
       KonanTarget.TVOS_ARM64 -> "aarch64-tvos-darwin"
-      //KonanTarget.TVOS_SIMULATOR_ARM64 -> "x86_64-tvos-darwin"
+      KonanTarget.TVOS_SIMULATOR_ARM64 -> "aarch64-tvossimulator-darwin"
       KonanTarget.TVOS_X64 -> "x86_64-tvos-darwin"
       KonanTarget.WASM32 -> TODO()
       KonanTarget.WATCHOS_ARM32 -> "arm32-watchos-darwin"
       KonanTarget.WATCHOS_ARM64 -> "aarch64-watchos-darwin"
-      KonanTarget.WATCHOS_SIMULATOR_ARM64 -> TODO()
+      KonanTarget.WATCHOS_SIMULATOR_ARM64 -> "aarch64-watchossimulator-darwin"
       KonanTarget.WATCHOS_X64 -> "x86_64-watchos-darwin"
       KonanTarget.WATCHOS_X86 -> "x86-watchos-darwin"
       else -> TODO("Add hostTriple for $this")
