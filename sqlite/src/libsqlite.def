@@ -77,12 +77,6 @@ linkerOpts.macos_x64 = -Lbuild/kotlinxtras/sqlite/macosX64/lib \
 	-L/usr/local/kotlinxtras/libs/sqlite/macosX64/lib 
 libraryPaths.macos_x64 = build/kotlinxtras/sqlite/macosX64/lib \
 	/usr/local/kotlinxtras/libs/sqlite/macosX64/lib 
-compilerOpts.mingw_x64 = -Ibuild/kotlinxtras/sqlite/mingwX64/include \
-	-I/usr/local/kotlinxtras/libs/sqlite/mingwX64/include 
-linkerOpts.mingw_x64 = -Lbuild/kotlinxtras/sqlite/mingwX64/lib \
-	-L/usr/local/kotlinxtras/libs/sqlite/mingwX64/lib 
-libraryPaths.mingw_x64 = build/kotlinxtras/sqlite/mingwX64/lib \
-	/usr/local/kotlinxtras/libs/sqlite/mingwX64/lib 
 compilerOpts.tvos_arm64 = -Ibuild/kotlinxtras/sqlite/tvosArm64/include \
 	-I/usr/local/kotlinxtras/libs/sqlite/tvosArm64/include 
 linkerOpts.tvos_arm64 = -Lbuild/kotlinxtras/sqlite/tvosArm64/lib \

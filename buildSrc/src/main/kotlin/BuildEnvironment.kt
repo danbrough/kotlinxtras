@@ -70,6 +70,8 @@ object BuildEnvironment {
     watchosX86()
     watchosSimulatorArm64()
 
+    //supports openssl and curl but not sqlite.
+    //weird compilation errors
     mingwX64()
 
   }
@@ -284,8 +286,8 @@ object BuildEnvironment {
 
 
       KonanTarget.MINGW_X64 -> {
-        this["CC"] = "x86_64-w64-mingw32-gcc"
-        this["CXX"] = "x86_64-w64-mingw32-g++"
+//        this["CC"] = "x86_64-w64-mingw32-gcc"
+//        this["CXX"] = "x86_64-w64-mingw32-g++"
 
 //        val clangArgs =
 //          "--target=$hostTriplet --gcc-toolchain=$konanDir/dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32" +

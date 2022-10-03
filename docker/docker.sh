@@ -8,7 +8,7 @@ PLATFORM=linux/amd64
 
 DOCKER_IMAGE=docker.io/danbrough/debian:latest
 NAME=kipfs_$(echo $PLATFORM | sed -e 's:\/:_:g')
-USER=bob
+USER=root
 TMPDIR=/tmp/$NAME
 HOMEDIR=/src
 

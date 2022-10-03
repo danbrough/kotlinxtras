@@ -5,20 +5,26 @@ import BuildEnvironment.konanDepsTask
 import BuildEnvironment.platformName
 import KotlinXtras_gradle.KotlinXtras.configureBinarySupport
 import org.gradle.configurationcache.extensions.capitalized
+import org.jetbrains.kotlin.de.undercouch.gradle.tasks.download.Download
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
   kotlin("multiplatform")
   `maven-publish`
+
+  //id("de.undercouch.download") version "5.2.1"
+
+
 }
 
 
 val sqliteGitDir = rootProject.file("repos/sqlite")
-val sqliteVersion = project.properties["sqlite.version"]?.toString() ?: throw Error("Gradle property sqlite.version not set")
+val sqliteVersion = project.properties["sqlite.version"]?.toString()
+  ?: throw Error("Gradle property sqlite.version not set")
 
 fun KonanTarget.sqliteSrcDir(project: Project): java.io.File =
-  project.buildDir.resolve("sqlite/$platformName")
+  project.buildDir.resolve("sqlite/$platformName/${project.properties["sqlite.version"]}")
 
 
 fun KonanTarget.sqlitePrefix(project: Project): java.io.File =
@@ -34,15 +40,37 @@ fun srcPrepare(target: KonanTarget): Exec =
     commandLine(
       BuildEnvironment.gitBinary, "clone", sqliteGitDir, srcDir
     )
-    onlyIf { target.sqliteNotBuilt && !srcDir.exists()}
+    onlyIf { target.sqliteNotBuilt && !srcDir.exists() }
   }
 
+
+val downloadSrcTask by tasks.creating(Download::class.java) {
+  src(project.properties["sqlite.source"])
+  dest(buildDir.resolve("sqlite").also{
+    if (!it.exists()) it.mkdirs()
+  })
+  overwrite(false)
+}
+
+fun srcPrepareFromDownload(target: KonanTarget): Copy =
+  tasks.create<Copy>("srcPrepareFromDownload${target.platformName.capitalize()}") {
+    dependsOn(downloadSrcTask)
+    val srcDir = target.sqliteSrcDir(project)
+    from(tarTree(resources.gzip(downloadSrcTask.outputFiles.first()))){
+      eachFile {
+        path = path.substring(relativePath.segments[0].length)
+      }
+    }
+    into(srcDir)
+    onlyIf { target.sqliteNotBuilt }
+  }
 
 
 
 fun configureTask(target: KonanTarget) =
   tasks.register("srcConfigure${target.platformName.capitalize()}", Exec::class) {
-    dependsOn("srcPrepare${target.platformName.capitalize()}")
+    //dependsOn("srcPrepare${target.platformName.capitalize()}")
+    dependsOn("srcPrepareFromDownload${target.platformName.capitalize()}")
 
 
     //to ensure the konan tools are available
@@ -62,7 +90,7 @@ fun configureTask(target: KonanTarget) =
     val args = listOf(
       "./configure",
       "--host=${target.hostTriplet}",
-      "--disable-tcl","--disable-readline",
+      "--disable-tcl", "--disable-readline",
       "--prefix=${target.sqlitePrefix(project)}",
 
       )
@@ -115,7 +143,8 @@ kotlin {
   targets.withType(KotlinNativeTarget::class).all {
 
     if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily) {
-      srcPrepare(konanTarget)
+      //srcPrepare(konanTarget)
+      srcPrepareFromDownload(konanTarget)
       configureTask(konanTarget)
       buildTask(konanTarget).also {
         buildAll.dependsOn(it)

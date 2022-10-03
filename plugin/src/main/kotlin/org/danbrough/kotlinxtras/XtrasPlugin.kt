@@ -39,6 +39,10 @@ open class XtrasExtension {
   fun enableOpenSSL(version: String = "OpenSSL_1_1_1q_a") {
     binDeps.add(BinDep("org.danbrough.kotlinxtras", "openssl", version))
   }
+
+  fun enableSQLite(version: String = "OpenSSL_1_1_1q_a") {
+    binDeps.add(BinDep("org.danbrough.kotlinxtras", "openssl", version))
+  }
 }
 
 
