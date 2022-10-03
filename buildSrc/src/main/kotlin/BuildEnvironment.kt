@@ -102,27 +102,25 @@ object BuildEnvironment {
       KonanTarget.ANDROID_X64 -> "x86_64-linux-android"
       KonanTarget.ANDROID_X86 -> "i686-linux-android"
       KonanTarget.MACOS_X64 -> "x86_64-apple-darwin"
+
       KonanTarget.MACOS_ARM64 -> "aarch64-apple-darwin"
       KonanTarget.MINGW_X64 -> "x86_64-w64-mingw32"
-/*      KonanTarget.IOS_ARM32 -> TODO()
-      KonanTarget.IOS_ARM64 -> TODO()
-      KonanTarget.IOS_SIMULATOR_ARM64 -> TODO()
-      KonanTarget.IOS_X64 -> TODO()
-      KonanTarget.LINUX_ARM32_HFP -> TODO()
-      KonanTarget.LINUX_MIPS32 -> TODO()
-      KonanTarget.LINUX_MIPSEL32 -> TODO()
+      KonanTarget.MINGW_X86 -> "x86-w64-mingw32"
+      KonanTarget.IOS_ARM32 -> "arm32-apple-darwin"
+      KonanTarget.IOS_ARM64 -> "aarch64-ios-darwin"
+      //KonanTarget.IOS_SIMULATOR_ARM64 -> "aarch64-apple-darwin"
+      KonanTarget.IOS_X64 -> "x86_64-ios-darwin"
 
 
-      KonanTarget.MINGW_X86 -> TODO()
-      KonanTarget.TVOS_ARM64 -> TODO()
-      KonanTarget.TVOS_SIMULATOR_ARM64 -> TODO()
-      KonanTarget.TVOS_X64 -> TODO()
+      KonanTarget.TVOS_ARM64 -> "aarch64-tvos-darwin"
+      //KonanTarget.TVOS_SIMULATOR_ARM64 -> "x86_64-tvos-darwin"
+      KonanTarget.TVOS_X64 -> "x86_64-tvos-darwin"
       KonanTarget.WASM32 -> TODO()
-      KonanTarget.WATCHOS_ARM32 -> TODO()
-      KonanTarget.WATCHOS_ARM64 -> TODO()
+      KonanTarget.WATCHOS_ARM32 -> "arm32-watchos-darwin"
+      KonanTarget.WATCHOS_ARM64 -> "aarch64-watchos-darwin"
       KonanTarget.WATCHOS_SIMULATOR_ARM64 -> TODO()
-      KonanTarget.WATCHOS_X64 -> TODO()
-      KonanTarget.WATCHOS_X86 -> TODO()*/
+      KonanTarget.WATCHOS_X64 -> "x86_64-watchos-darwin"
+      KonanTarget.WATCHOS_X86 -> "x86-watchos-darwin"
       else -> TODO("Add hostTriple for $this")
 
     }
