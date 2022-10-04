@@ -25,9 +25,9 @@ kotlin {
   val commonMain by sourceSets.getting {
     dependencies {
       //implementation(libs.org.danbrough.sqldelight.core)
-      implementation("org.danbrough.kotlinxtras:sqlite:0.0.1-beta04")
-      implementation("org.danbrough.sqldelight:primitive-adapters:2.0.0-alpha03")
-      implementation("org.danbrough.sqldelight:runtime:2.0.0-alpha03")
+      implementation("org.danbrough.kotlinxtras:sqlite:_")
+      implementation("org.danbrough.sqldelight:primitive-adapters:_")
+      implementation("org.danbrough.sqldelight:runtime:_")
     }
   }
   val commonTest by sourceSets.getting {
