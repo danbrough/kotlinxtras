@@ -4,7 +4,6 @@ import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.xtrasTaskGroup
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
@@ -43,15 +42,8 @@ open class BinariesProviderExtension {
 
 class BinariesProviderPlugin : Plugin<Project> {
   override fun apply(targetProject: Project) {
-    println("Applying binaries plugin to $targetProject")
 
     val isMacHost = System.getProperty("os.name").startsWith("Mac")
-
-
-    val s: Configuration = targetProject.configurations.create("stuff") {
-      it.isTransitive = false
-    }
-
 
     val extn =
       targetProject.extensions.create("binariesProvider", BinariesProviderExtension::class.java)
@@ -70,15 +62,10 @@ class BinariesProviderPlugin : Plugin<Project> {
         if (extn.supportedTargets.isEmpty())
           project.kotlinExtension.targets.filterIsInstance<KotlinNativeTarget>()
             .map { it.konanTarget } else extn.supportedTargets
-
-
-
-
+      
       project.extensions.getByType<PublishingExtension>().apply {
 
         val repoNames = repositories.names
-
-        println("REPO NAMES: $repoNames")
 
         val publishToReposTasks = repoNames.associateWith {
           project.tasks.create("publish${libName.capitalized()}BinariesTo${it.capitalized()}") { task ->
