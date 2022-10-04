@@ -5,7 +5,6 @@ import BuildEnvironment.konanDepsTaskName
 import BuildEnvironment.platformName
 import Curl.curlPrefix
 import Curl.curlSrcDir
-import KotlinXtras_gradle.KotlinXtras.configureBinarySupport
 import OpenSSL.opensslPrefix
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -21,9 +20,14 @@ plugins {
 
 ProjectProperties.init(project)
 
+binariesProvider {
+  version = project.properties["curl.version"]?.toString()
+    ?: throw Error("Gradle property curl.version not set")
+}
+
+
+
 val curlGitDir = rootProject.file("repos/curl")
-val curlVersion = project.properties["curl.version"]?.toString()
-  ?: throw Error("Gradle property curl.version not set")
 
 val KonanTarget.curlNotBuilt: Boolean
   get() = !curlPrefix(project).resolve("include/curl/curl.h").exists()
@@ -183,21 +187,3 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>() {
     dependsOn("build${konanTarget.platformName.capitalized()}")
 }
 
-project.configureBinarySupport(curlVersion)
-
-
-binariesProvider {
-}
-
-dependencies {
-  stuff("a:b:c")
-}
-
-tasks.create("test"){
-  doLast {
-
-    publishing.publications.all {
-      if (this !is MavenPublication) return@all
-    }
-  }
-}

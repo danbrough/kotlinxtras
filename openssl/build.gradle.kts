@@ -1,14 +1,14 @@
+
 import BuildEnvironment.buildEnvironment
-import BuildEnvironment.konanDepsTaskName
+import BuildEnvironment.declareNativeTargets
 import BuildEnvironment.hostTriplet
+import BuildEnvironment.konanDepsTaskName
 import BuildEnvironment.platformName
 import OpenSSL.opensslPlatform
 import OpenSSL.opensslPrefix
 import OpenSSL.opensslSrcDir
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import BuildEnvironment.declareNativeTargets
-import KotlinXtras_gradle.KotlinXtras.configureBinarySupport
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 plugins {
   kotlin("multiplatform")
   `maven-publish`
+  id("org.danbrough.kotlinxtras.binaries.provider") version "0.0.1-beta04"
+  id("org.danbrough.kotlinxtras.properties") version "0.0.1-beta04"
 }
 
 val openSSLVersion = project.properties["openssl.version"]?.toString() ?: throw Error("Gradle property openssl.version not set")
@@ -147,4 +149,3 @@ tasks.withType<CInteropProcess>() {
 
 
 
-project.configureBinarySupport(openSSLVersion)

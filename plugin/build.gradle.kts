@@ -9,11 +9,9 @@ plugins {
 
 kotlin {
   dependencies {
-    //implementation(gradleApi())
     implementation(gradleKotlinDsl())
     implementation(kotlin("gradle-plugin"))
   }
-
 }
 
 
@@ -76,11 +74,7 @@ val sourcesJar by tasks.registering(Jar::class) {
 }
 
 publishing {
-  repositories {
-    maven("../build/m2"){
-      name = "m2"
-    }
-  }
+
 
   publications.all {
     if (this !is MavenPublication) return@all

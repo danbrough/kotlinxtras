@@ -1,9 +1,9 @@
+
 import BuildEnvironment.buildEnvironment
 import BuildEnvironment.declareNativeTargets
 import BuildEnvironment.hostTriplet
 import BuildEnvironment.konanDepsTaskName
 import BuildEnvironment.platformName
-import KotlinXtras_gradle.KotlinXtras.configureBinarySupport
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.de.undercouch.gradle.tasks.download.Download
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 plugins {
   kotlin("multiplatform")
   `maven-publish`
+  id("org.danbrough.kotlinxtras.binaries.provider") version "0.0.1-beta04"
+  id("org.danbrough.kotlinxtras.properties") version "0.0.1-beta04"
 }
 
 
@@ -186,5 +188,4 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>() {
     dependsOn("build${konanTarget.platformName.capitalized()}")
 }
 
-project.configureBinarySupport(sqliteVersion)
 

@@ -6,6 +6,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.getByType
@@ -31,8 +32,12 @@ open class BinariesProviderExtension {
   //Will default to $rootProject.buildDir/binaries/libName
   var archivesDir: File? = null
 
+
+  lateinit var version: String
+
   internal fun configure(project: Project) {
     libName = project.name
+    version = project.version?.toString() ?: "unspecified"
   }
 }
 
@@ -66,9 +71,20 @@ class BinariesProviderPlugin : Plugin<Project> {
           project.kotlinExtension.targets.filterIsInstance<KotlinNativeTarget>()
             .map { it.konanTarget } else extn.supportedTargets
 
-      println("supported targets: $supportedTargets")
+
+
 
       project.extensions.getByType<PublishingExtension>().apply {
+
+        val repoNames = repositories.names
+
+        println("REPO NAMES: $repoNames")
+
+        val publishToReposTasks = repoNames.associateWith {
+          project.tasks.create("publish${libName.capitalized()}BinariesTo${it.capitalized()}") { task ->
+            task.group = xtrasTaskGroup
+          }
+        }
 
         //Support apple targets on mac host and everything else on what is assumed to be linux
         supportedTargets.filter { it.family.isAppleFamily == isMacHost }.forEach { target ->
@@ -84,6 +100,19 @@ class BinariesProviderPlugin : Plugin<Project> {
             into("$libName/${target.platformName}")
             destinationDirectory.set(archivesDir)
           }
+
+          val publicationName = "$libName${target.platformName.capitalized()}Binaries"
+          publications.register<MavenPublication>(publicationName) {
+            artifactId = name
+            groupId = "${project.group}.$libName"
+            version = extn.version
+            artifact(jarTask)
+          }
+
+          publishToReposTasks.forEach {
+            it.value.dependsOn("publish${publicationName.capitalized()}PublicationTo${it.key.capitalized()}Repository")
+          }
+
         }
       }
     }

@@ -3,7 +3,6 @@ import   org.gradle.api.tasks.testing.logging.TestLogEvent
 plugins {
   kotlin("multiplatform") apply false
   `maven-publish`
-  id("KotlinXtras")
   signing
   id("org.jetbrains.dokka") apply false
 }
@@ -48,7 +47,7 @@ allprojects {
 
 
 
-allprojects {
+subprojects {
 
 
   apply<SigningPlugin>()
@@ -66,8 +65,9 @@ allprojects {
 
     publishing {
       repositories {
-
-
+        maven(rootProject.buildDir.resolve("m2")) {
+          name = "M2"
+        }
         val sonatypeRepoId = project.properties["sonatypeRepoId"]!!.toString()
         maven("https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/$sonatypeRepoId"){
           name = "SonaType"
