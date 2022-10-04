@@ -1,7 +1,7 @@
 pluginManagement {
 
   repositories {
-    maven("/usr/local/kotlinxtras/build/m2")
+    maven(file("build/m2"))
     gradlePluginPortal()
     mavenCentral()
     google()
@@ -16,9 +16,10 @@ plugins {
 
 rootProject.name = "kotlinxtras"
 
-include(":konandeps")
+include(":plugin")
 
+include(":konandeps")
 include(":openssl")
 include(":curl")
 include(":sqlite")
-include(":plugin")
+

@@ -187,7 +187,6 @@ project.configureBinarySupport(curlVersion)
 
 
 binariesProvider {
-
 }
 
 dependencies {
@@ -196,6 +195,7 @@ dependencies {
 
 tasks.create("test"){
   doLast {
+
     publishing.publications.all {
       if (this !is MavenPublication) return@all
     }
