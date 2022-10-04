@@ -1,5 +1,5 @@
 import BuildEnvironment.buildEnvironment
-import BuildEnvironment.konanDepsTask
+import BuildEnvironment.konanDepsTaskName
 import BuildEnvironment.hostTriplet
 import BuildEnvironment.platformName
 import OpenSSL.opensslPlatform
@@ -89,7 +89,7 @@ fun buildTask(target: KonanTarget) =
 
     val installDir = target.opensslPrefix(project)
 
-    dependsOn(target.konanDepsTask(project))
+    dependsOn(target.konanDepsTaskName)
 
     workingDir(target.opensslSrcDir(project))
 

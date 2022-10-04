@@ -29,24 +29,6 @@ linkerOpts.android_x86 = -Lbuild/kotlinxtras/sqlite/androidNativeX86/lib \
 	-L/usr/local/kotlinxtras/libs/sqlite/androidNativeX86/lib 
 libraryPaths.android_x86 = build/kotlinxtras/sqlite/androidNativeX86/lib \
 	/usr/local/kotlinxtras/libs/sqlite/androidNativeX86/lib 
-compilerOpts.ios_arm64 = -Ibuild/kotlinxtras/sqlite/iosArm64/include \
-	-I/usr/local/kotlinxtras/libs/sqlite/iosArm64/include 
-linkerOpts.ios_arm64 = -Lbuild/kotlinxtras/sqlite/iosArm64/lib \
-	-L/usr/local/kotlinxtras/libs/sqlite/iosArm64/lib 
-libraryPaths.ios_arm64 = build/kotlinxtras/sqlite/iosArm64/lib \
-	/usr/local/kotlinxtras/libs/sqlite/iosArm64/lib 
-compilerOpts.ios_simulator_arm64 = -Ibuild/kotlinxtras/sqlite/iosSimulatorArm64/include \
-	-I/usr/local/kotlinxtras/libs/sqlite/iosSimulatorArm64/include 
-linkerOpts.ios_simulator_arm64 = -Lbuild/kotlinxtras/sqlite/iosSimulatorArm64/lib \
-	-L/usr/local/kotlinxtras/libs/sqlite/iosSimulatorArm64/lib 
-libraryPaths.ios_simulator_arm64 = build/kotlinxtras/sqlite/iosSimulatorArm64/lib \
-	/usr/local/kotlinxtras/libs/sqlite/iosSimulatorArm64/lib 
-compilerOpts.ios_x64 = -Ibuild/kotlinxtras/sqlite/iosX64/include \
-	-I/usr/local/kotlinxtras/libs/sqlite/iosX64/include 
-linkerOpts.ios_x64 = -Lbuild/kotlinxtras/sqlite/iosX64/lib \
-	-L/usr/local/kotlinxtras/libs/sqlite/iosX64/lib 
-libraryPaths.ios_x64 = build/kotlinxtras/sqlite/iosX64/lib \
-	/usr/local/kotlinxtras/libs/sqlite/iosX64/lib 
 compilerOpts.linux_arm32_hfp = -Ibuild/kotlinxtras/sqlite/linuxArm32Hfp/include \
 	-I/usr/local/kotlinxtras/libs/sqlite/linuxArm32Hfp/include 
 linkerOpts.linux_arm32_hfp = -Lbuild/kotlinxtras/sqlite/linuxArm32Hfp/lib \
@@ -77,51 +59,9 @@ linkerOpts.macos_x64 = -Lbuild/kotlinxtras/sqlite/macosX64/lib \
 	-L/usr/local/kotlinxtras/libs/sqlite/macosX64/lib 
 libraryPaths.macos_x64 = build/kotlinxtras/sqlite/macosX64/lib \
 	/usr/local/kotlinxtras/libs/sqlite/macosX64/lib 
-compilerOpts.tvos_arm64 = -Ibuild/kotlinxtras/sqlite/tvosArm64/include \
-	-I/usr/local/kotlinxtras/libs/sqlite/tvosArm64/include 
-linkerOpts.tvos_arm64 = -Lbuild/kotlinxtras/sqlite/tvosArm64/lib \
-	-L/usr/local/kotlinxtras/libs/sqlite/tvosArm64/lib 
-libraryPaths.tvos_arm64 = build/kotlinxtras/sqlite/tvosArm64/lib \
-	/usr/local/kotlinxtras/libs/sqlite/tvosArm64/lib 
-compilerOpts.tvos_simulator_arm64 = -Ibuild/kotlinxtras/sqlite/tvosSimulatorArm64/include \
-	-I/usr/local/kotlinxtras/libs/sqlite/tvosSimulatorArm64/include 
-linkerOpts.tvos_simulator_arm64 = -Lbuild/kotlinxtras/sqlite/tvosSimulatorArm64/lib \
-	-L/usr/local/kotlinxtras/libs/sqlite/tvosSimulatorArm64/lib 
-libraryPaths.tvos_simulator_arm64 = build/kotlinxtras/sqlite/tvosSimulatorArm64/lib \
-	/usr/local/kotlinxtras/libs/sqlite/tvosSimulatorArm64/lib 
-compilerOpts.tvos_x64 = -Ibuild/kotlinxtras/sqlite/tvosX64/include \
-	-I/usr/local/kotlinxtras/libs/sqlite/tvosX64/include 
-linkerOpts.tvos_x64 = -Lbuild/kotlinxtras/sqlite/tvosX64/lib \
-	-L/usr/local/kotlinxtras/libs/sqlite/tvosX64/lib 
-libraryPaths.tvos_x64 = build/kotlinxtras/sqlite/tvosX64/lib \
-	/usr/local/kotlinxtras/libs/sqlite/tvosX64/lib 
-compilerOpts.watchos_arm32 = -Ibuild/kotlinxtras/sqlite/watchosArm32/include \
-	-I/usr/local/kotlinxtras/libs/sqlite/watchosArm32/include 
-linkerOpts.watchos_arm32 = -Lbuild/kotlinxtras/sqlite/watchosArm32/lib \
-	-L/usr/local/kotlinxtras/libs/sqlite/watchosArm32/lib 
-libraryPaths.watchos_arm32 = build/kotlinxtras/sqlite/watchosArm32/lib \
-	/usr/local/kotlinxtras/libs/sqlite/watchosArm32/lib 
-compilerOpts.watchos_arm64 = -Ibuild/kotlinxtras/sqlite/watchosArm64/include \
-	-I/usr/local/kotlinxtras/libs/sqlite/watchosArm64/include 
-linkerOpts.watchos_arm64 = -Lbuild/kotlinxtras/sqlite/watchosArm64/lib \
-	-L/usr/local/kotlinxtras/libs/sqlite/watchosArm64/lib 
-libraryPaths.watchos_arm64 = build/kotlinxtras/sqlite/watchosArm64/lib \
-	/usr/local/kotlinxtras/libs/sqlite/watchosArm64/lib 
-compilerOpts.watchos_simulator_arm64 = -Ibuild/kotlinxtras/sqlite/watchosSimulatorArm64/include \
-	-I/usr/local/kotlinxtras/libs/sqlite/watchosSimulatorArm64/include 
-linkerOpts.watchos_simulator_arm64 = -Lbuild/kotlinxtras/sqlite/watchosSimulatorArm64/lib \
-	-L/usr/local/kotlinxtras/libs/sqlite/watchosSimulatorArm64/lib 
-libraryPaths.watchos_simulator_arm64 = build/kotlinxtras/sqlite/watchosSimulatorArm64/lib \
-	/usr/local/kotlinxtras/libs/sqlite/watchosSimulatorArm64/lib 
-compilerOpts.watchos_x64 = -Ibuild/kotlinxtras/sqlite/watchosX64/include \
-	-I/usr/local/kotlinxtras/libs/sqlite/watchosX64/include 
-linkerOpts.watchos_x64 = -Lbuild/kotlinxtras/sqlite/watchosX64/lib \
-	-L/usr/local/kotlinxtras/libs/sqlite/watchosX64/lib 
-libraryPaths.watchos_x64 = build/kotlinxtras/sqlite/watchosX64/lib \
-	/usr/local/kotlinxtras/libs/sqlite/watchosX64/lib 
-compilerOpts.watchos_x86 = -Ibuild/kotlinxtras/sqlite/watchosX86/include \
-	-I/usr/local/kotlinxtras/libs/sqlite/watchosX86/include 
-linkerOpts.watchos_x86 = -Lbuild/kotlinxtras/sqlite/watchosX86/lib \
-	-L/usr/local/kotlinxtras/libs/sqlite/watchosX86/lib 
-libraryPaths.watchos_x86 = build/kotlinxtras/sqlite/watchosX86/lib \
-	/usr/local/kotlinxtras/libs/sqlite/watchosX86/lib 
+compilerOpts.mingw_x64 = -Ibuild/kotlinxtras/sqlite/mingwX64/include \
+	-I/usr/local/kotlinxtras/libs/sqlite/mingwX64/include 
+linkerOpts.mingw_x64 = -Lbuild/kotlinxtras/sqlite/mingwX64/lib \
+	-L/usr/local/kotlinxtras/libs/sqlite/mingwX64/lib 
+libraryPaths.mingw_x64 = build/kotlinxtras/sqlite/mingwX64/lib \
+	/usr/local/kotlinxtras/libs/sqlite/mingwX64/lib 

@@ -20,12 +20,21 @@ kotlin {
 
 gradlePlugin {
   plugins {
+
     create("xtrasPlugin") {
       id = "org.danbrough.kotlinxtras.xtras"
       implementationClass = "org.danbrough.kotlinxtras.XtrasPlugin"
       displayName = "KotlinXtras plugin"
       description = "Cross compiled binaries for openssl,curl"
     }
+
+    create("propertiesPlugin") {
+      id = "org.danbrough.kotlinxtras.properties"
+      implementationClass = "org.danbrough.kotlinxtras.PropertiesPlugin"
+      displayName = "KotlinXtras properties plugin"
+      description = "Provides a gradle properties abstraction. (For internal use)"
+    }
+
 
     create("binaries") {
       id = "org.danbrough.kotlinxtras.binaries"
@@ -34,19 +43,18 @@ gradlePlugin {
       description = "Precompiled binaries for openssl,curl for compiling against."
     }
 
+    create("binariesProvider") {
+      id = "org.danbrough.kotlinxtras.binaries.provider"
+      implementationClass = "org.danbrough.kotlinxtras.binaries.BinariesProviderPlugin"
+      displayName = "KotlinXtras binaries provider plugin"
+      description = "Add support for packaging binaries into maven publications"
+    }
+
     create("sonatypePlugin") {
       id = "org.danbrough.kotlinxtras.sonatype"
       implementationClass = "org.danbrough.kotlinxtras.sonatype.SonatypePlugin"
       displayName = "Sonatype plugin"
       description = "Sonatype publishing support"
-    }
-
-
-    create("testPlugin") {
-      id = "org.danbrough.kotlinxtras.test"
-      implementationClass = "org.danbrough.kotlinxtras.TestPlugin"
-      displayName = "Test plugin"
-      description = "Test plugin support"
     }
   }
 }

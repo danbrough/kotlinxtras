@@ -1,7 +1,7 @@
 import BuildEnvironment.buildEnvironment
 import BuildEnvironment.declareNativeTargets
 import BuildEnvironment.hostTriplet
-import BuildEnvironment.konanDepsTask
+import BuildEnvironment.konanDepsTaskName
 import BuildEnvironment.platformName
 import KotlinXtras_gradle.KotlinXtras.configureBinarySupport
 import org.gradle.configurationcache.extensions.capitalized
@@ -12,10 +12,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 plugins {
   kotlin("multiplatform")
   `maven-publish`
-
-  //id("de.undercouch.download") version "5.2.1"
-
-
 }
 
 
@@ -74,7 +70,7 @@ fun configureTask(target: KonanTarget) =
 
 
     //to ensure the konan tools are available
-    dependsOn(target.konanDepsTask(project))
+    dependsOn(target.konanDepsTaskName)
 
 
     val srcDir = target.sqliteSrcDir(project)

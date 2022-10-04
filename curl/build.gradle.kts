@@ -1,7 +1,7 @@
 import BuildEnvironment.buildEnvironment
 import BuildEnvironment.declareNativeTargets
 import BuildEnvironment.hostTriplet
-import BuildEnvironment.konanDepsTask
+import BuildEnvironment.konanDepsTaskName
 import BuildEnvironment.platformName
 import Curl.curlPrefix
 import Curl.curlSrcDir
@@ -14,11 +14,16 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 plugins {
   kotlin("multiplatform")
   `maven-publish`
+  id("org.danbrough.kotlinxtras.binaries.provider") version "0.0.1-beta04"
+  id("org.danbrough.kotlinxtras.properties") version "0.0.1-beta04"
 }
 
 
+ProjectProperties.init(project)
+
 val curlGitDir = rootProject.file("repos/curl")
-val curlVersion = project.properties["curl.version"]?.toString() ?: throw Error("Gradle property curl.version not set")
+val curlVersion = project.properties["curl.version"]?.toString()
+  ?: throw Error("Gradle property curl.version not set")
 
 val KonanTarget.curlNotBuilt: Boolean
   get() = !curlPrefix(project).resolve("include/curl/curl.h").exists()
@@ -30,7 +35,7 @@ fun srcPrepare(target: KonanTarget): Exec =
     commandLine(
       BuildEnvironment.gitBinary, "clone", curlGitDir, srcDir
     )
-    onlyIf { target.curlNotBuilt && !srcDir.exists()}
+    onlyIf { target.curlNotBuilt && !srcDir.exists() }
 
   }
 
@@ -45,7 +50,7 @@ fun autoconfTask(target: KonanTarget) =
     val configureFile = srcDir.resolve("configure")
     outputs.file(configureFile)
     onlyIf {
-       target.curlNotBuilt
+      target.curlNotBuilt
     }
   }
 
@@ -56,7 +61,7 @@ fun configureTask(target: KonanTarget) =
 
 
     //to ensure the konan tools are available
-    dependsOn(target.konanDepsTask(project))
+    dependsOn(target.konanDepsTaskName)
     dependsOn(":openssl:build${target.platformName.capitalized()}")
 
     val srcDir = target.curlSrcDir(project)
@@ -139,6 +144,7 @@ kotlin {
     compilations["main"].apply {
       defaultSourceSet.dependsOn(posixMain)
       cinterops.create("curl") {
+
         packageName("libcurl")
         defFile("src/libcurl.def")
       }
@@ -178,3 +184,20 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>() {
 }
 
 project.configureBinarySupport(curlVersion)
+
+
+binariesProvider {
+
+}
+
+dependencies {
+  stuff("a:b:c")
+}
+
+tasks.create("test"){
+  doLast {
+    publishing.publications.all {
+      if (this !is MavenPublication) return@all
+    }
+  }
+}

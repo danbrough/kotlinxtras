@@ -41,12 +41,17 @@ object BuildEnvironment {
   private val buildPathEnvironment: String by ProjectProperties.createProperty("build.path")
 
 
+  /**
+   * Declares the kotlin native targets that are currently supported
+   */
   fun KotlinMultiplatformExtension.declareNativeTargets() {
     //comment out platforms you don't need
     androidNativeX86()
     androidNativeX64()
     androidNativeArm32()
     androidNativeArm64()
+
+    mingwX64()
 
     linuxX64()
     linuxArm64()
@@ -55,7 +60,9 @@ object BuildEnvironment {
     macosX64()
     macosArm64()
 
-    //iosArm32()
+    /*
+    //TODO
+    iosArm32()
     iosArm64()
     iosSimulatorArm64()
     iosX64()
@@ -69,10 +76,9 @@ object BuildEnvironment {
     watchosX64()
     watchosX86()
     watchosSimulatorArm64()
+     */
 
-    //supports openssl and curl but not sqlite.
-    //weird compilation errors
-    mingwX64()
+
 
   }
 
@@ -335,7 +341,8 @@ object BuildEnvironment {
   }
 
 
-  fun KonanTarget.konanDepsTask(project: Project): String = ":konandeps:$platformName"
+  val KonanTarget.konanDepsTaskName: String
+    get() = ":konandeps:$platformName"
 }
 
 

@@ -7,7 +7,6 @@ plugins {
   `maven-publish`
 }
 
-ProjectProperties.init(project)
 
 repositories {
   maven( "https://s01.oss.sonatype.org/content/groups/staging/")
@@ -37,6 +36,7 @@ object KotlinXtras {
 
 
   fun Project.configureBinarySupport(binariesVersion:String) {
+
     publishing {
       repositories {
         maven(rootProject.buildDir.resolve("m2")) {
@@ -44,7 +44,6 @@ object KotlinXtras {
         }
       }
     }
-
 
     afterEvaluate {
       val libName = name
