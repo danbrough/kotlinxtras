@@ -1,3 +1,4 @@
+
 import BuildEnvironment.buildEnvironment
 import BuildEnvironment.declareNativeTargets
 import BuildEnvironment.hostTriplet
@@ -13,19 +14,16 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 plugins {
   kotlin("multiplatform")
   `maven-publish`
-  id("org.danbrough.kotlinxtras.binaries.provider") version "0.0.1-beta04"
-  id("org.danbrough.kotlinxtras.properties") version "0.0.1-beta04"
+  id("org.danbrough.kotlinxtras.binaries.provider")
 }
 
 
 ProjectProperties.init(project)
 
+
 binariesProvider {
-  version = project.properties["curl.version"]?.toString()
-    ?: throw Error("Gradle property curl.version not set")
+  version = project.properties["curl.version"].toString()
 }
-
-
 
 val curlGitDir = rootProject.file("repos/curl")
 
@@ -84,8 +82,6 @@ fun configureTask(target: KonanTarget) =
       "--with-ssl=${target.opensslPrefix(project)}",
       "--with-ca-path=/etc/ssl/certs:/etc/security/cacerts:/etc/ca-certificates",
       "--prefix=${target.curlPrefix(project)}",
-
-
       )
     commandLine(args)
   }
@@ -154,12 +150,12 @@ kotlin {
       }
     }
   }
-
-
 }
 
 
-tasks.register("generateCInteropsDef") {
+val generateInteropsDefTaskName = "generateCInteropsDef"
+
+tasks.register(generateInteropsDefTaskName) {
   description = "Generate src/libcurl.def from src/libcurl_headers.h"
   inputs.file("src/libcurl_header.def")
   outputs.file("src/libcurl.def")
@@ -182,7 +178,7 @@ tasks.register("generateCInteropsDef") {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>() {
-  dependsOn("generateCInteropsDef")
+  dependsOn(generateInteropsDefTaskName)
   if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily)
     dependsOn("build${konanTarget.platformName.capitalized()}")
 }

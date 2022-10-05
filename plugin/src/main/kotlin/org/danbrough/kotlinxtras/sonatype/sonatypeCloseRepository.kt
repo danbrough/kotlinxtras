@@ -1,5 +1,6 @@
 package org.danbrough.kotlinxtras.sonatype
 
+import org.danbrough.kotlinxtras.sonatype.SonatypeExtension.Companion.SONATYPE_TASK_GROUP
 import org.gradle.api.Project
 import java.io.PrintWriter
 import java.net.HttpURLConnection
@@ -13,7 +14,7 @@ fun sonatypeCloseRepository(
   description: String,
   username: String,
   password: String,
-  urlBase: String = "https://s01.oss.sonatype.org"
+  urlBase: String
 ) {
   println("sonatypeOpenRepository: ")
   val url = "$urlBase/service/local/staging/profiles/$stagingProfileId/finish"
@@ -51,19 +52,19 @@ fun sonatypeCloseRepository(
 internal fun Project.createCloseRepoTask(extn:SonatypeExtension){
   project.tasks.create("sonatypeCloseRepository") {task->
     task.description =
-      "Closes the sonatype repository as specified by the ${SonatypeProperties.REPOSITORY_ID} gradle property"
+      "Closes the sonatype repository as specified by the ${SonatypeExtension.REPOSITORY_ID} gradle property"
     task.group = SONATYPE_TASK_GROUP
     task.doLast {_->
       if (extn.stagingProfileId.isBlank()) throw Error("sonatype.stagingProfileId not set")
       val description =
-        project.properties[SonatypeProperties.DESCRIPTION]?.toString() ?: ""
+        project.properties[SonatypeExtension.DESCRIPTION]?.toString() ?: ""
 
       sonatypeCloseRepository(
         extn.stagingProfileId,
-        extn.repoId,
+        extn.sonatypeRepositoryId,
         description,
-        extn.username,
-        extn.password,
+        extn.sonatypeUsername,
+        extn.sonatypePassword,
         extn.sonatypeUrlBase
       )
     }

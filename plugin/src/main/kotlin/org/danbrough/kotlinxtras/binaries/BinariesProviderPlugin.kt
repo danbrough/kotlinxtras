@@ -18,38 +18,33 @@ import java.io.File
 
 data class BinaryDependency(val name: String)
 
-open class BinariesProviderExtension {
+open class BinariesProviderExtension(private val project: Project) {
 
   //Base name for the publications
   //Will default to the projects name
-  lateinit var libName: String
+   var libName: String = project.name
 
   //KonanTargets for which to build binary archives for
   var supportedTargets = mutableListOf<KonanTarget>()
 
   //Where to store the archives.
   //Will default to $rootProject.buildDir/binaries/libName
-  var archivesDir: File? = null
+  var archivesDir: File = project.rootProject.buildDir.resolve("m2")
 
 
-  lateinit var version: String
+  var version: String = project.version.toString()
 
-  internal fun configure(project: Project) {
-    libName = project.name
-    version = project.version?.toString() ?: "unspecified"
-  }
 }
 
 class BinariesProviderPlugin : Plugin<Project> {
   override fun apply(targetProject: Project) {
 
+    targetProject.pluginManager.apply("org.danbrough.kotlinxtras.properties")
+
     val isMacHost = System.getProperty("os.name").startsWith("Mac")
 
     val extn =
-      targetProject.extensions.create("binariesProvider", BinariesProviderExtension::class.java)
-        .also {
-          it.configure(targetProject)
-        }
+      targetProject.extensions.create("binariesProvider", BinariesProviderExtension::class.java,targetProject)
 
     targetProject.afterEvaluate { project ->
 

@@ -15,7 +15,6 @@ kotlin {
 }
 
 
-
 gradlePlugin {
   plugins {
 
@@ -74,8 +73,6 @@ val sourcesJar by tasks.registering(Jar::class) {
 }
 
 publishing {
-
-
   publications.all {
     if (this !is MavenPublication) return@all
     if (project.hasProperty("publishDocs"))

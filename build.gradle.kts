@@ -5,8 +5,13 @@ plugins {
   `maven-publish`
   signing
   id("org.jetbrains.dokka") apply false
+  id("org.danbrough.kotlinxtras.properties")
+  id("org.danbrough.kotlinxtras.sonatype")
+
 }
 
+//val projectProperties = project.projectProperties
+ProjectProperties.init(project)
 
 group = ProjectProperties.projectGroup
 version = ProjectProperties.buildVersionName
@@ -15,7 +20,7 @@ version = ProjectProperties.buildVersionName
 allprojects {
 
   repositories {
-    maven( "https://s01.oss.sonatype.org/content/groups/staging/")
+    maven("https://s01.oss.sonatype.org/content/groups/staging/")
     mavenCentral()
   }
 
@@ -68,10 +73,10 @@ subprojects {
         maven(rootProject.buildDir.resolve("m2")) {
           name = "M2"
         }
-        val sonatypeRepoId = project.properties["sonatypeRepoId"]!!.toString()
-        maven("https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/$sonatypeRepoId"){
+        val sonatypeRepositoryId = project.properties["sonatypeRepositoryId"]!!.toString()
+        maven("https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/$sonatypeRepositoryId") {
           name = "SonaType"
-          credentials{
+          credentials {
             username = project.properties["sonatypeUsername"]!!.toString()
             password = project.properties["sonatypePassword"]!!.toString()
           }

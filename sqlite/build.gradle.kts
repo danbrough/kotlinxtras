@@ -1,4 +1,3 @@
-
 import BuildEnvironment.buildEnvironment
 import BuildEnvironment.declareNativeTargets
 import BuildEnvironment.hostTriplet
@@ -12,14 +11,17 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 plugins {
   kotlin("multiplatform")
   `maven-publish`
-  id("org.danbrough.kotlinxtras.binaries.provider") version "0.0.1-beta04"
-  id("org.danbrough.kotlinxtras.properties") version "0.0.1-beta04"
+  id("org.danbrough.kotlinxtras.binaries.provider")
 }
 
+group = "org.danbrough.kotlinxtras.sqlite"
 
 val sqliteGitDir = rootProject.file("repos/sqlite")
-val sqliteVersion = project.properties["sqlite.version"]?.toString()
-  ?: throw Error("Gradle property sqlite.version not set")
+
+binariesProvider {
+  version = project.properties["sqlite.version"]?.toString()
+    ?: throw Error("Gradle property sqlite.version not set")
+}
 
 fun KonanTarget.sqliteSrcDir(project: Project): java.io.File =
   project.buildDir.resolve("sqlite/$platformName/${project.properties["sqlite.version"]}")
@@ -44,7 +46,7 @@ fun srcPrepare(target: KonanTarget): Exec =
 
 val downloadSrcTask by tasks.creating(Download::class.java) {
   src(project.properties["sqlite.source"])
-  dest(buildDir.resolve("sqlite").also{
+  dest(buildDir.resolve("sqlite").also {
     if (!it.exists()) it.mkdirs()
   })
   overwrite(false)
@@ -54,7 +56,7 @@ fun srcPrepareFromDownload(target: KonanTarget): Copy =
   tasks.create<Copy>("srcPrepareFromDownload${target.platformName.capitalize()}") {
     dependsOn(downloadSrcTask)
     val srcDir = target.sqliteSrcDir(project)
-    from(tarTree(resources.gzip(downloadSrcTask.outputFiles.first()))){
+    from(tarTree(resources.gzip(downloadSrcTask.outputFiles.first()))) {
       eachFile {
         path = path.substring(relativePath.segments[0].length)
       }
@@ -62,7 +64,6 @@ fun srcPrepareFromDownload(target: KonanTarget): Copy =
     into(srcDir)
     onlyIf { target.sqliteNotBuilt }
   }
-
 
 
 fun configureTask(target: KonanTarget) =

@@ -1,5 +1,6 @@
 package org.danbrough.kotlinxtras.sonatype
 
+import org.danbrough.kotlinxtras.sonatype.SonatypeExtension.Companion.SONATYPE_TASK_GROUP
 import org.gradle.api.Project
 import org.w3c.dom.Element
 import java.io.InputStream
@@ -16,7 +17,7 @@ fun sonatypeOpenRepository(
   description: String,
   username: String,
   password: String,
-  urlBase: String = "https://s01.oss.sonatype.org"
+  urlBase: String
 ): PromoteRequestResponse {
   println("sonatypeOpenRepository: ")
   val url = "$urlBase/service/local/staging/profiles/$stagingProfileId/start"
@@ -86,13 +87,13 @@ internal  fun Project.createOpenRepoTask(extn:SonatypeExtension){
     task.doLast {_->
       if (extn.stagingProfileId.isBlank()) throw Error("sonatype.stagingProfileId not set")
       val description =
-        project.properties[SonatypeProperties.DESCRIPTION]?.toString() ?: ""
+        project.properties[SonatypeExtension.DESCRIPTION]?.toString() ?: ""
 
       val response = sonatypeOpenRepository(
         extn.stagingProfileId,
         description,
-        extn.username,
-        extn.password,
+        extn.sonatypeUsername,
+        extn.sonatypePassword,
         extn.sonatypeUrlBase
       )
       project.logger.info("Received response: $response")
@@ -102,21 +103,21 @@ internal  fun Project.createOpenRepoTask(extn:SonatypeExtension){
         var writeRepoDescription = false
         project.rootProject.file("gradle.properties").printWriter().use {output->
           lines.forEach {
-            if (it.startsWith(SonatypeProperties.REPOSITORY_ID)){
+            if (it.startsWith(SonatypeExtension.REPOSITORY_ID)){
               wroteRepoId = true
-              output.println("${SonatypeProperties.REPOSITORY_ID}=${response.repositoryId}")
-            } else if (it.startsWith(SonatypeProperties.DESCRIPTION)){
+              output.println("${SonatypeExtension.REPOSITORY_ID}=${response.repositoryId}")
+            } else if (it.startsWith(SonatypeExtension.DESCRIPTION)){
               writeRepoDescription = true
-              output.println("${SonatypeProperties.DESCRIPTION}=${response.description}")
+              output.println("${SonatypeExtension.DESCRIPTION}=${response.description}")
             } else {
               output.println(it)
             }
           }
           if (!wroteRepoId){
-            output.println("${SonatypeProperties.REPOSITORY_ID}=${response.repositoryId}")
+            output.println("${SonatypeExtension.REPOSITORY_ID}=${response.repositoryId}")
           }
           if (!writeRepoDescription){
-            output.println("${SonatypeProperties.DESCRIPTION}=${response.description}")
+            output.println("${SonatypeExtension.DESCRIPTION}=${response.description}")
           }
         }
       }

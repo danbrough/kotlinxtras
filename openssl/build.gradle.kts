@@ -16,11 +16,13 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 plugins {
   kotlin("multiplatform")
   `maven-publish`
-  id("org.danbrough.kotlinxtras.binaries.provider") version "0.0.1-beta04"
-  id("org.danbrough.kotlinxtras.properties") version "0.0.1-beta04"
+  id("org.danbrough.kotlinxtras.binaries.provider")
 }
 
-val openSSLVersion = project.properties["openssl.version"]?.toString() ?: throw Error("Gradle property openssl.version not set")
+
+binariesProvider {
+  version = project.properties["openssl.version"].toString()
+}
 
 val KonanTarget.openSSLNotBuilt: Boolean
   get() = !opensslPrefix(project).resolve("include/openssl/ssl.h").exists()
