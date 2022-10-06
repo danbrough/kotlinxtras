@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 
 plugins {
   kotlin("multiplatform")
@@ -35,13 +36,21 @@ kotlin {
 
   targets.withType<KotlinNativeTarget>().all {
 
+
     compilations["main"].apply {
       defaultSourceSet.dependsOn(nativeMain)
     }
 
     binaries {
+
       executable("demo1") {
         entryPoint = "demo1.main"
+        linkTask.doFirst {
+          val curlDir = File("/usr/local/kotlinxtras/lib/curl/")
+          if (!curlDir.exists())
+            project.logger.warn("""$curlDir doesn't exist. Have you built curl?. 
+              |Run ./gradlew curl:buildLinuxX64 in /usr/local/kotlinxtras or try the standalone demo""".trimMargin())
+        }
       }
     }
   }
