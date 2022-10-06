@@ -35,13 +35,6 @@ tasks.withType(JavaCompile::class) {
 gradlePlugin {
   plugins {
 
-    create("xtrasPlugin") {
-      id = "org.danbrough.kotlinxtras.xtras"
-      implementationClass = "org.danbrough.kotlinxtras.XtrasPlugin"
-      displayName = "KotlinXtras plugin"
-      description = "Cross compiled binaries for openssl,curl"
-    }
-
     create("propertiesPlugin") {
       id = "org.danbrough.kotlinxtras.properties"
       implementationClass = "org.danbrough.kotlinxtras.PropertiesPlugin"
@@ -50,15 +43,15 @@ gradlePlugin {
     }
 
 
-    create("binaries") {
-      id = "org.danbrough.kotlinxtras.binaries"
-      implementationClass = "org.danbrough.kotlinxtras.binaries.BinariesPlugin"
-      displayName = "KotlinXtras binaries plugin"
+    create("binariesConsumer") {
+      id = "org.danbrough.kotlinxtras.consumer"
+      implementationClass = "org.danbrough.kotlinxtras.binaries.BinariesConsumerPlugin"
+      displayName = "KotlinXtras binaries consumer plugin"
       description = "Precompiled binaries for openssl,curl for compiling against."
     }
 
     create("binariesProvider") {
-      id = "org.danbrough.kotlinxtras.binaries.provider"
+      id = "org.danbrough.kotlinxtras.provider"
       implementationClass = "org.danbrough.kotlinxtras.binaries.BinariesProviderPlugin"
       displayName = "KotlinXtras binaries provider plugin"
       description = "Add support for packaging binaries into maven publications"

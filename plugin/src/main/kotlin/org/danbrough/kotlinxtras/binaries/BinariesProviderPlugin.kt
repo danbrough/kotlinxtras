@@ -1,5 +1,6 @@
 package org.danbrough.kotlinxtras.binaries
 
+import org.danbrough.kotlinxtras.PropertiesPlugin
 import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.xtrasTaskGroup
 import org.gradle.api.Plugin
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.targets
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
-data class BinaryDependency(val name: String)
+
 
 open class BinariesProviderExtension(private val project: Project) {
 
@@ -29,7 +30,7 @@ open class BinariesProviderExtension(private val project: Project) {
 
   //Where to store the archives.
   //Will default to $rootProject.buildDir/binaries/libName
-  var archivesDir: File = project.rootProject.buildDir.resolve("m2")
+  var archivesDir: File = project.rootProject.buildDir.resolve("binaries")
 
 
   var version: String = project.version.toString()
@@ -39,7 +40,7 @@ open class BinariesProviderExtension(private val project: Project) {
 class BinariesProviderPlugin : Plugin<Project> {
   override fun apply(targetProject: Project) {
 
-    targetProject.pluginManager.apply("org.danbrough.kotlinxtras.properties")
+    targetProject.pluginManager.apply(PropertiesPlugin::class.java)
 
     val isMacHost = System.getProperty("os.name").startsWith("Mac")
 
@@ -50,8 +51,7 @@ class BinariesProviderPlugin : Plugin<Project> {
 
       val libName = extn.libName
 
-      val archivesDir =
-        extn.archivesDir ?: project.rootProject.buildDir.resolve("binaries/$libName")
+      val archivesDir = extn.archivesDir
 
       val supportedTargets =
         if (extn.supportedTargets.isEmpty())

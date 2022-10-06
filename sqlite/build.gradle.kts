@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 plugins {
   kotlin("multiplatform")
   `maven-publish`
-  id("org.danbrough.kotlinxtras.binaries.provider")
+  id("org.danbrough.kotlinxtras.provider")
 }
 
 group = "org.danbrough.kotlinxtras.sqlite"
