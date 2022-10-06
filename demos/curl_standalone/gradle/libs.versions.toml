@@ -2,7 +2,7 @@
 
 [plugins]
 
-org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version = "1.7.10" }
+org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 
 org-danbrough-kotlinxtras-consumer = { id = "org.danbrough.kotlinxtras.consumer", version.ref = "xtras" }
 

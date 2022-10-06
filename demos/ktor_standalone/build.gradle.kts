@@ -1,32 +1,43 @@
-import org.danbrough.kotlinxtras.configurePrecompiledBinaries
-import org.danbrough.kotlinxtras.Repositories
+
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
 
 plugins {
   kotlin("multiplatform")
-  id("org.danbrough.kotlinxtras.xtras")
+  //id("org.danbrough.kotlinxtras.consumer") version "0.0.1-beta04"
 }
+
 
 
 repositories {
-  maven(Repositories.SONA_STAGING)
+  maven("../../build/m2")
+  maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
 }
+//
+//binaries {
+//  enableCurl()
+//  enableOpenSSL()
+//}
 
 
 kotlin {
-
 
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
   macosX64()
   macosArm64()
-  androidNativeArm64()
-  androidNativeArm32()
+
+  /** //uncomment if you want android support
   androidNativeX86()
   androidNativeX64()
+  androidNativeArm32()
+  androidNativeArm64()
 
+   **/
+
+  //add your other apple targets
 
 
   val commonMain by sourceSets.getting {
@@ -56,17 +67,5 @@ kotlin {
     }
   }
 }
-
-xtras {
-  enableCurl()
-  enableOpenSSL()
-}
-
-
-afterEvaluate{
-  configurePrecompiledBinaries()
-}
-
-
 
 
