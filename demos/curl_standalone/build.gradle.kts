@@ -1,4 +1,3 @@
-import org.danbrough.kotlinxtras.binaries.configureBinaries
 import org.danbrough.kotlinxtras.platformName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
