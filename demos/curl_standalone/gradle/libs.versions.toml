@@ -8,12 +8,12 @@ xtras = "0.0.1-beta04"
 
 org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version = "1.7.10" }
 
-org-danbrough-kotlinxtras-binaries = { id = "org.danbrough.kotlinxtras.binaries", version.ref = "xtras" }
+org-danbrough-kotlinxtras-consumer = { id = "org.danbrough.kotlinxtras.consumer", version.ref = "xtras" }
 
 
 [libraries]
 
-klog = "org.danbrough:klog:0.0.1-beta08"
+klog = "org.danbrough:klog:0.0.1"
 
 kotlinx-coroutines-core = "org.danbrough.kotlinx:kotlinx-coroutines-core:1.6.4"
 

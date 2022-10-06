@@ -11,7 +11,7 @@ xtras = "0.0.1-beta04"
 
 [libraries]
 
-klog = "org.danbrough:klog:0.0.1-beta08"
+klog = "org.danbrough:klog:0.0.1"
 
 kotlinx-coroutines-core = "org.danbrough.kotlinx:kotlinx-coroutines-core:1.6.4"
 
