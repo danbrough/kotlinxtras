@@ -168,7 +168,7 @@ private fun Project.configureBinaries() {
       //  println("BIN DEP: $binDep")
         konanTargets.forEach { target ->
           val binDepLib =
-            "${binDep.group}:${binDep.name}${target.platformName.capitalized()}Binaries:${binDep.version}"
+            "${binDep.group}.${binDep.name}:${binDep.name}${target.platformName.capitalized()}Binaries:${binDep.version}"
           project.logger.log(LogLevel.INFO, "Adding binary support with $binDepLib")
           preCompiled(binDepLib)
         }
