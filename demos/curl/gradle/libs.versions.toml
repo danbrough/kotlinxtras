@@ -7,13 +7,15 @@ org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform"
 [versions]
 
 kotlin = "1.7.20"
+xtras = "0.0.1-beta04"
 
 [libraries]
 
-klog = "org.danbrough:klog:0.0.1-beta07"
+klog = "org.danbrough:klog:0.0.1-beta08"
 
 kotlinx-coroutines-core = "org.danbrough.kotlinx:kotlinx-coroutines-core:1.6.4"
 
 kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }
 
-curl = "org.danbrough.kotlinxtras:curl:_"
+
+curl  = { group = "org.danbrough.kotlinxtras", name = "curl", version.ref = "xtras" }
