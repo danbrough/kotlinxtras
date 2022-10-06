@@ -9,11 +9,28 @@ plugins {
 
 kotlin {
   dependencies {
+    implementation(gradleApi())
     implementation(gradleKotlinDsl())
     implementation(kotlin("gradle-plugin"))
   }
+
+/*  jvmToolchain {
+    check(this is JavaToolchainSpec)
+    languageVersion.set(JavaLanguageVersion.of())
+  }*/
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class).all {
+
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
+}
+
+tasks.withType(JavaCompile::class) {
+  sourceCompatibility = JavaVersion.VERSION_1_8.toString()
+  targetCompatibility = JavaVersion.VERSION_1_8.toString()
+}
 
 gradlePlugin {
   plugins {

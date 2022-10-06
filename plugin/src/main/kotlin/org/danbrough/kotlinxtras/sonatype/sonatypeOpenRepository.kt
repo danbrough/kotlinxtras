@@ -19,7 +19,6 @@ fun sonatypeOpenRepository(
   password: String,
   urlBase: String
 ): PromoteRequestResponse {
-  println("sonatypeOpenRepository: ")
   val url = "$urlBase/service/local/staging/profiles/$stagingProfileId/start"
   URL(url).openConnection().apply {
     this as HttpURLConnection
@@ -81,16 +80,16 @@ internal  fun Project.createOpenRepoTask(extn:SonatypeExtension){
     task.description =
       """
         Open a new sonatype repository and store the repository id in gradle.properties.
-        Specify the repository description with -PsonatypeDescription="..".
+        Specify the repository description with -P${SonatypeExtension.DESCRIPTION}="..".
       """.trimMargin()
     task.group = SONATYPE_TASK_GROUP
     task.doLast {_->
-      if (extn.stagingProfileId.isBlank()) throw Error("sonatype.stagingProfileId not set")
+      if (extn.sonatypeProfileId.isBlank()) throw Error("sonatype.stagingProfileId not set")
       val description =
         project.properties[SonatypeExtension.DESCRIPTION]?.toString() ?: ""
 
       val response = sonatypeOpenRepository(
-        extn.stagingProfileId,
+        extn.sonatypeProfileId,
         description,
         extn.sonatypeUsername,
         extn.sonatypePassword,

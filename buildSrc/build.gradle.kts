@@ -16,7 +16,7 @@ val props = Properties().apply {
 val kotlinVersion: String = props.getProperty("version.kotlin")
 
 kotlinDslPluginOptions {
-  jvmTarget.set(provider { java.targetCompatibility.toString() })
+  jvmTarget.set( "11" )
 }
 
 kotlin {
@@ -25,7 +25,6 @@ kotlin {
     check(this is JavaToolchainSpec)
     languageVersion.set(JavaLanguageVersion.of(11))
   }
-
 
   sourceSets.all {
     languageSettings {

@@ -1,9 +1,9 @@
-import   org.gradle.api.tasks.testing.logging.TestLogEvent
+
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
   kotlin("multiplatform") apply false
   `maven-publish`
-  signing
   id("org.jetbrains.dokka") apply false
   id("org.danbrough.kotlinxtras.properties")
   id("org.danbrough.kotlinxtras.sonatype")
@@ -16,24 +16,25 @@ ProjectProperties.init(project)
 group = ProjectProperties.projectGroup
 version = ProjectProperties.buildVersionName
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class).all {
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
+}
+
+tasks.withType(JavaCompile::class) {
+  sourceCompatibility = JavaVersion.VERSION_1_8.toString()
+  targetCompatibility = JavaVersion.VERSION_1_8.toString()
+}
+
+
 
 allprojects {
-
   repositories {
     maven("https://s01.oss.sonatype.org/content/groups/staging/")
     mavenCentral()
   }
 
-  tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
-    kotlinOptions {
-      jvmTarget = ProjectProperties.KOTLIN_JVM_VERSION
-    }
-  }
-
-  tasks.withType<JavaCompile>().all {
-    sourceCompatibility = JavaVersion.VERSION_11.toString()
-    targetCompatibility = JavaVersion.VERSION_11.toString()
-  }
 
   tasks.withType<AbstractTestTask>() {
     testLogging {
@@ -51,11 +52,8 @@ allprojects {
 }
 
 
-
 subprojects {
 
-
-  apply<SigningPlugin>()
 
   afterEvaluate {
 
@@ -63,34 +61,17 @@ subprojects {
     if (version == "unspecified")
       version = ProjectProperties.buildVersionName
 
-    extensions.findByType(PublishingExtension::class) ?: run {
-      //println("PROJECT $name has no publishing")
-      return@afterEvaluate
-    }
+    extensions.findByType(PublishingExtension::class) ?: return@afterEvaluate
 
     publishing {
       repositories {
         maven(rootProject.buildDir.resolve("m2")) {
           name = "M2"
         }
-        val sonatypeRepositoryId = project.properties["sonatypeRepositoryId"]!!.toString()
-        maven("https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/$sonatypeRepositoryId") {
-          name = "SonaType"
-          credentials {
-            username = project.properties["sonatypeUsername"]!!.toString()
-            password = project.properties["sonatypePassword"]!!.toString()
-          }
-        }
       }
 
       publications.all {
         if (this !is MavenPublication) return@all
-
-        if (project.hasProperty("signPublications"))
-          signing {
-            sign(this@all)
-          }
-
 
         pom {
 
