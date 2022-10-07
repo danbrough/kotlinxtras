@@ -21,9 +21,7 @@ object BuildEnvironment {
   val buildCacheDir: File by ProjectProperties.createProperty("build.cache", "build/cache")
 
 
-
-
-  val hostIsMac:Boolean by lazy {
+  val hostIsMac: Boolean by lazy {
     System.getProperty("os.name").startsWith("Mac")
   }
 
@@ -43,12 +41,17 @@ object BuildEnvironment {
   private val buildPathEnvironment: String by ProjectProperties.createProperty("build.path")
 
 
+  /**
+   * Declares the kotlin native targets that are currently supported
+   */
   fun KotlinMultiplatformExtension.declareNativeTargets() {
     //comment out platforms you don't need
     androidNativeX86()
     androidNativeX64()
     androidNativeArm32()
     androidNativeArm64()
+
+    mingwX64()
 
     linuxX64()
     linuxArm64()
@@ -57,7 +60,25 @@ object BuildEnvironment {
     macosX64()
     macosArm64()
 
-    //TODO mingwX64()
+    /*
+    //TODO
+    iosArm32()
+    iosArm64()
+    iosSimulatorArm64()
+    iosX64()
+
+    tvosArm64()
+    tvosX64()
+    tvosSimulatorArm64()
+
+    watchosArm32()
+    watchosArm64()
+    watchosX64()
+    watchosX86()
+    watchosSimulatorArm64()
+     */
+
+
 
   }
 
@@ -87,27 +108,25 @@ object BuildEnvironment {
       KonanTarget.ANDROID_X64 -> "x86_64-linux-android"
       KonanTarget.ANDROID_X86 -> "i686-linux-android"
       KonanTarget.MACOS_X64 -> "x86_64-apple-darwin"
+
       KonanTarget.MACOS_ARM64 -> "aarch64-apple-darwin"
       KonanTarget.MINGW_X64 -> "x86_64-w64-mingw32"
-/*      KonanTarget.IOS_ARM32 -> TODO()
-      KonanTarget.IOS_ARM64 -> TODO()
-      KonanTarget.IOS_SIMULATOR_ARM64 -> TODO()
-      KonanTarget.IOS_X64 -> TODO()
-      KonanTarget.LINUX_ARM32_HFP -> TODO()
-      KonanTarget.LINUX_MIPS32 -> TODO()
-      KonanTarget.LINUX_MIPSEL32 -> TODO()
+      KonanTarget.MINGW_X86 -> "x86-w64-mingw32"
+      KonanTarget.IOS_ARM32 -> "arm32-apple-darwin"
+      KonanTarget.IOS_ARM64 -> "aarch64-ios-darwin"
+      KonanTarget.IOS_SIMULATOR_ARM64 -> "aarch64-iossimulator-darwin"
+      KonanTarget.IOS_X64 -> "x86_64-ios-darwin"
 
 
-      KonanTarget.MINGW_X86 -> TODO()
-      KonanTarget.TVOS_ARM64 -> TODO()
-      KonanTarget.TVOS_SIMULATOR_ARM64 -> TODO()
-      KonanTarget.TVOS_X64 -> TODO()
+      KonanTarget.TVOS_ARM64 -> "aarch64-tvos-darwin"
+      KonanTarget.TVOS_SIMULATOR_ARM64 -> "aarch64-tvossimulator-darwin"
+      KonanTarget.TVOS_X64 -> "x86_64-tvos-darwin"
       KonanTarget.WASM32 -> TODO()
-      KonanTarget.WATCHOS_ARM32 -> TODO()
-      KonanTarget.WATCHOS_ARM64 -> TODO()
-      KonanTarget.WATCHOS_SIMULATOR_ARM64 -> TODO()
-      KonanTarget.WATCHOS_X64 -> TODO()
-      KonanTarget.WATCHOS_X86 -> TODO()*/
+      KonanTarget.WATCHOS_ARM32 -> "arm32-watchos-darwin"
+      KonanTarget.WATCHOS_ARM64 -> "aarch64-watchos-darwin"
+      KonanTarget.WATCHOS_SIMULATOR_ARM64 -> "aarch64-watchossimulator-darwin"
+      KonanTarget.WATCHOS_X64 -> "x86_64-watchos-darwin"
+      KonanTarget.WATCHOS_X86 -> "x86-watchos-darwin"
       else -> TODO("Add hostTriple for $this")
 
     }
@@ -165,25 +184,6 @@ object BuildEnvironment {
     } ?: throw Error("Unknown build host: $osName:$osArch")
   }
 
-  val nativeTargets: List<KonanTarget>
-    get() =
-      if (ProjectProperties.IDE_ACTIVE)
-        listOf(hostTarget, KonanTarget.ANDROID_X86)
-      else
-        listOf(
-          KonanTarget.LINUX_X64,
-          KonanTarget.LINUX_ARM64,
-          KonanTarget.LINUX_ARM32_HFP,
-//          KonanTarget.MINGW_X64,
-//          KonanTarget.MACOS_ARM64,
-//          KonanTarget.MACOS_X64,
-//          KonanTarget.ANDROID_ARM64,
-//          KonanTarget.ANDROID_ARM32,
-          KonanTarget.ANDROID_X64,
-          KonanTarget.ANDROID_X86,
-        )
-
-
   fun KotlinMultiplatformExtension.registerTarget(
     konanTarget: KonanTarget, conf: KotlinNativeTarget.() -> Unit = {}
   ): KotlinNativeTarget {
@@ -194,7 +194,6 @@ object BuildEnvironment {
   }
 
   val androidToolchainDir by lazy {
-    //androidNdkDir.resolve("toolchains/llvm/prebuilt/linux-x86_64").also {
     androidNdkDir.also {
       assert(it.exists()) {
         "Failed to locate ${it.absolutePath}"
@@ -202,12 +201,7 @@ object BuildEnvironment {
     }
   }
 
-  /*  fun KotlinMultiplatformExtension.registerNativeTargets(conf: KotlinNativeTarget.() -> Unit) {
-      nativeTargets.forEach {
-        registerTarget(it, conf)
-      }
-    }
-    */
+
   val clangBinDir by lazy {
     File("$konanDir/dependencies").listFiles()?.first {
       it.isDirectory && it.name.contains("essentials")
@@ -296,7 +290,14 @@ object BuildEnvironment {
 
 
       KonanTarget.MINGW_X64 -> {
+//        this["CC"] = "x86_64-w64-mingw32-gcc"
+//        this["CXX"] = "x86_64-w64-mingw32-g++"
 
+//        val clangArgs =
+//          "--target=$hostTriplet --gcc-toolchain=$konanDir/dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32" +
+//              " --sysroot=$konanDir/dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32/x86_64-w64-mingw32"
+//        this["CC"] = "clang $clangArgs"
+//        this["CXX"] = "clang++ $clangArgs"
         /*  export HOST=x86_64-w64-mingw32
   export GOOS=windows
   export CFLAGS="$CFLAGS -pthread"
@@ -320,8 +321,8 @@ object BuildEnvironment {
         val toolChain = "$konanDir/dependencies/msys2-mingw-w64-x86_64-1"
         this["PATH"] = "$toolChain/bin:${this["PATH"]}"*/
 
-        this["CC"] = "x86_64-w64-mingw32-gcc"
-        this["CXX"] = "x86_64-w64-mingw32-g++"
+        //this["CC"] = "x86_64-w64-mingw32-gcc"
+        //this["CXX"] = "x86_64-w64-mingw32-g++"
 
 
       }
@@ -331,7 +332,7 @@ object BuildEnvironment {
         this["CC"] = "$hostTriplet${androidNdkApiVersion}-clang"
         this["CXX"] = "$hostTriplet${androidNdkApiVersion}-clang++"
         this["AR"] = "llvm-ar"
-        this["RANLIB"] = "llvm-ranlib"
+        this["RANLIB"] = "ranlib"
       }
     }
 
@@ -340,7 +341,8 @@ object BuildEnvironment {
   }
 
 
-  fun KonanTarget.konanDepsTask(project: Project): String = ":konandeps:$platformName"
+  val KonanTarget.konanDepsTaskName: String
+    get() = ":konandeps:$platformName"
 }
 
 

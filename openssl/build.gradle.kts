@@ -1,14 +1,14 @@
+
 import BuildEnvironment.buildEnvironment
-import BuildEnvironment.konanDepsTask
+import BuildEnvironment.declareNativeTargets
 import BuildEnvironment.hostTriplet
+import BuildEnvironment.konanDepsTaskName
 import BuildEnvironment.platformName
 import OpenSSL.opensslPlatform
 import OpenSSL.opensslPrefix
 import OpenSSL.opensslSrcDir
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import BuildEnvironment.declareNativeTargets
-import KotlinXtras_gradle.KotlinXtras.configureBinarySupport
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -16,9 +16,13 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 plugins {
   kotlin("multiplatform")
   `maven-publish`
+  id("org.danbrough.kotlinxtras.provider")
 }
 
-val openSSLVersion = project.properties["openssl.version"]?.toString() ?: throw Error("Gradle property openssl.version not set")
+
+binariesProvider {
+  version = project.properties["openssl.version"].toString()
+}
 
 val KonanTarget.openSSLNotBuilt: Boolean
   get() = !opensslPrefix(project).resolve("include/openssl/ssl.h").exists()
@@ -44,6 +48,7 @@ tasks.register("generateCInteropsDef") {
       }
     }
   }
+
 }
 
 fun srcPrepare(target: KonanTarget) =
@@ -88,7 +93,7 @@ fun buildTask(target: KonanTarget) =
 
     val installDir = target.opensslPrefix(project)
 
-    dependsOn(target.konanDepsTask(project))
+    dependsOn(target.konanDepsTaskName)
 
     workingDir(target.opensslSrcDir(project))
 
@@ -140,6 +145,9 @@ kotlin {
 
 tasks.withType<CInteropProcess>() {
   dependsOn("generateCInteropsDef")
+  if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily)
+    dependsOn("build${konanTarget.platformName.capitalized()}")
 }
 
-project.configureBinarySupport(openSSLVersion)
+
+

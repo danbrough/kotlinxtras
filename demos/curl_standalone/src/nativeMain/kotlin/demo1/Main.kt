@@ -20,7 +20,6 @@ fun main(args: Array<String>) {
 
   val url = if (args.isEmpty()) "https://example.com" else args[0]
 
-
   log.debug("connecting to $url ..")
 
   memScoped {

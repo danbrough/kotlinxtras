@@ -1,6 +1,6 @@
 [submodule "repos/ktor"]
 	path = repos/ktor
-	url = git@github.com:/danbrough/ktor.git
+	url = https://github.com/danbrough/ktor.git
 	branch = danbrough-2.1.0
 
 [submodule "repos/curl"]
@@ -8,19 +8,33 @@
 	url = https://github.com/curl/curl.git
 [submodule "repos/kotlinx.serialization"]
 	path = repos/kotlinx.serialization
-	url = git@github.com:danbrough/kotlinx.serialization.git
+	url = https://github.com/danbrough/kotlinx.serialization.git
 	branch = danbroid-v1.4.0
 [submodule "repos/kotlinx.atomicfu"]
 	path = repos/kotlinx.atomicfu
-	url = git@github.com:danbrough/kotlinx.atomicfu.git
+	url = https://github.com/danbrough/kotlinx.atomicfu.git
 	branch = dan-0.17.3
 [submodule "repos/kotlinx.coroutines"]
 	path = repos/kotlinx.coroutines
-	url = git@github.com:danbrough/kotlinx.coroutines.git
-	branch = danbroid-1.6.4
+	url = https://github.com/danbrough/kotlinx.coroutines.git
+	branch = danbrough-1.6.3-mt
 [submodule "repos/openssl"]
 	path = repos/openssl
-	url = git@github.com:danbrough/openssl.git
+	url = https://github.com/danbrough/openssl.git
 [submodule "repos/kotlinx.html"]
 	path = repos/kotlinx.html
-	url = git@github.com:danbrough/kotlinx.html.git
+	url = https://github.com/danbrough/kotlinx.html.git
+[submodule "repos/sqlite"]
+	path = repos/sqlite
+	url = https://github.com/sqlite/sqlite.git
+[submodule "repos/sqldelight"]
+	path = repos/sqldelight
+	url = https://github.com/danbrough/sqldelight.git
+	branch = danbrough-2.0.0-alpha03
+[submodule "repos/stately"]
+	path = repos/stately
+	url = https://github.com/danbrough/Stately.git
+[submodule "repos/sqliter"]
+	path = repos/sqliter
+	url = https://github.com/danbrough/SQLiter.git
+	branch = remotes/origin/danbrough-1.2.1

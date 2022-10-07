@@ -1,11 +1,11 @@
+
 import BuildEnvironment.buildEnvironment
 import BuildEnvironment.declareNativeTargets
 import BuildEnvironment.hostTriplet
-import BuildEnvironment.konanDepsTask
+import BuildEnvironment.konanDepsTaskName
 import BuildEnvironment.platformName
 import Curl.curlPrefix
 import Curl.curlSrcDir
-import KotlinXtras_gradle.KotlinXtras.configureBinarySupport
 import OpenSSL.opensslPrefix
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -14,11 +14,18 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 plugins {
   kotlin("multiplatform")
   `maven-publish`
+  id("org.danbrough.kotlinxtras.provider")
 }
 
 
+ProjectProperties.init(project)
+
+
+binariesProvider {
+  version = project.properties["curl.version"].toString()
+}
+
 val curlGitDir = rootProject.file("repos/curl")
-val curlVersion = project.properties["curl.version"]?.toString() ?: throw Error("Gradle property curl.version not set")
 
 val KonanTarget.curlNotBuilt: Boolean
   get() = !curlPrefix(project).resolve("include/curl/curl.h").exists()
@@ -30,7 +37,7 @@ fun srcPrepare(target: KonanTarget): Exec =
     commandLine(
       BuildEnvironment.gitBinary, "clone", curlGitDir, srcDir
     )
-    onlyIf { target.curlNotBuilt && !srcDir.exists()}
+    onlyIf { target.curlNotBuilt && !srcDir.exists() }
 
   }
 
@@ -45,7 +52,7 @@ fun autoconfTask(target: KonanTarget) =
     val configureFile = srcDir.resolve("configure")
     outputs.file(configureFile)
     onlyIf {
-       target.curlNotBuilt
+      target.curlNotBuilt
     }
   }
 
@@ -56,7 +63,7 @@ fun configureTask(target: KonanTarget) =
 
 
     //to ensure the konan tools are available
-    dependsOn(target.konanDepsTask(project))
+    dependsOn(target.konanDepsTaskName)
     dependsOn(":openssl:build${target.platformName.capitalized()}")
 
     val srcDir = target.curlSrcDir(project)
@@ -75,8 +82,6 @@ fun configureTask(target: KonanTarget) =
       "--with-ssl=${target.opensslPrefix(project)}",
       "--with-ca-path=/etc/ssl/certs:/etc/security/cacerts:/etc/ca-certificates",
       "--prefix=${target.curlPrefix(project)}",
-
-
       )
     commandLine(args)
   }
@@ -139,17 +144,19 @@ kotlin {
     compilations["main"].apply {
       defaultSourceSet.dependsOn(posixMain)
       cinterops.create("curl") {
+
         packageName("libcurl")
         defFile("src/libcurl.def")
       }
     }
   }
-
-
 }
 
 
-tasks.register("generateCInteropsDef") {
+val generateInteropsDefTaskName = "generateCInteropsDef"
+
+tasks.register(generateInteropsDefTaskName) {
+  description = "Generate src/libcurl.def from src/libcurl_headers.h"
   inputs.file("src/libcurl_header.def")
   outputs.file("src/libcurl.def")
   doFirst {
@@ -171,9 +178,8 @@ tasks.register("generateCInteropsDef") {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>() {
-  dependsOn("generateCInteropsDef")
+  dependsOn(generateInteropsDefTaskName)
   if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily)
     dependsOn("build${konanTarget.platformName.capitalized()}")
 }
 
-project.configureBinarySupport(curlVersion)

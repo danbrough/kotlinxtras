@@ -6,34 +6,63 @@ plugins {
   id("org.jetbrains.dokka")
 }
 
-group = "org.danbrough.kotlinxtras"
 
 kotlin {
   dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
     implementation(kotlin("gradle-plugin"))
-    //implementation(kotlin("stdlib"))
-    testImplementation(kotlin("test"))
-    implementation("org.danbrough:klog:_")
   }
 
+/*  jvmToolchain {
+    check(this is JavaToolchainSpec)
+    languageVersion.set(JavaLanguageVersion.of())
+  }*/
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class).all {
+
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
+}
+
+tasks.withType(JavaCompile::class) {
+  sourceCompatibility = JavaVersion.VERSION_1_8.toString()
+  targetCompatibility = JavaVersion.VERSION_1_8.toString()
 }
 
 
+val projectGroup = "org.danbrough.kotlinxtras"
 
 gradlePlugin {
   plugins {
-    create("xtrasPlugin") {
-      id = "org.danbrough.kotlinxtras.xtras"
-      implementationClass = "org.danbrough.kotlinxtras.XtrasPlugin"
-      displayName = "KotlinXtras plugin"
-      description = "Cross compiled binaries for openssl,curl"
+
+    create("propertiesPlugin") {
+      id = "$projectGroup.properties"
+      implementationClass = "$projectGroup.PropertiesPlugin"
+      displayName = "KotlinXtras properties plugin"
+      description = "Provides a gradle properties abstraction. (For internal use)"
+    }
+
+
+    create("binariesConsumer") {
+      id = "$projectGroup.consumer"
+      implementationClass = "$projectGroup.binaries.BinariesConsumerPlugin"
+      displayName = "KotlinXtras binaries consumer plugin"
+      description = "Precompiled binaries for openssl,curl for compiling against."
+    }
+
+    create("binariesProvider") {
+      id = "$projectGroup.provider"
+      implementationClass = "$projectGroup.binaries.BinariesProviderPlugin"
+      displayName = "KotlinXtras binaries provider plugin"
+      description = "Add support for packaging binaries into maven publications"
     }
 
     create("sonatypePlugin") {
-      id = "org.danbrough.kotlinxtras.sonatype"
-      implementationClass = "org.danbrough.kotlinxtras.SonatypePlugin"
+      id = "$projectGroup.sonatype"
+      implementationClass = "$projectGroup.sonatype.SonatypePlugin"
       displayName = "Sonatype plugin"
       description = "Sonatype publishing support"
     }
@@ -57,12 +86,6 @@ val sourcesJar by tasks.registering(Jar::class) {
 }
 
 publishing {
-  repositories {
-    maven("../build/m2"){
-      name = "m2"
-    }
-  }
-
   publications.all {
     if (this !is MavenPublication) return@all
     if (project.hasProperty("publishDocs"))

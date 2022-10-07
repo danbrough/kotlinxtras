@@ -1,44 +1,45 @@
-import BuildEnvironment.platformName
-import org.gradle.configurationcache.extensions.capitalized
-import org.jetbrains.kotlin.konan.target.KonanTarget
+
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
   kotlin("multiplatform") apply false
-  //id("io.github.gradle-nexus.publish-plugin")
   `maven-publish`
-  id("KotlinXtras")
-  signing
   id("org.jetbrains.dokka") apply false
+  id("org.danbrough.kotlinxtras.properties")
+  id("org.danbrough.kotlinxtras.sonatype")
+
 }
 
-
-
+//val projectProperties = project.projectProperties
+ProjectProperties.init(project)
 
 group = ProjectProperties.projectGroup
 version = ProjectProperties.buildVersionName
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class).all {
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
+}
+
+tasks.withType(JavaCompile::class) {
+  sourceCompatibility = JavaVersion.VERSION_1_8.toString()
+  targetCompatibility = JavaVersion.VERSION_1_8.toString()
+}
+
+
 
 allprojects {
   repositories {
-    maven( "https://s01.oss.sonatype.org/content/groups/staging/")
+    maven("https://s01.oss.sonatype.org/content/groups/staging/")
     mavenCentral()
   }
 
-  tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
-    kotlinOptions {
-      jvmTarget = ProjectProperties.KOTLIN_JVM_VERSION
-    }
-  }
-
-  tasks.withType<JavaCompile>().all {
-    sourceCompatibility = JavaVersion.VERSION_11.toString()
-    targetCompatibility = JavaVersion.VERSION_11.toString()
-  }
 
   tasks.withType<AbstractTestTask>() {
     testLogging {
       events = setOf(
-        org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED, org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED, org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
+        TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED
       )
       exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
       showStandardStreams = true
@@ -50,24 +51,9 @@ allprojects {
   }
 }
 
-/*
-nexusPublishing {
-  repositories {
-    sonatype {
-      //stagingProfileId.set("98edb69227dc82")
-      //nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-      //nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/orgdanbrough-1171/"))
-      snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-    }
-  }
-}
-*/
 
+subprojects {
 
-allprojects {
-
-
-  apply<SigningPlugin>()
 
   afterEvaluate {
 
@@ -75,32 +61,17 @@ allprojects {
     if (version == "unspecified")
       version = ProjectProperties.buildVersionName
 
-    extensions.findByType(PublishingExtension::class) ?: run {
-      //println("PROJECT $name has no publishing")
-      return@afterEvaluate
-    }
+    extensions.findByType(PublishingExtension::class) ?: return@afterEvaluate
 
     publishing {
       repositories {
-
-
-        val sonatypeRepoId = project.properties["sonatypeRepoId"]!!.toString()
-        maven("https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/$sonatypeRepoId"){
-          name = "SonaType"
-          credentials{
-            username = project.properties["sonatypeUsername"]!!.toString()
-            password = project.properties["sonatypePassword"]!!.toString()
-          }
+        maven(rootProject.buildDir.resolve("m2")) {
+          name = "M2"
         }
       }
 
       publications.all {
         if (this !is MavenPublication) return@all
-
-        if (project.hasProperty("signPublications"))
-          signing {
-            sign(this@all)
-          }
 
         pom {
 
@@ -139,3 +110,4 @@ allprojects {
     }
   }
 }
+

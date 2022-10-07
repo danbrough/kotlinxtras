@@ -2,27 +2,25 @@
 
 [plugins]
 
-org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version = "1.7.10" }
+org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 
-org-danbrough-kotlinxtras-xtras = { id = "org.danbrough.kotlinxtras.xtras", version = "_" }
+org-danbrough-kotlinxtras-consumer = { id = "org.danbrough.kotlinxtras.consumer", version.ref = "xtras" }
 
 [versions]
 
-kotlin = "1.7.10"
-##  ⬆ = "1.7.20-Beta"
-##  ⬆ = "1.7.20-RC"
+kotlin = "1.7.20"
+xtras = "0.0.1-beta04"
 
 [libraries]
 
-klog = "org.danbrough:klog:0.0.1-beta07"
+klog = "org.danbrough:klog:0.0.1"
 
 kotlinx-coroutines-core = "org.danbrough.kotlinx:kotlinx-coroutines-core:1.6.4"
 
 kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }
 
-curl = "org.danbrough.kotlinxtras:curl:0.0.1-beta02"
-
-openssl = "org.danbrough.kotlinxtras:openssl:0.0.1-beta02"
+curl = {group = "org.danbrough.kotlinxtras", name = "curl",version.ref = "xtras"}
+openssl = {group = "org.danbrough.kotlinxtras", name = "openssl",version.ref = "xtras"}
 
 kotlin-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-compiler-embeddable", version.ref = "kotlin" }
 

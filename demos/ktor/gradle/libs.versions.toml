@@ -2,21 +2,19 @@
 
 [plugins]
 
-org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version = "1.7.10" }
+org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 
 [versions]
 
-kotlin = "1.7.10"
-##  ⬆ = "1.7.20-Beta"
-##  ⬆ = "1.7.20-RC"
+kotlin = "1.7.20"
 
 [libraries]
 
-klog = "org.danbrough:klog:0.0.1-beta07"
+klog = "org.danbrough:klog:0.0.1"
 
-ktor-client-core = "org.danbrough.ktor:ktor-client-core:2.1.1"
+ktor-client-core = "org.danbrough.ktor:ktor-client-core:2.1.2"
 
-ktor-client-curl = "org.danbrough.ktor:ktor-client-curl:2.1.1"
+ktor-client-curl = "org.danbrough.ktor:ktor-client-curl:2.1.2"
 
 kotlinx-coroutines-core = "org.danbrough.kotlinx:kotlinx-coroutines-core:1.6.4"
 
