@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   kotlin("multiplatform")
-  //id("org.danbrough.kotlinxtras.consumer") version "0.0.1-beta04"
+  id("org.danbrough.kotlinxtras.consumer")
 }
 
 
@@ -14,11 +14,11 @@ repositories {
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
 }
-//
-//binaries {
-//  enableCurl()
-//  enableOpenSSL()
-//}
+
+binaries {
+  enableCurl()
+  enableOpenSSL()
+}
 
 
 kotlin {

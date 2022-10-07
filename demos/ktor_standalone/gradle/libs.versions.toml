@@ -10,13 +10,14 @@ org-danbrough-kotlinxtras-consumer = { id = "org.danbrough.kotlinxtras.consumer"
 
 kotlin = "1.7.20"
 xtras = "0.0.1-beta04"
+ktor = "2.1.2"
 
 [libraries]
 
 klog = "org.danbrough:klog:0.0.1"
 ktor-client-core = "org.danbrough.ktor:ktor-client-core:2.1.2"
 
-ktor-client-curl = "org.danbrough.ktor:ktor-client-curl:2.1.2"
+ktor-client-curl = { group = "org.danbrough.ktor", name = "ktor-client-curl", version.ref = "ktor"}
 
 kotlinx-coroutines-core = "org.danbrough.kotlinx:kotlinx-coroutines-core:1.6.4"
 
