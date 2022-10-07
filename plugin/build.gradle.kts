@@ -32,34 +32,37 @@ tasks.withType(JavaCompile::class) {
   targetCompatibility = JavaVersion.VERSION_1_8.toString()
 }
 
+
+val projectGroup = "org.danbrough.kotlinxtras"
+
 gradlePlugin {
   plugins {
 
     create("propertiesPlugin") {
-      id = "org.danbrough.kotlinxtras.properties"
-      implementationClass = "org.danbrough.kotlinxtras.PropertiesPlugin"
+      id = "$projectGroup.properties"
+      implementationClass = "$projectGroup.PropertiesPlugin"
       displayName = "KotlinXtras properties plugin"
       description = "Provides a gradle properties abstraction. (For internal use)"
     }
 
 
     create("binariesConsumer") {
-      id = "org.danbrough.kotlinxtras.consumer"
-      implementationClass = "org.danbrough.kotlinxtras.binaries.BinariesConsumerPlugin"
+      id = "$projectGroup.consumer"
+      implementationClass = "$projectGroup.binaries.BinariesConsumerPlugin"
       displayName = "KotlinXtras binaries consumer plugin"
       description = "Precompiled binaries for openssl,curl for compiling against."
     }
 
     create("binariesProvider") {
-      id = "org.danbrough.kotlinxtras.provider"
-      implementationClass = "org.danbrough.kotlinxtras.binaries.BinariesProviderPlugin"
+      id = "$projectGroup.provider"
+      implementationClass = "$projectGroup.binaries.BinariesProviderPlugin"
       displayName = "KotlinXtras binaries provider plugin"
       description = "Add support for packaging binaries into maven publications"
     }
 
     create("sonatypePlugin") {
-      id = "org.danbrough.kotlinxtras.sonatype"
-      implementationClass = "org.danbrough.kotlinxtras.sonatype.SonatypePlugin"
+      id = "$projectGroup.sonatype"
+      implementationClass = "$projectGroup.sonatype.SonatypePlugin"
       displayName = "Sonatype plugin"
       description = "Sonatype publishing support"
     }

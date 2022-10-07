@@ -27,7 +27,7 @@ data class BinDep(val group: String?, val name: String, val version: String?)
 open class BinariesExtension(private val project: Project) {
   internal var binDeps: MutableSet<BinDep> = mutableSetOf()
 
-  private val projectGroup = project.properties["project.group"].toString()
+  private val projectGroup = "org.danbrough.kotlinxtras"
 
   fun enableCurl(version: String = DEFAULT_CURL_VERSION) {
     binDeps.add(BinDep(projectGroup, "curl", version))
