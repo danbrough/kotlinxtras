@@ -3,7 +3,6 @@
 package org.danbrough.kotlinxtras.binaries
 
 import org.danbrough.kotlinxtras.platformName
-import org.danbrough.kotlinxtras.xtrasTaskGroup
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -37,6 +36,14 @@ open class BinariesExtension(private val project: Project) {
     binDeps.add(BinDep(projectGroup, "openssl", version))
   }
 
+  fun enableSqlite(version: String = DEFAULT_SQLITE_VERSION) {
+    binDeps.add(BinDep(projectGroup, "sqlite", version))
+  }
+
+  fun addBinaryDependency(binDep: BinDep) {
+    binDeps.add(binDep)
+  }
+
   var taskToPlatformName: (Task) -> String? = { task ->
     when (task) {
       is KotlinNativeTest -> task.targetName!!
@@ -47,91 +54,14 @@ open class BinariesExtension(private val project: Project) {
 }
 
 
-fun Project.configurePrecompiledBinaries() {
-  val binaries = project.extensions.getByType(BinariesExtension::class)
-
-  val preCompiled: Configuration by configurations.creating {
-    isTransitive = false
-  }
-
-  repositories {
-    maven("/usr/local/kotlinxtras/build/m2")
-    maven("https://s01.oss.sonatype.org/content/groups/staging/")
-    mavenCentral()
-  }
-
-  val konanTargets =
-    project.extensions.getByType<KotlinMultiplatformExtension>().targets.withType<KotlinNativeTarget>()
-      .map { it.konanTarget }.distinct()
-
-  dependencies {
-    binaries.binDeps.forEach { binDep ->
-      konanTargets.forEach { target ->
-        val binDepLib =
-          "${binDep.group}:${binDep.name}${target.platformName.capitalized()}Binaries:${binDep.version}"
-        project.logger.info("Adding binary support with $binDepLib")
-        preCompiled(binDepLib)
-      }
-    }
-  }
-
-  preCompiled.resolvedConfiguration.resolvedArtifacts.forEach { artifact ->
-    tasks.register<Copy>("extract${artifact.name.capitalized()}") {
-      group = xtrasTaskGroup
-      from(zipTree(artifact.file).matching {
-        exclude("**/META-INF")
-        exclude("**/META-INF/*")
-      })
-      into(project.rootProject.buildDir.resolve("kotlinxtras"))
-    }
-  }
-
-  binaries.binDeps.forEach { binDep ->
-    project.tasks.forEach { task ->
-      binaries.taskToPlatformName(task)?.also { platformName ->
-        project.logger.info("adding extract dependency on ${binDep.name} for $platformName")
-        task.dependsOn("extract${binDep.name.capitalized()}${platformName.capitalized()}Binaries")
-      }
-    }
-  }
-}
-
-private fun Project.configureTask(task: Task) {
-  val extn = rootProject.extensions.getByType<BinariesExtension>()
-
-  val platformName = if (task is KotlinNativeCompile) {
-    println("KotlinNativeCompile: ${task.target}")
-    KonanTarget.predefinedTargets[task.target]?.platformName
-  } else if (task is KotlinNativeTest) {
-    println("KotlinNativeTest target: ${task.targetName}")
-    task.targetName!!
-  } else return
-
-  println("TARGET: $platformName")
-  extn.binDeps.forEach {
-    println("making task ${task.name} dependent on ${"extract${it.name.capitalized()}${platformName?.capitalized()}Binaries"}")
-    task.dependsOn("extract${it.name.capitalized()}${platformName?.capitalized()}Binaries")
-  }
-
-
-}
-
-//fun Project.configureBinariesTaskDeps() {
-//  afterEvaluate { p ->
-//    p.tasks.forEach {
-//      p.configureTask(it)
-//    }
-//    p.childProjects.values.forEach {
-//      it.configureBinariesTaskDeps()
-//    }
-//  }
-//}
-
 class BinariesConsumerPlugin : Plugin<Project> {
 
   override fun apply(targetProject: Project) {
 
     targetProject.extensions.create("binaries", BinariesExtension::class.java, targetProject)
+    val preCompiled: Configuration by targetProject.configurations.creating {
+      isTransitive = false
+    }
 
     targetProject.afterEvaluate {
       it.configureBinaries()
@@ -156,16 +86,14 @@ private fun Project.configureBinaries() {
 
     //println("KONANTARGETS: $konanTargets")
 
-    val preCompiled: Configuration by project.configurations.creating {
-      isTransitive = false
-    }
+    val preCompiled by project.configurations.getting
 
 
     val localBinariesDir = project.rootProject.buildDir.resolve("kotlinxtras")
 
     project.dependencies {
       binaries.binDeps.forEach { binDep ->
-      //  println("BIN DEP: $binDep")
+        println("BIN DEP: $binDep")
         konanTargets.forEach { target ->
           val binDepLib =
             "${binDep.group}.${binDep.name}:${binDep.name}${target.platformName.capitalized()}Binaries:${binDep.version}"
@@ -177,10 +105,7 @@ private fun Project.configureBinaries() {
 
 
     preCompiled.resolvedConfiguration.resolvedArtifacts.forEach { artifact ->
-      //println("RESOLVED ARTIFACT: $artifact")
       project.tasks.register<Copy>("extract${artifact.name.capitalized()}") {
-        group = xtrasTaskGroup
-
         from(project.zipTree(artifact.file).matching {
           exclude("**/META-INF")
           exclude("**/META-INF/*")

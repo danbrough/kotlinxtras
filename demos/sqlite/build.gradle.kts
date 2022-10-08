@@ -2,15 +2,24 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   kotlin("multiplatform")
+  id("org.danbrough.kotlinxtras.consumer") version "0.0.1-beta05"
 }
 
 
 repositories {
-  maven("/usr/local/kotlinxtras/build/m2")
+  //maven("/usr/local/kotlinxtras/build/m2")
   maven("https://s01.oss.sonatype.org/content/groups/staging/")
   mavenCentral()
 }
 
+//  val preCompiled = configurations.getting
+//  dependencies {
+//    preCompiled(libs.sqlite)
+//  }
+
+binaries {
+  enableSqlite()
+}
 
 kotlin {
 
@@ -53,8 +62,6 @@ kotlin {
       }
     }
   }
-
-
 
 
 }

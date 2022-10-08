@@ -8,11 +8,7 @@ import klog.KLogWriters
 import klog.KMessageFormatters
 import klog.Level
 import klog.colored
-import kotlinx.cinterop.cstr
-import kotlinx.cinterop.objcPtr
 import kotlinx.cinterop.toKString
-import platform.posix.dirname
-import platform.posix.posix_FD_ISSET
 import platform.posix.realpath
 
 
