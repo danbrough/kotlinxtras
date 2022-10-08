@@ -4,11 +4,11 @@
 
 org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version = "1.7.20" }
 
+org-danbrough-kotlinxtras-consumer = { id = "org.danbrough.kotlinxtras.consumer", version = "0.0.1-beta05" }
+
 [versions]
 
 kotlin = "1.7.20"
-##  ⬆ = "1.7.20-Beta"
-##  ⬆ = "1.7.20-RC"
 
 [libraries]
 
@@ -19,3 +19,4 @@ kotlinx-coroutines-core = "org.danbrough.kotlinx:kotlinx-coroutines-core:1.6.4"
 kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }
 
 sqlite = "org.danbrough.kotlinxtras:sqlite:0.0.1-beta04"
+

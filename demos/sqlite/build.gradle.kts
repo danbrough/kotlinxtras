@@ -14,7 +14,7 @@ repositories {
 
 //  val preCompiled = configurations.getting
 //  dependencies {
-//    preCompiled("org.danbrough.kotlinxtras:sqlite:3.39.4")
+//    preCompiled(libs.sqlite)
 //  }
 
 binaries {

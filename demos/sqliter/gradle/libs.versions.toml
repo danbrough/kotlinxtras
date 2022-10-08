@@ -10,7 +10,7 @@ kotlin = "1.7.20"
 
 [libraries]
 
-klog = "org.danbrough:klog:0.0.1-beta07"
+klog = "org.danbrough:klog:0.0.1"
 
 kotlinx-coroutines-core = "org.danbrough.kotlinx:kotlinx-coroutines-core:1.6.4"
 

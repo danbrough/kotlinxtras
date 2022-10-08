@@ -1,14 +1,15 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
   kotlin("multiplatform")
+  id("org.danbrough.kotlinxtras.consumer")
 }
 
+binaries {
+  enableSqlite()
+}
 
 repositories {
-  maven("../../build/m2")
   maven("https://s01.oss.sonatype.org/content/groups/staging/")
   mavenCentral()
 }
@@ -61,8 +62,6 @@ kotlin {
       }
     }
   }
-
-
 
 
 }
