@@ -6,18 +6,12 @@ plugins {
   id("org.jetbrains.dokka")
 }
 
-
 kotlin {
   dependencies {
     implementation(gradleApi())
     implementation(gradleKotlinDsl())
     implementation(kotlin("gradle-plugin"))
   }
-
-/*  jvmToolchain {
-    check(this is JavaToolchainSpec)
-    languageVersion.set(JavaLanguageVersion.of())
-  }*/
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class).all {
@@ -44,7 +38,6 @@ gradlePlugin {
       displayName = "KotlinXtras properties plugin"
       description = "Provides a gradle properties abstraction. (For internal use)"
     }
-
 
     create("binariesConsumer") {
       id = "$projectGroup.consumer"
