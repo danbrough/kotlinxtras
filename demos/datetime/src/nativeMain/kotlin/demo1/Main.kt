@@ -4,8 +4,6 @@ import klog.KLogWriters
 import klog.KMessageFormatters
 import klog.Level
 import klog.colored
-import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.toKString
 import kotlinx.datetime.Clock
 
 
@@ -21,6 +19,11 @@ fun main(args: Array<String>) {
 
   val currentMoment = Clock.System.now()
   log.debug("currentMoment: $currentMoment")
+
+  //wow .. exciting.
+  //shows that it works though .. (or doesn't)
+  //feel free to make this demo more interesting
+  // dan.
 
 
 }
