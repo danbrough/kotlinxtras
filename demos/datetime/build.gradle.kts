@@ -26,8 +26,6 @@ kotlin {
   val commonMain by sourceSets.getting {
     dependencies {
       implementation(libs.klog)
-      implementation(libs.kotlinx.coroutines.core)
-      implementation(libs.curl)
       implementation(libs.kotlinx.datetime)
     }
   }

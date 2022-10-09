@@ -21,8 +21,7 @@ upstream: https://github.com/Kotlin/kotlinx.coroutines.git
 https://github.com/danbrough/kotlinx-datetime.git  
 upstream: https://github.com/Kotlin/kotlinx-datetime.git
 
-- branch danbroid-v0.4.0 in progress 
-
+- branch danbroid-v0.4.0 published. Artifact: "org.danbrough.kotlinx:kotlinx-datetime:0.4.0"
 
 
 ### Sqlite 3 
