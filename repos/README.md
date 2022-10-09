@@ -23,6 +23,10 @@ upstream: https://github.com/Kotlin/kotlinx-datetime.git
 
 - branch danbroid-v0.4.0 published. Artifact: "org.danbrough.kotlinx:kotlinx-datetime:0.4.0"
 
+### Stately 
+https://github.com/danbrough/Stately.git
+upstream: https://github.com/touchlab/Stately.git
+-- in progress 
 
 ### Sqlite 3 
 - at version-3.39.3 from https://github.com/sqlite/sqlite.git
