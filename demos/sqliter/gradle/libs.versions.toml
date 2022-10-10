@@ -16,6 +16,6 @@ kotlinx-coroutines-core = "org.danbrough.kotlinx:kotlinx-coroutines-core:1.6.4"
 
 kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }
 
-sqliter-driver = "org.danbrough:sqliter-driver:1.2.1"
+sqliter-driver = "org.danbrough.touchlab:sqliter-driver:1.2.1"
 
 sqlite = "org.danbrough.kotlinxtras:sqlite:0.0.1-beta04"
