@@ -2,9 +2,9 @@
 
 [plugins]
 
-org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version = "1.7.20" }
 
-org-danbrough-kotlinxtras-consumer = { id = "org.danbrough.kotlinxtras.consumer", version.ref = "xtras" }
+org-danbrough-kotlinxtras-consumer = { id = "org.danbrough.kotlinxtras.consumer", version = "0.0.1-beta04" }
 
 [versions]
 
@@ -15,9 +15,10 @@ ktor = "2.1.2"
 [libraries]
 
 klog = "org.danbrough:klog:0.0.1"
-ktor-client-core = "org.danbrough.ktor:ktor-client-core:2.1.2"
+ktor-client-core = {group = "org.danbrough.ktor", name = "ktor-client-core",version.ref = "ktor"}
 
-ktor-client-curl = { group = "org.danbrough.ktor", name = "ktor-client-curl", version.ref = "ktor"}
+ktor-client-curl = {group = "org.danbrough.ktor", name = "ktor-client-curl",version.ref = "ktor"}
+ktor-server-cio = {group = "org.danbrough.ktor", name = "ktor-server-cio",version.ref = "ktor"}
 
 kotlinx-coroutines-core = "org.danbrough.kotlinx:kotlinx-coroutines-core:1.6.4"
 
@@ -29,3 +30,6 @@ openssl = {group = "org.danbrough.kotlinxtras", name = "openssl",version.ref = "
 kotlin-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-compiler-embeddable", version.ref = "kotlin" }
 
 kotlin-klib-commonizer-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-klib-commonizer-embeddable", version.ref = "kotlin" }
+
+kotlinx-datetime = "org.danbrough.kotlinx:kotlinx-datetime:0.4.0a"
+##                                                     ⬆ :0.4.0"

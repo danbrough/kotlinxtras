@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   kotlin("multiplatform")
-  id("org.danbrough.kotlinxtras.consumer")
+  id("org.danbrough.kotlinxtras.consumer") version "0.0.1-beta05"
 }
 
 
@@ -46,6 +46,8 @@ kotlin {
       implementation(libs.ktor.client.core)
       implementation(libs.ktor.client.curl)
       implementation(libs.kotlinx.coroutines.core)
+      implementation(libs.ktor.server.cio)
+      implementation(libs.kotlinx.datetime)
     }
   }
 
@@ -63,6 +65,9 @@ kotlin {
     binaries {
       executable("demo1") {
         entryPoint = "demo1.main"
+      }
+      executable("demo2") {
+        entryPoint = "demo2.main"
       }
     }
   }
