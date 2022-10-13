@@ -27,3 +27,4 @@ include(":openssl")
 include(":curl")
 include(":sqlite")
 
+include(":iconv")

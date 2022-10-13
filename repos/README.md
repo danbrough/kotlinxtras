@@ -28,6 +28,10 @@ https://github.com/danbrough/Stately.git
 upstream: https://github.com/touchlab/Stately.git
 -- in progress 
 
+### GNU iconv
+
+https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz
+
 ### Sqlite 3 
 - at version-3.39.3 from https://github.com/sqlite/sqlite.git
 

@@ -10,7 +10,13 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Copy
 import org.gradle.configurationcache.extensions.capitalized
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.creating
+import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.findByType
+import org.gradle.kotlin.dsl.getValue
+import org.gradle.kotlin.dsl.getting
+import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
@@ -20,6 +26,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 const val DEFAULT_CURL_VERSION = "curl-7_85_0"
 const val DEFAULT_OPENSSL_VERSION = "OpenSSL_1_1_1q"
 const val DEFAULT_SQLITE_VERSION = "3.39.4"
+const val DEFAULT_ICONV_VERSION = "1.17"
 
 data class BinDep(val group: String?, val name: String, val version: String?)
 
@@ -39,7 +46,9 @@ open class BinariesExtension(private val project: Project) {
   fun enableSqlite(version: String = DEFAULT_SQLITE_VERSION) {
     binDeps.add(BinDep(projectGroup, "sqlite", version))
   }
-
+  fun enableIconv(version: String = DEFAULT_ICONV_VERSION) {
+    binDeps.add(BinDep(projectGroup, "iconv", version))
+  }
   fun addBinaryDependency(binDep: BinDep) {
     binDeps.add(binDep)
   }
