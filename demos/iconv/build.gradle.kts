@@ -10,14 +10,20 @@ plugins {
 
 
 repositories {
-  maven("/usr/local/kotlinxtras/build/m2")
+  //maven("/usr/local/kotlinxtras/build/m2")
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
 }
 
 binaries {
-  //addBinaryDependency(BinDep("org.danbrough.kotlinxtras","iconv","1.17"))
-  enableIconv()
+  addBinaryDependency(
+    org.danbrough.kotlinxtras.binaries.BinDep(
+      "org.danbrough.kotlinxtras",
+      "iconv",
+      "1.17_01"
+    )
+  )
+ // enableIconv()
 }
 
 

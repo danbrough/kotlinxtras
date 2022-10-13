@@ -25,4 +25,4 @@ kotlin-klib-commonizer-embeddable = { group = "org.jetbrains.kotlin", name = "ko
 
 kotlinx-datetime = "org.danbrough.kotlinx:kotlinx-datetime:0.4.0a"
 
-iconv = "org.danbrough.kotlinxtras:iconv:0.0.1-beta05"
+iconv = "org.danbrough.kotlinxtras:iconv:0.0.1-beta06"

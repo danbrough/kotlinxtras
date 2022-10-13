@@ -77,7 +77,7 @@ class BinariesProviderPlugin : Plugin<Project> {
             dependsOn("build${target.platformName.capitalized()}")
             group = xtrasTaskGroup
             from(project.rootProject.fileTree("libs/$libName/${target.platformName}")) {
-              include("include/**", "lib/*.so", "lib/*.a", "lib/*.dll", "lib/*.dylib")
+              include("include/**", "lib/*.so.*", "lib/*.a", "lib/*.dll", "lib/*.dylib")
             }
             into("$libName/${target.platformName}")
             destinationDirectory.set(archivesDir)
