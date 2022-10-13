@@ -1,61 +1,62 @@
 headers = iconv.h libcharset.h
+linkerOpts = -liconv
 compilerOpts.android_arm32 = -Ibuild/kotlinxtras/iconv/androidNativeArm32/include \
 	-I/usr/local/kotlinxtras/libs/iconv/androidNativeArm32/include 
 linkerOpts.android_arm32 = -Lbuild/kotlinxtras/iconv/androidNativeArm32/lib \
 	-L/usr/local/kotlinxtras/libs/iconv/androidNativeArm32/lib 
-libraryPaths.android_arm32 = build/kotlinxtras/sqlite/androidNativeArm32/lib \
+libraryPaths.android_arm32 = build/kotlinxtras/iconv/androidNativeArm32/lib \
 	/usr/local/kotlinxtras/libs/iconv/androidNativeArm32/lib 
 compilerOpts.android_arm64 = -Ibuild/kotlinxtras/iconv/androidNativeArm64/include \
 	-I/usr/local/kotlinxtras/libs/iconv/androidNativeArm64/include 
 linkerOpts.android_arm64 = -Lbuild/kotlinxtras/iconv/androidNativeArm64/lib \
 	-L/usr/local/kotlinxtras/libs/iconv/androidNativeArm64/lib 
-libraryPaths.android_arm64 = build/kotlinxtras/sqlite/androidNativeArm64/lib \
+libraryPaths.android_arm64 = build/kotlinxtras/iconv/androidNativeArm64/lib \
 	/usr/local/kotlinxtras/libs/iconv/androidNativeArm64/lib 
 compilerOpts.android_x64 = -Ibuild/kotlinxtras/iconv/androidNativeX64/include \
 	-I/usr/local/kotlinxtras/libs/iconv/androidNativeX64/include 
 linkerOpts.android_x64 = -Lbuild/kotlinxtras/iconv/androidNativeX64/lib \
 	-L/usr/local/kotlinxtras/libs/iconv/androidNativeX64/lib 
-libraryPaths.android_x64 = build/kotlinxtras/sqlite/androidNativeX64/lib \
+libraryPaths.android_x64 = build/kotlinxtras/iconv/androidNativeX64/lib \
 	/usr/local/kotlinxtras/libs/iconv/androidNativeX64/lib 
 compilerOpts.android_x86 = -Ibuild/kotlinxtras/iconv/androidNativeX86/include \
 	-I/usr/local/kotlinxtras/libs/iconv/androidNativeX86/include 
 linkerOpts.android_x86 = -Lbuild/kotlinxtras/iconv/androidNativeX86/lib \
 	-L/usr/local/kotlinxtras/libs/iconv/androidNativeX86/lib 
-libraryPaths.android_x86 = build/kotlinxtras/sqlite/androidNativeX86/lib \
+libraryPaths.android_x86 = build/kotlinxtras/iconv/androidNativeX86/lib \
 	/usr/local/kotlinxtras/libs/iconv/androidNativeX86/lib 
 compilerOpts.linux_arm32_hfp = -Ibuild/kotlinxtras/iconv/linuxArm32Hfp/include \
 	-I/usr/local/kotlinxtras/libs/iconv/linuxArm32Hfp/include 
 linkerOpts.linux_arm32_hfp = -Lbuild/kotlinxtras/iconv/linuxArm32Hfp/lib \
 	-L/usr/local/kotlinxtras/libs/iconv/linuxArm32Hfp/lib 
-libraryPaths.linux_arm32_hfp = build/kotlinxtras/sqlite/linuxArm32Hfp/lib \
+libraryPaths.linux_arm32_hfp = build/kotlinxtras/iconv/linuxArm32Hfp/lib \
 	/usr/local/kotlinxtras/libs/iconv/linuxArm32Hfp/lib 
 compilerOpts.linux_arm64 = -Ibuild/kotlinxtras/iconv/linuxArm64/include \
 	-I/usr/local/kotlinxtras/libs/iconv/linuxArm64/include 
 linkerOpts.linux_arm64 = -Lbuild/kotlinxtras/iconv/linuxArm64/lib \
 	-L/usr/local/kotlinxtras/libs/iconv/linuxArm64/lib 
-libraryPaths.linux_arm64 = build/kotlinxtras/sqlite/linuxArm64/lib \
+libraryPaths.linux_arm64 = build/kotlinxtras/iconv/linuxArm64/lib \
 	/usr/local/kotlinxtras/libs/iconv/linuxArm64/lib 
 compilerOpts.linux_x64 = -Ibuild/kotlinxtras/iconv/linuxX64/include \
 	-I/usr/local/kotlinxtras/libs/iconv/linuxX64/include 
 linkerOpts.linux_x64 = -Lbuild/kotlinxtras/iconv/linuxX64/lib \
 	-L/usr/local/kotlinxtras/libs/iconv/linuxX64/lib 
-libraryPaths.linux_x64 = build/kotlinxtras/sqlite/linuxX64/lib \
+libraryPaths.linux_x64 = build/kotlinxtras/iconv/linuxX64/lib \
 	/usr/local/kotlinxtras/libs/iconv/linuxX64/lib 
 compilerOpts.macos_arm64 = -Ibuild/kotlinxtras/iconv/macosArm64/include \
 	-I/usr/local/kotlinxtras/libs/iconv/macosArm64/include 
 linkerOpts.macos_arm64 = -Lbuild/kotlinxtras/iconv/macosArm64/lib \
 	-L/usr/local/kotlinxtras/libs/iconv/macosArm64/lib 
-libraryPaths.macos_arm64 = build/kotlinxtras/sqlite/macosArm64/lib \
+libraryPaths.macos_arm64 = build/kotlinxtras/iconv/macosArm64/lib \
 	/usr/local/kotlinxtras/libs/iconv/macosArm64/lib 
 compilerOpts.macos_x64 = -Ibuild/kotlinxtras/iconv/macosX64/include \
 	-I/usr/local/kotlinxtras/libs/iconv/macosX64/include 
 linkerOpts.macos_x64 = -Lbuild/kotlinxtras/iconv/macosX64/lib \
 	-L/usr/local/kotlinxtras/libs/iconv/macosX64/lib 
-libraryPaths.macos_x64 = build/kotlinxtras/sqlite/macosX64/lib \
+libraryPaths.macos_x64 = build/kotlinxtras/iconv/macosX64/lib \
 	/usr/local/kotlinxtras/libs/iconv/macosX64/lib 
 compilerOpts.mingw_x64 = -Ibuild/kotlinxtras/iconv/mingwX64/include \
 	-I/usr/local/kotlinxtras/libs/iconv/mingwX64/include 
 linkerOpts.mingw_x64 = -Lbuild/kotlinxtras/iconv/mingwX64/lib \
 	-L/usr/local/kotlinxtras/libs/iconv/mingwX64/lib 
-libraryPaths.mingw_x64 = build/kotlinxtras/sqlite/mingwX64/lib \
+libraryPaths.mingw_x64 = build/kotlinxtras/iconv/mingwX64/lib \
 	/usr/local/kotlinxtras/libs/iconv/mingwX64/lib 

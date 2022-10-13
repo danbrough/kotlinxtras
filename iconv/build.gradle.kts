@@ -77,10 +77,9 @@ fun configureTask(target: KonanTarget) =
     }
 
     val args = listOf(
-      "./configure",
+      "./configure", "-C",
       "--host=${target.hostTriplet}",
       "--prefix=${target.iconvPrefix(project)}",
-
       )
     commandLine(args)
   }
@@ -166,7 +165,7 @@ tasks.register("generateCInteropsDef") {
         output.println("\t-I/usr/local/kotlinxtras/libs/iconv/${konanTarget.platformName}/include ")
         output.println("linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/iconv/${konanTarget.platformName}/lib \\")
         output.println("\t-L/usr/local/kotlinxtras/libs/iconv/${konanTarget.platformName}/lib ")
-        output.println("libraryPaths.${konanTarget.name} = build/kotlinxtras/sqlite/${konanTarget.platformName}/lib \\")
+        output.println("libraryPaths.${konanTarget.name} = build/kotlinxtras/iconv/${konanTarget.platformName}/lib \\")
         output.println("\t/usr/local/kotlinxtras/libs/iconv/${konanTarget.platformName}/lib ")
       }
     }

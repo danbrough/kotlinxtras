@@ -1,15 +1,13 @@
 package demo1
 
-import io.ktor.client.*
-import io.ktor.client.engine.*
-import io.ktor.client.engine.curl.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
+
 import klog.KLogWriters
 import klog.KMessageFormatters
 import klog.Level
 import klog.colored
-import kotlinx.coroutines.runBlocking
+import libiconv.libiconv_open
+import platform.iconv.iconv_t
+import platform.posix.errno
 
 
 private val log = klog.klog("demo1") {
@@ -18,25 +16,25 @@ private val log = klog.klog("demo1") {
   messageFormatter = KMessageFormatters.verbose.colored
 }
 
-suspend fun runClient(engine: HttpClientEngine,url:String) {
-  val client = HttpClient(engine)
-  try {
-    val response = client.get(url)
-    log.debug(response.bodyAsText())
-  } finally {
-    // To prevent IllegalStateException https://youtrack.jetbrains.com/issue/KTOR-1071
-    client.close()
-    engine.close()
-  }
+const val EUCSET = "EUC-JP"
+const val OUTSET = "UTF-8"
+
+fun initialize() {
+  log.info("initialize()")
+
+  val s: iconv_t = libiconv_open(OUTSET, EUCSET).also {
+    if (it == null) {
+      log.error("errno: $errno")
+      return
+    }
+  }!!
+
+  log.debug("opened iconv")
 }
 
 fun main(args: Array<String>) {
-  val url = if (args.size == 0) "https://example.com" else args[0]
-  log.debug("running demo1: url: $url")
+  val input = if (args.isEmpty()) "\\xB6\\xE2ʸ\\xC2\\xCE" else args[0]
+  log.debug("running demo1: input: $input")
 
-  runBlocking {
-    Platform.isMemoryLeakCheckerActive = false
-
-    runClient(Curl.create(),url)
-  }
+  initialize()
 }

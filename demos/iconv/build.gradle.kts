@@ -10,13 +10,13 @@ plugins {
 
 
 repositories {
+  maven("/usr/local/kotlinxtras/build/m2")
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
 }
 
 binaries {
-  enableCurl()
-  enableOpenSSL()
+  //addBinaryDependency(BinDep("org.danbrough.kotlinxtras","iconv","1.17"))
   enableIconv()
 }
 
@@ -43,12 +43,7 @@ kotlin {
   val commonMain by sourceSets.getting {
     dependencies {
       implementation(libs.klog)
-      implementation(libs.ktor.client.core)
-      implementation(libs.ktor.client.curl)
-      implementation(libs.kotlinx.coroutines.core)
-      implementation(libs.ktor.server.cio)
-      implementation(libs.kotlinx.datetime)
-      implementation("org.danbrough.kotlinxtras:iconv:0.0.1-beta05")
+      implementation(libs.iconv)
 
     }
   }
@@ -67,9 +62,6 @@ kotlin {
     binaries {
       executable("demo1") {
         entryPoint = "demo1.main"
-      }
-      executable("demo2") {
-        entryPoint = "demo2.main"
       }
     }
   }
