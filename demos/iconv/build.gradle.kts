@@ -16,14 +16,14 @@ repositories {
 }
 
 binaries {
-  addBinaryDependency(
-    org.danbrough.kotlinxtras.binaries.BinDep(
-      "org.danbrough.kotlinxtras",
-      "iconv",
-      "1.17_01"
-    )
-  )
- // enableIconv()
+//  addBinaryDependency(
+//    org.danbrough.kotlinxtras.binaries.BinDep(
+//      "org.danbrough.kotlinxtras",
+//      "iconv",
+//      "1.17_01"
+//    )
+//  )
+ enableIconv()
 }
 
 

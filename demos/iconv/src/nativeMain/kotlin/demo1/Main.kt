@@ -5,9 +5,16 @@ import klog.KLogWriters
 import klog.KMessageFormatters
 import klog.Level
 import klog.colored
+import kotlinx.cinterop.CPointed
+import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.toKString
+import libiconv.libiconv_close
 import libiconv.libiconv_open
+import libiconv.libiconv_t
 import platform.iconv.iconv_t
+import platform.posix.EINVAL
 import platform.posix.errno
+import platform.posix.strerror
 
 
 private val log = klog.klog("demo1") {
@@ -19,22 +26,23 @@ private val log = klog.klog("demo1") {
 const val EUCSET = "EUC-JP"
 const val OUTSET = "UTF-8"
 
-fun initialize() {
+fun initialize(): CPointer<out CPointed> {
   log.info("initialize()")
-
-  val s: iconv_t = libiconv_open(OUTSET, EUCSET).also {
-    if (it == null) {
-      log.error("errno: $errno")
-      return
+  return libiconv_open(OUTSET, EUCSET).also {
+    if (errno == EINVAL){
+      log.error("Initialization failure: ${strerror(errno)?.toKString()}")
+      throw Error("Initialization failure: ${strerror(errno)?.toKString()}")
     }
+    log.trace("errno: $errno  ${strerror(errno)?.toKString()}")
   }!!
-
-  log.debug("opened iconv")
 }
 
-fun main(args: Array<String>) {
-  val input = if (args.isEmpty()) "\\xB6\\xE2ʸ\\xC2\\xCE" else args[0]
+fun main() {
+  val input =  intArrayOf(0xb6,0xe2,0xca,0xb8,0xc2,0xce).map{it.toByte()}
   log.debug("running demo1: input: $input")
 
-  initialize()
+  val convDesc:libiconv_t = initialize()
+
+
+
 }
