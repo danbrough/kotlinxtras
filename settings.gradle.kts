@@ -1,8 +1,8 @@
 pluginManagement {
 
   repositories {
-    maven(file("build/m2"))
-    maven("https://s01.oss.sonatype.org/content/groups/staging")
+//    maven(file("build/m2"))
+//    maven("https://s01.oss.sonatype.org/content/groups/staging")
 
 
     gradlePluginPortal()
@@ -11,6 +11,7 @@ pluginManagement {
   }
 }
 
+includeBuild("plugin")
 
 plugins {
   id("de.fayard.refreshVersions") version "0.50.2"
@@ -20,7 +21,6 @@ plugins {
 
 rootProject.name = "kotlinxtras"
 
-include(":plugin")
 
 include(":konandeps")
 include(":openssl")

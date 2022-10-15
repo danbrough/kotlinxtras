@@ -19,14 +19,14 @@ open class SonatypeExtension(private val project: Project) {
     const val DESCRIPTION = "sonatypeDescription"
   }
 
-  var configurePublishing: PublishingExtension.(project:Project)->Unit = {}
+  var configurePublishing: PublishingExtension.(project: Project) -> Unit = {}
 
   val sonatypeUrlBase: String = "https://s01.oss.sonatype.org"
   val sonatypeProfileId: String by project.properties
   val sonatypeRepositoryId: String by project.properties
   val sonatypeUsername: String by project.properties
   val sonatypePassword: String by project.properties
-  var signPublications:Boolean = project.properties.containsKey("signPublications")
+  var signPublications: Boolean = project.properties.containsKey("signPublications")
   private val sonatypeSnapshot: String by project.properties
 
   val publishingURL: String
@@ -44,38 +44,35 @@ open class SonatypeExtension(private val project: Project) {
 }
 
 
-
-fun Project.declareRepositories(extn: SonatypeExtension){
+fun Project.declareRepositories(extn: SonatypeExtension) {
 
   afterEvaluate {
 
     extensions.findByType<PublishingExtension>()?.apply {
       if (extn.signPublications) {
-        it.apply<SigningPlugin>()
-        it.extensions.getByType<SigningExtension>().also {signingExtension->
-          publications.all {publication->
-            signingExtension.sign(publication)
+        apply<SigningPlugin>()
+        extensions.getByType<SigningExtension>().apply {
+          publications.all {
+            sign(this)
           }
         }
       }
 
-      repositories { handler ->
-        handler.maven { repo ->
-          repo.name = "SonaType"
-          repo.url = URI(extn.publishingURL)
-          repo.credentials { creds->
-            creds.username = extn.sonatypeUsername
-            creds.password = extn.sonatypePassword
+      repositories {
+        maven {
+          name = "SonaType"
+          url = URI(extn.publishingURL)
+          credentials {
+            username = extn.sonatypeUsername
+            password = extn.sonatypePassword
           }
         }
       }
 
-      extn.configurePublishing.invoke(this,it)
-
-
+      extn.configurePublishing(this,this@declareRepositories)
     }
-    it.childProjects.forEach {entry->
-      entry.value.declareRepositories(extn)
+    childProjects.forEach {
+      it.value.declareRepositories(extn)
     }
   }
 
@@ -94,12 +91,12 @@ class SonatypePlugin : Plugin<Project> {
     project.afterEvaluate {
       project.extensions.findByType<PublishingExtension>()?.apply {
         repositories {
-          it.maven { repo ->
-            repo.name = "SonaType"
-            repo.setUrl(extn.publishingURL)
-            repo.credentials { creds ->
-              creds.username = extn.sonatypeUsername
-              creds.password = extn.sonatypePassword
+          maven {
+            name = "SonaType"
+            setUrl(extn.publishingURL)
+            credentials {
+              username = extn.sonatypeUsername
+              password = extn.sonatypePassword
             }
           }
         }

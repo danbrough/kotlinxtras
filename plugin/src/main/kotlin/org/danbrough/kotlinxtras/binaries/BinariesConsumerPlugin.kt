@@ -67,14 +67,14 @@ class BinariesConsumerPlugin : Plugin<Project> {
     }
 
     targetProject.afterEvaluate {
-      it.configureBinaries()
+      configureBinaries()
     }
   }
 
 }
 
 private fun Project.configureBinaries() {
-  afterEvaluate { project ->
+  afterEvaluate {
 
 
     val binaries =

@@ -50,11 +50,11 @@ fun sonatypeCloseRepository(
 }
 
 internal fun Project.createCloseRepoTask(extn:SonatypeExtension){
-  project.tasks.create("sonatypeCloseRepository") {task->
-    task.description =
+  project.tasks.create("sonatypeCloseRepository") {
+    description =
       "Closes the sonatype repository as specified by the ${SonatypeExtension.REPOSITORY_ID} gradle property"
-    task.group = SONATYPE_TASK_GROUP
-    task.doLast {_->
+    group = SONATYPE_TASK_GROUP
+    doLast {
       if (extn.sonatypeProfileId.isBlank()) throw Error("sonatype.stagingProfileId not set")
       val description =
         project.properties[SonatypeExtension.DESCRIPTION]?.toString() ?: ""

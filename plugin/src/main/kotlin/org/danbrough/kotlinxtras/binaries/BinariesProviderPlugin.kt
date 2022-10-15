@@ -16,14 +16,15 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.targets
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
-
+import java.nio.file.FileSystems
+import java.nio.file.Files
 
 
 open class BinariesProviderExtension(private val project: Project) {
 
   //Base name for the publications
   //Will default to the projects name
-   var libName: String = project.name
+  var libName: String = project.name
 
   //KonanTargets for which to build binary archives for
   var supportedTargets = mutableListOf<KonanTarget>()
@@ -37,6 +38,36 @@ open class BinariesProviderExtension(private val project: Project) {
 
 }
 
+/*
+import java.nio.file.FileSystems
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+
+import org.gradle.api.tasks.Copy
+
+class CopyWithSymlink extends Copy {
+    public CopyWithSymlink() {
+        super();
+        eachFile { details ->
+            Path sourcePath = FileSystems.getDefault().getPath(details.file.path)
+            if(Files.isSymbolicLink(sourcePath)) {
+                details.exclude()
+                Path destinationPath = Paths.get("${destinationDir}/${details.relativePath}")
+                if(Files.notExists(destinationPath.parent)) {
+                    project.mkdir destinationPath.parent
+                }
+                project.exec {
+                    commandLine 'ln', '-sf', Files.readSymbolicLink(sourcePath), destinationPath
+                }
+            }
+        }
+    }
+}
+ */
+
+
+
 class BinariesProviderPlugin : Plugin<Project> {
   override fun apply(targetProject: Project) {
 
@@ -45,9 +76,13 @@ class BinariesProviderPlugin : Plugin<Project> {
     val isMacHost = System.getProperty("os.name").startsWith("Mac")
 
     val extn =
-      targetProject.extensions.create("binariesProvider", BinariesProviderExtension::class.java,targetProject)
+      targetProject.extensions.create(
+        "binariesProvider",
+        BinariesProviderExtension::class.java,
+        targetProject
+      )
 
-    targetProject.afterEvaluate { project ->
+    targetProject.afterEvaluate {
 
       val libName = extn.libName
 
@@ -57,14 +92,16 @@ class BinariesProviderPlugin : Plugin<Project> {
         if (extn.supportedTargets.isEmpty())
           project.kotlinExtension.targets.filterIsInstance<KotlinNativeTarget>()
             .map { it.konanTarget } else extn.supportedTargets
-      
+
       project.extensions.getByType<PublishingExtension>().apply {
 
         val repoNames = repositories.names
 
+
         val publishToReposTasks = repoNames.associateWith {
-          project.tasks.create("publish${libName.capitalized()}BinariesTo${it.capitalized()}") { task ->
-            task.group = xtrasTaskGroup
+          project.tasks.create("publish${libName.capitalized()}BinariesTo${it.capitalized()}") {
+            group = "publishing"
+            version = extn.version
           }
         }
 
@@ -72,21 +109,54 @@ class BinariesProviderPlugin : Plugin<Project> {
         supportedTargets.filter { it.family.isAppleFamily == isMacHost }.forEach { target ->
           val jarName = "$libName${target.platformName.capitalized()}"
 
-          val jarTask = project.tasks.register<Jar>("zip${jarName.capitalized()}Binaries") {
+          val jarTask = project.tasks.register<Jar>("jar${jarName.capitalized()}Binaries") {
             archiveBaseName.set(jarName)
             dependsOn("build${target.platformName.capitalized()}")
             group = xtrasTaskGroup
-            from(project.rootProject.fileTree("libs/$libName/${target.platformName}")) {
-              include("include/**", "lib/*.so.*", "lib/*.a", "lib/*.dll", "lib/*.dylib")
+
+            val srcDir = project.rootProject.file("libs/$libName/${target.platformName}")
+
+//            doFirst {
+//              Files.list(srcDir.toPath().resolve("lib")).filter { Files.isSymbolicLink(it) }
+//                .forEach {
+//                  println("FOUND LINK $it")
+//                }
+//            }
+
+            from(srcDir) {
+              //include("include/**","lib/*.so", "lib/*.so.*", "lib/*.a", "lib/*.dll", "lib/*.dylib")
+              include("include/**", "lib/*")
             }
+
             into("$libName/${target.platformName}")
-            destinationDirectory.set(archivesDir)
+            destinationDirectory.set(archivesDir.resolve(extn.libName).resolve(extn.version))
+
+
+            //to preserve symlinks
+            eachFile {
+              val sourcePath = FileSystems.getDefault().getPath(file.path)
+
+              if (Files.isSymbolicLink(sourcePath)) {
+                exclude()
+             //   println("found symlink sourcePath:$sourcePath relatetivePath:$relativePath")
+
+//                val destinationPath = Paths.get("${destinationDirectory.get()}/$relativeSourcePath")
+//                println("sourcePath: $sourcePath -> $destinationPath  relativeSourcePath: ${this.relativeSourcePath}")
+//                if (Files.notExists(destinationPath.parent)){
+//                  mkdir(destinationPath.parent)
+//                }
+//                exec {
+//                  commandLine("ln","-sf",Files.readSymbolicLink(sourcePath),destinationPath)
+//                }
+              }
+            }
           }
 
-          val publicationName = "$libName${target.platformName.capitalized()}Binaries"
+          val publicationName = "$libName${target.platformName.capitalized()}"
+
           publications.register<MavenPublication>(publicationName) {
             artifactId = name
-            groupId = "${project.group}.$libName"
+            groupId = "${project.group}.$libName.binaries"
             version = extn.version
             artifact(jarTask)
           }

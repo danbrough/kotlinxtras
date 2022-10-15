@@ -1,29 +1,34 @@
 
 plugins {
-  kotlin("jvm")
+  kotlin("jvm") version "1.7.20"
+  `kotlin-dsl`
   `java-gradle-plugin`
   `maven-publish`
-  id("org.jetbrains.dokka")
+  id("org.jetbrains.dokka") version "1.7.20"
+}
+
+repositories {
+  mavenCentral()
 }
 
 kotlin {
   dependencies {
-    implementation(gradleApi())
-    implementation(gradleKotlinDsl())
-    implementation(kotlin("gradle-plugin"))
+    compileOnly(gradleApi())
+    compileOnly(gradleKotlinDsl())
+    compileOnly(kotlin("gradle-plugin"))
   }
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class).all {
 
   kotlinOptions {
-    jvmTarget = "1.8"
+    jvmTarget = "11"
   }
 }
 
 tasks.withType(JavaCompile::class) {
-  sourceCompatibility = JavaVersion.VERSION_1_8.toString()
-  targetCompatibility = JavaVersion.VERSION_1_8.toString()
+  sourceCompatibility = JavaVersion.VERSION_11.toString()
+  targetCompatibility = JavaVersion.VERSION_11.toString()
 }
 
 
@@ -79,6 +84,7 @@ val sourcesJar by tasks.registering(Jar::class) {
 }
 
 publishing {
+
   publications.all {
     if (this !is MavenPublication) return@all
     if (project.hasProperty("publishDocs"))
