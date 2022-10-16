@@ -10,8 +10,8 @@ plugins {
 
 
 repositories {
-  //maven("/usr/local/kotlinxtras/build/m2")
-  maven("https://s01.oss.sonatype.org/content/groups/staging")
+  maven("/usr/local/kotlinxtras/build/m2")
+ // maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
 }
 
@@ -23,7 +23,7 @@ binaries {
 //      "1.17_01"
 //    )
 //  )
- enableIconv()
+ enableIconv("1.17_01")
 }
 
 
@@ -32,8 +32,8 @@ kotlin {
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
-  macosX64()
-  macosArm64()
+//  macosX64()
+//  macosArm64()
 
   /** //uncomment if you want android support
   androidNativeX86()

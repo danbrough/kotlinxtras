@@ -1,11 +1,14 @@
-
 plugins {
   kotlin("jvm") version "1.7.20"
   `kotlin-dsl`
   `java-gradle-plugin`
   `maven-publish`
+  `signing`
   id("org.jetbrains.dokka") version "1.7.20"
 }
+
+group = "org.danbrough.kotlinxtras"
+version = "0.0.1"
 
 repositories {
   mavenCentral()
@@ -20,7 +23,6 @@ kotlin {
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class).all {
-
   kotlinOptions {
     jvmTarget = "11"
   }
@@ -32,35 +34,34 @@ tasks.withType(JavaCompile::class) {
 }
 
 
-val projectGroup = "org.danbrough.kotlinxtras"
 
 gradlePlugin {
   plugins {
 
     create("propertiesPlugin") {
-      id = "$projectGroup.properties"
-      implementationClass = "$projectGroup.PropertiesPlugin"
+      id = "$group.properties"
+      implementationClass = "$group.PropertiesPlugin"
       displayName = "KotlinXtras properties plugin"
       description = "Provides a gradle properties abstraction. (For internal use)"
     }
 
     create("binariesConsumer") {
-      id = "$projectGroup.consumer"
-      implementationClass = "$projectGroup.binaries.BinariesConsumerPlugin"
+      id = "$group.consumer"
+      implementationClass = "$group.binaries.BinariesConsumerPlugin"
       displayName = "KotlinXtras binaries consumer plugin"
       description = "Precompiled binaries for openssl,curl for compiling against."
     }
 
     create("binariesProvider") {
-      id = "$projectGroup.provider"
-      implementationClass = "$projectGroup.binaries.BinariesProviderPlugin"
+      id = "$group.provider"
+      implementationClass = "$group.binaries.BinariesProviderPlugin"
       displayName = "KotlinXtras binaries provider plugin"
       description = "Add support for packaging binaries into maven publications"
     }
 
     create("sonatypePlugin") {
-      id = "$projectGroup.sonatype"
-      implementationClass = "$projectGroup.sonatype.SonatypePlugin"
+      id = "$group.sonatype"
+      implementationClass = "$group.sonatype.SonatypePlugin"
       displayName = "Sonatype plugin"
       description = "Sonatype publishing support"
     }
@@ -83,13 +84,35 @@ val sourcesJar by tasks.registering(Jar::class) {
   from(sourceSets["main"].allJava)
 }
 
+
 publishing {
 
   publications.all {
+    group = project.group
+    version = project.version
     if (this !is MavenPublication) return@all
     if (project.hasProperty("publishDocs"))
       artifact(javadocJar)
     artifact(sourcesJar)
+    if (hasProperty("signPublications"))
+      signing.sign(this)
   }
+
+  repositories {
+    maven("../build/m2"){
+      name = "M2"
+    }
+
+    maven{
+      name = "SonaType"
+      url = uri("https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/${System.getenv("SONATYPE_REPO_ID")}")
+      credentials{
+        username = property("sonatypeUsername")?.toString()
+        password = property("sonatypePassword")?.toString()
+      }
+    }
+  }
+
 }
+
 

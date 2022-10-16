@@ -6,11 +6,13 @@ import org.danbrough.kotlinxtras.platformName
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Copy
 import org.gradle.configurationcache.extensions.capitalized
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.findByType
+import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
@@ -18,7 +20,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 const val DEFAULT_CURL_VERSION = "curl-7_85_0"
-const val DEFAULT_OPENSSL_VERSION = "OpenSSL_1_1_1q"
+const val DEFAULT_OPENSSL_VERSION = "OpenSSL_1_1_1r"
 const val DEFAULT_SQLITE_VERSION = "3.39.4"
 const val DEFAULT_ICONV_VERSION = "1.17_01"
 
@@ -61,14 +63,18 @@ class BinariesConsumerPlugin : Plugin<Project> {
 
   override fun apply(targetProject: Project) {
 
-    targetProject.extensions.create("binaries", BinariesExtension::class.java, targetProject)
-    val preCompiled: Configuration by targetProject.configurations.creating {
-      isTransitive = false
+    with(targetProject){
+      extensions.create("binaries", BinariesExtension::class.java, targetProject)
+
+      configurations.register("binary") {
+        isTransitive = false
+      }
+
+      afterEvaluate {
+        configureBinaries()
+      }
     }
 
-    targetProject.afterEvaluate {
-      configureBinaries()
-    }
   }
 
 }
@@ -80,7 +86,6 @@ private fun Project.configureBinaries() {
     val binaries =
       project.rootProject.extensions.findByType<BinariesExtension>() ?: return@afterEvaluate
 
-
     val mppExtension =
       project.extensions.findByType<KotlinMultiplatformExtension>() ?: return@afterEvaluate
 
@@ -89,8 +94,7 @@ private fun Project.configureBinaries() {
 
     //println("KONANTARGETS: $konanTargets")
 
-    val preCompiled by project.configurations.getting
-
+    val binaryConfiguration = project.configurations.getByName("binary")
 
     val localBinariesDir = project.rootProject.buildDir.resolve("kotlinxtras")
 
@@ -99,15 +103,15 @@ private fun Project.configureBinaries() {
         println("BIN DEP: $binDep")
         konanTargets.forEach { target ->
           val binDepLib =
-            "${binDep.group}.${binDep.name}:${binDep.name}${target.platformName.capitalized()}Binaries:${binDep.version}"
+            "${binDep.group}.${binDep.name}.binaries:${binDep.name}${target.platformName.capitalized()}:${binDep.version}"
           project.logger.log(LogLevel.INFO, "Adding binary support with $binDepLib")
-          preCompiled(binDepLib)
+          binaryConfiguration(binDepLib)
         }
       }
     }
 
 
-    preCompiled.resolvedConfiguration.resolvedArtifacts.forEach { artifact ->
+    binaryConfiguration.resolvedConfiguration.resolvedArtifacts.forEach { artifact ->
       project.tasks.register<Copy>("extract${artifact.name.capitalized()}") {
         from(project.zipTree(artifact.file).matching {
           exclude("**/META-INF")

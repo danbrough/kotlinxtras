@@ -17,10 +17,10 @@ plugins {
 
 group = "org.danbrough.kotlinxtras.iconv"
 
+val iconvVersion = project.properties["iconv.version"]?.toString() ?: throw Error("iconv.version not set")
 
 binariesProvider {
-  version = project.properties["iconv.version"]?.toString()
-    ?: throw Error("Gradle property iconv.version not set")
+  version = iconvVersion
 }
 
 fun KonanTarget.iconvSrcDir(project: Project): java.io.File =
