@@ -5,11 +5,9 @@ import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.xtrasTaskGroup
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.provider.Property
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.Exec
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Tar
 import org.gradle.configurationcache.extensions.capitalized
@@ -40,38 +38,10 @@ open class BinariesProviderExtension(private val project: Project) {
   var libsDir: File = project.rootProject.file("libs")
 
 
-
   var version: String = project.version.toString()
 
 }
 
-/*
-import java.nio.file.FileSystems
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-
-import org.gradle.api.tasks.Copy
-
-class CopyWithSymlink extends Copy {
-    public CopyWithSymlink() {
-        super();
-        eachFile { details ->
-            Path sourcePath = FileSystems.getDefault().getPath(details.file.path)
-            if(Files.isSymbolicLink(sourcePath)) {
-                details.exclude()
-                Path destinationPath = Paths.get("${destinationDir}/${details.relativePath}")
-                if(Files.notExists(destinationPath.parent)) {
-                    project.mkdir destinationPath.parent
-                }
-                project.exec {
-                    commandLine 'ln', '-sf', Files.readSymbolicLink(sourcePath), destinationPath
-                }
-            }
-        }
-    }
-}
- */
 
 fun Project.registerArchiveTask2(libName:String,target: KonanTarget,extn: BinariesProviderExtension) : TaskProvider<*>{
   val archiveName = "$libName${target.platformName.capitalized()}"
@@ -87,23 +57,6 @@ fun Project.registerArchiveTask2(libName:String,target: KonanTarget,extn: Binari
   }
 }
 
-abstract class RSyncTask : Exec() {
-      @get:Input
-    abstract val destDir: Property<File>
-}
-
-//fun Project.registerCopyTask(tmpDir:File) =  tasks.register<Exec>("copy${archiveName.capitalized()}"){
-//  dependsOn("build${target.platformName.capitalized()}")
-//  doFirst {
-//    println("copying files to tempDir: $tmpDir")
-//  }
-//  workingDir(libsDir)
-//  commandLine("rsync","-avHS","--include=$libName","--include=$libName/${target.platformName}",
-//    "--include=lib**","--include=include**","--include=bin**",
-//    "--exclude=*", "./",tmpDir.absolutePath)
-//}
-
-
 fun Project.registerArchiveTask(libName:String,target: KonanTarget,extn: BinariesProviderExtension) : TaskProvider<Exec>{
   val archiveName = "$libName${target.platformName.capitalized()}"
   val libsDir = extn.libsDir
@@ -115,8 +68,9 @@ fun Project.registerArchiveTask(libName:String,target: KonanTarget,extn: Binarie
       println("copying files to tempDir: $temporaryDir")
     }
     workingDir(libsDir)
+    inputs.dir(libsDir)
     outputs.dir(temporaryDir)
-    commandLine("rsync","-avHS","--include=$libName","--include=$libName/${target.platformName}",
+    commandLine("rsync","-avHSx","--delete","--include=$libName","--include=$libName/${target.platformName}",
       "--include=lib**","--include=include**","--include=bin**",
       "--exclude=*", "./",temporaryDir.absolutePath)
   }
@@ -127,6 +81,7 @@ fun Project.registerArchiveTask(libName:String,target: KonanTarget,extn: Binarie
     dependsOn(copyTask)
     val srcDir = copyTask.get().outputs.files.files.first()
     val tarFile = destDir.resolve("${archiveName}_${extn.version}.tar.gz")
+    inputs.dir(srcDir)
     outputs.file(tarFile)
     doFirst {
       if (!tarFile.parentFile.exists()){
@@ -138,29 +93,6 @@ fun Project.registerArchiveTask(libName:String,target: KonanTarget,extn: Binarie
 
     workingDir(srcDir)
     commandLine("tar","-f",tarFile.absolutePath, "-cpz","./")
-
-
-
-
-
-
-
-  //  val srcDir = project.rootProject.file("libs/$libName/${target.platformName}")
-
-//            doFirst {
-//              Files.list(srcDir.toPath().resolve("lib")).filter { Files.isSymbolicLink(it) }
-//                .forEach {
-//                  println("FOUND LINK $it")
-//                }
-//            }
-//
-//    from(srcDir) {
-//      //include("include/**","lib/*.so", "lib/*.so.*", "lib/*.a", "lib/*.dll", "lib/*.dylib")
-//      include("include/**", "lib/*")
-//    }
-//
-//    into("$libName/${target.platformName}")
-//    destinationDirectory.set()
   }
 }
 class BinariesProviderPlugin : Plugin<Project> {
@@ -194,7 +126,7 @@ class BinariesProviderPlugin : Plugin<Project> {
         val publishToReposTasks = repoNames.associateWith {
           project.tasks.create("publish${libName.capitalized()}BinariesTo${it.capitalized()}") {
             group = "publishing"
-            version = extn.version
+           // version = extn.version
           }
         }
 
@@ -203,55 +135,14 @@ class BinariesProviderPlugin : Plugin<Project> {
           //val jarName = "$libName${target.platformName.capitalized()}"
           val archiveTask = project.registerArchiveTask(libName,target,extn)
 
-//          val archiveTask = project.tasks.register<Jar>("jar${jarName.capitalized()}Binaries") {
-//            archiveBaseName.set(jarName)
-//            dependsOn("build${target.platformName.capitalized()}")
-//            group = xtrasTaskGroup
-//
-//            val srcDir = project.rootProject.file("libs/$libName/${target.platformName}")
-//
-////            doFirst {
-////              Files.list(srcDir.toPath().resolve("lib")).filter { Files.isSymbolicLink(it) }
-////                .forEach {
-////                  println("FOUND LINK $it")
-////                }
-////            }
-//
-//            from(srcDir) {
-//              //include("include/**","lib/*.so", "lib/*.so.*", "lib/*.a", "lib/*.dll", "lib/*.dylib")
-//              include("include/**", "lib/*")
-//            }
-//
-//            into("$libName/${target.platformName}")
-//            destinationDirectory.set(archivesDir.resolve(extn.libName).resolve(extn.version))
-//
-//
-//            //to preserve symlinks
-//            eachFile {
-//              val sourcePath = FileSystems.getDefault().getPath(file.path)
-//
-//              if (Files.isSymbolicLink(sourcePath)) {
-//                exclude()
-//             //   println("found symlink sourcePath:$sourcePath relatetivePath:$relativePath")
-//
-////                val destinationPath = Paths.get("${destinationDirectory.get()}/$relativeSourcePath")
-////                println("sourcePath: $sourcePath -> $destinationPath  relativeSourcePath: ${this.relativeSourcePath}")
-////                if (Files.notExists(destinationPath.parent)){
-////                  mkdir(destinationPath.parent)
-////                }
-////                exec {
-////                  commandLine("ln","-sf",Files.readSymbolicLink(sourcePath),destinationPath)
-////                }
-//              }
-//            }
-//          }
+
 
           val publicationName = "$libName${target.platformName.capitalized()}"
 
           publications.register<MavenPublication>(publicationName) {
             artifactId = name
             groupId = "${project.group}.$libName.binaries"
-            version = extn.version
+           // version = extn.version
             artifact(archiveTask)
           }
 

@@ -1,9 +1,9 @@
-
 import BuildEnvironment.buildEnvironment
 import BuildEnvironment.declareNativeTargets
 import BuildEnvironment.hostTriplet
 import BuildEnvironment.konanDepsTaskName
 import BuildEnvironment.platformName
+import org.danbrough.kotlinxtras.binaries.CurrentVersions
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.de.undercouch.gradle.tasks.download.Download
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -15,16 +15,14 @@ plugins {
   id("org.danbrough.kotlinxtras.provider")
 }
 
-group = "org.danbrough.kotlinxtras.iconv"
 
-val iconvVersion = project.properties["iconv.version"]?.toString() ?: throw Error("iconv.version not set")
+version = CurrentVersions.iconv
 
 binariesProvider {
-  version = iconvVersion
 }
 
 fun KonanTarget.iconvSrcDir(project: Project): java.io.File =
-  project.buildDir.resolve("iconv/$platformName/${project.properties["iconv.version"]}")
+  project.buildDir.resolve("iconv/$platformName/$version")
 
 
 fun KonanTarget.iconvPrefix(project: Project): java.io.File =
@@ -36,9 +34,15 @@ val KonanTarget.iconvNotBuilt: Boolean
 
 val downloadSrcTask by tasks.creating(Download::class.java) {
   src(project.properties["iconv.source"])
-  dest(buildDir.resolve("iconv").also {
-    if (!it.exists()) it.mkdirs()
-  })
+  val destDir =buildDir.resolve("iconv")
+  dest(destDir)
+  doFirst {
+    if (!destDir.exists()){
+      project.exec {
+        mkdir(destDir)
+      }
+    }
+  }
   overwrite(false)
 }
 
@@ -80,7 +84,7 @@ fun configureTask(target: KonanTarget) =
       "./configure", "-C",
       "--host=${target.hostTriplet}",
       "--prefix=${target.iconvPrefix(project)}",
-      )
+    )
     commandLine(args)
   }
 
@@ -151,31 +155,37 @@ kotlin {
 }
 
 
-tasks.register("generateCInteropsDef") {
+val generateInteropsDefTaskName = "generateCInteropsDef"
+
+tasks.register(generateInteropsDefTaskName) {
   inputs.file("src/libiconv_header.def")
   outputs.file("src/libiconv.def")
   doFirst {
     val outputFile = outputs.files.files.first()
     println("Generating $outputFile")
+    val libName = "iconv"
+
     outputFile.printWriter().use { output ->
       output.println(inputs.files.files.first().readText())
       kotlin.targets.withType<KotlinNativeTarget>().forEach {
         val konanTarget = it.konanTarget
-        output.println("compilerOpts.${konanTarget.name} = -Ibuild/kotlinxtras/iconv/${konanTarget.platformName}/include \\")
-        output.println("\t-I/usr/local/kotlinxtras/libs/iconv/${konanTarget.platformName}/include ")
-        output.println("linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/iconv/${konanTarget.platformName}/lib \\")
-        output.println("\t-L/usr/local/kotlinxtras/libs/iconv/${konanTarget.platformName}/lib ")
-        output.println("libraryPaths.${konanTarget.name} = build/kotlinxtras/iconv/${konanTarget.platformName}/lib \\")
-        output.println("\t/usr/local/kotlinxtras/libs/iconv/${konanTarget.platformName}/lib ")
+        output.println(
+          """
+         |compilerOpts.${konanTarget.name} = -Ibuild/kotlinxtras/$libName/${konanTarget.platformName}/include \
+         |  -I/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/include
+         |linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/$libName/${konanTarget.platformName}/lib \
+         |  -L/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/lib
+         |libraryPaths.${konanTarget.name} = -Lbuild/kotlinxtras/$libName/${konanTarget.platformName}/lib \
+         |  -L/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/lib    
+         |""".trimMargin()
+        )
       }
     }
   }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>() {
-  dependsOn("generateCInteropsDef")
+  dependsOn(generateInteropsDefTaskName)
   if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily)
     dependsOn("build${konanTarget.platformName.capitalized()}")
 }
-
-

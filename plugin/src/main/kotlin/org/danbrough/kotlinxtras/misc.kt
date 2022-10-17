@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 const val xtrasTaskGroup = "xtras"
 
-
 val KonanTarget.platformName: String
   get() {
     if (family == Family.ANDROID) {
@@ -22,3 +21,9 @@ val KonanTarget.platformName: String
     }
     return name.split("_").joinToString("") { it.capitalize() }.decapitalize()
   }
+
+
+
+val hostIsMac: Boolean
+  get()=  System.getProperty("os.name").startsWith("Mac")
+

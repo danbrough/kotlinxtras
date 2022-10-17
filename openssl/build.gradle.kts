@@ -7,9 +7,9 @@ import BuildEnvironment.platformName
 import OpenSSL.opensslPlatform
 import OpenSSL.opensslPrefix
 import OpenSSL.opensslSrcDir
+import org.danbrough.kotlinxtras.binaries.CurrentVersions
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 
@@ -19,9 +19,10 @@ plugins {
   id("org.danbrough.kotlinxtras.provider")
 }
 
+version = CurrentVersions.openssl
 
 binariesProvider {
-  version = project.properties["openssl.version"].toString()
+  //extra configuration values can go here
 }
 
 val KonanTarget.openSSLNotBuilt: Boolean
@@ -30,26 +31,39 @@ val KonanTarget.openSSLNotBuilt: Boolean
 
 val opensslGitDir = rootProject.file("repos/openssl")
 
-tasks.register("generateCInteropsDef") {
+val generateInteropsDefTaskName = "generateCInteropsDef"
+
+tasks.register(generateInteropsDefTaskName) {
   inputs.file("src/openssl_header.def")
   outputs.file("src/openssl.def")
   doFirst {
     val outputFile = outputs.files.files.first()
     println("Generating $outputFile")
+    val libName = "openssl"
 
     outputFile.printWriter().use { output ->
       output.println(inputs.files.files.first().readText())
       kotlin.targets.withType<KotlinNativeTarget>().forEach {
         val konanTarget = it.konanTarget
-        output.println("compilerOpts.${konanTarget.name} = -Ibuild/kotlinxtras/openssl/${konanTarget.platformName}/include \\")
-        output.println("\t-I/usr/local/kotlinxtras/libs/openssl/${konanTarget.platformName}/include ")
-        output.println("linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/openssl/${konanTarget.platformName}/lib \\")
-        output.println("\t-L/usr/local/kotlinxtras/libs/openssl/${konanTarget.platformName}/lib ")
+        output.println("""
+         |compilerOpts.${konanTarget.name} = -Ibuild/kotlinxtras/$libName/${konanTarget.platformName}/include \
+         |  -I/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/include
+         |linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/$libName/${konanTarget.platformName}/lib \
+         |  -L/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/lib
+         |libraryPaths.${konanTarget.name} = -Lbuild/kotlinxtras/$libName/${konanTarget.platformName}/lib \
+         |  -L/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/lib    
+         |""".trimMargin())
       }
     }
   }
-
 }
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>() {
+  dependsOn(generateInteropsDefTaskName)
+  if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily)
+    dependsOn("build${konanTarget.platformName.capitalized()}")
+}
+
 
 fun srcPrepare(target: KonanTarget) =
   tasks.register("srcPrepare${target.platformName.capitalize()}", Exec::class) {
@@ -143,11 +157,6 @@ kotlin {
   }
 }
 
-tasks.withType<CInteropProcess>() {
-  dependsOn("generateCInteropsDef")
-  if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily)
-    dependsOn("build${konanTarget.platformName.capitalized()}")
-}
 
 
 

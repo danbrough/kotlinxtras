@@ -11,21 +11,10 @@ plugins {
 }
 
 //val projectProperties = project.projectProperties
-ProjectProperties.init(project)
+//ProjectProperties.init(project)
 
 group = ProjectProperties.projectGroup
 version = ProjectProperties.buildVersionName
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class).all {
-  kotlinOptions {
-    jvmTarget = "1.8"
-  }
-}
-
-tasks.withType(JavaCompile::class) {
-  sourceCompatibility = JavaVersion.VERSION_1_8.toString()
-  targetCompatibility = JavaVersion.VERSION_1_8.toString()
-}
 
 
 
@@ -48,6 +37,17 @@ allprojects {
     outputs.upToDateWhen {
       false
     }
+  }
+
+  tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class).all {
+    kotlinOptions {
+      jvmTarget = "11"
+    }
+  }
+
+  tasks.withType(JavaCompile::class) {
+    sourceCompatibility = JavaVersion.VERSION_11.toString()
+    targetCompatibility = JavaVersion.VERSION_11.toString()
   }
 }
 

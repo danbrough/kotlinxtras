@@ -3,6 +3,7 @@ import BuildEnvironment.declareNativeTargets
 import BuildEnvironment.hostTriplet
 import BuildEnvironment.konanDepsTaskName
 import BuildEnvironment.platformName
+import org.danbrough.kotlinxtras.binaries.CurrentVersions
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.de.undercouch.gradle.tasks.download.Download
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -14,17 +15,16 @@ plugins {
   id("org.danbrough.kotlinxtras.provider")
 }
 
-group = "org.danbrough.kotlinxtras.sqlite"
-
+version = CurrentVersions.sqlite
 val sqliteGitDir = rootProject.file("repos/sqlite")
+val sqliteSource = "https://www.sqlite.org/2022/sqlite-autoconf-3390400.tar.gz"
 
 binariesProvider {
-  version = project.properties["sqlite.version"]?.toString()
-    ?: throw Error("Gradle property sqlite.version not set")
+
 }
 
 fun KonanTarget.sqliteSrcDir(project: Project): java.io.File =
-  project.buildDir.resolve("sqlite/$platformName/${project.properties["sqlite.version"]}")
+  project.buildDir.resolve("sqlite/$platformName/$version")
 
 
 fun KonanTarget.sqlitePrefix(project: Project): java.io.File =
@@ -45,7 +45,7 @@ fun srcPrepare(target: KonanTarget): Exec =
 
 
 val downloadSrcTask by tasks.creating(Download::class.java) {
-  src(project.properties["sqlite.source"])
+  src(sqliteSource)
   dest(buildDir.resolve("sqlite").also {
     if (!it.exists()) it.mkdirs()
   })
@@ -68,7 +68,6 @@ fun srcPrepareFromDownload(target: KonanTarget): Copy =
 
 fun configureTask(target: KonanTarget) =
   tasks.register("srcConfigure${target.platformName.capitalize()}", Exec::class) {
-    //dependsOn("srcPrepare${target.platformName.capitalize()}")
     dependsOn("srcPrepareFromDownload${target.platformName.capitalize()}")
 
 
@@ -163,28 +162,36 @@ kotlin {
 }
 
 
-tasks.register("generateCInteropsDef") {
+
+val generateInteropsDefTaskName = "generateCInteropsDef"
+
+tasks.register(generateInteropsDefTaskName) {
   inputs.file("src/libsqlite_header.def")
   outputs.file("src/libsqlite.def")
   doFirst {
     val outputFile = outputs.files.files.first()
     println("Generating $outputFile")
+    val libName = "sqlite"
+
     outputFile.printWriter().use { output ->
       output.println(inputs.files.files.first().readText())
       kotlin.targets.withType<KotlinNativeTarget>().forEach {
         val konanTarget = it.konanTarget
-        output.println("compilerOpts.${konanTarget.name} = -Ibuild/kotlinxtras/sqlite/${konanTarget.platformName}/include \\")
-        output.println("\t-I/usr/local/kotlinxtras/libs/sqlite/${konanTarget.platformName}/include ")
-        output.println("linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/sqlite/${konanTarget.platformName}/lib \\")
-        output.println("\t-L/usr/local/kotlinxtras/libs/sqlite/${konanTarget.platformName}/lib ")
-        output.println("libraryPaths.${konanTarget.name} = build/kotlinxtras/sqlite/${konanTarget.platformName}/lib \\")
-        output.println("\t/usr/local/kotlinxtras/libs/sqlite/${konanTarget.platformName}/lib ")
+        output.println("""
+         |compilerOpts.${konanTarget.name} = -Ibuild/kotlinxtras/$libName/${konanTarget.platformName}/include \
+         |  -I/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/include
+         |linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/$libName/${konanTarget.platformName}/lib \
+         |  -L/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/lib
+         |libraryPaths.${konanTarget.name} = -Lbuild/kotlinxtras/$libName/${konanTarget.platformName}/lib \
+         |  -L/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/lib    
+         |""".trimMargin())
       }
     }
   }
 }
+
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>() {
-  dependsOn("generateCInteropsDef")
+  dependsOn(generateInteropsDefTaskName)
   if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily)
     dependsOn("build${konanTarget.platformName.capitalized()}")
 }

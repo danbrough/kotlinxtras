@@ -7,6 +7,7 @@ import BuildEnvironment.platformName
 import Curl.curlPrefix
 import Curl.curlSrcDir
 import OpenSSL.opensslPrefix
+import org.danbrough.kotlinxtras.binaries.CurrentVersions
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -16,13 +17,13 @@ plugins {
   `maven-publish`
   id("org.danbrough.kotlinxtras.provider")
 }
-
-
 ProjectProperties.init(project)
+
+version = CurrentVersions.curl
 
 
 binariesProvider {
-  version = project.properties["curl.version"].toString()
+ //for extra configuration
 }
 
 val curlGitDir = rootProject.file("repos/curl")
@@ -123,8 +124,18 @@ kotlin {
     }
   }
 
+  val commonTest by sourceSets.getting {
+    dependencies {
+      implementation(kotlin("test"))
+    }
+  }
+
   val posixMain by sourceSets.creating {
     dependsOn(commonMain)
+  }
+
+  val posixTest by sourceSets.creating {
+    dependsOn(commonTest)
   }
 
   val buildAll by tasks.creating
@@ -155,6 +166,8 @@ kotlin {
 
 val generateInteropsDefTaskName = "generateCInteropsDef"
 
+
+
 tasks.register(generateInteropsDefTaskName) {
   description = "Generate src/libcurl.def from src/libcurl_headers.h"
   inputs.file("src/libcurl_header.def")
@@ -162,16 +175,20 @@ tasks.register(generateInteropsDefTaskName) {
   doFirst {
     val outputFile = outputs.files.files.first()
     println("Generating $outputFile")
+    val libName = "curl"
     outputFile.printWriter().use { output ->
       output.println(inputs.files.files.first().readText())
       kotlin.targets.withType<KotlinNativeTarget>().forEach {
         val konanTarget = it.konanTarget
-        output.println("compilerOpts.${konanTarget.name} = -Ibuild/kotlinxtras/curl/${konanTarget.platformName}/include \\")
-        output.println("\t-I/usr/local/kotlinxtras/libs/curl/${konanTarget.platformName}/include ")
-        output.println("linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/curl/${konanTarget.platformName}/lib \\")
-        output.println("\t-L/usr/local/kotlinxtras/libs/curl/${konanTarget.platformName}/lib ")
-        output.println("libraryPaths.${konanTarget.name} = build/kotlinxtras/curl/${konanTarget.platformName}/lib \\")
-        output.println("\t/usr/local/kotlinxtras/libs/curl/${konanTarget.platformName}/lib ")
+        output.println("""
+         |compilerOpts.${konanTarget.name} = -Ibuild/kotlinxtras/$libName/${konanTarget.platformName}/include \
+         |  -I/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/include
+         |linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/$libName/${konanTarget.platformName}/lib \
+         |  -L/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/lib
+         |libraryPaths.${konanTarget.name} = -Lbuild/kotlinxtras/$libName/${konanTarget.platformName}/lib \
+         |  -L/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/lib
+         |
+         |""".trimMargin())
       }
     }
   }
