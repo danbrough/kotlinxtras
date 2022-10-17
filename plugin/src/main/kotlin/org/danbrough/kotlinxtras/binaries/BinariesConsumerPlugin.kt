@@ -59,7 +59,7 @@ data class BinDep(val group: String?, val name: String, val version: String?)
 open class BinariesExtension(private val project: Project) {
   internal var binDeps: MutableSet<BinDep> = mutableSetOf()
 
-  private val projectGroup = "org.danbrough.kotlinxtras"
+  var projectGroup = "org.danbrough.kotlinxtras"
 
   fun enableCurl(version: String = CurrentVersions.curl) {
     binDeps.add(BinDep(projectGroup, "curl", version))
@@ -168,7 +168,7 @@ private fun Project.configureBinaries() {
           "adding extract dependency on ${binDep.name} for ${it.name}"
         )
         val konanTarget = KonanTarget.predefinedTargets[it.target]!!
-        it.dependsOn("extract${binDep.name.capitalized()}${konanTarget.platformName.capitalized()}Binaries")
+        it.dependsOn("extract${binDep.name.capitalized()}${konanTarget.platformName.capitalized()}")
       }
     }
   }
