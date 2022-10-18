@@ -126,7 +126,6 @@ class BinariesProviderPlugin : Plugin<Project> {
         val publishToReposTasks = repoNames.associateWith {
           project.tasks.create("publish${libName.capitalized()}BinariesTo${it.capitalized()}") {
             group = "publishing"
-           // version = extn.version
           }
         }
 
@@ -135,13 +134,11 @@ class BinariesProviderPlugin : Plugin<Project> {
           //val jarName = "$libName${target.platformName.capitalized()}"
           val archiveTask = project.registerArchiveTask(libName,target,extn)
 
-
-
           val publicationName = "$libName${target.platformName.capitalized()}"
 
-          publications.register<MavenPublication>(publicationName) {
-            artifactId = name
-            groupId = "${project.group}.$libName.binaries"
+          publications.register<MavenPublication>(publicationName){
+            artifactId = publicationName
+            groupId = "${project.group}.${project.name}.binaries"
            // version = extn.version
             artifact(archiveTask)
           }

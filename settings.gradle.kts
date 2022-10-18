@@ -28,4 +28,4 @@ include(":sqlite")
 
 include(":iconv")
 
-include(":demo")
+//include(":demo")

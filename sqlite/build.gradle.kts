@@ -1,10 +1,11 @@
+
 import BuildEnvironment.buildEnvironment
 import BuildEnvironment.declareNativeTargets
 import BuildEnvironment.hostTriplet
 import BuildEnvironment.konanDepsTaskName
 import BuildEnvironment.platformName
 import org.danbrough.kotlinxtras.binaries.CurrentVersions
-import org.gradle.configurationcache.extensions.capitalized
+import org.danbrough.kotlinxtras.sonatype.generateInterops
 import org.jetbrains.kotlin.de.undercouch.gradle.tasks.download.Download
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -163,37 +164,6 @@ kotlin {
 
 
 
-val generateInteropsDefTaskName = "generateCInteropsDef"
-
-tasks.register(generateInteropsDefTaskName) {
-  inputs.file("src/libsqlite_header.def")
-  outputs.file("src/libsqlite.def")
-  doFirst {
-    val outputFile = outputs.files.files.first()
-    println("Generating $outputFile")
-    val libName = "sqlite"
-
-    outputFile.printWriter().use { output ->
-      output.println(inputs.files.files.first().readText())
-      kotlin.targets.withType<KotlinNativeTarget>().forEach {
-        val konanTarget = it.konanTarget
-        output.println("""
-         |compilerOpts.${konanTarget.name} = -Ibuild/kotlinxtras/$libName/${konanTarget.platformName}/include \
-         |  -I/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/include
-         |linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/$libName/${konanTarget.platformName}/lib \
-         |  -L/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/lib
-         |libraryPaths.${konanTarget.name} = -Lbuild/kotlinxtras/$libName/${konanTarget.platformName}/lib \
-         |  -L/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/lib    
-         |""".trimMargin())
-      }
-    }
-  }
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>() {
-  dependsOn(generateInteropsDefTaskName)
-  if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily)
-    dependsOn("build${konanTarget.platformName.capitalized()}")
-}
+generateInterops("sqlite",file("src/libsqlite_header.def"),file("src/libsqlite.def"))
 
 
