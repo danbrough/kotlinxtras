@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.KonanTarget.Companion.predefinedTargets
 
 plugins {
   kotlin("multiplatform")
@@ -23,14 +24,6 @@ repositories {
 //  dependencies {
 //    preCompiled(libs.sqlite)
 //  }
-
-val binaryDep = project.configurations.create("binary"){
-  isVisible = false
-  isTransitive = false
-  isCanBeConsumed = false
-  isCanBeResolved = true
-}
-
 
 
 kotlin {
@@ -85,55 +78,70 @@ kotlin {
       }
     }
   }
+}
+
+fun resolveBinariesTask(konanTarget: KonanTarget) =
+  tasks.register("resolveBinaries${konanTarget.platformName.capitalized()}") {
+    val binaryDep =
+      project.configurations.create("binaries${konanTarget.platformName.capitalized()}") {
+        isVisible = false
+        isTransitive = false
+        isCanBeConsumed = false
+        isCanBeResolved = true
+      }
 
 
-  tasks.register("resolveBinariesLinuxX64"){
-    val konanTarget = org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_X64
+
+    dependencies {
+      binaryDep("org.danbrough.kotlinxtras.sqlite.binaries:sqlite${konanTarget.platformName.capitalized()}:3.39.4")
+      binaryDep("org.danbrough.kotlinxtras.openssl.binaries:openssl${konanTarget.platformName.capitalized()}:1_1_1r")
+    }
+
+    //dependsOn(binaryDep)
+    println("binDEp: ${binaryDep.name}")
+    outputs.files(binaryDep.resolve())
+    val taskOutputs = outputs
+    //
+
     doFirst {
       println("resolving $konanTarget binaries")
+//        taskOutputs.files(binaryDep.resolve())
+      //println("binaries: ${bin}")
+//      binaryDep.resolve().also {
+//        println("RESOLVED: $it")
+//        outputs.file(it)
+//      }
+    }
 
-      dependencies {
-        binaryDep("org.danbrough.kotlinxtras.sqlite.binaries:sqliteLinuxX64:3.39.4")
-        binaryDep("org.danbrough.kotlinxtras.sqlite.binaries:sqliteLinuxX22:3.39.4")
-
-      }
-
-
-      binaryDep.incoming.dependencies.all {
-        println("BINDEP DEPENDENCY $this")
-      }
-      binaryDep.resolutionStrategy {
-        this.eachDependency {
-
-        }
-      }
-      binaryDep.resolve().also {
-        println("RESOLVED: $it")
-      }
-
+    doLast {
+      println("FINISHED RESOLVING STUFF")
+      println("OUTPUTS: ${this@register.outputs.files.files}")
     }
   }
 
-  tasks.withType<KotlinNativeCompile>{
-    if (target == "linux_x64"){
-     dependsOn("resolveBinariesLinuxX64")
+
+fun binariesTask(konanTarget: KonanTarget) {
+  val resolveTask = resolveBinariesTask(konanTarget)
+  tasks.register("extractBinaries${konanTarget.platformName.capitalized()}") {
+    dependsOn(resolveTask)
+    doFirst {
+      println("BINARIES TASK on ${resolveTask.get().outputs.files.files}")
     }
   }
-
-  tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink>{
-    if (target == "linux_x64"){
-      dependsOn("resolveBinariesLinuxX64")
-    }
-  }
-
 
 }
 
 
+tasks.withType<KotlinNativeCompile>().map { KonanTarget.Companion.predefinedTargets[it.target]!! }
+  .distinct().forEach(::binariesTask)
 
+tasks.withType<KotlinNativeCompile> {
+  dependsOn("extractBinaries${predefinedTargets[target]!!.platformName.capitalized()}")
+}
 
-
-
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink> {
+  dependsOn("extractBinaries${predefinedTargets[target]!!.platformName.capitalized()}")
+}
 
 val KonanTarget.platformName: String
   get() {

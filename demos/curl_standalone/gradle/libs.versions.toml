@@ -19,7 +19,7 @@ kotlinx-coroutines-core = "org.danbrough.kotlinx:kotlinx-coroutines-core:1.6.4"
 
 kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }
 
-curl = {group = "org.danbrough.kotlinxtras", name = "curl",version.ref = "xtras"}
+curl = {group = "org.danbrough.kotlinxtras", name = "curl",version = "7_86_0"}
 openssl = {group = "org.danbrough.kotlinxtras", name = "openssl",version.ref = "xtras"}
 
 kotlin-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-compiler-embeddable", version.ref = "kotlin" }

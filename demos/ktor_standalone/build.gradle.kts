@@ -4,20 +4,27 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   kotlin("multiplatform")
-  id("org.danbrough.kotlinxtras.consumer") version "0.0.1-beta05"
+  id("org.danbrough.kotlinxtras.consumer")
 }
 
 
 
 repositories {
- // maven("../../build/m2")
+  maven("../../build/m2")
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
 }
 
 binaries {
-  enableCurl()
-  enableOpenSSL()
+  enableCurl(version = libs.curl.get().versionConstraint.toString())
+  enableOpenSSL(version = libs.openssl.get().versionConstraint.toString())
+}
+
+
+tasks.register("thang") {
+  doFirst {
+    println("VERSION: ${libs.curl.get().versionConstraint}")
+  }
 }
 
 
@@ -26,8 +33,9 @@ kotlin {
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
-  macosX64()
-  macosArm64()
+  // uncomment if you want them
+  //macosX64()
+  //macosArm64()
 
   /** //uncomment if you want android support
   androidNativeX86()
@@ -48,6 +56,7 @@ kotlin {
       implementation(libs.kotlinx.coroutines.core)
       implementation(libs.ktor.server.cio)
       implementation(libs.kotlinx.datetime)
+
     }
   }
 

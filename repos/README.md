@@ -16,6 +16,11 @@ upstream: https://github.com/Kotlin/kotlinx.coroutines.git
 
 - kotlinx.coroutines 1.6.3-native-mt in staging.
 
+### KotlinX AtomicFU 
+
+https://github.com:danbrough/kotlinx.atomicfu.git
+upstream: https://github.com/Kotlin/kotlinx-atomicfu
+
 ### KotlinX DateTime 
 
 https://github.com/danbrough/kotlinx-datetime.git  

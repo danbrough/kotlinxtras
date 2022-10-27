@@ -9,7 +9,7 @@ plugins {
 
 
 repositories {
- // maven("../../build/m2")
+  maven("../../build/m2")
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
 }
@@ -21,8 +21,10 @@ kotlin {
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
-  macosX64()
-  macosArm64()
+// uncomment if you want them
+
+//  macosX64()
+//  macosArm64()
 
   /** //uncomment if you want android support
   androidNativeX86()
