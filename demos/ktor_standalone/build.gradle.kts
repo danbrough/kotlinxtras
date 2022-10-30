@@ -21,13 +21,6 @@ binaries {
 }
 
 
-tasks.register("thang") {
-  doFirst {
-    println("VERSION: ${libs.curl.get().versionConstraint}")
-  }
-}
-
-
 kotlin {
 
   linuxX64()

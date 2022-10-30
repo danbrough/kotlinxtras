@@ -1,7 +1,7 @@
 import org.gradle.configurationcache.extensions.capitalized
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
+import org.jetbrains.kotlin.incremental.mkdirsOrThrow
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.Companion.predefinedTargets
 
@@ -31,11 +31,11 @@ kotlin {
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
-//  if you want them
-//  androidNativeX86()
-//  androidNativeX64()
-//  androidNativeArm32()
-//  androidNativeArm64()
+
+  androidNativeX86()
+  androidNativeX64()
+  androidNativeArm32()
+  androidNativeArm64()
 
 
   val commonMain by sourceSets.getting {
@@ -60,11 +60,16 @@ kotlin {
 
   targets.withType<KotlinNativeTarget>().all {
 
-
     compilations["main"].apply {
 
       defaultSourceSet.dependsOn(nativeMain)
+//
+//      cinterops.create("demo"){
+//        defFile("src/demo.def")
+//      }
     }
+
+
 
     binaries {
       executable("sqliteDemo1") {
@@ -77,6 +82,13 @@ kotlin {
         }
       }
     }
+  }
+}
+
+tasks.register("thang"){
+
+  KonanTarget.predefinedTargets.forEach {
+    println("TARGET: ${it.key}")
   }
 }
 
@@ -120,12 +132,22 @@ fun resolveBinariesTask(konanTarget: KonanTarget) =
   }
 
 
-fun binariesTask(konanTarget: KonanTarget) {
+fun extractBinariesTask(konanTarget: KonanTarget) {
   val resolveTask = resolveBinariesTask(konanTarget)
   tasks.register("extractBinaries${konanTarget.platformName.capitalized()}") {
     dependsOn(resolveTask)
     doFirst {
-      println("BINARIES TASK on ${resolveTask.get().outputs.files.files}")
+      val files = resolveTask.get().outputs.files.files
+      println("BINARIES TASK on $files")
+
+      val xtrasDirectory = buildDir.resolve("kotlinxtras").also {
+        if (!it.exists()) it.mkdirs()
+      }
+      files.forEach {file->
+        exec {
+          commandLine("tar","xfz",file, "-C",xtrasDirectory.absolutePath)
+        }
+      }
     }
   }
 
@@ -133,7 +155,7 @@ fun binariesTask(konanTarget: KonanTarget) {
 
 
 tasks.withType<KotlinNativeCompile>().map { KonanTarget.Companion.predefinedTargets[it.target]!! }
-  .distinct().forEach(::binariesTask)
+  .distinct().forEach(::extractBinariesTask)
 
 tasks.withType<KotlinNativeCompile> {
   dependsOn("extractBinaries${predefinedTargets[target]!!.platformName.capitalized()}")
@@ -142,6 +164,8 @@ tasks.withType<KotlinNativeCompile> {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink> {
   dependsOn("extractBinaries${predefinedTargets[target]!!.platformName.capitalized()}")
 }
+
+
 
 val KonanTarget.platformName: String
   get() {

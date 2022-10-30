@@ -26,13 +26,11 @@ kotlin {
 //  macosX64()
 //  macosArm64()
 
-  /** //uncomment if you want android support
   androidNativeX86()
   androidNativeX64()
   androidNativeArm32()
   androidNativeArm64()
 
-   **/
 
   //add your other apple targets
 
