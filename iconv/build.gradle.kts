@@ -17,7 +17,8 @@ plugins {
 }
 
 
-version = CurrentVersions.iconv
+
+version = CurrentVersions.iconv.version
 
 binariesProvider {
 }
@@ -34,7 +35,7 @@ val KonanTarget.iconvNotBuilt: Boolean
 
 
 val downloadSrcTask by tasks.creating(Download::class.java) {
-  src(project.properties["iconv.source"])
+  src(CurrentVersions.iconv.src)
   val destDir =buildDir.resolve("iconv")
   dest(destDir)
   doFirst {
