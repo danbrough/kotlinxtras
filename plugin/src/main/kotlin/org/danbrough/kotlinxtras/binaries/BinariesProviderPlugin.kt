@@ -43,9 +43,13 @@ open class BinariesProviderExtension(private val project: Project) {
 }
 
 
-fun Project.registerArchiveTask2(libName:String,target: KonanTarget,extn: BinariesProviderExtension) : TaskProvider<*>{
+fun Project.registerArchiveTask2(
+  libName: String,
+  target: KonanTarget,
+  extn: BinariesProviderExtension
+): TaskProvider<*> {
   val archiveName = "$libName${target.platformName.capitalized()}"
-  return tasks.register<Tar>("archive${archiveName.capitalized()}"){
+  return tasks.register<Tar>("archive${archiveName.capitalized()}") {
     group = xtrasTaskGroup
     archiveBaseName.set(archiveName)
     dependsOn("build${target.platformName.capitalized()}")
@@ -57,12 +61,16 @@ fun Project.registerArchiveTask2(libName:String,target: KonanTarget,extn: Binari
   }
 }
 
-fun Project.registerArchiveTask(libName:String,target: KonanTarget,extn: BinariesProviderExtension) : TaskProvider<Exec>{
+fun Project.registerArchiveTask(
+  libName: String,
+  target: KonanTarget,
+  extn: BinariesProviderExtension
+): TaskProvider<Exec> {
   val archiveName = "$libName${target.platformName.capitalized()}"
   val libsDir = extn.libsDir
   val destDir = extn.archivesDir.resolve(extn.libName).resolve(extn.version)
 
-  val copyTask = tasks.register<Exec>("copy${archiveName.capitalized()}"){
+  val copyTask = tasks.register<Exec>("copy${archiveName.capitalized()}") {
     dependsOn("build${target.platformName.capitalized()}")
     doFirst {
       println("copying files to tempDir: $temporaryDir")
@@ -70,13 +78,23 @@ fun Project.registerArchiveTask(libName:String,target: KonanTarget,extn: Binarie
     workingDir(libsDir)
     inputs.dir(libsDir)
     outputs.dir(temporaryDir)
-    commandLine("rsync","-avHSx","--delete","--include=$libName","--include=$libName/${target.platformName}",
-      "--include=lib**","--include=include**","--include=bin**",
-      "--exclude=*", "./",temporaryDir.absolutePath)
+    commandLine(
+      "rsync",
+      "-avHSx",
+      "--delete",
+      "--include=$libName",
+      "--include=$libName/${target.platformName}",
+      "--include=lib**",
+      "--include=include**",
+      "--include=bin**",
+      "--exclude=*",
+      "./",
+      temporaryDir.absolutePath
+    )
   }
 
 
-  return tasks.register<Exec>("archive${archiveName.capitalized()}"){
+  return tasks.register<Exec>("archive${archiveName.capitalized()}") {
     group = xtrasTaskGroup
     dependsOn(copyTask)
     val srcDir = copyTask.get().outputs.files.files.first()
@@ -84,7 +102,7 @@ fun Project.registerArchiveTask(libName:String,target: KonanTarget,extn: Binarie
     inputs.dir(srcDir)
     outputs.file(tarFile)
     doFirst {
-      if (!tarFile.parentFile.exists()){
+      if (!tarFile.parentFile.exists()) {
         exec {
           mkdir(tarFile.parentFile)
         }
@@ -92,9 +110,10 @@ fun Project.registerArchiveTask(libName:String,target: KonanTarget,extn: Binarie
     }
 
     workingDir(srcDir)
-    commandLine("tar","-f",tarFile.absolutePath, "-cpz","./")
+    commandLine("tar", "-f", tarFile.absolutePath, "-cpz", "./")
   }
 }
+
 class BinariesProviderPlugin : Plugin<Project> {
   override fun apply(targetProject: Project) {
 
@@ -102,12 +121,11 @@ class BinariesProviderPlugin : Plugin<Project> {
 
     val isMacHost = System.getProperty("os.name").startsWith("Mac")
 
-    val extn =
-      targetProject.extensions.create(
-        "binariesProvider",
-        BinariesProviderExtension::class.java,
-        targetProject
-      )
+    val extn = targetProject.extensions.create(
+      "binariesProvider",
+      BinariesProviderExtension::class.java,
+      targetProject
+    )
 
     targetProject.afterEvaluate {
 
@@ -132,15 +150,16 @@ class BinariesProviderPlugin : Plugin<Project> {
         //Support apple targets on mac host and everything else on what is assumed to be linux
         supportedTargets.filter { it.family.isAppleFamily == isMacHost }.forEach { target ->
           //val jarName = "$libName${target.platformName.capitalized()}"
-          val archiveTask = project.registerArchiveTask(libName,target,extn)
+          val archiveTask = project.registerArchiveTask(libName, target, extn)
 
           val publicationName = "$libName${target.platformName.capitalized()}"
 
-          publications.register<MavenPublication>(publicationName){
+          publications.register<MavenPublication>(publicationName) {
             artifactId = publicationName
             groupId = "${project.group}.${project.name}.binaries"
-           // version = extn.version
+            // version = extn.version
             artifact(archiveTask)
+
           }
 
           publishToReposTasks.forEach {

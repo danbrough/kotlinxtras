@@ -81,6 +81,10 @@ fun main(args: Array<String>) {
         throw Error(it)
       }
 
+      processStatement(dbPtr,"SELECT SQLITE_VERSION()"){
+        log.info("SQLITE VERSION: ${sqlite3_column_text(it.value,0)?.reinterpret<ByteVar>()?.toKString()}")
+      }
+
       processStatement(dbPtr, SQL_CREATE)
 
       processStatement(dbPtr,"INSERT INTO log(message) values ($logMessage)")
