@@ -6,6 +6,10 @@ plugins {
   id("org.danbrough.kotlinxtras.consumer")
 }
 
+binaries {
+
+
+}
 
 
 repositories {
@@ -80,7 +84,3 @@ kotlin {
 
 
 
-binaries {
-  enableCurl()
-  enableOpenSSL()
-}
