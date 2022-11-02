@@ -38,3 +38,9 @@
 	path = repos/sqliter
 	url = https://github.com/danbrough/SQLiter.git
 	branch = remotes/origin/danbrough-1.2.1
+[submodule "repos/okio"]
+	path = repos/okio
+	url = https://github.com/danbrough/okio.git
+[submodule "repos/kotlinx-datetime"]
+	path = repos/kotlinx-datetime
+	url = https://github.com/danbrough/kotlinx-datetime.git

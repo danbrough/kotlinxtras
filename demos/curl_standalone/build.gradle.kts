@@ -6,11 +6,18 @@ plugins {
   id("org.danbrough.kotlinxtras.consumer")
 }
 
+binaries {
+
+
+}
 
 
 repositories {
- // maven("../../build/m2")
+  //for local builds of the xtras plugins
+  maven("../../build/m2")
+  //for pre-releases of the xtras plugins
   maven("https://s01.oss.sonatype.org/content/groups/staging")
+  //for releases of the xtras plugins
   mavenCentral()
 }
 
@@ -21,16 +28,16 @@ kotlin {
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
+
+
   macosX64()
   macosArm64()
 
-  /** //uncomment if you want android support
   androidNativeX86()
   androidNativeX64()
   androidNativeArm32()
   androidNativeArm64()
 
-   **/
 
   //add your other apple targets
 
@@ -80,7 +87,3 @@ kotlin {
 
 
 
-binaries {
-  enableCurl()
-  enableOpenSSL()
-}

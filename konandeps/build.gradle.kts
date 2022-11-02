@@ -1,9 +1,10 @@
-import BuildEnvironment.declareNativeTargets
-import BuildEnvironment.platformName
+import org.danbrough.kotlinxtras.BuildEnvironment.declareNativeTargets
+import org.danbrough.kotlinxtras.platformName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   kotlin("multiplatform")
+
 }
 
 kotlin {

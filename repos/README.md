@@ -9,14 +9,33 @@ Staging repo: https://s01.oss.sonatype.org/content/groups/staging/
 https://github.com/danbrough/kotlinx.serialization.git  
 upstream: https://github.com/Kotlin/kotlinx.serialization
 
-
-
 ### KotlinX Coroutines
 
 https://github.com:danbrough/kotlinx.coroutines.git
 upstream: https://github.com/Kotlin/kotlinx.coroutines.git
 
 - kotlinx.coroutines 1.6.3-native-mt in staging.
+
+### KotlinX AtomicFU 
+
+https://github.com:danbrough/kotlinx.atomicfu.git
+upstream: https://github.com/Kotlin/kotlinx-atomicfu
+
+### KotlinX DateTime 
+
+https://github.com/danbrough/kotlinx-datetime.git  
+upstream: https://github.com/Kotlin/kotlinx-datetime.git
+
+- branch danbroid-v0.4.0 published. Artifact: "org.danbrough.kotlinx:kotlinx-datetime:0.4.0"
+
+### Stately 
+https://github.com/danbrough/Stately.git
+upstream: https://github.com/touchlab/Stately.git
+-- in progress 
+
+### GNU iconv
+
+https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz
 
 ### Sqlite 3 
 - at version-3.39.3 from https://github.com/sqlite/sqlite.git
@@ -36,4 +55,11 @@ upstream: https://github.com/cashapp/sqldelight.git
 upstream: https://github.com/ktorio/ktor  
 repo: https://github.com/danbrough/ktor.git
 
-- 
+- branch danbrough-2.1.2 is published 
+
+### Okio
+
+upstream: https://github.com/square/okio.git
+repo: https://github.com/danbrough/okio.git
+
+- in progress on branch danbrough-3.2.0

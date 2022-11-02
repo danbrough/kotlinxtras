@@ -1,12 +1,14 @@
 
-import BuildEnvironment.buildEnvironment
-import BuildEnvironment.declareNativeTargets
-import BuildEnvironment.hostTriplet
-import BuildEnvironment.konanDepsTaskName
-import BuildEnvironment.platformName
-import Curl.curlPrefix
-import Curl.curlSrcDir
-import OpenSSL.opensslPrefix
+
+
+import org.danbrough.kotlinxtras.BuildEnvironment.buildEnvironment
+import org.danbrough.kotlinxtras.BuildEnvironment.declareNativeTargets
+import org.danbrough.kotlinxtras.BuildEnvironment.hostTriplet
+import org.danbrough.kotlinxtras.OpenSSL.opensslPrefix
+import org.danbrough.kotlinxtras.binaries.CurrentVersions
+import org.danbrough.kotlinxtras.konanDepsTaskName
+import org.danbrough.kotlinxtras.platformName
+import org.danbrough.kotlinxtras.sonatype.generateInterops
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -17,27 +19,35 @@ plugins {
   id("org.danbrough.kotlinxtras.provider")
 }
 
+//ProjectProperties.init(project)
 
-ProjectProperties.init(project)
+version = CurrentVersions.curl
+
 
 
 binariesProvider {
-  version = project.properties["curl.version"].toString()
+ //for extra configuration
+
 }
+
+fun KonanTarget.curlSrcDir(project: Project): File =
+  project.buildDir.resolve("curl/$platformName")
+
+
+fun KonanTarget.curlPrefix(project: Project): File =project.rootProject.file("libs/curl/$platformName")
 
 val curlGitDir = rootProject.file("repos/curl")
 
-val KonanTarget.curlNotBuilt: Boolean
-  get() = !curlPrefix(project).resolve("include/curl/curl.h").exists()
+val KonanTarget.curlBuilt: Boolean
+  get() = curlPrefix(project).resolve("include/curl/curl.h").exists()
 
 fun srcPrepare(target: KonanTarget): Exec =
   tasks.create("srcPrepare${target.platformName.capitalize()}", Exec::class) {
     val srcDir = target.curlSrcDir(project)
+
     outputs.dir(srcDir)
-    commandLine(
-      BuildEnvironment.gitBinary, "clone", curlGitDir, srcDir
-    )
-    onlyIf { target.curlNotBuilt && !srcDir.exists() }
+    commandLine(org.danbrough.kotlinxtras.BuildEnvironment.gitBinary, "clone", curlGitDir, srcDir)
+    onlyIf { !target.curlBuilt && !srcDir.exists() }
 
   }
 
@@ -52,7 +62,7 @@ fun autoconfTask(target: KonanTarget) =
     val configureFile = srcDir.resolve("configure")
     outputs.file(configureFile)
     onlyIf {
-      target.curlNotBuilt
+      !target.curlBuilt
     }
   }
 
@@ -73,7 +83,7 @@ fun configureTask(target: KonanTarget) =
     val makefile = srcDir.resolve("Makefile")
     outputs.file(makefile)
     onlyIf {
-      target.curlNotBuilt
+      !target.curlBuilt
     }
 
     val args = listOf(
@@ -99,7 +109,7 @@ fun buildTask(target: KonanTarget) =
     outputs.file(curlPrefixDir.resolve("include/curl/curl.h"))
 
     onlyIf {
-      target.curlNotBuilt
+      !target.curlBuilt
     }
     workingDir(srcDir)
     environment(target.buildEnvironment())
@@ -123,8 +133,18 @@ kotlin {
     }
   }
 
+  val commonTest by sourceSets.getting {
+    dependencies {
+      implementation(kotlin("test"))
+    }
+  }
+
   val posixMain by sourceSets.creating {
     dependsOn(commonMain)
+  }
+
+  val posixTest by sourceSets.creating {
+    dependsOn(commonTest)
   }
 
   val buildAll by tasks.creating
@@ -132,7 +152,7 @@ kotlin {
 
   targets.withType(KotlinNativeTarget::class).all {
 
-    if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily) {
+    if (org.danbrough.kotlinxtras.hostIsMac == konanTarget.family.isAppleFamily) {
       srcPrepare(konanTarget)
       autoconfTask(konanTarget)
       configureTask(konanTarget)
@@ -153,33 +173,5 @@ kotlin {
 }
 
 
-val generateInteropsDefTaskName = "generateCInteropsDef"
 
-tasks.register(generateInteropsDefTaskName) {
-  description = "Generate src/libcurl.def from src/libcurl_headers.h"
-  inputs.file("src/libcurl_header.def")
-  outputs.file("src/libcurl.def")
-  doFirst {
-    val outputFile = outputs.files.files.first()
-    println("Generating $outputFile")
-    outputFile.printWriter().use { output ->
-      output.println(inputs.files.files.first().readText())
-      kotlin.targets.withType<KotlinNativeTarget>().forEach {
-        val konanTarget = it.konanTarget
-        output.println("compilerOpts.${konanTarget.name} = -Ibuild/kotlinxtras/curl/${konanTarget.platformName}/include \\")
-        output.println("\t-I/usr/local/kotlinxtras/libs/curl/${konanTarget.platformName}/include ")
-        output.println("linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/curl/${konanTarget.platformName}/lib \\")
-        output.println("\t-L/usr/local/kotlinxtras/libs/curl/${konanTarget.platformName}/lib ")
-        output.println("libraryPaths.${konanTarget.name} = build/kotlinxtras/curl/${konanTarget.platformName}/lib \\")
-        output.println("\t/usr/local/kotlinxtras/libs/curl/${konanTarget.platformName}/lib ")
-      }
-    }
-  }
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>() {
-  dependsOn(generateInteropsDefTaskName)
-  if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily)
-    dependsOn("build${konanTarget.platformName.capitalized()}")
-}
-
+generateInterops("curl",file("src/libcurl_header.def"),file("src/libcurl.def"))

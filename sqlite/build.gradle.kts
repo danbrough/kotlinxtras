@@ -1,9 +1,14 @@
-import BuildEnvironment.buildEnvironment
-import BuildEnvironment.declareNativeTargets
-import BuildEnvironment.hostTriplet
-import BuildEnvironment.konanDepsTaskName
-import BuildEnvironment.platformName
-import org.gradle.configurationcache.extensions.capitalized
+
+
+import org.danbrough.kotlinxtras.BuildEnvironment
+import org.danbrough.kotlinxtras.BuildEnvironment.buildEnvironment
+import org.danbrough.kotlinxtras.BuildEnvironment.declareNativeTargets
+import org.danbrough.kotlinxtras.BuildEnvironment.hostTriplet
+import org.danbrough.kotlinxtras.binaries.CurrentVersions
+import org.danbrough.kotlinxtras.hostIsMac
+import org.danbrough.kotlinxtras.konanDepsTaskName
+import org.danbrough.kotlinxtras.platformName
+import org.danbrough.kotlinxtras.sonatype.generateInterops
 import org.jetbrains.kotlin.de.undercouch.gradle.tasks.download.Download
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -14,17 +19,16 @@ plugins {
   id("org.danbrough.kotlinxtras.provider")
 }
 
-group = "org.danbrough.kotlinxtras.sqlite"
-
+version = CurrentVersions.sqlite
 val sqliteGitDir = rootProject.file("repos/sqlite")
+val sqliteSource = "https://www.sqlite.org/2022/sqlite-autoconf-3390400.tar.gz"
 
 binariesProvider {
-  version = project.properties["sqlite.version"]?.toString()
-    ?: throw Error("Gradle property sqlite.version not set")
+
 }
 
 fun KonanTarget.sqliteSrcDir(project: Project): java.io.File =
-  project.buildDir.resolve("sqlite/$platformName/${project.properties["sqlite.version"]}")
+  project.buildDir.resolve("sqlite/$platformName/$version")
 
 
 fun KonanTarget.sqlitePrefix(project: Project): java.io.File =
@@ -45,7 +49,7 @@ fun srcPrepare(target: KonanTarget): Exec =
 
 
 val downloadSrcTask by tasks.creating(Download::class.java) {
-  src(project.properties["sqlite.source"])
+  src(sqliteSource)
   dest(buildDir.resolve("sqlite").also {
     if (!it.exists()) it.mkdirs()
   })
@@ -68,7 +72,6 @@ fun srcPrepareFromDownload(target: KonanTarget): Copy =
 
 fun configureTask(target: KonanTarget) =
   tasks.register("srcConfigure${target.platformName.capitalize()}", Exec::class) {
-    //dependsOn("srcPrepare${target.platformName.capitalize()}")
     dependsOn("srcPrepareFromDownload${target.platformName.capitalize()}")
 
 
@@ -141,7 +144,7 @@ kotlin {
 
   targets.withType(KotlinNativeTarget::class).all {
 
-    if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily) {
+    if (hostIsMac == konanTarget.family.isAppleFamily) {
       //srcPrepare(konanTarget)
       srcPrepareFromDownload(konanTarget)
       configureTask(konanTarget)
@@ -163,30 +166,7 @@ kotlin {
 }
 
 
-tasks.register("generateCInteropsDef") {
-  inputs.file("src/libsqlite_header.def")
-  outputs.file("src/libsqlite.def")
-  doFirst {
-    val outputFile = outputs.files.files.first()
-    println("Generating $outputFile")
-    outputFile.printWriter().use { output ->
-      output.println(inputs.files.files.first().readText())
-      kotlin.targets.withType<KotlinNativeTarget>().forEach {
-        val konanTarget = it.konanTarget
-        output.println("compilerOpts.${konanTarget.name} = -Ibuild/kotlinxtras/sqlite/${konanTarget.platformName}/include \\")
-        output.println("\t-I/usr/local/kotlinxtras/libs/sqlite/${konanTarget.platformName}/include ")
-        output.println("linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/sqlite/${konanTarget.platformName}/lib \\")
-        output.println("\t-L/usr/local/kotlinxtras/libs/sqlite/${konanTarget.platformName}/lib ")
-        output.println("libraryPaths.${konanTarget.name} = build/kotlinxtras/sqlite/${konanTarget.platformName}/lib \\")
-        output.println("\t/usr/local/kotlinxtras/libs/sqlite/${konanTarget.platformName}/lib ")
-      }
-    }
-  }
-}
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>() {
-  dependsOn("generateCInteropsDef")
-  if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily)
-    dependsOn("build${konanTarget.platformName.capitalized()}")
-}
+
+generateInterops("sqlite",file("src/libsqlite_header.def"),file("src/libsqlite.def"))
 
 

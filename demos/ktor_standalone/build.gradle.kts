@@ -10,14 +10,14 @@ plugins {
 
 
 repositories {
- // maven("../../build/m2")
+  maven("../../build/m2")
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
 }
 
 binaries {
-  enableCurl()
-  enableOpenSSL()
+  enableCurl(version = libs.curl.get().versionConstraint.toString())
+  enableOpenSSL(version = libs.openssl.get().versionConstraint.toString())
 }
 
 
@@ -26,8 +26,9 @@ kotlin {
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
-  macosX64()
-  macosArm64()
+  // uncomment if you want them
+  //macosX64()
+  //macosArm64()
 
   /** //uncomment if you want android support
   androidNativeX86()
@@ -46,6 +47,9 @@ kotlin {
       implementation(libs.ktor.client.core)
       implementation(libs.ktor.client.curl)
       implementation(libs.kotlinx.coroutines.core)
+      implementation(libs.ktor.server.cio)
+      implementation(libs.kotlinx.datetime)
+
     }
   }
 
@@ -63,6 +67,9 @@ kotlin {
     binaries {
       executable("demo1") {
         entryPoint = "demo1.main"
+      }
+      executable("demo2") {
+        entryPoint = "demo2.main"
       }
     }
   }

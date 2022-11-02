@@ -1,15 +1,18 @@
 
-import BuildEnvironment.buildEnvironment
-import BuildEnvironment.declareNativeTargets
-import BuildEnvironment.hostTriplet
-import BuildEnvironment.konanDepsTaskName
-import BuildEnvironment.platformName
-import OpenSSL.opensslPlatform
-import OpenSSL.opensslPrefix
-import OpenSSL.opensslSrcDir
+
+import org.danbrough.kotlinxtras.BuildEnvironment
+import org.danbrough.kotlinxtras.BuildEnvironment.buildEnvironment
+import org.danbrough.kotlinxtras.BuildEnvironment.declareNativeTargets
+import org.danbrough.kotlinxtras.BuildEnvironment.hostTriplet
+import org.danbrough.kotlinxtras.OpenSSL.opensslPlatform
+import org.danbrough.kotlinxtras.ProjectProperties
+import org.danbrough.kotlinxtras.binaries.CurrentVersions
+import org.danbrough.kotlinxtras.hostIsMac
+import org.danbrough.kotlinxtras.konanDepsTaskName
+import org.danbrough.kotlinxtras.platformName
+import org.danbrough.kotlinxtras.sonatype.generateInterops
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 
@@ -19,43 +22,32 @@ plugins {
   id("org.danbrough.kotlinxtras.provider")
 }
 
+ProjectProperties.apply(project)
+
+version = CurrentVersions.openssl
 
 binariesProvider {
-  version = project.properties["openssl.version"].toString()
+  //extra configuration values can go here
 }
 
-val KonanTarget.openSSLNotBuilt: Boolean
-  get() = !opensslPrefix(project).resolve("include/openssl/ssl.h").exists()
-
+val KonanTarget.openSSLBuilt: Boolean
+  get() = opensslPrefix(project).resolve("include/openssl/ssl.h").exists()
 
 val opensslGitDir = rootProject.file("repos/openssl")
 
-tasks.register("generateCInteropsDef") {
-  inputs.file("src/openssl_header.def")
-  outputs.file("src/openssl.def")
-  doFirst {
-    val outputFile = outputs.files.files.first()
-    println("Generating $outputFile")
+fun KonanTarget.opensslSrcDir(project: Project): File =
+  project.rootProject.file("openssl/build/openssl/$platformName")
 
-    outputFile.printWriter().use { output ->
-      output.println(inputs.files.files.first().readText())
-      kotlin.targets.withType<KotlinNativeTarget>().forEach {
-        val konanTarget = it.konanTarget
-        output.println("compilerOpts.${konanTarget.name} = -Ibuild/kotlinxtras/openssl/${konanTarget.platformName}/include \\")
-        output.println("\t-I/usr/local/kotlinxtras/libs/openssl/${konanTarget.platformName}/include ")
-        output.println("linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/openssl/${konanTarget.platformName}/lib \\")
-        output.println("\t-L/usr/local/kotlinxtras/libs/openssl/${konanTarget.platformName}/lib ")
-      }
-    }
-  }
+fun KonanTarget.opensslPrefix(project: Project): File =
+  project.rootProject.file("libs/openssl/$platformName")
 
-}
+generateInterops("openssl",file("src/openssl_header.def"),file("src/openssl.def"))
 
 fun srcPrepare(target: KonanTarget) =
   tasks.register("srcPrepare${target.platformName.capitalize()}", Exec::class) {
     val srcDir = target.opensslSrcDir(project)
     outputs.dir(srcDir)
-    onlyIf { target.openSSLNotBuilt }
+    onlyIf { !target.openSSLBuilt }
     commandLine(BuildEnvironment.gitBinary, "clone", opensslGitDir, srcDir)
   }
 
@@ -67,7 +59,7 @@ fun configureTask(target: KonanTarget) =
     workingDir(srcDir)
     environment(target.buildEnvironment())
     val makeFile = srcDir.resolve("Makefile")
-    onlyIf { target.openSSLNotBuilt }
+    onlyIf { !target.openSSLBuilt }
     outputs.file(makeFile)
     doFirst {
       println("OpenSSL Configure $target ..")
@@ -99,8 +91,7 @@ fun buildTask(target: KonanTarget) =
 
     val outputFile = installDir.resolve("include/openssl/ssl.h")
     outputs.file(outputFile)
-    onlyIf { target.openSSLNotBuilt }
-
+    onlyIf { !target.openSSLBuilt }
     environment(target.buildEnvironment())
     group = BasePlugin.BUILD_GROUP
     commandLine("make", "install_sw")
@@ -121,7 +112,7 @@ kotlin {
   targets.withType(KotlinNativeTarget::class).all {
 
 
-    if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily) {
+    if (hostIsMac == konanTarget.family.isAppleFamily) {
       srcPrepare(konanTarget)
       configureTask(konanTarget)
       buildTask(konanTarget)
@@ -143,11 +134,6 @@ kotlin {
   }
 }
 
-tasks.withType<CInteropProcess>() {
-  dependsOn("generateCInteropsDef")
-  if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily)
-    dependsOn("build${konanTarget.platformName.capitalized()}")
-}
 
 
 

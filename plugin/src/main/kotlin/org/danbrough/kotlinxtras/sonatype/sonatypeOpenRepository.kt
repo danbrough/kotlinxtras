@@ -76,14 +76,14 @@ fun parsePromoteRequest(input: InputStream): PromoteRequestResponse {
 }
 
 internal  fun Project.createOpenRepoTask(extn:SonatypeExtension){
-  project.tasks.create("sonatypeOpenRepository") {task->
-    task.description =
+  project.tasks.create("sonatypeOpenRepository") {
+    description =
       """
         Open a new sonatype repository and store the repository id in gradle.properties.
         Specify the repository description with -P${SonatypeExtension.DESCRIPTION}="..".
       """.trimMargin()
-    task.group = SONATYPE_TASK_GROUP
-    task.doLast {_->
+    group = SONATYPE_TASK_GROUP
+    doLast {
       if (extn.sonatypeProfileId.isBlank()) throw Error("sonatype.stagingProfileId not set")
       val description =
         project.properties[SonatypeExtension.DESCRIPTION]?.toString() ?: ""

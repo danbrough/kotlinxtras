@@ -1,15 +1,11 @@
 @file:Suppress("MemberVisibilityCanBePrivate")
 
-import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.tasks.TaskProvider
+package org.danbrough.kotlinxtras
+
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-
 import java.io.File
 
 object BuildEnvironment {
@@ -19,11 +15,6 @@ object BuildEnvironment {
   val gitBinary: String by ProjectProperties.createProperty("git.binary", "/usr/bin/git")
 
   val buildCacheDir: File by ProjectProperties.createProperty("build.cache", "build/cache")
-
-
-  val hostIsMac: Boolean by lazy {
-    System.getProperty("os.name").startsWith("Mac")
-  }
 
   val konanDir: File by ProjectProperties.createProperty(
     "konan.dir", "${System.getProperty("user.home")}/.konan"
@@ -82,20 +73,6 @@ object BuildEnvironment {
 
   }
 
-
-  val KonanTarget.platformName: String
-    get() {
-      if (family == Family.ANDROID) {
-        return when (this) {
-          KonanTarget.ANDROID_X64 -> "androidNativeX64"
-          KonanTarget.ANDROID_X86 -> "androidNativeX86"
-          KonanTarget.ANDROID_ARM64 -> "androidNativeArm64"
-          KonanTarget.ANDROID_ARM32 -> "androidNativeArm32"
-          else -> throw Error("Unhandled android target $this")
-        }
-      }
-      return name.split("_").joinToString("") { it.capitalize() }.decapitalize()
-    }
 
 
   val KonanTarget.hostTriplet: String
@@ -184,14 +161,16 @@ object BuildEnvironment {
     } ?: throw Error("Unknown build host: $osName:$osArch")
   }
 
-  fun KotlinMultiplatformExtension.registerTarget(
-    konanTarget: KonanTarget, conf: KotlinNativeTarget.() -> Unit = {}
-  ): KotlinNativeTarget {
-    @Suppress("UNCHECKED_CAST")
-    val preset: KotlinTargetPreset<KotlinNativeTarget> =
-      presets.getByName(konanTarget.platformName) as KotlinTargetPreset<KotlinNativeTarget>
-    return targetFromPreset(preset, konanTarget.platformName, conf)
-  }
+  /*
+    fun KotlinMultiplatformExtension.registerTarget(
+      konanTarget: KonanTarget, conf: KotlinNativeTarget.() -> Unit = {}
+    ): KotlinNativeTarget {
+      @Suppress("UNCHECKED_CAST")
+      val preset: KotlinTargetPreset<KotlinNativeTarget> =
+        presets.getByName(konanTarget.platformName) as KotlinTargetPreset<KotlinNativeTarget>
+      return targetFromPreset(preset, konanTarget.platformName, conf)
+    }
+  */
 
   val androidToolchainDir by lazy {
     androidNdkDir.also {
@@ -279,8 +258,8 @@ object BuildEnvironment {
           "--target=$hostTriplet --gcc-toolchain=$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2 --sysroot=$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/x86_64-unknown-linux-gnu/sysroot"
         this["CC"] = "clang $clangArgs"
         this["CXX"] = "clang++ $clangArgs"
-/*        this["RANLIB"] =
-          "$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/x86_64-unknown-linux-gnu/bin/ranlib"*/
+        /*        this["RANLIB"] =
+                  "$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/x86_64-unknown-linux-gnu/bin/ranlib"*/
       }
 
       KonanTarget.MACOS_X64 -> {
@@ -314,9 +293,9 @@ object BuildEnvironment {
   export CC=$TARGET-gcc
   export CXX=$TARGET-g++
         */
-/*
-        this["WINDRES"] = "x86_64-w64-mingw32-windres"
-        this["RC"] = this["WINDRES"] as String*/
+        /*
+                this["WINDRES"] = "x86_64-w64-mingw32-windres"
+                this["RC"] = this["WINDRES"] as String*/
         /*this["CROSS_PREFIX"] = "${platform.host}-"
         val toolChain = "$konanDir/dependencies/msys2-mingw-w64-x86_64-1"
         this["PATH"] = "$toolChain/bin:${this["PATH"]}"*/
@@ -341,11 +320,10 @@ object BuildEnvironment {
   }
 
 
-  val KonanTarget.konanDepsTaskName: String
-    get() = ":konandeps:$platformName"
+
 }
 
 
-  
+
 
 

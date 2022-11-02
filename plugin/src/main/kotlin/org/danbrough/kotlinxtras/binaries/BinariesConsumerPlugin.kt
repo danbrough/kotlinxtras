@@ -1,129 +1,142 @@
-@file:Suppress("PropertyName", "unused")
-
 package org.danbrough.kotlinxtras.binaries
 
 import org.danbrough.kotlinxtras.platformName
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.logging.LogLevel
-import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.configurationcache.extensions.capitalized
-import org.gradle.kotlin.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
+import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.File
 
-const val DEFAULT_CURL_VERSION = "curl-7_85_0"
-const val DEFAULT_OPENSSL_VERSION = "OpenSSL_1_1_1q"
-const val DEFAULT_SQLITE_VERSION = "3.39.4"
+typealias BinaryArtifact = BinaryDep.(KonanTarget) -> String?
 
-data class BinDep(val group: String?, val name: String, val version: String?)
+//maps the BinaryDep and konan target to a dependency notation
+val defaultArtifactMap: BinaryArtifact = {
+  "$group.$name.binaries:$name${it.platformName.capitalized()}:$version"
+}
 
-open class BinariesExtension(private val project: Project) {
-  internal var binDeps: MutableSet<BinDep> = mutableSetOf()
+data class BinaryDep(
+  val group: String,
+  val name: String,
+  val version: String,
+  val artifactMap: BinaryArtifact = defaultArtifactMap
+) {
+  fun binariesTaskName(konanTarget: KonanTarget): String =
+    "binaries${name.capitalized()}${konanTarget.platformName.capitalized()}"
+}
 
-  private val projectGroup = "org.danbrough.kotlinxtras"
+open class BinariesConsumerExtension(private val project: Project) {
+  @Suppress("MemberVisibilityCanBePrivate")
+  val dependencies = mutableListOf<BinaryDep>()
 
-  fun enableCurl(version: String = DEFAULT_CURL_VERSION) {
-    binDeps.add(BinDep(projectGroup, "curl", version))
-  }
+  var libsDir: File = project.buildDir.resolve("kotlinxtras")
 
-  fun enableOpenSSL(version: String = DEFAULT_OPENSSL_VERSION) {
-    binDeps.add(BinDep(projectGroup, "openssl", version))
-  }
+  fun dependency(
+    group: String,
+    name: String,
+    version: String,
+    artifactMap: BinaryArtifact = defaultArtifactMap
+  ) = dependencies.add(BinaryDep(group, name, version, artifactMap))
 
-  fun enableSqlite(version: String = DEFAULT_SQLITE_VERSION) {
-    binDeps.add(BinDep(projectGroup, "sqlite", version))
-  }
 
-  fun addBinaryDependency(binDep: BinDep) {
-    binDeps.add(binDep)
-  }
+  fun defineBinariesTask(dep: BinaryDep, konanTarget: KonanTarget): TaskProvider<*> {
+    val binariesTaskName = dep.binariesTaskName(konanTarget)
+    val binaryArtifact = dep.artifactMap.invoke(dep, konanTarget)!!
+    println("Defining $binariesTaskName")
 
-  var taskToPlatformName: (Task) -> String? = { task ->
-    when (task) {
-      is KotlinNativeTest -> task.targetName!!
-      is KotlinNativeCompile -> task.target
-      else -> null
+    val resolveBinariesTask =
+      project.tasks.register("resolve${dep.name.capitalized()}Binaries${konanTarget.platformName.capitalized()}") {
+        val binaries =
+          project.configurations.create("configuration${dep.name.capitalized()}Binaries${konanTarget.platformName.capitalized()}") {
+            isVisible = false
+            isTransitive = false
+            isCanBeConsumed = false
+            isCanBeResolved = true
+          }
+
+        project.dependencies {
+          binaries(binaryArtifact)
+        }
+
+        val archives = binaries.resolve()
+        if (archives.size != 1) throw Error("Expecting one file in $archives")
+        outputs.files(archives.first())
+      }
+
+    val extractBinariesTask =
+      project.tasks.register("extract${dep.name.capitalized()}Binaries${konanTarget.platformName.capitalized()}",Exec::class.java) {
+        dependsOn(resolveBinariesTask)
+        val archiveFile =resolveBinariesTask.get().outputs.files.first()
+        inputs.file(archiveFile)
+        outputs.dir(libsDir.resolve(dep.name).resolve(konanTarget.platformName))
+        doFirst {
+          println("Running $name on $archiveFile")
+          if (!libsDir.exists()) libsDir.mkdirs()
+        }
+        commandLine("tar","xvpf",archiveFile.absolutePath,"-C",libsDir.absolutePath)
+      }
+
+    return project.tasks.register(binariesTaskName) {
+      doFirst {
+        println("Starting $binariesTaskName")
+      }
+      dependsOn(extractBinariesTask)
     }
   }
 }
+
+
+/*
+      project.configurations.create("binaries${konanTarget.platformName.capitalized()}") {
+        isVisible = false
+        isTransitive = false
+        isCanBeConsumed = false
+        isCanBeResolved = true
+      }
+ */
+
+
+
 
 
 class BinariesConsumerPlugin : Plugin<Project> {
 
   override fun apply(targetProject: Project) {
-
-    targetProject.extensions.create("binaries", BinariesExtension::class.java, targetProject)
-    val preCompiled: Configuration by targetProject.configurations.creating {
-      isTransitive = false
-    }
-
-    targetProject.afterEvaluate {
-      it.configureBinaries()
-    }
-  }
-
-}
-
-private fun Project.configureBinaries() {
-  afterEvaluate { project ->
+    val extn =
+      targetProject.extensions.create("binaries", BinariesConsumerExtension::class.java, targetProject)
 
 
-    val binaries =
-      project.rootProject.extensions.findByType<BinariesExtension>() ?: return@afterEvaluate
-
-
-    val mppExtension =
-      project.extensions.findByType<KotlinMultiplatformExtension>() ?: return@afterEvaluate
-
-    val konanTargets = mppExtension.targets.withType<KotlinNativeTarget>()
-      .map { it.konanTarget }.distinct()
-
-    //println("KONANTARGETS: $konanTargets")
-
-    val preCompiled by project.configurations.getting
-
-
-    val localBinariesDir = project.rootProject.buildDir.resolve("kotlinxtras")
-
-    project.dependencies {
-      binaries.binDeps.forEach { binDep ->
-        println("BIN DEP: $binDep")
-        konanTargets.forEach { target ->
-          val binDepLib =
-            "${binDep.group}.${binDep.name}:${binDep.name}${target.platformName.capitalized()}Binaries:${binDep.version}"
-          project.logger.log(LogLevel.INFO, "Adding binary support with $binDepLib")
-          preCompiled(binDepLib)
+    fun Project.defineTasks(konanTarget: KonanTarget) {
+      extn.dependencies.forEach { dep ->
+        dep.artifactMap.invoke(dep, konanTarget)?.also {
+          extn.defineBinariesTask(dep, konanTarget)
         }
       }
     }
 
+    targetProject.afterEvaluate {
 
-    preCompiled.resolvedConfiguration.resolvedArtifacts.forEach { artifact ->
-      project.tasks.register<Copy>("extract${artifact.name.capitalized()}") {
-        from(project.zipTree(artifact.file).matching {
-          exclude("**/META-INF")
-          exclude("**/META-INF/*")
-        })
-        into(localBinariesDir)
+      tasks.withType<KotlinNativeCompile>()
+        .map { KonanTarget.Companion.predefinedTargets[it.target]!! }
+        .distinct().forEach { defineTasks(it) }
+
+      tasks.withType<AbstractKotlinNativeCompile<*, *, *>>().all {
+        val konanTarget = KonanTarget.Companion.predefinedTargets[target]!!
+        extn.dependencies.forEach { binaryDep ->
+          binaryDep.artifactMap.invoke(binaryDep, konanTarget)?.also {
+            //binary artifact is available for this dependency and target
+            //so make this compile task dependent on it.
+            dependsOn(binaryDep.binariesTaskName(konanTarget))
+          }
+        }
       }
+
     }
 
-
-    binaries.binDeps.forEach { binDep ->
-      project.tasks.withType(KotlinNativeCompile::class).forEach {
-        project.logger.log(
-          LogLevel.INFO,
-          "adding extract dependency on ${binDep.name} for ${it.name}"
-        )
-        val konanTarget = KonanTarget.predefinedTargets[it.target]!!
-        it.dependsOn("extract${binDep.name.capitalized()}${konanTarget.platformName.capitalized()}Binaries")
-      }
-    }
   }
 }

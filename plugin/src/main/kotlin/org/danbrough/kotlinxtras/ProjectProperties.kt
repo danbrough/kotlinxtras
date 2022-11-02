@@ -1,6 +1,9 @@
 @file:Suppress("MemberVisibilityCanBePrivate")
 
+package org.danbrough.kotlinxtras
+
 import org.gradle.api.JavaVersion
+import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File
 import java.io.FileReader
@@ -8,7 +11,7 @@ import java.net.URI
 import java.util.Properties
 import kotlin.reflect.KProperty
 
-object ProjectProperties {
+object ProjectProperties : Plugin<Project>{
   
   
   const val SDK_VERSION = 33
@@ -98,7 +101,7 @@ object ProjectProperties {
     } as T
   }
   
-  fun init(project: Project) {
+  private fun init(project: Project) {
     
     LOCAL_M2 = project.buildDir.resolve("m2").toURI()
     localProperties.clear()
@@ -158,7 +161,11 @@ object ProjectProperties {
       }
     }
   }
-  
+
+  override fun apply(target: Project) {
+    init(target)
+  }
+
 }
 
 

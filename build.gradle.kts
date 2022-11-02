@@ -1,4 +1,6 @@
 
+import org.danbrough.kotlinxtras.ProjectProperties
+import org.danbrough.kotlinxtras.PropertiesPlugin
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
@@ -7,34 +9,21 @@ plugins {
   id("org.jetbrains.dokka") apply false
   id("org.danbrough.kotlinxtras.properties")
   id("org.danbrough.kotlinxtras.sonatype")
-
 }
 
 //val projectProperties = project.projectProperties
-ProjectProperties.init(project)
+//ProjectProperties.init(project)
 
 group = ProjectProperties.projectGroup
 version = ProjectProperties.buildVersionName
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class).all {
-  kotlinOptions {
-    jvmTarget = "1.8"
-  }
-}
-
-tasks.withType(JavaCompile::class) {
-  sourceCompatibility = JavaVersion.VERSION_1_8.toString()
-  targetCompatibility = JavaVersion.VERSION_1_8.toString()
-}
-
-
 
 allprojects {
+
   repositories {
     maven("https://s01.oss.sonatype.org/content/groups/staging/")
     mavenCentral()
   }
-
 
   tasks.withType<AbstractTestTask>() {
     testLogging {
@@ -49,11 +38,22 @@ allprojects {
       false
     }
   }
+
+  tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class).all {
+    kotlinOptions {
+      jvmTarget = "11"
+    }
+  }
+
+  tasks.withType(JavaCompile::class) {
+    sourceCompatibility = JavaVersion.VERSION_11.toString()
+    targetCompatibility = JavaVersion.VERSION_11.toString()
+  }
 }
 
 
 subprojects {
-
+  apply<PropertiesPlugin>()
 
   afterEvaluate {
 
@@ -72,40 +72,7 @@ subprojects {
 
       publications.all {
         if (this !is MavenPublication) return@all
-
-        pom {
-
-          name.set("KotlinXtras")
-          description.set("Common kotlin packages with linux arm and android native support")
-          url.set("https://github.com/danbrough/kotlinxtras/")
-
-          licenses {
-            license {
-              name.set("Apache-2.0")
-              url.set("https://opensource.org/licenses/Apache-2.0")
-            }
-          }
-
-          scm {
-            connection.set("scm:git:git@github.com:danbrough/kotlinxtras.git")
-            developerConnection.set("scm:git:git@github.com:danbrough/kotlinxtras.git")
-            url.set("https://github.com/danbrough/kotlinxtras/")
-          }
-
-          issueManagement {
-            system.set("GitHub")
-            url.set("https://github.com/danbrough/kotlinxtras/issues")
-          }
-
-          developers {
-            developer {
-              id.set("danbrough")
-              name.set("Dan Brough")
-              email.set("dan@danbrough.org")
-              organizationUrl.set("https://github.com/danbrough")
-            }
-          }
-        }
+        //TODO configure POM
       }
     }
   }
