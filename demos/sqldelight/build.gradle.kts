@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 plugins {
   kotlin("multiplatform")
-
+  id("org.danbrough.kotlinxtras.consumer")
   id("app.cash.sqldelight")
 }
 
@@ -25,9 +25,9 @@ kotlin {
   val commonMain by sourceSets.getting {
     dependencies {
       //implementation(libs.org.danbrough.sqldelight.core)
-      implementation("org.danbrough.kotlinxtras:sqlite:_")
-      implementation("org.danbrough.sqldelight:primitive-adapters:_")
-      implementation("org.danbrough.sqldelight:runtime:_")
+      implementation(libs.sqlite)
+      implementation(libs.primitive.adapters)
+      implementation(libs.org.danbrough.sqldelight.runtime)
     }
   }
   val commonTest by sourceSets.getting {

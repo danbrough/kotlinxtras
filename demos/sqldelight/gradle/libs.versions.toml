@@ -6,23 +6,34 @@ org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform"
 
 app-cash-sqldelight = { id = "app.cash.sqldelight", version = "2.0.0-alpha03" }
 
+org-danbrough-kotlinxtras-consumer = { id = "org.danbrough.kotlinxtras.consumer", version = "0.0.1" }
+
 [versions]
 
 kotlin = "1.7.20"
 
+app-cash-sqldelight = "2.0.0-alpha03"
 
 [libraries]
 
-klog = "org.danbrough:klog::0.0.1"
+klog = "org.danbrough:klog:0.0.1"
 
 kotlinx-coroutines-core = "org.danbrough.kotlinx:kotlinx-coroutines-core:1.6.4"
 
 kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }
 
-sqlite = "org.danbrough.kotlinxtras:sqlite:0.0.1-beta04"
+sqlite = "org.danbrough.kotlinxtras:sqlite:3.39.4"
 
 org-danbrough-sqldelight-core = "org.danbrough.sqldelight:core:2.0.0-alpha03"
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
 
 native-driver = "org.danbrough.sqldelight:native-driver:2.0.0-alpha03"
+
+sqlite-3-18-dialect = { group = "app.cash.sqldelight", name = "sqlite-3-18-dialect", version.ref = "app-cash-sqldelight" }
+
+app-cash-sqldelight-runtime = { group = "app.cash.sqldelight", name = "runtime", version.ref = "app-cash-sqldelight" }
+
+primitive-adapters = "org.danbrough.sqldelight:primitive-adapters:2.0.0-alpha03"
+
+org-danbrough-sqldelight-runtime = "org.danbrough.sqldelight:runtime:2.0.0-alpha03"
