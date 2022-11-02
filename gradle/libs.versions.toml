@@ -18,8 +18,8 @@ klog = "org.danbrough:klog:0.0.1"
 
 kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }
 
-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin"  }
 
-dokka-analysis = "org.jetbrains.dokka:dokka-analysis:1.7.20"
+dokka-analysis = {group = "org.jetbrains.dokka", name = "dokka-analysis", version.ref = "kotlin" }
 
 dokka-base = "org.jetbrains.dokka:dokka-base:1.7.20"

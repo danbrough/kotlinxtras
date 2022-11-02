@@ -1,10 +1,13 @@
 
-import BuildEnvironment.buildEnvironment
-import BuildEnvironment.declareNativeTargets
-import BuildEnvironment.hostTriplet
-import BuildEnvironment.konanDepsTaskName
-import BuildEnvironment.platformName
+
+import org.danbrough.kotlinxtras.BuildEnvironment
+import org.danbrough.kotlinxtras.BuildEnvironment.buildEnvironment
+import org.danbrough.kotlinxtras.BuildEnvironment.declareNativeTargets
+import org.danbrough.kotlinxtras.BuildEnvironment.hostTriplet
 import org.danbrough.kotlinxtras.binaries.CurrentVersions
+import org.danbrough.kotlinxtras.hostIsMac
+import org.danbrough.kotlinxtras.konanDepsTaskName
+import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.sonatype.generateInterops
 import org.jetbrains.kotlin.de.undercouch.gradle.tasks.download.Download
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -141,7 +144,7 @@ kotlin {
 
   targets.withType(KotlinNativeTarget::class).all {
 
-    if (BuildEnvironment.hostIsMac == konanTarget.family.isAppleFamily) {
+    if (hostIsMac == konanTarget.family.isAppleFamily) {
       //srcPrepare(konanTarget)
       srcPrepareFromDownload(konanTarget)
       configureTask(konanTarget)

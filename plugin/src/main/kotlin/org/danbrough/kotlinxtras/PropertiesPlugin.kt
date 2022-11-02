@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package org.danbrough.kotlinxtras
 
 import org.gradle.api.Plugin
@@ -12,7 +14,7 @@ import kotlin.reflect.KProperty
 open class PropertiesExtension( val project: Project) {
   var group: String = project.group.toString()
   val buildVersionFormat: String by project.properties
-
+  val message:String by project.createProjectProperty("message","default message")
 
 
 }

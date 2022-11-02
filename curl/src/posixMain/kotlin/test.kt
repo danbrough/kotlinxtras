@@ -2,8 +2,16 @@
 
 import kotlinx.cinterop.cstr
 import kotlinx.cinterop.memScoped
-import libcurl.*
 import kotlinx.cinterop.toKString
+import libcurl.CURLE_OK
+import libcurl.CURLOPT_CAINFO
+import libcurl.CURLOPT_FOLLOWLOCATION
+import libcurl.CURLOPT_URL
+import libcurl.curl_easy_cleanup
+import libcurl.curl_easy_init
+import libcurl.curl_easy_perform
+import libcurl.curl_easy_setopt
+import libcurl.curl_easy_strerror
 
 fun downloadTest(url:String,caCertFile:String? = null) {
   memScoped {

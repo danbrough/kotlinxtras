@@ -1,5 +1,7 @@
+import Pommy_gradle.Pommy.xtrasPom2
+
 plugins {
-  kotlin("jvm") version "1.7.20"
+  kotlin("jvm")
   `kotlin-dsl`
   `java-gradle-plugin`
   `maven-publish`
@@ -112,6 +114,14 @@ publishing {
       }
     }
   }
+
+  publications.all {
+    if (this !is MavenPublication) return@all
+
+
+    xtrasPom2()
+  }
+
 
 }
 
