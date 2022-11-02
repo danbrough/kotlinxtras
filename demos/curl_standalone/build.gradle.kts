@@ -13,8 +13,11 @@ binaries {
 
 
 repositories {
+  //for local builds of the xtras plugins
   maven("../../build/m2")
+  //for pre-releases of the xtras plugins
   maven("https://s01.oss.sonatype.org/content/groups/staging")
+  //for releases of the xtras plugins
   mavenCentral()
 }
 
@@ -25,10 +28,10 @@ kotlin {
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
-// uncomment if you want them
 
-//  macosX64()
-//  macosArm64()
+
+  macosX64()
+  macosArm64()
 
   androidNativeX86()
   androidNativeX64()
