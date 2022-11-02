@@ -1,3 +1,4 @@
+import org.danbrough.kotlinxtras.binaries.CurrentVersions.enableSqlite
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -17,11 +18,8 @@ repositories {
 
 
 
-
 binaries {
-  dependency("org.danbrough.kotlinxtras","sqlite","3.39.4")
-  //dependency("org.danbrough.kotlinxtras","curl","7_86_0")
-  //dependency("org.danbrough.kotlinxtras","openssl","1_1_1r")
+  enableSqlite()
 }
 
 kotlin {
