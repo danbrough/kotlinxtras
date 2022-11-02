@@ -33,6 +33,9 @@ kotlin {
   androidNativeArm32()
   androidNativeArm64()
 
+  macosArm64()
+  macosX64()
+
 
   val commonMain by sourceSets.getting {
     dependencies {
