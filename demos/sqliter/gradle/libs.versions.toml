@@ -18,4 +18,4 @@ kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = 
 
 sqliter-driver = "org.danbrough.touchlab:sqliter-driver:1.2.1"
 
-sqlite = "org.danbrough.kotlinxtras:sqlite:0.0.1-beta04"
+sqlite = "org.danbrough.kotlinxtras:sqlite:3.39.4"

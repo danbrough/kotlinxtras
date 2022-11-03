@@ -1,10 +1,11 @@
+import org.danbrough.kotlinxtras.binaries.CurrentVersions.enableSqlite
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 plugins {
   kotlin("multiplatform")
-
-  id("app.cash.sqldelight")
+  id("org.danbrough.kotlinxtras.consumer")
+  id("org.danbrough.sqldelight")
 }
 
 repositories {
@@ -17,25 +18,32 @@ repositories {
   mavenCentral()
 }
 
+binaries {
+  enableSqlite()
+}
+
+
+sqldelight {
+  database("Database") {
+    packageName = "demo"
+  }
+}
+
 kotlin {
 
   linuxX64()
-  //linuxArm64()
+  linuxArm64()
+  linuxArm32Hfp()
+  androidNativeX86()
 
   val commonMain by sourceSets.getting {
     dependencies {
-      //implementation(libs.org.danbrough.sqldelight.core)
-      implementation("org.danbrough.kotlinxtras:sqlite:_")
-      implementation("org.danbrough.sqldelight:primitive-adapters:_")
-      implementation("org.danbrough.sqldelight:runtime:_")
+      implementation(libs.sqlite)
+      implementation(libs.primitive.adapters)
+      implementation(libs.org.danbrough.sqldelight.runtime)
     }
   }
-  val commonTest by sourceSets.getting {
-    dependencies {
-      implementation(kotlin("test"))
-      implementation(libs.klog)
-    }
-  }
+
 
   val nativeMain by sourceSets.creating {
     dependencies {
@@ -44,19 +52,16 @@ kotlin {
     }
   }
 
-  val nativeTest by sourceSets.creating {
-    dependencies {
-      dependsOn(nativeMain)
-    }
-  }
 
   targets.withType(KotlinNativeTarget::class) {
     compilations["main"].apply {
       defaultSourceSet.dependsOn(nativeMain)
     }
 
-    compilations["test"].apply {
-      defaultSourceSet.dependsOn(nativeTest)
+    binaries {
+      executable("demo1") {
+        entryPoint("demo.main")
+      }
     }
   }
 
@@ -64,8 +69,3 @@ kotlin {
 
 
 
-sqldelight {
-  database("Database") {
-    packageName = "demo"
-  }
-}

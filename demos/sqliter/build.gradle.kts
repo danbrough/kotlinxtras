@@ -1,3 +1,4 @@
+import org.danbrough.kotlinxtras.binaries.CurrentVersions.enableSqlite
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -47,18 +48,10 @@ kotlin {
     }
 
 
-
     binaries {
 
       executable("demo1") {
         entryPoint = "demo1.main"
-//        runTask?.apply {
-//          properties["url"]?.also {
-//            args(it.toString())
-//          }
-//          environment("CA_CERT_FILE",file("cacert.pem"))
-//        }
-
       }
     }
   }
