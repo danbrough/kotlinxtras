@@ -34,10 +34,10 @@ kotlin {
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
+  androidNativeX86()
 
   val commonMain by sourceSets.getting {
     dependencies {
-      //implementation(libs.org.danbrough.sqldelight.core)
       implementation(libs.sqlite)
       implementation(libs.primitive.adapters)
       implementation(libs.org.danbrough.sqldelight.runtime)
