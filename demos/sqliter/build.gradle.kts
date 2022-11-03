@@ -1,3 +1,4 @@
+import org.danbrough.kotlinxtras.binaries.CurrentVersions.enableSqlite
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
