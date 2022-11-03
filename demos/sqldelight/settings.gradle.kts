@@ -1,8 +1,8 @@
 pluginManagement {
 
   repositories {
-    maven("../../build/m2")
-    maven("https://s01.oss.sonatype.org/content/groups/staging/")
+    maven("/usr/local/kotlinxtras/build/m2")
+   maven("https://s01.oss.sonatype.org/content/groups/staging/")
     maven("https://www.jetbrains.com/intellij-repository/releases")
     maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
     gradlePluginPortal()
