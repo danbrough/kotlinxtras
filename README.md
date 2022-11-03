@@ -40,7 +40,8 @@ See the sqlite,curl_standalone,sqldelight in the [demos](./demos) folder for exa
 ## News
 
 
-The [sqldelight](./demos/sqldelight) demo is working with sqldelight 2.0.0-alpha04. 
+The [sqldelight](./demos/sqldelight) demo is working with sqldelight 2.0.0-alpha04 with all linux and android native targets.
+
 
 
 
