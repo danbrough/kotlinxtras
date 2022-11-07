@@ -8,8 +8,12 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.Executable
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -47,7 +51,7 @@ open class BinariesConsumerExtension(private val project: Project) {
   fun defineBinariesTask(dep: BinaryDep, konanTarget: KonanTarget): TaskProvider<*> {
     val binariesTaskName = dep.binariesTaskName(konanTarget)
     val binaryArtifact = dep.artifactMap.invoke(dep, konanTarget)!!
-    println("Defining $binariesTaskName")
+    project.logger.info("Defining $binariesTaskName")
 
     val resolveBinariesTask =
       project.tasks.register("resolve${dep.name.capitalized()}Binaries${konanTarget.platformName.capitalized()}") {
@@ -69,16 +73,19 @@ open class BinariesConsumerExtension(private val project: Project) {
       }
 
     val extractBinariesTask =
-      project.tasks.register("extract${dep.name.capitalized()}Binaries${konanTarget.platformName.capitalized()}",Exec::class.java) {
+      project.tasks.register(
+        "extract${dep.name.capitalized()}Binaries${konanTarget.platformName.capitalized()}",
+        Exec::class.java
+      ) {
         dependsOn(resolveBinariesTask)
-        val archiveFile =resolveBinariesTask.get().outputs.files.first()
+        val archiveFile = resolveBinariesTask.get().outputs.files.first()
         inputs.file(archiveFile)
         outputs.dir(libsDir.resolve(dep.name).resolve(konanTarget.platformName))
         doFirst {
-          println("Running $name on $archiveFile")
+          project.logger.info("Running $name on $archiveFile")
           if (!libsDir.exists()) libsDir.mkdirs()
         }
-        commandLine("tar","xvpf",archiveFile.absolutePath,"-C",libsDir.absolutePath)
+        commandLine("tar", "xvpf", archiveFile.absolutePath, "-C", libsDir.absolutePath)
       }
 
     return project.tasks.register(binariesTaskName) {
@@ -108,7 +115,11 @@ class BinariesConsumerPlugin : Plugin<Project> {
 
   override fun apply(targetProject: Project) {
     val extn =
-      targetProject.extensions.create("binaries", BinariesConsumerExtension::class.java, targetProject)
+      targetProject.extensions.create(
+        "binaries",
+        BinariesConsumerExtension::class.java,
+        targetProject
+      )
 
 
     fun Project.defineTasks(konanTarget: KonanTarget) {
@@ -136,6 +147,18 @@ class BinariesConsumerPlugin : Plugin<Project> {
         }
       }
 
+      extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
+        val envKey = if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH"
+        targets.withType<KotlinNativeTarget>().all {
+          binaries.withType<Executable>().all {
+            extn.dependencies.joinToString(File.pathSeparator) { buildDir.resolve("kotlinxtras/${it.name}/${konanTarget.platformName}/lib").absolutePath }
+              .also {
+                project.logger.info("$envKey = $it")
+                runTask?.environment(envKey, it)
+              }
+          }
+        }
+      }
     }
 
   }

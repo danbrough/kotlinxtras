@@ -2,13 +2,12 @@
 
 [plugins]
 
-org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version = "1.7.20" }
+org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref="kotlin" }
 
 
 [versions]
 
 kotlin = "1.7.20"
-xtras = "0.0.1-beta04"
 
 [libraries]
 
@@ -24,4 +23,4 @@ kotlin-klib-commonizer-embeddable = { group = "org.jetbrains.kotlin", name = "ko
 
 kotlinx-datetime = "org.danbrough.kotlinx:kotlinx-datetime:0.4.0a"
 
-iconv = "org.danbrough.kotlinxtras:iconv:0.0.1-beta06"
+iconv = "org.danbrough.kotlinxtras:iconv:1.17"

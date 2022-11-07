@@ -7,7 +7,6 @@ import org.danbrough.kotlinxtras.BuildEnvironment.hostTriplet
 import org.danbrough.kotlinxtras.OpenSSL.opensslPlatform
 import org.danbrough.kotlinxtras.ProjectProperties
 import org.danbrough.kotlinxtras.binaries.CurrentVersions
-import org.danbrough.kotlinxtras.hostIsMac
 import org.danbrough.kotlinxtras.konanDepsTaskName
 import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.sonatype.generateInterops
@@ -112,7 +111,7 @@ kotlin {
   targets.withType(KotlinNativeTarget::class).all {
 
 
-    if (hostIsMac == konanTarget.family.isAppleFamily) {
+    if (org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac == konanTarget.family.isAppleFamily) {
       srcPrepare(konanTarget)
       configureTask(konanTarget)
       buildTask(konanTarget)

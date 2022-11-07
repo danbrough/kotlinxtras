@@ -9,6 +9,7 @@ import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.sonatype.generateInterops
 import org.jetbrains.kotlin.de.undercouch.gradle.tasks.download.Download
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
@@ -85,6 +86,7 @@ fun configureTask(target: KonanTarget) =
 
     val args = listOf(
       "./configure", "-C",
+      "--enable-static",
       "--host=${target.hostTriplet}",
       "--prefix=${target.iconvPrefix(project)}",
     )
@@ -101,7 +103,7 @@ fun buildTask(target: KonanTarget) =
     doFirst {
       println("building : $target")
     }
-    outputs.file(prefixDir.resolve("lib/libiconv.la"))
+    outputs.file(prefixDir.resolve("lib/libiconv.a"))
 
     onlyIf {
       target.iconvNotBuilt
@@ -136,7 +138,7 @@ kotlin {
 
   targets.withType(KotlinNativeTarget::class).all {
 
-    if (org.danbrough.kotlinxtras.hostIsMac == konanTarget.family.isAppleFamily) {
+    if (HostManager.hostIsMac == konanTarget.family.isAppleFamily) {
       //srcPrepare(konanTarget)
       srcPrepareFromDownload(konanTarget)
       configureTask(konanTarget)

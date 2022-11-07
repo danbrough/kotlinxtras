@@ -38,5 +38,4 @@ object Pommy {
     }
   }
 
-  fun Project.thang() = "Hello There"
 }

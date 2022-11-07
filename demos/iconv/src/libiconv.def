@@ -1,0 +1,8 @@
+headers = iconv.h libcharset.h
+
+#linkerOpts = -liconv
+staticLibraries = libiconv.la
+
+compilerOpts.linux_x64 = -I/usr/local/kotlinxtras/libs/iconv/linuxX64/include -L/usr/local/kotlinxtras/libs/iconv/linuxX64/lib -l:libiconv.la
+linkerOpts.linux_x64 = -L/usr/local/kotlinxtras/libs/iconv/linuxX64/lib -l:libiconv.la
+libraryPaths = /usr/local/kotlinxtras/libs/iconv/linuxX64/lib
