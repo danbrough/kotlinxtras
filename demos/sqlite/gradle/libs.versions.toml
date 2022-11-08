@@ -16,4 +16,4 @@ kotlinx-coroutines-core = "org.danbrough.kotlinx:kotlinx-coroutines-core:1.6.4"
 
 kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }
 
-sqlite = "org.danbrough.kotlinxtras:sqlite:3.39.4"
+sqlite = "org.danbrough.kotlinxtras:sqlite:3.39.4a"

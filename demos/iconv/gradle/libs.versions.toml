@@ -4,7 +4,6 @@
 
 org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref="kotlin" }
 
-
 [versions]
 
 kotlin = "1.7.20"
