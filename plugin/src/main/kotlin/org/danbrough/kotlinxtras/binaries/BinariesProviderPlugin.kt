@@ -13,9 +13,8 @@ import org.gradle.api.tasks.bundling.Tar
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.targets
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -133,7 +132,7 @@ class BinariesProviderPlugin : Plugin<Project> {
 
       val supportedTargets =
         if (extn.supportedTargets.isEmpty())
-          project.kotlinExtension.targets.filterIsInstance<KotlinNativeTarget>()
+          project.extensions.getByType<KotlinMultiplatformExtension>().targets.filterIsInstance<KotlinNativeTarget>()
             .map { it.konanTarget } else extn.supportedTargets
 
       project.extensions.getByType<PublishingExtension>().apply {

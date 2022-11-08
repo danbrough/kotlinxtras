@@ -1,5 +1,6 @@
 headers = iconv.h libcharset.h
 linkerOpts = -liconv
+
 compilerOpts.android_arm32 = -Ibuild/kotlinxtras/iconv/androidNativeArm32/include \
   -I/usr/local/kotlinxtras/libs/iconv/androidNativeArm32/include
 linkerOpts.android_arm32 = -Lbuild/kotlinxtras/iconv/androidNativeArm32/lib \

@@ -6,12 +6,12 @@ object CurrentVersions {
   const val sqlite = "3.39.4a"
 
   object iconv{
-    const val version = "1.17a"
+    const val version = "1.17b"
     const val src = "https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz"
   }
 
+  const val XTRAS_GROUP = "org.danbrough.kotlinxtras"
 
-  private val XTRAS_GROUP = "org.danbrough.kotlinxtras"
   fun BinariesConsumerExtension.enableCurl(group:String = XTRAS_GROUP,version:String = curl){
     dependency(group,"curl",version)
   }

@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "org.danbrough.kotlinxtras"
-version = "0.0.2"
+version = "0.0.3-beta01"
 
 repositories {
   mavenCentral()
@@ -24,11 +24,12 @@ kotlin {
   }
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class).all {
-  kotlinOptions {
-    jvmTarget = "11"
-  }
-}
+
+//tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class).all {
+//  kotlinOptions {
+//    jvmTarget = "11"
+//  }
+//}
 
 tasks.withType(JavaCompile::class) {
   sourceCompatibility = JavaVersion.VERSION_11.toString()

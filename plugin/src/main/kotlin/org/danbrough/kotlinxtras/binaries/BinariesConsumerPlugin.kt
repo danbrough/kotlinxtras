@@ -97,20 +97,6 @@ open class BinariesConsumerExtension(private val project: Project) {
   }
 }
 
-
-/*
-      project.configurations.create("binaries${konanTarget.platformName.capitalized()}") {
-        isVisible = false
-        isTransitive = false
-        isCanBeConsumed = false
-        isCanBeResolved = true
-      }
- */
-
-
-
-
-
 class BinariesConsumerPlugin : Plugin<Project> {
 
   override fun apply(targetProject: Project) {
@@ -136,7 +122,7 @@ class BinariesConsumerPlugin : Plugin<Project> {
         .map { KonanTarget.Companion.predefinedTargets[it.target]!! }
         .distinct().forEach { defineTasks(it) }
 
-      tasks.withType<AbstractKotlinNativeCompile<*, *, *>>().all {
+      tasks.withType<AbstractKotlinNativeCompile<*, *>>().all {
         val konanTarget = KonanTarget.Companion.predefinedTargets[target]!!
         extn.dependencies.forEach { binaryDep ->
           binaryDep.artifactMap.invoke(binaryDep, konanTarget)?.also {

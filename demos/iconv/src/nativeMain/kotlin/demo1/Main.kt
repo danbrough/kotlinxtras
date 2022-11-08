@@ -39,17 +39,16 @@ fun main(){
       0.toByte()
     }
 
+    val inputSize =   alloc<size_tVar>().also {
+      it.value = input.size.toSizeT()
+    }
+
+    val outputSize = alloc<size_tVar>().also {
+      it.value = output.size.toSizeT()
+    }
+
     input.usePinned {inputPinned->
-
       output.usePinned {outputPinned->
-
-        val inputSize =   alloc<size_tVar>().also {
-          it.value = input.size.toSizeT()
-        }
-
-        val outputSize = alloc<size_tVar>().also {
-          it.value = output.size.toSizeT()
-        }
 
         val inbuf = alloc<CPointerVar<ByteVar>>().also {
           it.value = inputPinned.addressOf(0)
@@ -66,6 +65,15 @@ fun main(){
         }
 
         log.trace("output remaining: ${outputSize.value}")
+      }
+
+
+      val outputString = output.decodeToString(0,output.size - outputSize.value.toInt())
+      val expected = "电视机"
+
+      if (outputString != expected){
+        log.error("Invalid output: $outputString  Expecting: $expected")
+        log.debug("${outputString.encodeToByteArray().joinToString(",")} != ${expected.encodeToByteArray().joinToString(",")}")
       }
 
       log.debug("output: ${output.decodeToString()}")
