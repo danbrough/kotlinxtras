@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
   kotlin("multiplatform")
@@ -51,7 +52,11 @@ kotlin {
           properties["url"]?.also {
             args(it.toString())
           }
+
           environment("CA_CERT_FILE",file("cacert.pem"))
+          environment(if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH",
+            "/usr/local/kotlinxtras/libs/openssl/${konanTarget.platformName}/lib${File.pathSeparatorChar}\"/usr/local/kotlinxtras/libs/curl/${konanTarget.platformName}/lib\"")
+
         }
 
       }
@@ -65,6 +70,20 @@ kotlin {
 
 
 
+
+val org.jetbrains.kotlin.konan.target.KonanTarget.platformName: String
+  get() {
+    if (family == org.jetbrains.kotlin.konan.target.Family.ANDROID) {
+      return when (this) {
+        org.jetbrains.kotlin.konan.target.KonanTarget.ANDROID_X64 -> "androidNativeX64"
+        org.jetbrains.kotlin.konan.target.KonanTarget.ANDROID_X86 -> "androidNativeX86"
+        org.jetbrains.kotlin.konan.target.KonanTarget.ANDROID_ARM64 -> "androidNativeArm64"
+        org.jetbrains.kotlin.konan.target.KonanTarget.ANDROID_ARM32 -> "androidNativeArm32"
+        else -> throw Error("Unhandled android target $this")
+      }
+    }
+    return name.split("_").joinToString("") { it.capitalize() }.decapitalize()
+  }
 
 
 
