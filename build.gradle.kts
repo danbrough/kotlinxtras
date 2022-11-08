@@ -1,5 +1,5 @@
 
-import Pommy_gradle.Pommy.xtrasPom2
+import org.danbrough.kotlinxtras.Pom.xtrasPom
 import org.danbrough.kotlinxtras.ProjectProperties
 import org.danbrough.kotlinxtras.PropertiesPlugin
 import org.gradle.api.tasks.testing.logging.TestLogEvent
@@ -73,9 +73,7 @@ subprojects {
 
       publications.all {
         if (this !is MavenPublication) return@all
-        //TODO configure POM
-        apply<PommyPlugin>()
-        xtrasPom2()
+        xtrasPom()
       }
     }
   }
