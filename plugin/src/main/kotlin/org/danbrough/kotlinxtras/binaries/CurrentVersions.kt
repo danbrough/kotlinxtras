@@ -1,9 +1,9 @@
 package org.danbrough.kotlinxtras.binaries
 
 object CurrentVersions {
-  const val curl = "7_86_0"
+  const val curl = "7_86_0a"
   const val openssl = "1_1_1s"
-  const val sqlite = "3.39.4"
+  const val sqlite = "3.39.4a"
 
   object iconv{
     const val version = "1.17a"
