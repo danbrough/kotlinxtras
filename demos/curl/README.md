@@ -2,13 +2,14 @@
 
 This demo uses the org.danbrough.kotlinxtras:curl library to compile a curl demo.  
 It expects precompiled curl and openssl at /usr/local/kotlinxtras/libs/curl,openssl but might
-work with your system versions.  
+work with your system versions (and should if you are running linuxX64).    
 See the (curl standalone)[../curl_standalone/] for this demo that downloads precompiled binaries to link against.
 
 The cacert.pem file is from: http://curl.haxx.se/ca/cacert.pem
 
-You need to specify it in the environment variable "CA_CERT_FILE" the path to this.  
+You need to specify the path to cacert.pem using the environment variable "CA_CERT_FILE".  
 If it complains that libcrypt.so.1 is missing then you will need libxcrypt-compat.  
+
 Run the demo with:  
 ```bash 
 ./gradlew  runDemo1DebugExecutableMacosX64  (loads example.com) 

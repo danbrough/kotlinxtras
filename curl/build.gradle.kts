@@ -165,7 +165,6 @@ kotlin {
     compilations["main"].apply {
       defaultSourceSet.dependsOn(posixMain)
       cinterops.create("curl") {
-
         packageName("libcurl")
         defFile("src/libcurl.def")
       }

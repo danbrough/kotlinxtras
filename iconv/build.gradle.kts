@@ -18,8 +18,6 @@ plugins {
   id("org.danbrough.kotlinxtras.provider")
 }
 
-
-
 version = CurrentVersions.iconv.version
 
 binariesProvider {
