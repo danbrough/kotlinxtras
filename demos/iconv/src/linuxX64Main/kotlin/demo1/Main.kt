@@ -20,7 +20,6 @@ fun main(){
 
   memScoped {
 
-
     val conv = iconv_open!!("UTF-8".cstr.ptr,"GBK".cstr.ptr)
 
     if (conv.toLong() == -1L){
@@ -30,7 +29,6 @@ fun main(){
     }
 
     val input = intArrayOf(0xB5,0xE7,0xCA,0xD3,0xBB,0xFA).map{it.toByte()}.toByteArray()
-
 
     val output =ByteArray(128){
       0.toByte()
@@ -71,18 +69,6 @@ fun main(){
         val err = posix_errno()
         log.error("close failed: $err : ${strerror(err)?.toKString()}")
       }
-
     }
-
-
-
   }
-
-
-
-
-
-
-
-
 }

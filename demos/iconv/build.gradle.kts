@@ -8,12 +8,12 @@ import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
   kotlin("multiplatform")
-  id("org.danbrough.kotlinxtras.properties")
+  id("org.danbrough.kotlinxtras.consumer")
 }
-//
-//binaries {
-//  enableIconv()
-//}
+
+binaries {
+  enableIconv()
+}
 
 repositories {
   //maven("/usr/local/kotlinxtras/build/m2")
@@ -27,6 +27,7 @@ kotlin {
 
   //androidNativeX86()
   linuxX64()
+  androidNativeX86()
 
   /** //uncomment if you want android support
   androidNativeX86()
@@ -42,25 +43,13 @@ kotlin {
   val commonMain by sourceSets.getting {
     dependencies {
       implementation(libs.klog)
-      //implementation(libs.iconv)
+      implementation(libs.iconv)
 
     }
   }
 
-
-//  val nativeMain by sourceSets.creating {
-//    dependsOn(commonMain)
-//  }
-
   targets.withType<KotlinNativeTarget>().all {
 
-    compilations["main"].apply {
-      cinterops.create("libiconv") {
-        packageName("libiconv")
-        defFile(file("src/libiconv.def"))
-        extraOpts("-verbose")
-      }
-    }
 
     binaries {
       executable("demo1") {
@@ -68,11 +57,6 @@ kotlin {
       }
     }
 
-    binaries {
-      executable("demo2") {
-        entryPoint = "demo2.main"
-      }
-    }
   }
 }
 
