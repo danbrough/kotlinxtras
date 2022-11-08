@@ -20,7 +20,9 @@ plugins {
   id("org.danbrough.kotlinxtras.provider")
 }
 
-//ProjectProperties.init(project)
+repositories {
+
+}
 
 version = CurrentVersions.curl
 

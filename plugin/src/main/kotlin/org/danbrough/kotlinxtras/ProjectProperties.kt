@@ -41,7 +41,7 @@ object ProjectProperties : Plugin<Project>{
   
   val buildVersion: Int by createProperty("build.version", "0")
   
-  val projectGroup: String by createProperty("project.group", "org.danbrough")
+  val projectGroup: String by createProperty("project.group", "org.danbrough.kotlinxtras")
   
   val buildSnapshot: Boolean by createProperty(
     "build.snapshot", "false"
