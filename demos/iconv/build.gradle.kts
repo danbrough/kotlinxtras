@@ -25,8 +25,9 @@ repositories {
 
 kotlin {
 
-  //androidNativeX86()
+
   linuxX64()
+  linuxArm64()
   androidNativeX86()
 
   /** //uncomment if you want android support
@@ -44,12 +45,29 @@ kotlin {
     dependencies {
       implementation(libs.klog)
       implementation(libs.iconv)
-
     }
+  }
+
+  val nativeMain by sourceSets.creating {
+    dependsOn(commonMain)
+  }
+
+  val native32Main by sourceSets.creating {
+    dependsOn(nativeMain)
+  }
+
+  val native64Main by sourceSets.creating {
+    dependsOn(nativeMain)
   }
 
   targets.withType<KotlinNativeTarget>().all {
 
+    compilations["main"].apply {
+      if (konanTarget.architecture.bitness == 32)
+        defaultSourceSet.dependsOn(native32Main)
+      else
+        defaultSourceSet.dependsOn(native64Main)
+    }
 
     binaries {
       executable("demo1") {

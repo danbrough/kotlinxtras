@@ -9,6 +9,9 @@ import libiconv.iconv
 import libiconv.iconv_close
 import libiconv.iconv_open
 import platform.posix.*
+import toSizeT
+
+val s:size_t = 0u
 
 val log =   klog.klog("demo1"){
   level = Level.TRACE
@@ -19,6 +22,8 @@ val log =   klog.klog("demo1"){
 fun main(){
 
   memScoped {
+
+    log.info("PLATFORM: ${Platform.cpuArchitecture.bitness}")
 
     val conv = iconv_open!!("UTF-8".cstr.ptr,"GBK".cstr.ptr)
 
@@ -39,11 +44,11 @@ fun main(){
       output.usePinned {outputPinned->
 
         val inputSize =   alloc<size_tVar>().also {
-          it.value = input.size.toULong()
+          it.value = input.size.toSizeT()
         }
 
         val outputSize = alloc<size_tVar>().also {
-          it.value = output.size.toULong()
+          it.value = output.size.toSizeT()
         }
 
         val inbuf = alloc<CPointerVar<ByteVar>>().also {
