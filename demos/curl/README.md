@@ -3,7 +3,7 @@
 This demo uses the org.danbrough.kotlinxtras:curl library to compile a curl demo.  
 It expects precompiled curl and openssl at /usr/local/kotlinxtras/libs/curl,openssl but might
 work with your system versions (and should if you are running linuxX64).    
-See the (curl standalone)[../curl_standalone/] for this demo that downloads precompiled binaries to link against.
+See the [curl standalone](../curl_standalone/) for this demo that downloads precompiled binaries to link against.
 
 The cacert.pem file is from: http://curl.haxx.se/ca/cacert.pem
 
