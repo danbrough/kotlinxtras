@@ -12,6 +12,8 @@ plugins {
   id("org.danbrough.kotlinxtras.sonatype")
 }
 
+println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION}")
+
 //val projectProperties = project.projectProperties
 //ProjectProperties.init(project)
 
@@ -39,17 +41,17 @@ allprojects {
       false
     }
   }
-
-  tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class).all {
-    kotlinOptions {
-      jvmTarget = "11"
-    }
-  }
-
-  tasks.withType(JavaCompile::class) {
-    sourceCompatibility = JavaVersion.VERSION_11.toString()
-    targetCompatibility = JavaVersion.VERSION_11.toString()
-  }
+//
+//  tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class).all {
+//    kotlinOptions {
+//      jvmTarget = "11"
+//    }
+//  }
+//
+//  tasks.withType(JavaCompile::class) {
+//    sourceCompatibility = JavaVersion.VERSION_11.toString()
+//    targetCompatibility = JavaVersion.VERSION_11.toString()
+//  }
 }
 
 

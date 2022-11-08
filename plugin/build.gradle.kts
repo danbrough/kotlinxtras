@@ -1,4 +1,4 @@
-import Pommy_gradle.Pommy.xtrasPom2
+import Pommy_gradle.Pommy.xtrasPom
 
 plugins {
   kotlin("jvm")
@@ -120,7 +120,7 @@ publishing {
     if (this !is MavenPublication) return@all
 
 
-    xtrasPom2()
+    xtrasPom()
   }
 
 

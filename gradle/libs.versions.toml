@@ -2,15 +2,16 @@
 
 [plugins]
 
-org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version = "1.7.20" }
+org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref="kotlin" }
 
-org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version = "1.7.20" }
+org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref="kotlin" }
 
-org-jetbrains-dokka = { id = "org.jetbrains.dokka", version = "1.7.20" }
+org-jetbrains-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka"}
 
 [versions]
 
-kotlin = "1.7.20"
+kotlin = "1.7.21"
+dokka = "1.7.20"
 
 [libraries]
 
@@ -22,4 +23,4 @@ kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", v
 
 dokka-analysis = {group = "org.jetbrains.dokka", name = "dokka-analysis", version.ref = "kotlin" }
 
-dokka-base = "org.jetbrains.dokka:dokka-base:1.7.20"
+dokka-base = {group = "org.jetbrains.dokka", name = "dokka-base", version.ref = "dokka"}

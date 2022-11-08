@@ -5,11 +5,12 @@ import org.danbrough.kotlinxtras.BuildEnvironment.buildEnvironment
 import org.danbrough.kotlinxtras.BuildEnvironment.declareNativeTargets
 import org.danbrough.kotlinxtras.BuildEnvironment.hostTriplet
 import org.danbrough.kotlinxtras.binaries.CurrentVersions
+import org.danbrough.kotlinxtras.createDownloadTask
 
 import org.danbrough.kotlinxtras.konanDepsTaskName
 import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.sonatype.generateInterops
-import org.jetbrains.kotlin.de.undercouch.gradle.tasks.download.Download
+
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -20,9 +21,9 @@ plugins {
   id("org.danbrough.kotlinxtras.provider")
 }
 
-version = CurrentVersions.sqlite
+version = CurrentVersions.sqlite.version
 val sqliteGitDir = rootProject.file("repos/sqlite")
-val sqliteSource = "https://www.sqlite.org/2022/sqlite-autoconf-3390400.tar.gz"
+
 
 binariesProvider {
 
@@ -49,19 +50,21 @@ fun srcPrepare(target: KonanTarget): Exec =
   }
 
 
-val downloadSrcTask by tasks.creating(Download::class.java) {
-  src(sqliteSource)
-  dest(buildDir.resolve("sqlite").also {
-    if (!it.exists()) it.mkdirs()
-  })
-  overwrite(false)
-}
+//val downloadSrcTask by tasks.creating(Download::class.java) {
+//  src(sqliteSource)
+//  dest(buildDir.resolve("sqlite").also {
+//    if (!it.exists()) it.mkdirs()
+//  })
+//  overwrite(false)
+//}
+
+val downloadSrcTask = project.createDownloadTask("downloadSrcTask",CurrentVersions.sqlite.url,buildDir.resolve("sqlite"))
 
 fun srcPrepareFromDownload(target: KonanTarget): Copy =
   tasks.create<Copy>("srcPrepareFromDownload${target.platformName.capitalize()}") {
     dependsOn(downloadSrcTask)
     val srcDir = target.sqliteSrcDir(project)
-    from(tarTree(resources.gzip(downloadSrcTask.outputFiles.first()))) {
+    from(tarTree(resources.gzip(downloadSrcTask.get().outputs.files.first()))) {
       eachFile {
         path = path.substring(relativePath.segments[0].length)
       }

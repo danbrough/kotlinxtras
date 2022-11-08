@@ -2,7 +2,7 @@ import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
 
 object Pommy {
-  fun MavenPublication.xtrasPom2() {
+  fun MavenPublication.xtrasPom() {
     pom {
 
       name.set("KotlinXtras")

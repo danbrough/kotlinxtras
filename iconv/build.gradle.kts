@@ -1,13 +1,15 @@
 
 
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.danbrough.kotlinxtras.BuildEnvironment.buildEnvironment
 import org.danbrough.kotlinxtras.BuildEnvironment.declareNativeTargets
 import org.danbrough.kotlinxtras.BuildEnvironment.hostTriplet
 import org.danbrough.kotlinxtras.binaries.CurrentVersions
+import org.danbrough.kotlinxtras.createDownloadTask
 import org.danbrough.kotlinxtras.konanDepsTaskName
 import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.sonatype.generateInterops
-import org.jetbrains.kotlin.de.undercouch.gradle.tasks.download.Download
+
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -33,26 +35,30 @@ fun KonanTarget.iconvPrefix(project: Project): java.io.File =
 val KonanTarget.iconvNotBuilt: Boolean
   get() = !iconvPrefix(project).resolve("lib/libiconv.la").exists()
 
+/*
 
-val downloadSrcTask by tasks.creating(Download::class.java) {
+val downloadSrcTask by tasks.creating(org.jetbrains.kotlin.de.undercouch.gradle.tasks.download.Download::class.java) {
   src(CurrentVersions.iconv.src)
   val destDir =buildDir.resolve("iconv")
   dest(destDir)
   doFirst {
-    if (!destDir.exists()){
-      project.exec {
-        mkdir(destDir)
-      }
-    }
+    if (!destDir.exists())
+      destDir.mkdirs()
   }
   overwrite(false)
 }
+*/
+
+
+val downloadTask = project.createDownloadTask("downloadSrcTask",CurrentVersions.iconv.url,buildDir.resolve("iconv"))
+
 
 fun srcPrepareFromDownload(target: KonanTarget): Copy =
   tasks.create<Copy>("srcPrepareFromDownload${target.platformName.capitalize()}") {
-    dependsOn(downloadSrcTask)
+    dependsOn(downloadTask)
     val srcDir = target.iconvSrcDir(project)
-    from(tarTree(resources.gzip(downloadSrcTask.outputFiles.first()))) {
+
+    from(tarTree(resources.gzip(downloadTask.get().outputs.files.first()))) {
       eachFile {
         path = path.substring(relativePath.segments[0].length)
       }
