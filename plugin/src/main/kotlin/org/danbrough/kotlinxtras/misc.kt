@@ -3,7 +3,6 @@
 package org.danbrough.kotlinxtras
 
 import org.gradle.api.Project
-import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -67,19 +66,11 @@ object OpenSSL {
       is KonanTarget.ZEPHYR -> TODO()
     }
 }
-val hostIsMac: Boolean
-  get() = System.getProperty("os.name").startsWith("Mac")
 
 
-fun test(project: Project) {
 
 
-}
 
-fun MavenPublication.xtrasPom() {
-
-
-}
 
 val KonanTarget.konanDepsTaskName: String
   get() = ":konandeps:$platformName"

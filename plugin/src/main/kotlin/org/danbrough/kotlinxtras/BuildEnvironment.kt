@@ -5,6 +5,7 @@ package org.danbrough.kotlinxtras
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -22,7 +23,7 @@ object BuildEnvironment {
 
   val androidNdkDir: File by ProjectProperties.createProperty(
     "android.ndk.dir", konanDir.resolve(
-      if (hostIsMac) "dependencies/target-toolchain-2-osx-android_ndk" else
+      if (HostManager.hostIsMac) "dependencies/target-toolchain-2-osx-android_ndk" else
         "dependencies/target-toolchain-2-linux-android_ndk"
     ).absolutePath
   )

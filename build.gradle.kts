@@ -1,4 +1,5 @@
 
+import org.danbrough.kotlinxtras.Pom.xtrasPom
 import org.danbrough.kotlinxtras.ProjectProperties
 import org.danbrough.kotlinxtras.PropertiesPlugin
 import org.gradle.api.tasks.testing.logging.TestLogEvent
@@ -72,7 +73,7 @@ subprojects {
 
       publications.all {
         if (this !is MavenPublication) return@all
-        //TODO configure POM
+        xtrasPom()
       }
     }
   }

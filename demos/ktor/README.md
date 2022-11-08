@@ -1,4 +1,4 @@
-# Ktor demo
+# Ktor demo not working as of 0.0.2
 
 This expects to find curl and openssl in the /usr/local/kotlinxtras/libs/ directory.
 To build those run `./gradlew curl:buildLinuxX64 .. curl:buildLinuxArm32Hfp ..` in the root directory

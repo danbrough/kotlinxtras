@@ -6,7 +6,6 @@ org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform"
 
 org-danbrough-sqldelight = { id = "org.danbrough.sqldelight", version = "2.0.0-alpha04" }
 
-org-danbrough-kotlinxtras-consumer = { id = "org.danbrough.kotlinxtras.consumer", version = "0.0.1" }
 
 [versions]
 
@@ -22,7 +21,7 @@ kotlinx-coroutines-core = "org.danbrough.kotlinx:kotlinx-coroutines-core:1.6.4"
 
 kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }
 
-sqlite = "org.danbrough.kotlinxtras:sqlite:3.39.4"
+sqlite = "org.danbrough.kotlinxtras:sqlite:3.39.4a"
 
 org-danbrough-sqldelight-core = "org.danbrough.sqldelight:core:2.0.0-alpha04"
 

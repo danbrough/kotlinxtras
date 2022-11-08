@@ -15,10 +15,10 @@ repositories {
   mavenCentral()
 }
 
-binaries {
-  enableCurl(version = libs.curl.get().versionConstraint.toString())
-  enableOpenSSL(version = libs.openssl.get().versionConstraint.toString())
-}
+//binaries {
+//  enableCurl(version = libs.curl.get().versionConstraint.toString())
+//  enableOpenSSL(version = libs.openssl.get().versionConstraint.toString())
+//}
 
 
 kotlin {

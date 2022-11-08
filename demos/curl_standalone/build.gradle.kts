@@ -1,3 +1,5 @@
+import org.danbrough.kotlinxtras.binaries.CurrentVersions.enableCurl
+import org.danbrough.kotlinxtras.binaries.CurrentVersions.enableOpenssl
 import org.danbrough.kotlinxtras.platformName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
@@ -7,8 +9,8 @@ plugins {
 }
 
 binaries {
-
-
+  enableCurl()
+  enableOpenssl()
 }
 
 

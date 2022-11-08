@@ -35,7 +35,7 @@ fun Project.generateInterops(
     group = xtrasTaskGroup
     doFirst {
       val outputFile = outputs.files.files.first()
-      println("Generating $outputFile")
+      project.logger.info("Generating $outputFile")
 
       outputFile.printWriter().use { output ->
         output.println(inputs.files.files.first().readText())
@@ -48,8 +48,8 @@ fun Project.generateInterops(
          |  -I/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/include
          |linkerOpts.${konanTarget.name} = -Lbuild/kotlinxtras/$libName/${konanTarget.platformName}/lib \
          |  -L/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/lib
-         |libraryPaths.${konanTarget.name} = -Lbuild/kotlinxtras/$libName/${konanTarget.platformName}/lib \
-         |  -L/usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/lib    
+         |libraryPaths.${konanTarget.name} = build/kotlinxtras/$libName/${konanTarget.platformName}/lib \
+         |  /usr/local/kotlinxtras/libs/$libName/${konanTarget.platformName}/lib    
          |""".trimMargin()
           )
         }

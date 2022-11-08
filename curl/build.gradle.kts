@@ -11,6 +11,7 @@ import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.sonatype.generateInterops
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
@@ -19,7 +20,9 @@ plugins {
   id("org.danbrough.kotlinxtras.provider")
 }
 
-//ProjectProperties.init(project)
+repositories {
+
+}
 
 version = CurrentVersions.curl
 
@@ -152,7 +155,7 @@ kotlin {
 
   targets.withType(KotlinNativeTarget::class).all {
 
-    if (org.danbrough.kotlinxtras.hostIsMac == konanTarget.family.isAppleFamily) {
+    if (HostManager.hostIsMac == konanTarget.family.isAppleFamily) {
       srcPrepare(konanTarget)
       autoconfTask(konanTarget)
       configureTask(konanTarget)
@@ -164,7 +167,6 @@ kotlin {
     compilations["main"].apply {
       defaultSourceSet.dependsOn(posixMain)
       cinterops.create("curl") {
-
         packageName("libcurl")
         defFile("src/libcurl.def")
       }

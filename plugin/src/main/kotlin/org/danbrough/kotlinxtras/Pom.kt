@@ -1,8 +1,9 @@
-import org.gradle.api.Project
+package org.danbrough.kotlinxtras
+
 import org.gradle.api.publish.maven.MavenPublication
 
-object Pommy {
-  fun MavenPublication.xtrasPom2() {
+object Pom {
+  fun MavenPublication.xtrasPom() {
     pom {
 
       name.set("KotlinXtras")
@@ -37,5 +38,4 @@ object Pommy {
       }
     }
   }
-
 }
