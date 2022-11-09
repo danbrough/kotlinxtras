@@ -15,7 +15,7 @@ dokka = "1.7.20"
 
 [libraries]
 
-klog = "org.danbrough:klog:0.0.1"
+klog = "org.danbrough:klog:0.0.2-beta01"
 
 kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }
 
