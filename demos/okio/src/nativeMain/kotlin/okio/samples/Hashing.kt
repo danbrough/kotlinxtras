@@ -18,18 +18,33 @@ package okio.samples
 import okio.Buffer
 import okio.ByteString
 import okio.ByteString.Companion.decodeHex
-import okio.FileSystem
 import okio.HashingSink.Companion.sha256
 import okio.HashingSource.Companion.sha256
 import okio.Path
 import okio.Path.Companion.toPath
 import okio.blackholeSink
 import okio.buffer
-import java.io.IOException
+import okio.fakefilesystem.FakeFileSystem
+import okio.use
 
 class KotlinHashing {
+  private val fileSystem = FakeFileSystem()
+
   fun run() {
-    val path = "../README.md".toPath()
+    val path = "testFile.txt".toPath()
+    val testContent = "Hello World"
+
+    fileSystem.sink(path,true).use {sink->
+      testContent.encodeToByteArray().also { bytes->
+        Buffer().write(bytes).also {
+          sink.write(it,it.size)
+        }
+      }
+    }
+
+    fileSystem.source(path).buffer().use {
+      println("TEST CONTENT: ${it.readUtf8Line()}")
+    }
 
     println("ByteString")
     val byteString = readByteString(path)
@@ -48,7 +63,7 @@ class KotlinHashing {
     println()
 
     println("HashingSource")
-    sha256(FileSystem.SYSTEM.source(path)).use { hashingSource ->
+    sha256(fileSystem.source(path)).use { hashingSource ->
       hashingSource.buffer().use { source ->
         source.readAll(blackholeSink())
         println("    sha256: " + hashingSource.hash.hex())
@@ -59,7 +74,7 @@ class KotlinHashing {
     println("HashingSink")
     sha256(blackholeSink()).use { hashingSink ->
       hashingSink.buffer().use { sink ->
-        FileSystem.SYSTEM.source(path).use { source ->
+        fileSystem.source(path).use { source ->
           sink.writeAll(source)
           sink.close() // Emit anything buffered.
           println("    sha256: " + hashingSink.hash.hex())
@@ -74,17 +89,14 @@ class KotlinHashing {
     println()
   }
 
-  @Throws(IOException::class)
-  fun readByteString(path: Path): ByteString {
-    return FileSystem.SYSTEM.read(path) { readByteString() }
-  }
+  private fun readByteString(path: Path): ByteString =fileSystem.read(path) { readByteString() }
 
-  @Throws(IOException::class)
-  fun readBuffer(path: Path): Buffer {
-    FileSystem.SYSTEM.read(path) {
+
+  private fun readBuffer(path: Path): Buffer {
+    return fileSystem.read(path) {
       val result = Buffer()
       readAll(result)
-      return result
+       result
     }
   }
 }
