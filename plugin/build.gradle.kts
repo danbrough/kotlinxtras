@@ -1,4 +1,5 @@
 import Pommy_gradle.Pommy.xtrasPom
+import org.danbrough.kotlinxtras.binaries.CurrentVersions
 
 plugins {
   kotlin("jvm")
@@ -9,7 +10,7 @@ plugins {
   id("org.jetbrains.dokka") version "1.7.20"
 }
 
-group = "org.danbrough.kotlinxtras"
+group = CurrentVersions.XTRAS_GROUP
 version = "0.0.3-beta01"
 
 repositories {
@@ -24,12 +25,6 @@ kotlin {
   }
 }
 
-
-//tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile::class).all {
-//  kotlinOptions {
-//    jvmTarget = "11"
-//  }
-//}
 
 tasks.withType(JavaCompile::class) {
   sourceCompatibility = JavaVersion.VERSION_11.toString()

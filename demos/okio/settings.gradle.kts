@@ -15,5 +15,5 @@ plugins {
 
 
 
-rootProject.name = "iconv_demo"
+rootProject.name = "okio_demo"
 
