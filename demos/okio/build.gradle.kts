@@ -23,7 +23,7 @@ kotlin {
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
-  androidNativeArm64()
+  androidNativeX86()
 
   if (org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac){
     macosX64()

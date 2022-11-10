@@ -6,6 +6,7 @@ plugins {
 
 
 repositories {
+  mavenLocal()
   maven("https://s01.oss.sonatype.org/content/groups/staging/")
   mavenCentral()
 }
@@ -38,10 +39,13 @@ kotlin {
 
     compilations["main"].apply {
       defaultSourceSet.dependsOn(nativeMain)
+//      cinterops.create("demo"){
+//        defFile(file("src/demo.def"))
+//      }
     }
 
     binaries {
-      executable("demo1") {
+      executable("datetimeDemo") {
         entryPoint = "demo1.main"
       }
     }
