@@ -9,6 +9,7 @@ plugins {
 
 
 repositories {
+  mavenLocal()
   //maven("/usr/local/kotlinxtras/build/m2")
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
@@ -21,7 +22,8 @@ kotlin {
 
   linuxX64()
   linuxArm64()
-  androidNativeX86()
+  linuxArm32Hfp()
+  androidNativeArm64()
 
   if (org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac){
     macosX64()
@@ -42,8 +44,8 @@ kotlin {
   val commonMain by sourceSets.getting {
     dependencies {
       implementation(libs.klog)
-      implementation("org.danbrough.okio:okio:3.2.0")
-      implementation("org.danbrough.okio:okio-fakefilesystem:3.2.0")
+      implementation("org.danbrough.okio:okio:3.3.0-alpha01")
+      implementation("org.danbrough.okio:okio-fakefilesystem:3.3.0-alpha01")
 
     }
   }

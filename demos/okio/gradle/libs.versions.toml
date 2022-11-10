@@ -20,5 +20,5 @@ kotlin-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-co
 
 kotlin-klib-commonizer-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-klib-commonizer-embeddable", version.ref = "kotlin" }
 
-kotlinx-datetime = "org.danbrough.kotlinx:kotlinx-datetime:0.4.0a"
+kotlinx-datetime = "org.danbrough.kotlinx:kotlinx-datetime:0.4.0b"
 

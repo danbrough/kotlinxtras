@@ -1,5 +1,4 @@
 import Pommy_gradle.Pommy.xtrasPom
-import org.danbrough.kotlinxtras.binaries.CurrentVersions
 
 plugins {
   kotlin("jvm")
@@ -10,7 +9,7 @@ plugins {
   id("org.jetbrains.dokka") version "1.7.20"
 }
 
-group = CurrentVersions.XTRAS_GROUP
+group = "org.danbrough.kotlinxtras"
 version = "0.0.3-beta01"
 
 repositories {
