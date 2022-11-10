@@ -20,7 +20,7 @@ kotlin-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-co
 
 kotlin-klib-commonizer-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-klib-commonizer-embeddable", version.ref = "kotlin" }
 
-kotlinx-datetime = "org.danbrough.kotlinx:kotlinx-datetime:0.4.0a"
+kotlinx-datetime = "org.danbrough.kotlinx:kotlinx-datetime:0.4.0d"
 
-iconv = "org.danbrough.kotlinxtras:iconv:1.17b"
-##                                   ⬆ :1.17"
+iconv = "org.danbrough.kotlinxtras:iconv:1.17a"
+plugin/src/main/kotlin/org/danbrough/kotlinxtras/binaries/CurrentVersions.kt

@@ -14,8 +14,6 @@ plugins {
 
 println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION}")
 
-//val projectProperties = project.projectProperties
-//ProjectProperties.init(project)
 
 group = ProjectProperties.projectGroup
 version = ProjectProperties.buildVersionName

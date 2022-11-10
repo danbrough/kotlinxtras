@@ -44,8 +44,8 @@ kotlin {
   val commonMain by sourceSets.getting {
     dependencies {
       implementation(libs.klog)
-      implementation("org.danbrough.okio:okio:3.3.0-alpha01")
-      implementation("org.danbrough.okio:okio-fakefilesystem:3.3.0-alpha01")
+      implementation(libs.okio)
+      implementation(libs.okio.fakefilesystem)
 
     }
   }

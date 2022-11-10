@@ -2,11 +2,12 @@
 
 [plugins]
 
-org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref="kotlin" }
+org-jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 
 [versions]
 
 kotlin = "1.7.21"
+okio = "3.3.0-alpha01"
 
 [libraries]
 
@@ -20,5 +21,7 @@ kotlin-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-co
 
 kotlin-klib-commonizer-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-klib-commonizer-embeddable", version.ref = "kotlin" }
 
-kotlinx-datetime = "org.danbrough.kotlinx:kotlinx-datetime:0.4.0b"
+kotlinx-datetime = "org.danbrough.kotlinx:kotlinx-datetime:0.4.0d"
 
+okio = {group = "org.danbrough.okio", name = "okio", version.ref = "okio" }
+okio-fakefilesystem = {group = "org.danbrough.okio", name = "okio-fakefilesystem", version.ref = "okio" }
