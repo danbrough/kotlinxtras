@@ -16,7 +16,7 @@ binaries {
 }
 
 repositories {
-  mavenLocal()
+  //mavenLocal()
   maven("/usr/local/kotlinxtras/build/m2")
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
@@ -31,14 +31,10 @@ kotlin {
   linuxArm64()
   linuxArm32Hfp()
   androidNativeX86()
-
-  /** //uncomment if you want android support
-  androidNativeX86()
   androidNativeX64()
   androidNativeArm32()
   androidNativeArm64()
 
-   **/
 
   //add your other apple targets
 
@@ -65,14 +61,16 @@ kotlin {
   targets.withType<KotlinNativeTarget>().all {
 
     compilations["main"].apply {
-      if (konanTarget.architecture.bitness == 32)
+      if (konanTarget.architecture.bitness == 32) {
         defaultSourceSet.dependsOn(native32Main)
-      else
+      }
+      else {
         defaultSourceSet.dependsOn(native64Main)
+      }
     }
 
     binaries {
-      executable("demo1") {
+      executable("iconvDemo") {
         entryPoint = "demo1.main"
       }
     }

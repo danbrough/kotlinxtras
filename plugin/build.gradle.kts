@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "org.danbrough.kotlinxtras"
-version = "0.0.3-beta01"
+version = "0.0.3-beta02"
 
 repositories {
   mavenCentral()

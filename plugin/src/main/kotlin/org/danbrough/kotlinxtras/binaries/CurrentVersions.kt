@@ -10,26 +10,26 @@ object CurrentVersions {
   }
 
   object iconv {
-    const val version = "1.17b"
+    const val version = "1.17c"
     const val url = "https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz"
   }
 
   const val XTRAS_GROUP = "org.danbrough.kotlinxtras"
 
-  fun BinariesConsumerExtension.enableCurl(group:String = XTRAS_GROUP,version:String = curl){
+  fun BinariesConsumerExtension.enableCurl(version:String = curl,group:String = XTRAS_GROUP){
     dependency(group,"curl",version)
   }
 
 
-  fun BinariesConsumerExtension.enableOpenssl(group:String = XTRAS_GROUP,version:String = openssl){
+  fun BinariesConsumerExtension.enableOpenssl(version:String = openssl,group:String = XTRAS_GROUP){
     dependency(group,"openssl",version)
   }
 
-  fun BinariesConsumerExtension.enableSqlite(group:String = XTRAS_GROUP,version:String = sqlite.version){
+  fun BinariesConsumerExtension.enableSqlite(version:String = sqlite.version ,group:String = XTRAS_GROUP){
     dependency(group,"sqlite",version)
   }
 
-  fun BinariesConsumerExtension.enableIconv(group:String = XTRAS_GROUP,version:String = iconv.version){
+  fun BinariesConsumerExtension.enableIconv(version:String = iconv.version,group:String = XTRAS_GROUP){
     dependency(group,"iconv",version)
   }
 }

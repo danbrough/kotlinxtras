@@ -1,7 +1,7 @@
 import org.danbrough.kotlinxtras.binaries.CurrentVersions.enableCurl
 import org.danbrough.kotlinxtras.binaries.CurrentVersions.enableOpenssl
-import org.danbrough.kotlinxtras.platformName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
   kotlin("multiplatform")
@@ -32,8 +32,10 @@ kotlin {
   linuxArm32Hfp()
 
 
-  macosX64()
-  macosArm64()
+  if (HostManager.hostIsMac) {
+    macosX64()
+    macosArm64()
+  }
 
   androidNativeX86()
   androidNativeX64()
@@ -67,18 +69,11 @@ kotlin {
     binaries {
       executable("demo1") {
         entryPoint = "demo1.main"
-        val konanTarget = target.konanTarget
         runTask?.apply {
           properties["url"]?.also {
             args(it.toString())
           }
           environment("CA_CERT_FILE", file("cacert.pem"))
-          val libPath = "${buildDir.resolve("kotlinxtras/curl/${konanTarget.platformName}/lib")}" +
-              ":${buildDir.resolve("kotlinxtras/openssl/${konanTarget.platformName}/lib")}"
-          environment(
-            if (konanTarget.family.isAppleFamily) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH",
-            libPath
-          )
         }
 
       }
