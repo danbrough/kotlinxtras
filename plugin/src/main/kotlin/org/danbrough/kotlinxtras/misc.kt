@@ -3,6 +3,7 @@
 package org.danbrough.kotlinxtras
 
 import org.gradle.api.Project
+import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -73,4 +74,4 @@ object OpenSSL {
 
 
 val KonanTarget.konanDepsTaskName: String
-  get() = ":konandeps:$platformName"
+  get() = ":common:compileKotlin${platformName.capitalized()}"

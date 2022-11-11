@@ -21,7 +21,7 @@ plugins {
 rootProject.name = "kotlinxtras"
 
 
-include(":konandeps")
+include(":common")
 include(":openssl")
 include(":curl")
 include(":sqlite")
