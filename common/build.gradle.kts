@@ -1,5 +1,5 @@
+
 import org.danbrough.kotlinxtras.BuildEnvironment.declareNativeTargets
-import org.danbrough.kotlinxtras.platformName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -8,20 +8,24 @@ plugins {
 }
 
 kotlin {
-
-  val nativeMain by sourceSets.creating {}
-
   declareNativeTargets()
+
+  val posixMain by sourceSets.creating {}
+
+  val posix32Main by sourceSets.creating {
+    dependsOn(posixMain)
+  }
+
+  val posix64Main by sourceSets.creating {
+    dependsOn(posixMain)
+  }
 
   targets.withType<KotlinNativeTarget>().all {
     compilations["main"].apply {
-      defaultSourceSet.dependsOn(nativeMain)
-    }
-
-    binaries.executable("helloWorld")
-
-    tasks.create(konanTarget.platformName){
-      dependsOn("compileKotlin${konanTarget.platformName.capitalize()}")
+      if (konanTarget.architecture.bitness == 32)
+        defaultSourceSet.dependsOn(posix32Main)
+      else
+        defaultSourceSet.dependsOn(posix64Main)
     }
   }
 }

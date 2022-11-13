@@ -11,7 +11,7 @@ pluginManagement {
   }
 }
 
-includeBuild("plugin")
+
 
 plugins {
   id("de.fayard.refreshVersions") version "0.51.0"
@@ -22,10 +22,12 @@ rootProject.name = "kotlinxtras"
 
 
 include(":common")
+include(":demo")
+include(":iconv")
+
 include(":openssl")
 include(":curl")
 include(":sqlite")
 
-include(":iconv")
-
-//include(":demo")
+includeBuild("plugin")
+includeBuild("iconv2")

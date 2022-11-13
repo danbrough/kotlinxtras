@@ -31,7 +31,6 @@ kotlin {
   linuxArm64()
   linuxArm32Hfp()
 
-
   if (HostManager.hostIsMac) {
     macosX64()
     macosArm64()
@@ -42,16 +41,12 @@ kotlin {
   androidNativeArm32()
   androidNativeArm64()
 
-
-  //add your other apple targets
-
   val commonMain by sourceSets.getting {
     dependencies {
       implementation(libs.klog)
       implementation(libs.kotlinx.coroutines.core)
       implementation(libs.curl)
       implementation(libs.openssl)
-
     }
   }
 
@@ -64,7 +59,6 @@ kotlin {
     compilations["main"].apply {
       defaultSourceSet.dependsOn(nativeMain)
     }
-
 
     binaries {
       executable("demo1") {

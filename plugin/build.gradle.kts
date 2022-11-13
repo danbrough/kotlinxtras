@@ -1,9 +1,9 @@
 import Pommy_gradle.Pommy.xtrasPom
 
 plugins {
-  kotlin("jvm")
+  //kotlin("jvm")
   `kotlin-dsl`
-  `java-gradle-plugin`
+  //`java-gradle-plugin`
   `maven-publish`
   `signing`
   id("org.jetbrains.dokka") version "1.7.20"
@@ -16,13 +16,19 @@ repositories {
   mavenCentral()
 }
 
-kotlin {
-  dependencies {
-    compileOnly(gradleApi())
-    compileOnly(gradleKotlinDsl())
-    compileOnly(kotlin("gradle-plugin"))
-  }
+
+dependencies {
+  add("compileOnly", kotlin("gradle-plugin"))
+  add("compileOnly", kotlin("gradle-plugin-api"))
 }
+
+//kotlin {
+//  dependencies {
+//    compileOnly(gradleApi())
+//    compileOnly(gradleKotlinDsl())
+//    compileOnly(kotlin("gradle-plugin"))
+//  }
+//}
 
 
 tasks.withType(JavaCompile::class) {

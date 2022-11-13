@@ -58,7 +58,7 @@ subprojects {
 
   afterEvaluate {
 
-    group = ProjectProperties.projectGroup
+    //group = ProjectProperties.projectGroup
     if (version == "unspecified")
       version = ProjectProperties.buildVersionName
 

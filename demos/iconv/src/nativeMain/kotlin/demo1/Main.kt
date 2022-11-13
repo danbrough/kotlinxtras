@@ -11,6 +11,7 @@ import libiconv.iconv_open
 import platform.posix.*
 import toSizeT
 
+@OptIn(UnsafeNumber::class)
 val s:size_t = 0u
 
 val log =   klog.klog("demo1"){

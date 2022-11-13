@@ -1,3 +1,4 @@
 import platform.posix.size_t
 
-actual fun Number.toSizeT(): size_t =  toInt().toUInt()
+actual fun Int.toSizeT(): size_t = toUInt()
+actual fun Long.toSizeT(): size_t = toUInt()

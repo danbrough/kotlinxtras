@@ -70,8 +70,5 @@ object OpenSSL {
 
 
 
-
-
-
 val KonanTarget.konanDepsTaskName: String
   get() = ":common:compileKotlin${platformName.capitalized()}"

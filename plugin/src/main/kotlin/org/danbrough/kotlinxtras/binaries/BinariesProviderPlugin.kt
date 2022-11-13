@@ -9,12 +9,12 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.Tar
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -41,25 +41,6 @@ open class BinariesProviderExtension(private val project: Project) {
 
 }
 
-
-fun Project.registerArchiveTask2(
-  libName: String,
-  target: KonanTarget,
-  extn: BinariesProviderExtension
-): TaskProvider<*> {
-  val archiveName = "$libName${target.platformName.capitalized()}"
-  return tasks.register<Tar>("archive${archiveName.capitalized()}") {
-    group = xtrasTaskGroup
-    archiveBaseName.set(archiveName)
-    dependsOn("build${target.platformName.capitalized()}")
-
-    val srcDir = project.rootProject.file("libs/$libName/${target.platformName}")
-    val command = "tar "
-
-    destinationDirectory.set(extn.archivesDir.resolve(extn.libName).resolve(extn.version))
-  }
-}
-
 fun Project.registerArchiveTask(
   libName: String,
   target: KonanTarget,
@@ -70,16 +51,18 @@ fun Project.registerArchiveTask(
   val destDir = extn.archivesDir.resolve(extn.libName).resolve(extn.version)
 
   val copyTask = tasks.register<Exec>("copy${archiveName.capitalized()}") {
+    val tmpDir = buildDir.resolve("kotlinxtrastmp/${this@registerArchiveTask.name}/${target.platformName}")
     dependsOn("build${target.platformName.capitalized()}")
     doFirst {
-      println("copying files to tempDir: $temporaryDir")
+      println("copying files to tempDir: $tmpDir")
+      if (!tmpDir.exists()) tmpDir.mkdirs()
     }
     workingDir(libsDir)
     inputs.dir(libsDir)
-    outputs.dir(temporaryDir)
+    outputs.dir(tmpDir)
     commandLine(
       "rsync",
-      "-avHSx",
+      "-aHSx",
       "--delete",
       "--include=$libName",
       "--include=$libName/${target.platformName}",
@@ -88,7 +71,7 @@ fun Project.registerArchiveTask(
       "--include=bin**",
       "--exclude=*",
       "./",
-      temporaryDir.absolutePath
+      tmpDir.absolutePath
     )
   }
 
@@ -118,7 +101,7 @@ class BinariesProviderPlugin : Plugin<Project> {
 
     targetProject.pluginManager.apply(PropertiesPlugin::class.java)
 
-    val isMacHost = System.getProperty("os.name").startsWith("Mac")
+    val isMacHost = HostManager.hostIsMac
 
     val extn = targetProject.extensions.create(
       "binariesProvider",

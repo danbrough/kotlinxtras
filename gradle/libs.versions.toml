@@ -10,7 +10,7 @@ org-jetbrains-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka"}
 
 [versions]
 
-kotlin = "1.7.21"
+kotlin = "1.6.21"
 dokka = "1.7.20"
 
 [libraries]
