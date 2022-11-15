@@ -55,10 +55,8 @@ fun configureTask(target: KonanTarget) =
     //dependsOn("srcPrepare${target.platformName.capitalize()}")
     dependsOn("srcPrepareFromDownload${target.platformName.capitalize()}")
 
-
     //to ensure the konan tools are available
     dependsOn(target.konanDepsTaskName)
-
 
     val srcDir = target.iconvSrcDir(project)
     workingDir(srcDir)
@@ -121,7 +119,6 @@ kotlin {
   }
 
   val buildAll by tasks.creating
-
 
   targets.withType(KotlinNativeTarget::class).all {
 

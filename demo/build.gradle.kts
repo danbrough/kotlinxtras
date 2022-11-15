@@ -1,6 +1,6 @@
 
-import org.danbrough.kotlinxtras.archiveSource
 import org.danbrough.kotlinxtras.binaries.CurrentVersions.enableIconv
+import org.danbrough.kotlinxtras.platformName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -13,21 +13,37 @@ binaries {
   enableIconv()
 }
 
+
 iconv {
   version = "1.17c"
 
-  source = archiveSource("https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz") {
-    stripTopDir = true
-    tarExtractOptions = "xfz"
-  }
+//  archiveSource("https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz") {
+//    stripTopDir = true
+//    tarExtractOptions = "xfz"
+//  }
 
-  //downloadSourcesTask = registerGitDownloadTask("https://github.com/danbrough/openssl", "02e6fd7998830218909cbc484ca054c5916fdc59")
-  //downloadSourcesTask = registerSourceDownloadTask("https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz", extractOptions = "xvfz",stripTopDir =true)
+
+  /*
+      val args = listOf(
+      "./configure", "-C",
+      "--enable-static",
+      "--host=${target.hostTriplet}",
+      "--prefix=${target.iconvPrefix(project)}",
+    )
+   */
+
+
+
+  //gitSource("https://github.com/danbrough/openssl","02e6fd7998830218909cbc484ca054c5916fdc59")
+
 }
+
 
 kotlin {
 
   linuxX64()
+  linuxArm64()
+  androidNativeArm32()
 
   val commonMain by sourceSets.getting {
     dependencies {
@@ -43,6 +59,7 @@ kotlin {
   }
 
   targets.withType<KotlinNativeTarget>().all {
+
     compilations["main"].apply {
       defaultSourceSet.dependsOn(posixMain)
     }

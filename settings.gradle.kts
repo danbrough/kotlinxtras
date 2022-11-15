@@ -30,4 +30,4 @@ include(":curl")
 include(":sqlite")
 
 includeBuild("plugin")
-includeBuild("iconv2")
+includeBuild("plugin2")

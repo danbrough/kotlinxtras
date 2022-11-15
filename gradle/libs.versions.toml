@@ -11,6 +11,16 @@ org-jetbrains-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka"}
 [versions]
 
 kotlin = "1.6.21"
+##  ⬆ = "1.7.0-Beta"
+##  ⬆ = "1.7.0-RC"
+##  ⬆ = "1.7.0-RC2"
+##  ⬆ = "1.7.0"
+##  ⬆ = "1.7.10"
+##  ⬆ = "1.7.20-Beta"
+##  ⬆ = "1.7.20-RC"
+##  ⬆ = "1.7.20"
+##  ⬆ = "1.7.21"
+##  ⬆ = "1.8.0-Beta"
 dokka = "1.7.20"
 
 [libraries]
