@@ -1,5 +1,6 @@
 
 
+import org.danbrough.kotlinxtras.binaries.buildSources
 import org.danbrough.kotlinxtras.binaries.configureSources
 import org.danbrough.kotlinxtras.hostTriplet
 import org.danbrough.kotlinxtras.platformName
@@ -10,11 +11,10 @@ plugins {
   id("org.danbrough.kotlinxtras.iconv") version "0.0.1"
 }
 
-
 iconv {
 
-
 }
+
 repositories {
   mavenCentral()
 }
@@ -24,6 +24,7 @@ kotlin {
 
 
   linuxX64()
+  linuxArm32Hfp()
 
   val commonMain by sourceSets.getting {
     dependencies {
