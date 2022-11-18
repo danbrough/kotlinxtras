@@ -1,5 +1,6 @@
 package org.danbrough.kotlinxtras.binaries
 
+import org.danbrough.kotlinxtras.buildEnvironment
 import org.gradle.api.tasks.Exec
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -10,12 +11,13 @@ fun BinaryExtension.configureSources(task:SourcesTask) {
 }
 
 
-fun BinaryExtension.registerConfigureSourcesTask(konanTarget: KonanTarget)=
-  project.tasks.register(configureSourcesTaskName(konanTarget),Exec::class.java){
-    dependsOn(extractSourcesTaskName(konanTarget))
+fun BinaryExtension.registerConfigureSourcesTask(target: KonanTarget)=
+  project.tasks.register(configureSourcesTaskName(target),Exec::class.java){
+    dependsOn(extractSourcesTaskName(target))
+    environment(target.buildEnvironment())
     group = XTRAS_TASK_GROUP
-    workingDir(sourcesDir(konanTarget))
-    configureTask!!(konanTarget)
+    workingDir(sourcesDir(target))
+    configureTask!!(target)
   }
 
 
@@ -30,6 +32,7 @@ fun BinaryExtension.registerBuildSourcesTask(target: KonanTarget)=
       dependsOn(configureSourcesTaskName(target))
     }
     group = XTRAS_TASK_GROUP
+    environment(target.buildEnvironment())
     workingDir(sourcesDir(target))
     buildTask!!(target)
   }

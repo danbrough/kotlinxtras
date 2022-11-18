@@ -35,7 +35,6 @@ gradlePlugin {
 
 dependencies {
   implementation("org.danbrough.kotlinxtras:plugin:0.0.1")
-
 }
 
 tasks.withType(JavaCompile::class) {
