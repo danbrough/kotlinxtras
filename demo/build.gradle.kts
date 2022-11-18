@@ -1,49 +1,29 @@
 
-import org.danbrough.kotlinxtras.binaries.CurrentVersions.enableIconv
+
+import org.danbrough.kotlinxtras.binaries.configureSources
+import org.danbrough.kotlinxtras.hostTriplet
 import org.danbrough.kotlinxtras.platformName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
-  kotlin("multiplatform")
-  id("org.danbrough.kotlinxtras.consumer")
-  id("org.danbrough.kotlinxtras.iconv")
-}
-
-binaries {
-  enableIconv()
+  kotlin("multiplatform") version "1.6.21"
+  id("org.danbrough.kotlinxtras.iconv") version "0.0.1"
 }
 
 
 iconv {
-  version = "1.17c"
-
-//  archiveSource("https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz") {
-//    stripTopDir = true
-//    tarExtractOptions = "xfz"
-//  }
 
 
-  /*
-      val args = listOf(
-      "./configure", "-C",
-      "--enable-static",
-      "--host=${target.hostTriplet}",
-      "--prefix=${target.iconvPrefix(project)}",
-    )
-   */
-
-
-
-  //gitSource("https://github.com/danbrough/openssl","02e6fd7998830218909cbc484ca054c5916fdc59")
-
+}
+repositories {
+  mavenCentral()
 }
 
 
 kotlin {
 
+
   linuxX64()
-  linuxArm64()
-  androidNativeArm32()
 
   val commonMain by sourceSets.getting {
     dependencies {
@@ -54,7 +34,7 @@ kotlin {
   val posixMain by sourceSets.creating {
     dependsOn(commonMain)
     dependencies {
-      implementation(project(":iconv"))
+//      implementation(project(":iconv"))
     }
   }
 

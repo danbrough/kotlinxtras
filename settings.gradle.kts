@@ -1,10 +1,8 @@
 pluginManagement {
 
   repositories {
-    maven(file("build/m2"))
+    //maven(file("build/m2"))
     maven("https://s01.oss.sonatype.org/content/groups/staging")
-
-
     gradlePluginPortal()
     mavenCentral()
     google()
@@ -21,13 +19,17 @@ plugins {
 rootProject.name = "kotlinxtras"
 
 
-include(":common")
-include(":demo")
-include(":iconv")
+//include(":common")
+//include(":demo")
+//include(":iconv")
 
-include(":openssl")
-include(":curl")
-include(":sqlite")
+//include(":openssl")
+//include(":curl")
+//include(":sqlite")
+//include(":plugin2")
+include(":iconvPlugin")
 
+//includeBuild("plugin_old")
+//include("plugin2")
+//includeBuild("commonBuild")
 includeBuild("plugin")
-includeBuild("plugin2")

@@ -11,3 +11,5 @@ local.properties
 .bash_history
 .ssh
 /tmp
+/bak
+/demo

@@ -1,22 +1,22 @@
 
-import org.danbrough.kotlinxtras.Pom.xtrasPom
-import org.danbrough.kotlinxtras.ProjectProperties
-import org.danbrough.kotlinxtras.PropertiesPlugin
+//import org.danbrough.kotlinxtras.xtrasPom
+import org.danbrough.kotlinxtras.xtrasPom
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
   kotlin("multiplatform") apply false
   `maven-publish`
   id("org.jetbrains.dokka") apply false
-  id("org.danbrough.kotlinxtras.properties")
-  id("org.danbrough.kotlinxtras.sonatype")
+  id("org.danbrough.kotlinxtras.xtras")
+  //id("org.danbrough.kotlinxtras.sonatype")
+
 }
 
 println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION}")
 
 
-group = ProjectProperties.projectGroup
-version = ProjectProperties.buildVersionName
+group = "org.danbrough.kotlinxtras"
+version = "0.0.2-beta01"
 
 
 allprojects {
@@ -43,13 +43,13 @@ allprojects {
 
 
 subprojects {
-  apply<PropertiesPlugin>()
+  //apply<PropertiesPlugin>()
 
   afterEvaluate {
 
     //group = ProjectProperties.projectGroup
-    if (version == "unspecified")
-      version = ProjectProperties.buildVersionName
+//    if (version == "unspecified")
+//      version = ProjectProperties.buildVersionName
 
     extensions.findByType(PublishingExtension::class) ?: return@afterEvaluate
 
@@ -62,6 +62,7 @@ subprojects {
 
       publications.all {
         if (this !is MavenPublication) return@all
+        //xtrasPom()
         xtrasPom()
       }
     }

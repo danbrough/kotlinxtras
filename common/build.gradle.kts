@@ -1,5 +1,6 @@
 
-import org.danbrough.kotlinxtras.BuildEnvironment.declareNativeTargets
+
+//import org.danbrough.kotlinxtras.binaries.declareNativeTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -8,9 +9,12 @@ plugins {
 }
 
 kotlin {
-  declareNativeTargets()
 
-  val posixMain by sourceSets.creating {}
+  //declareNativeTargets()
+
+  linuxX64()
+
+  val posixMain by sourceSets.creating
 
   val posix32Main by sourceSets.creating {
     dependsOn(posixMain)
