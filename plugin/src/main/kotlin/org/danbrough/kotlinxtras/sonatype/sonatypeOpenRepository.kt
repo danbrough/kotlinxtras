@@ -12,7 +12,7 @@ import java.util.*
 import javax.xml.parsers.DocumentBuilderFactory
 
 
-fun sonatypeOpenRepository(
+internal fun sonatypeOpenRepository(
   stagingProfileId: String,
   description: String,
   username: String,
@@ -95,7 +95,7 @@ internal  fun Project.createOpenRepoTask(extn:SonatypeExtension){
         extn.sonatypePassword,
         extn.sonatypeUrlBase
       )
-      project.logger.info("Received response: $response")
+      println("Received response: $response")
 
       project.rootProject.file("gradle.properties").readLines().also { lines ->
         var wroteRepoId= false

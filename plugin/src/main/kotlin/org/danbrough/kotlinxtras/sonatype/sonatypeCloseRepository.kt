@@ -8,7 +8,7 @@ import java.net.URL
 import java.nio.charset.Charset
 import java.util.*
 
-fun sonatypeCloseRepository(
+internal fun sonatypeCloseRepository(
   stagingProfileId: String,
   repoId:String,
   description: String,

@@ -1,24 +1,29 @@
 plugins {
   `kotlin-dsl`
-  `java-gradle-plugin`
-
-
+  //`java-gradle-plugin`
   `maven-publish`
-  id("org.danbrough.kotlinxtras.sonatype") version "0.0.1"
+  id("org.jetbrains.dokka") version "1.7.20"
+
+  id("org.danbrough.kotlinxtras.sonatype") version "0.0.1-beta01"
 }
 
 repositories {
   mavenCentral()
 }
 
+
 sonatype{
+  localRepoLocation = project.file("../build/m2")
 }
+
+
 group = "org.danbrough.kotlinxtras"
-version = "0.0.1"
+version = "0.0.1-beta02"
 
 dependencies {
   compileOnly(kotlin("gradle-plugin"))
   compileOnly(kotlin("gradle-plugin-api"))
+  compileOnly("org.jetbrains.dokka:dokka-gradle-plugin:1.7.20")
 }
 
 
@@ -35,7 +40,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
   }
 }
 
-println("REPOID: ${project.findProperty("sonatypeRepositoryId")}")
 gradlePlugin {
   plugins {
     create("xtrasPlugin") {
@@ -54,6 +58,7 @@ gradlePlugin {
   }
 }
 
+/*
 publishing {
   repositories {
     maven(file("../build/m2")) {
@@ -62,4 +67,4 @@ publishing {
   }
 }
 
-
+*/

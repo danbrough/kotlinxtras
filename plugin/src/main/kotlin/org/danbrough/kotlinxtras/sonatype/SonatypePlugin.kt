@@ -1,23 +1,42 @@
 package org.danbrough.kotlinxtras.sonatype
 
 
+import org.danbrough.kotlinxtras.binaries.KOTLIN_XTRAS_DIR_NAME
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
-import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.findByType
-import org.gradle.kotlin.dsl.getByType
-import org.gradle.plugins.signing.SigningExtension
-import org.gradle.plugins.signing.SigningPlugin
 import java.io.File
-import java.net.URI
 
+class SonatypePlugin : Plugin<Project> {
+  override fun apply(project: Project) {
+    println("sonatype configuring ${project.name}")
+    val extn = project.extensions.create("sonatype", SonatypeExtension::class.java, project)
+
+    project.afterEvaluate {
+      project.createOpenRepoTask(extn)
+      project.createCloseRepoTask(extn)
+      project.configurePublishing(extn)
+//      project.extensions.findByType<PublishingExtension>()?.apply {
+//        repositories {
+//          maven {
+//            name = "SonaType"
+//            setUrl(extn.publishingURL)
+//            credentials {
+//              username = extn.sonatypeUsername
+//              password = extn.sonatypePassword
+//            }
+//          }
+//        }
+//      }
+    }
+  }
+}
 
 open class SonatypeExtension( project: Project) {
   companion object {
     const val SONATYPE_TASK_GROUP = "sonatype"
     const val REPOSITORY_ID = "sonatypeRepositoryId"
-    const val DESCRIPTION = "sonatypeDescription"
+    const val DESCRIPTION = "description"
   }
 
   var configurePublishing: PublishingExtension.(project: Project) -> Unit = {}
@@ -28,6 +47,8 @@ open class SonatypeExtension( project: Project) {
   val sonatypeUsername: String by project.properties
   val sonatypePassword: String by project.properties
   var signPublications: Boolean = project.properties.containsKey("signPublications")
+
+  var dokkaDir:File = project.rootProject.buildDir.resolve(KOTLIN_XTRAS_DIR_NAME).resolve("dokka")
 
   var localRepoEnabled:Boolean = true
   var localRepoName:String = "M2"
@@ -48,76 +69,5 @@ open class SonatypeExtension( project: Project) {
     "SonatypeExtension[urlBase=$sonatypeUrlBase,stagingProfileId=$sonatypeProfileId,sonatypeUsername=$sonatypeUsername]"
 
 }
-
-
-fun Project.declareRepositories(extn: SonatypeExtension) {
-
-  afterEvaluate {
-
-    extensions.findByType<PublishingExtension>()?.apply {
-      if (extn.signPublications) {
-        apply<SigningPlugin>()
-        extensions.getByType<SigningExtension>().apply {
-          publications.all {
-            sign(this)
-          }
-        }
-      }
-
-      repositories {
-        maven {
-          name = "SonaType"
-          url = URI(extn.publishingURL)
-          credentials {
-            username = extn.sonatypeUsername
-            password = extn.sonatypePassword
-          }
-        }
-
-        if (extn.localRepoEnabled){
-          maven {
-            name = extn.localRepoName
-            url = extn.localRepoLocation.toURI()
-          }
-        }
-      }
-
-      extn.configurePublishing(this,this@declareRepositories)
-    }
-    childProjects.forEach {
-      it.value.declareRepositories(extn)
-    }
-  }
-
-}
-
-class SonatypePlugin : Plugin<Project> {
-  override fun apply(project: Project) {
-
-    project.logger.info("sonatype configuring $project")
-    val extn = project.extensions.create("sonatype", SonatypeExtension::class.java, project)
-
-    project.createOpenRepoTask(extn)
-    project.createCloseRepoTask(extn)
-    project.declareRepositories(extn)
-
-    project.afterEvaluate {
-      project.extensions.findByType<PublishingExtension>()?.apply {
-        repositories {
-          maven {
-            name = "SonaType"
-            setUrl(extn.publishingURL)
-            credentials {
-              username = extn.sonatypeUsername
-              password = extn.sonatypePassword
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-
 
 
