@@ -9,10 +9,11 @@ import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
+import java.io.File
 import java.net.URI
 
 
-open class SonatypeExtension(private val project: Project) {
+open class SonatypeExtension( project: Project) {
   companion object {
     const val SONATYPE_TASK_GROUP = "sonatype"
     const val REPOSITORY_ID = "sonatypeRepositoryId"
@@ -27,6 +28,11 @@ open class SonatypeExtension(private val project: Project) {
   val sonatypeUsername: String by project.properties
   val sonatypePassword: String by project.properties
   var signPublications: Boolean = project.properties.containsKey("signPublications")
+
+  var localRepoEnabled:Boolean = true
+  var localRepoName:String = "M2"
+  var localRepoLocation : File =  project.rootProject.buildDir.resolve(localRepoName)
+
   private val sonatypeSnapshot: String by project.properties
 
   val publishingURL: String
@@ -65,6 +71,13 @@ fun Project.declareRepositories(extn: SonatypeExtension) {
           credentials {
             username = extn.sonatypeUsername
             password = extn.sonatypePassword
+          }
+        }
+
+        if (extn.localRepoEnabled){
+          maven {
+            name = extn.localRepoName
+            url = extn.localRepoLocation.toURI()
           }
         }
       }

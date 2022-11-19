@@ -9,24 +9,26 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
-const val KOTLIN_XTRAS_DIR_NAME = "kotlinxtras"
+const val KOTLIN_XTRAS_DIR_NAME = "xtras"
 const val XTRAS_TASK_GROUP = "xtras"
 
 @DslMarker
 //@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE,AnnotationTarget.FUNCTION)
 annotation class BinariesDSLMarker
 
-interface BuildEnv {
+interface Configuration {
   var gitBinary: String
   var wgetBinary: String
   var tarBinary: String
 }
 
-object DefaultBuildEnv : BuildEnv {
-  override var gitBinary: String = "/usr/bin/git"
-  override var wgetBinary: String = "/usr/bin/wget"
+
+data class DefaultConfiguration(
+  override var gitBinary: String = "/usr/bin/git",
+  override var wgetBinary: String = "/usr/bin/wget",
   override var tarBinary: String = "/usr/bin/tar"
-}
+) : Configuration
+
 
 typealias SourcesTask = Exec.(KonanTarget) -> Unit
 
@@ -35,7 +37,7 @@ open class BinaryExtension(
   val project: Project,
 //Unique identifier for a binary package
   var libName: String,
-  var buildEnvironment: BuildEnv
+  var configuration: Configuration= DefaultConfiguration()
 ) {
 
   open var version: String = "unspecified"
@@ -94,8 +96,8 @@ open class BinaryExtension(
 
 }
 
-fun Project.registerBinariesExtension(extnName: String): BinaryExtension =
-  extensions.create(extnName, BinaryExtension::class.java, this, extnName, DefaultBuildEnv)
+fun Project.registerBinariesExtension(extnName: String,configuration: Configuration = DefaultConfiguration()): BinaryExtension =
+  extensions.create(extnName, BinaryExtension::class.java, this, extnName, configuration)
     .apply {
       project.afterEvaluate {
         configureDefaults()

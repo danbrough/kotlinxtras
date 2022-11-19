@@ -45,7 +45,7 @@ internal fun BinaryExtension.registerGitDownloadTask(
 
     doFirst {
       project.exec {
-        commandLine(buildEnvironment.gitBinary, "init", "--bare", repoDir)
+        commandLine(configuration.gitBinary, "init", "--bare", repoDir)
         println("running#: ${commandLine.joinToString(" ")}")
       }
 
@@ -53,7 +53,7 @@ internal fun BinaryExtension.registerGitDownloadTask(
       println("running-: ${commandLine.joinToString(" ")}")
     }
     workingDir = gitRepoDir()
-    commandLine(buildEnvironment.gitBinary, "remote", "add", "origin", sourceURL)
+    commandLine(configuration.gitBinary, "remote", "add", "origin", sourceURL)
   }
 
   project.tasks.register(downloadSourcesTaskName, Exec::class.java) {
@@ -65,7 +65,7 @@ internal fun BinaryExtension.registerGitDownloadTask(
     group = XTRAS_TASK_GROUP
     workingDir(repoDir)
     commandLine(
-      buildEnvironment.gitBinary,
+      configuration.gitBinary,
       "fetch",
       "--depth",
       "1",
@@ -96,7 +96,7 @@ internal fun BinaryExtension.registerGitExtractTask(
     actions.add {
       project.exec {
         workingDir = destDir
-        commandLine(buildEnvironment.gitBinary, "init")
+        commandLine(configuration.gitBinary, "init")
         println("running: ${commandLine.joinToString(" ")}")
       }
     }
@@ -104,7 +104,7 @@ internal fun BinaryExtension.registerGitExtractTask(
     actions.add {
       project.exec {
         workingDir = destDir
-        commandLine(buildEnvironment.gitBinary, "remote", "add", "origin", gitRepo)
+        commandLine(configuration.gitBinary, "remote", "add", "origin", gitRepo)
         println("running: ${commandLine.joinToString(" ")}")
       }
     }
@@ -121,7 +121,7 @@ internal fun BinaryExtension.registerGitExtractTask(
     actions.add {
       project.exec {
         workingDir = destDir
-        commandLine(buildEnvironment.gitBinary, "fetch", "--depth", "1", "origin", srcConfig.commit)
+        commandLine(configuration.gitBinary, "fetch", "--depth", "1", "origin", srcConfig.commit)
         println("running: ${commandLine.joinToString(" ")}")
       }
       println("checking out commit:${srcConfig.commit} in $destDir")
@@ -130,7 +130,7 @@ internal fun BinaryExtension.registerGitExtractTask(
     actions.add {
       project.exec {
         workingDir = destDir
-        commandLine(buildEnvironment.gitBinary, "checkout", srcConfig.commit)
+        commandLine(configuration.gitBinary, "checkout", srcConfig.commit)
         println("running: ${commandLine.joinToString(" ")}")
       }
     }
@@ -150,7 +150,7 @@ internal fun BinaryExtension.registerArchiveDownloadTask(srcConfig: ArchiveSourc
       println("running: ${commandLine.joinToString(" ")}")
     }
     commandLine(
-      buildEnvironment.wgetBinary, "-q",
+      configuration.wgetBinary, "-q",
       "-c",
       inputs.properties["url"],
       "-P",

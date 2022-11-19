@@ -8,7 +8,7 @@ plugins {
   `maven-publish`
   id("org.jetbrains.dokka") apply false
   id("org.danbrough.kotlinxtras.xtras")
-  //id("org.danbrough.kotlinxtras.sonatype")
+  id("org.danbrough.kotlinxtras.sonatype")
 
 }
 
@@ -26,7 +26,7 @@ allprojects {
     mavenCentral()
   }
 
-  tasks.withType<AbstractTestTask>() {
+  tasks.withType<AbstractTestTask> {
     testLogging {
       events = setOf(
         TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED
@@ -43,26 +43,14 @@ allprojects {
 
 
 subprojects {
-  //apply<PropertiesPlugin>()
 
   afterEvaluate {
-
-    //group = ProjectProperties.projectGroup
-//    if (version == "unspecified")
-//      version = ProjectProperties.buildVersionName
 
     extensions.findByType(PublishingExtension::class) ?: return@afterEvaluate
 
     publishing {
-      repositories {
-        maven(rootProject.buildDir.resolve("m2")) {
-          name = "M2"
-        }
-      }
-
       publications.all {
         if (this !is MavenPublication) return@all
-        //xtrasPom()
         xtrasPom()
       }
     }

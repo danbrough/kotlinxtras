@@ -2,10 +2,7 @@
 
 package org.danbrough.kotlinxtras
 
-import org.danbrough.kotlinxtras.binaries.downloadSources
-import org.danbrough.kotlinxtras.binaries.buildSources
-import org.danbrough.kotlinxtras.binaries.configureSources
-import org.danbrough.kotlinxtras.binaries.registerBinariesExtension
+import org.danbrough.kotlinxtras.binaries.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 

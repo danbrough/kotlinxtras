@@ -16,3 +16,8 @@ kotlin {
     languageVersion.set(JavaLanguageVersion.of(11))
   }
 }
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
+  kotlinOptions {
+    jvmTarget = "11"
+  }
+}
