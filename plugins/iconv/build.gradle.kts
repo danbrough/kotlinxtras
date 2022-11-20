@@ -1,97 +1,69 @@
-import org.danbrough.kotlinxtras.xtrasPom
+import org.danbrough.kotlinxtras.binaries.buildSources
+import org.danbrough.kotlinxtras.binaries.configureSources
+import org.danbrough.kotlinxtras.binaries.downloadSources
+import org.danbrough.kotlinxtras.binaries.registerBinariesExtension
+import org.danbrough.kotlinxtras.hostTriplet
 
 plugins {
   `kotlin-dsl`
   `maven-publish`
   `signing`
-  id("org.jetbrains.dokka") version "1.7.20"
+  id("org.jetbrains.dokka")
   id("org.danbrough.kotlinxtras.xtras")
+  id("org.danbrough.kotlinxtras.sonatype")
 }
 
 group = "org.danbrough.kotlinxtras"
 version = "1.17c"
 
-repositories {
-  mavenCentral()
-  gradlePluginPortal()
-}
-
-
 dependencies {
-  compileOnly( kotlin("gradle-plugin"))
-  compileOnly( kotlin("gradle-plugin-api"))
+  compileOnly(kotlin("gradle-plugin"))
+  compileOnly(kotlin("gradle-plugin-api"))
+  implementation(libs.xtras)
 }
 
 gradlePlugin {
   plugins {
     create("iconvPlugin") {
       id = "$group.iconv"
-      implementationClass = "$group.IconvPlugin"
+      implementationClass = "IconvPlugin2"
       displayName = "KotlinXtras iconv plugin"
       description = "Provides iconv support to multi-platform projects"
     }
   }
 }
 
-dependencies {
-  implementation("org.danbrough.kotlinxtras:plugin:0.0.3-beta01")
-}
+class IconvPlugin2 : Plugin<Project> {
+  override fun apply(target: Project) {
+    println("APPLUING ICONV 2!!!")
 
-tasks.withType(JavaCompile::class) {
-  sourceCompatibility = JavaVersion.VERSION_11.toString()
-  targetCompatibility = JavaVersion.VERSION_11.toString()
-}
+    project.registerBinariesExtension("iconv").apply {
+      version = "1.17c"
 
-
-tasks.dokkaHtml.configure {
-  outputDirectory.set(buildDir.resolve("dokka"))
-//  finalizedBy("copyDocs")
-}
-
-val javadocJar by tasks.registering(Jar::class) {
-  archiveClassifier.set("javadoc")
-  from(tasks.dokkaHtml)
-}
-
-val sourcesJar by tasks.registering(Jar::class) {
-  archiveClassifier.set("sources")
-  from(sourceSets["main"].allJava)
-}
-
-
-publishing {
-
-  publications.all {
-    if (this !is MavenPublication) return@all
-    if (project.hasProperty("publishDocs"))
-      artifact(javadocJar)
-    artifact(sourcesJar)
-    if (hasProperty("signPublications"))
-      signing.sign(this)
-  }
-
-  repositories {
-    maven(rootProject.buildDir.resolve("m2")){
-      name = "M2"
-    }
-
-    maven{
-      name = "SonaType"
-      url = uri("https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/${System.getenv("SONATYPE_REPO_ID")}")
-      credentials{
-        username = property("sonatypeUsername")?.toString()
-        password = property("sonatypePassword")?.toString()
+      downloadSources("https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz") {
+        stripTopDir = true
+        tarExtractOptions = "xfz"
       }
+
+      configureSources { target ->
+        val sourcesDir = sourcesDir(target)
+        commandLine(
+          "./configure",
+          "-C",
+          "--enable-static",
+          "--host=${target.hostTriplet}",
+          "--prefix=${prefixDir(target)}"
+        )
+        outputs.file(sourcesDir.resolve("Makefile"))
+      }
+
+      buildSources { target ->
+        commandLine("make", "install")
+        outputs.dir(prefixDir(target))
+      }
+
+
     }
   }
 
-  publications.all {
-    if (this !is MavenPublication) return@all
-
-    xtrasPom()
-  }
-
-
 }
-
-

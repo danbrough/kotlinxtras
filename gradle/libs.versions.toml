@@ -23,6 +23,7 @@ kotlin = "1.6.21"
 ##  ⬆ = "1.7.21"
 ##  ⬆ = "1.8.0-Beta"
 dokka = "1.7.20"
+xtras = "0.0.3-beta01"
 
 [libraries]
 
@@ -35,3 +36,4 @@ kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", v
 dokka-analysis = {group = "org.jetbrains.dokka", name = "dokka-analysis", version.ref = "kotlin" }
 
 dokka-base = {group = "org.jetbrains.dokka", name = "dokka-base", version.ref = "dokka"}
+xtras= { group = "org.danbrough.kotlinxtras",name = "plugin",version.ref = "xtras"}
