@@ -12,4 +12,6 @@ local.properties
 .ssh
 /tmp
 /bak
-/demo
+/demo*
+
+

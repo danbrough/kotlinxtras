@@ -1,31 +1,38 @@
+import org.danbrough.kotlinxtras.xtrasPom
+
+
 plugins {
   `kotlin-dsl`
-  //`java-gradle-plugin`
   `maven-publish`
-  id("org.jetbrains.dokka") version "1.7.20"
-
-  id("org.danbrough.kotlinxtras.sonatype") version "0.0.1-beta01"
+  alias(libs.plugins.org.jetbrains.dokka)
+  alias(libs.plugins.org.danbrough.kotlinxtras.sonatype)
 }
 
 repositories {
   mavenCentral()
 }
 
-
-sonatype{
-  localRepoLocation = project.file("../build/m2")
-}
-
-
 group = "org.danbrough.kotlinxtras"
-version = "0.0.1-beta02"
+version = "0.0.3-beta02"
 
 dependencies {
   compileOnly(kotlin("gradle-plugin"))
   compileOnly(kotlin("gradle-plugin-api"))
-  compileOnly("org.jetbrains.dokka:dokka-gradle-plugin:1.7.20")
+  compileOnly("org.jetbrains.dokka:dokka-gradle-plugin:${libs.versions.dokka.get()}")
 }
 
+//publishing.repositories.maven(file("../build/m2")) { name = "M2" }
+
+sonatype{
+  localRepoLocation = project.file("../build/m2")
+
+  configurePublishing  = {
+    publications.all {
+      if (this is MavenPublication)
+        xtrasPom()
+    }
+  }
+}
 
 kotlin {
   jvmToolchain {
@@ -58,13 +65,5 @@ gradlePlugin {
   }
 }
 
-/*
-publishing {
-  repositories {
-    maven(file("../build/m2")) {
-      name = "M2"
-    }
-  }
-}
 
-*/
+

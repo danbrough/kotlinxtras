@@ -13,69 +13,68 @@ import java.net.URI
 
 
 internal fun Project.configurePublishing(extn: SonatypeExtension) {
-  println("configuring ${project.name} - ${project.group}:{project.version}")
+  println("configurePublishing - ${project.group}:${project.name}:${project.version}")
 
-    extensions.findByType<PublishingExtension>()?.apply {
-      if (extn.signPublications) {
-        apply<SigningPlugin>()
-        extensions.getByType<SigningExtension>().apply {
-          publications.all {
-            sign(this)
-          }
-        }
+  extensions.findByType<PublishingExtension>()?.apply {
+
+
+    if (plugins.hasPlugin("org.jetbrains.dokka")) {
+      val dokkaTask = tasks.named<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml")
+      dokkaTask.configure {
+        outputDirectory.set(extn.dokkaDir)
       }
 
-      if (plugins.hasPlugin("org.jetbrains.dokka")){
-        val dokkaTask =tasks.named<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml")
-        dokkaTask.configure {
-          outputDirectory.set(extn.dokkaDir)
-        }
+      val sourcesJar by tasks.registering(Jar::class) {
+        archiveClassifier.set("sources")
+        from(kotlinExtension.sourceSets["main"].kotlin)
+      }
 
-        val sourcesJar by tasks.registering(Jar::class) {
-          archiveClassifier.set("sources")
-          from(kotlinExtension.sourceSets["main"].kotlin)
-        }
+      val javadocJar by tasks.registering(Jar::class) {
+        archiveClassifier.set("javadoc")
+        from(dokkaTask)
+      }
 
-        val javadocJar by tasks.registering(Jar::class) {
-          archiveClassifier.set("javadoc")
-          from(dokkaTask)
-        }
+      publications.all {
+        this as MavenPublication
+        artifact(javadocJar)
+        artifact(sourcesJar)
+      }
+    }
 
+    if (extn.signPublications) {
+      apply<SigningPlugin>()
+      extensions.getByType<SigningExtension>().apply {
         publications.all {
-          this as MavenPublication
-          artifact(javadocJar)
-          artifact(sourcesJar)
+          sign(this)
+        }
+      }
+    }
+
+    repositories {
+      maven {
+        name = "SonaType"
+        url = URI(extn.publishingURL)
+        credentials {
+          username = extn.sonatypeUsername
+          password = extn.sonatypePassword
         }
       }
 
-      repositories {
+
+      if (extn.localRepoEnabled) {
         maven {
-          name = "SonaType"
-          url = URI(extn.publishingURL)
-          credentials {
-            username = extn.sonatypeUsername
-            password = extn.sonatypePassword
-          }
-        }
-
-        if (extn.localRepoEnabled){
-          maven {
-            name = extn.localRepoName
-            url = extn.localRepoLocation.toURI()
-          }
+          name = extn.localRepoName
+          url = extn.localRepoLocation.toURI()
         }
       }
+    }
 
-      extn.configurePublishing(this,this@configurePublishing)
-    }
-    childProjects.forEach {
-      it.value.configurePublishing(extn)
-    }
+    extn.configurePublishing(this, this@configurePublishing)
   }
-
-
-
-
+  childProjects.forEach {
+    it.value.configurePublishing(extn)
+  }
+}
 
 
 /*

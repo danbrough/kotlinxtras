@@ -39,7 +39,11 @@ open class SonatypeExtension( project: Project) {
     const val DESCRIPTION = "description"
   }
 
-  var configurePublishing: PublishingExtension.(project: Project) -> Unit = {}
+  internal var configurePublishing: PublishingExtension.(project: Project) -> Unit = {}
+
+  fun configurePublishing(configure:PublishingExtension.(project: Project) -> Unit){
+    configurePublishing = configure
+  }
 
   val sonatypeUrlBase: String = "https://s01.oss.sonatype.org"
   val sonatypeProfileId: String by project.properties

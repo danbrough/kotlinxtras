@@ -8,12 +8,16 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   kotlin("multiplatform") version "1.6.21"
-  id("org.danbrough.kotlinxtras.iconv") version "0.0.1"
+  id("org.danbrough.kotlinxtras.xtras") version "0.0.3-beta01"
 }
 
+
+
+/*
 iconv {
 
 }
+*/
 
 repositories {
   mavenCentral()

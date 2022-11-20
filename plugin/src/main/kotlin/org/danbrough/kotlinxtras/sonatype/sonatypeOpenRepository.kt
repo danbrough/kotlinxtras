@@ -75,12 +75,11 @@ fun parsePromoteRequest(input: InputStream): PromoteRequestResponse {
 
 }
 
-internal  fun Project.createOpenRepoTask(extn:SonatypeExtension){
+internal fun Project.createOpenRepoTask(extn: SonatypeExtension) {
   project.tasks.create("sonatypeOpenRepository") {
-    description =
-      """
-        Open a new sonatype repository and store the repository id in gradle.properties.
-        Specify the repository description with -P${SonatypeExtension.DESCRIPTION}="..".
+    description = """
+      Open a new sonatype repository and store the repository id in gradle.properties.
+      Specify the repository description with -P${SonatypeExtension.DESCRIPTION}="..".
       """.trimMargin()
     group = SONATYPE_TASK_GROUP
     doLast {
@@ -98,24 +97,24 @@ internal  fun Project.createOpenRepoTask(extn:SonatypeExtension){
       println("Received response: $response")
 
       project.rootProject.file("gradle.properties").readLines().also { lines ->
-        var wroteRepoId= false
+        var wroteRepoId = false
         var writeRepoDescription = false
-        project.rootProject.file("gradle.properties").printWriter().use {output->
+        project.rootProject.file("gradle.properties").printWriter().use { output ->
           lines.forEach {
-            if (it.startsWith(SonatypeExtension.REPOSITORY_ID)){
+            if (it.startsWith(SonatypeExtension.REPOSITORY_ID)) {
               wroteRepoId = true
               output.println("${SonatypeExtension.REPOSITORY_ID}=${response.repositoryId}")
-            } else if (it.startsWith(SonatypeExtension.DESCRIPTION)){
+            } else if (it.startsWith(SonatypeExtension.DESCRIPTION)) {
               writeRepoDescription = true
               output.println("${SonatypeExtension.DESCRIPTION}=${response.description}")
             } else {
               output.println(it)
             }
           }
-          if (!wroteRepoId){
+          if (!wroteRepoId) {
             output.println("${SonatypeExtension.REPOSITORY_ID}=${response.repositoryId}")
           }
-          if (!writeRepoDescription){
+          if (!writeRepoDescription) {
             output.println("${SonatypeExtension.DESCRIPTION}=${response.description}")
           }
         }

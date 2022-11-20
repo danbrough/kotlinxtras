@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "org.danbrough.kotlinxtras"
-version = "0.0.1"
+version = "1.17c"
 
 repositories {
   mavenCentral()
@@ -34,7 +34,7 @@ gradlePlugin {
 }
 
 dependencies {
-  implementation("org.danbrough.kotlinxtras:plugin:0.0.1")
+  implementation("org.danbrough.kotlinxtras:plugin:0.0.3-beta01")
 }
 
 tasks.withType(JavaCompile::class) {
@@ -62,8 +62,6 @@ val sourcesJar by tasks.registering(Jar::class) {
 publishing {
 
   publications.all {
-    group = project.group
-    version = project.version
     if (this !is MavenPublication) return@all
     if (project.hasProperty("publishDocs"))
       artifact(javadocJar)
@@ -73,7 +71,7 @@ publishing {
   }
 
   repositories {
-    maven("../build/m2"){
+    maven(rootProject.buildDir.resolve("m2")){
       name = "M2"
     }
 
