@@ -53,8 +53,9 @@ class OpenSSLPlugin : Plugin<Project> {
       }
 
 
-      build {
+      build {target->
         commandLine("make","install_sw")
+        outputs.dir(prefixDir(target))
       }
 /*
       configure{target->
