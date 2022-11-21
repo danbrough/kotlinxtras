@@ -4,10 +4,7 @@ import org.gradle.api.tasks.Exec
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 
-@BinariesDSLMarker
-fun BinaryExtension.configureSources(task:SourcesTask) {
-  configureTask = task
-}
+
 
 
 fun BinaryExtension.registerConfigureSourcesTask(target: KonanTarget)=
@@ -20,10 +17,7 @@ fun BinaryExtension.registerConfigureSourcesTask(target: KonanTarget)=
   }
 
 
-@BinariesDSLMarker
-fun BinaryExtension.buildSources(task:SourcesTask) {
-  buildTask = task
-}
+
 
 fun BinaryExtension.registerBuildSourcesTask(target: KonanTarget)=
   project.tasks.register(buildSourcesTaskName(target),Exec::class.java){
@@ -33,7 +27,12 @@ fun BinaryExtension.registerBuildSourcesTask(target: KonanTarget)=
     group = XTRAS_TASK_GROUP
     environment(buildEnvironment(target))
     workingDir(sourcesDir(target))
+    outputs.dir(prefixDir(target))
+
     buildTask!!(target)
+    installTask?.also {
+      finalizedBy(it)
+    }
   }
 
 

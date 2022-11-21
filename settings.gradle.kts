@@ -19,6 +19,8 @@ plugins {
 rootProject.name = "kotlinxtras"
 
 include(":plugins:iconv")
-//include(":demo2")
+include(":plugins:openssl")
+
+include(":demo2")
 
 includeBuild("plugin")

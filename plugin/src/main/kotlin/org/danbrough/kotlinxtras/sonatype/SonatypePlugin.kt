@@ -50,12 +50,13 @@ open class SonatypeExtension( project: Project) {
   val sonatypeRepositoryId: String by project.properties
   val sonatypeUsername: String by project.properties
   val sonatypePassword: String by project.properties
+  var publishDocs: Boolean = project.properties.containsKey("publishDocs")
   var signPublications: Boolean = project.properties.containsKey("signPublications")
 
   var dokkaDir:File = project.rootProject.buildDir.resolve(KOTLIN_XTRAS_DIR_NAME).resolve("dokka")
 
   var localRepoEnabled:Boolean = true
-  var localRepoName:String = "M2"
+  var localRepoName:String = "m2"
   var localRepoLocation : File =  project.rootProject.buildDir.resolve(localRepoName)
 
   private val sonatypeSnapshot: String by project.properties

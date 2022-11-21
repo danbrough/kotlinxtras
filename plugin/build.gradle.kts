@@ -13,7 +13,7 @@ repositories {
 }
 
 group = "org.danbrough.kotlinxtras"
-version = "0.0.3-beta02"
+version = "0.0.3-beta03"
 
 dependencies {
   compileOnly(kotlin("gradle-plugin"))
@@ -26,7 +26,7 @@ dependencies {
 sonatype{
   localRepoLocation = project.file("../build/m2")
 
-  configurePublishing  = {
+  configurePublishing   {
     publications.all {
       if (this is MavenPublication)
         xtrasPom()
@@ -49,6 +49,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
 
 gradlePlugin {
   plugins {
+
     create("xtrasPlugin") {
       id = "${group}.xtras"
       implementationClass = "$group.XtrasPlugin"
@@ -62,6 +63,7 @@ gradlePlugin {
       displayName = "Sonatype plugin"
       description = "Sonatype publishing support"
     }
+
   }
 }
 

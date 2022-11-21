@@ -5,7 +5,14 @@ import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.apply
+import org.gradle.kotlin.dsl.findByType
+import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.getValue
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.provideDelegate
+import org.gradle.kotlin.dsl.registering
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
@@ -17,28 +24,32 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
 
   extensions.findByType<PublishingExtension>()?.apply {
 
+    if (extn.publishDocs) {
+      if (plugins.hasPlugin("org.jetbrains.dokka")) {
+        tasks.named<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml").configure {
+          outputDirectory.set(extn.dokkaDir)
+        }
 
-    if (plugins.hasPlugin("org.jetbrains.dokka")) {
-      val dokkaTask = tasks.named<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml")
-      dokkaTask.configure {
-        outputDirectory.set(extn.dokkaDir)
-      }
+        val javadocJar by tasks.registering(Jar::class) {
+          archiveClassifier.set("javadoc")
+          from(tasks.named<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml"))
+        }
 
-      val sourcesJar by tasks.registering(Jar::class) {
-        archiveClassifier.set("sources")
-        from(kotlinExtension.sourceSets["main"].kotlin)
+        publications.all {
+          if (this is MavenPublication)
+            artifact(javadocJar)
+        }
       }
+    }
 
-      val javadocJar by tasks.registering(Jar::class) {
-        archiveClassifier.set("javadoc")
-        from(dokkaTask)
-      }
+    val sourcesJar by tasks.registering(Jar::class) {
+      archiveClassifier.set("sources")
+      from(kotlinExtension.sourceSets["main"].kotlin)
+    }
 
-      publications.all {
-        this as MavenPublication
-        artifact(javadocJar)
-        artifact(sourcesJar)
-      }
+    publications.all {
+      if (this is MavenPublication)
+      artifact(sourcesJar)
     }
 
     if (extn.signPublications) {
@@ -70,9 +81,6 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
     }
 
     extn.configurePublishing(this, this@configurePublishing)
-  }
-  childProjects.forEach {
-    it.value.configurePublishing(extn)
   }
 }
 

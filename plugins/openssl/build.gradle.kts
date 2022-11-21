@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "org.danbrough.kotlinxtras"
-version = "1.17c"
+version = "1_1_1s"
 
 dependencies {
   compileOnly( kotlin("gradle-plugin"))
@@ -18,15 +18,13 @@ dependencies {
 }
 
 gradlePlugin {
-
   plugins {
-    create("iconv") {
-      id = "$group.iconv"
-      implementationClass = "$group.IconvPlugin"
-      displayName = "KotlinXtras iconv plugin"
-      description = "Provides iconv support to multi-platform projects"
+    create("openssl") {
+      id = "$group.openssl"
+      implementationClass = "$group.OpenSSLPlugin"
+      displayName = "KotlinXtras openssl plugin"
+      description = "Provides openssl support to multi-platform projects"
     }
   }
-
 }
 

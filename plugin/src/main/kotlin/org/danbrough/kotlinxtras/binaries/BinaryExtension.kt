@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import java.io.Serializable
 
 const val KOTLIN_XTRAS_DIR_NAME = "xtras"
 const val XTRAS_TASK_GROUP = "xtras"
@@ -17,17 +18,18 @@ const val XTRAS_TASK_GROUP = "xtras"
 //@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE,AnnotationTarget.FUNCTION)
 annotation class BinariesDSLMarker
 
-interface Configuration {
+interface Configuration2 : Serializable{
   var gitBinary: String
   var wgetBinary: String
   var tarBinary: String
 }
 
-data class DefaultConfiguration(
+
+data class DefaultConfiguration2(
   override var gitBinary: String = "/usr/bin/git",
   override var wgetBinary: String = "/usr/bin/wget",
   override var tarBinary: String = "/usr/bin/tar"
-) : Configuration
+) : Configuration2
 
 
 typealias SourcesTask = Exec.(KonanTarget) -> Unit
@@ -37,7 +39,7 @@ open class BinaryExtension(
   val project: Project,
 //Unique identifier for a binary package
   var libName: String,
-  var configuration: Configuration= DefaultConfiguration()
+  var configuration: Configuration2= DefaultConfiguration2()
 ) {
 
   open var version: String = "unspecified"
@@ -47,6 +49,20 @@ open class BinaryExtension(
   lateinit var xtrasDir: File
 
   open fun gitRepoDir(): File = downloadsDir.resolve("repos/$libName")
+
+  @BinariesDSLMarker
+  fun configure(task:SourcesTask) {
+    configureTask = task
+  }
+  @BinariesDSLMarker
+  fun build(task:SourcesTask) {
+    buildTask = task
+  }
+
+  @BinariesDSLMarker
+  fun install(task:SourcesTask) {
+    installTask = task
+  }
 
   lateinit var downloadsDir: File
 
@@ -58,6 +74,8 @@ open class BinaryExtension(
 
   internal var buildTask: SourcesTask? = null
 
+  internal var installTask: SourcesTask? = null
+
   val downloadSourcesTaskName: String
     get() = "xtrasDownloadSources${libName.capitalized()}"
 
@@ -65,10 +83,10 @@ open class BinaryExtension(
     "xtrasExtractSources${libName.capitalized()}${konanTarget.platformName.capitalized()}"
 
   fun configureSourcesTaskName(konanTarget: KonanTarget): String =
-    "xtrasConfigureSources${libName.capitalized()}${konanTarget.platformName.capitalized()}"
+    "xtrasConfigure${libName.capitalized()}${konanTarget.platformName.capitalized()}"
 
   fun buildSourcesTaskName(konanTarget: KonanTarget): String =
-    "xtrasBuildSources${libName.capitalized()}${konanTarget.platformName.capitalized()}"
+    "xtrasBuild${libName.capitalized()}${konanTarget.platformName.capitalized()}"
 
   open fun sourcesDir(konanTarget: KonanTarget): File =
     xtrasDir.resolve("src/$libName/$version/${konanTarget.platformName}")
@@ -99,7 +117,7 @@ open class BinaryExtension(
 
 }
 
-fun Project.registerBinariesExtension(extnName: String,configuration: Configuration = DefaultConfiguration()): BinaryExtension =
+fun Project.registerBinariesExtension(extnName: String,configuration: Configuration2 = DefaultConfiguration2()): BinaryExtension =
   extensions.create(extnName, BinaryExtension::class.java, this, extnName, configuration)
     .apply {
       project.afterEvaluate {

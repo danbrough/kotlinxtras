@@ -7,9 +7,8 @@ plugins {
   kotlin("multiplatform") apply false
   `maven-publish`
   id("org.jetbrains.dokka") apply false
-  id("org.danbrough.kotlinxtras.xtras")
-  id("org.danbrough.kotlinxtras.sonatype")
-
+  id("org.danbrough.kotlinxtras.xtras") apply false 
+  id("org.danbrough.kotlinxtras.sonatype") apply false
 }
 
 println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION}")

@@ -2,6 +2,7 @@ package org.danbrough.kotlinxtras.binaries
 
 import org.gradle.api.tasks.Exec
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.File
 
 
 interface SourceConfig
@@ -13,15 +14,18 @@ data class ArchiveSourceConfig(
 
 data class GitSourceConfig(val commit: String) : SourceConfig
 
+
+data class InteropsConfig(var name:String,var defFile: File? = null)
+
 @BinariesDSLMarker
-fun BinaryExtension.downloadSources(url: String, configure: ArchiveSourceConfig.() -> Unit) {
+fun BinaryExtension.download(url: String, configure: ArchiveSourceConfig.() -> Unit) {
   sourceConfig?.also { throw Error("Source already configured") }
   sourceURL = url
   sourceConfig = ArchiveSourceConfig().also(configure)
 }
 
 @BinariesDSLMarker
-fun BinaryExtension.downloadGitSources(url: String, commit: String) {
+fun BinaryExtension.git(url: String, commit: String) {
   sourceConfig?.also { throw Error("Source already configured") }
   sourceURL = url
   sourceConfig = GitSourceConfig(commit)
