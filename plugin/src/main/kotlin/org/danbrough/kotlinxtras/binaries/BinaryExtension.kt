@@ -18,34 +18,42 @@ const val XTRAS_TASK_GROUP = "xtras"
 //@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE,AnnotationTarget.FUNCTION)
 annotation class BinariesDSLMarker
 
-interface Configuration2 : Serializable{
+interface Configuration : Serializable{
   var gitBinary: String
   var wgetBinary: String
   var tarBinary: String
 }
 
 
-data class DefaultConfiguration2(
+data class DefaultConfiguration(
   override var gitBinary: String = "/usr/bin/git",
   override var wgetBinary: String = "/usr/bin/wget",
   override var tarBinary: String = "/usr/bin/tar"
-) : Configuration2
+) : Configuration
 
 
 typealias SourcesTask = Exec.(KonanTarget) -> Unit
+
+
+@BinariesDSLMarker
+fun Project.registerBinariesExtension(name:String,configuration: Configuration = DefaultConfiguration(),configure:BinaryExtension.()->Unit):BinaryExtension =
+  registerBinariesExtension(name,configuration).apply{ configure() }
 
 @BinariesDSLMarker
 open class BinaryExtension(
   val project: Project,
 //Unique identifier for a binary package
   var libName: String,
-  var configuration: Configuration2= DefaultConfiguration2()
+  var configuration: Configuration= DefaultConfiguration()
 ) {
 
+  @BinariesDSLMarker
   open var version: String = "unspecified"
 
+  @BinariesDSLMarker
   open var sourceURL: String? = null
 
+  @BinariesDSLMarker
   lateinit var xtrasDir: File
 
   open fun gitRepoDir(): File = downloadsDir.resolve("repos/$libName")
@@ -57,6 +65,11 @@ open class BinaryExtension(
   @BinariesDSLMarker
   fun build(task:SourcesTask) {
     buildTask = task
+  }
+
+  @BinariesDSLMarker
+  fun configureTarget(configure: (KonanTarget)->Unit){
+    configureTargetTask = configure
   }
 
   @BinariesDSLMarker
@@ -76,6 +89,9 @@ open class BinaryExtension(
 
   internal var installTask: SourcesTask? = null
 
+
+  internal var configureTargetTask: ((KonanTarget)->Unit)? = null
+
   val downloadSourcesTaskName: String
     get() = "xtrasDownloadSources${libName.capitalized()}"
 
@@ -85,8 +101,8 @@ open class BinaryExtension(
   fun configureSourcesTaskName(konanTarget: KonanTarget): String =
     "xtrasConfigure${libName.capitalized()}${konanTarget.platformName.capitalized()}"
 
-  fun buildSourcesTaskName(konanTarget: KonanTarget): String =
-    "xtrasBuild${libName.capitalized()}${konanTarget.platformName.capitalized()}"
+  fun buildSourcesTaskName(konanTarget: KonanTarget,name:String = libName): String =
+    "xtrasBuild${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
   open fun sourcesDir(konanTarget: KonanTarget): File =
     xtrasDir.resolve("src/$libName/$version/${konanTarget.platformName}")
@@ -117,7 +133,7 @@ open class BinaryExtension(
 
 }
 
-fun Project.registerBinariesExtension(extnName: String,configuration: Configuration2 = DefaultConfiguration2()): BinaryExtension =
+internal fun Project.registerBinariesExtension(extnName: String,configuration: Configuration = DefaultConfiguration()): BinaryExtension =
   extensions.create(extnName, BinaryExtension::class.java, this, extnName, configuration)
     .apply {
       project.afterEvaluate {
@@ -141,6 +157,9 @@ private fun BinaryExtension.registerXtrasTasks() {
   }
 
   konanTargets.forEach { konanTarget ->
+
+    configureTargetTask?.invoke(konanTarget)
+
     when (srcConfig) {
       is ArchiveSourceConfig -> {
         registerArchiveExtractTask(srcConfig, konanTarget)

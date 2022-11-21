@@ -20,6 +20,7 @@ rootProject.name = "kotlinxtras"
 
 include(":plugins:iconv")
 include(":plugins:openssl")
+include(":plugins:curl")
 
 include(":demo2")
 

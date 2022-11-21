@@ -3,7 +3,9 @@ plugins {
 }
 
 dependencies {
-  implementation(kotlin("gradle-plugin",libs.versions.kotlin.get()))
+ // implementation(kotlin("gradle-plugin",libs.versions.kotlin.get()))
+  implementation(kotlin("gradle-plugin","1.6.21"))
+
 }
 
 repositories {

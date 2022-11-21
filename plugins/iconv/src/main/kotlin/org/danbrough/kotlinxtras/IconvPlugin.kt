@@ -12,7 +12,7 @@ import org.gradle.api.Project
 class IconvPlugin : Plugin<Project> {
   override fun apply(project: Project) {
 
-    project.registerBinariesExtension("iconv").apply {
+    project.registerBinariesExtension("iconv") {
       version = "1.17c"
 
       download("https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz") {
