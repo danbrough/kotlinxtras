@@ -21,8 +21,6 @@ dependencies {
   compileOnly("org.jetbrains.dokka:dokka-gradle-plugin:${libs.versions.dokka.get()}")
 }
 
-//publishing.repositories.maven(file("../build/m2")) { name = "M2" }
-
 sonatype{
   localRepoLocation = project.file("../build/m2")
 

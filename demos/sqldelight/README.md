@@ -1,4 +1,0 @@
-# SqlDelight demo
-
-Not working
-

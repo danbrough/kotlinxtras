@@ -1,3 +1,0 @@
-# Sqliter demo 
-
-Not working

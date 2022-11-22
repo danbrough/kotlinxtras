@@ -179,7 +179,9 @@ private fun BinaryExtension.registerXtrasTasks() {
 
     buildTask?.also {
       registerBuildSourcesTask(konanTarget)
+      registerPackageTask(konanTarget)
     }
+
   }
 
 }

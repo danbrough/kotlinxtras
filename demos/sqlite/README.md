@@ -1,6 +1,0 @@
-# Sqlite demo
-
-```bash
-
-
-```

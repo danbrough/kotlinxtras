@@ -1,18 +1,9 @@
 #!/bin/bash
+cd "$(dirname "$0")" 
 
-cd $(dirname "$0")
+REPO=${1-M2}
+echo publishing to $REPO
 
-#REPO="Sonatype"
-REPO="M2"
+[ "$REPO" == "SonaType" ] && OPTS="-Dorg.gradle.unsafe.configuration-cache=false -PsignPublications -PpublishDocs"
 
-if [ ! -z "$1" ]; then
-	REPO="$1"
-fi
-
-if [ "$(uname)" = "Darwin" ]; then
-  ./gradlew -PsignPublications -PpublishDocs `cat mac_targets.txt`
-  exit 0
-fi
-
-./gradlew -PsignPublications -PpublishDocs publishAllPublicationsTo${REPO}Repository
-
+./gradlew $OPTS  publishAllPublicationsTo${REPO}Repository $OPTS 
