@@ -16,31 +16,6 @@ dependencies {
   implementation(libs.xtras)
 }
 
-sonatype {
-  configurePublishing {
-    it.afterEvaluate {
-      publications.all {
-        if (this !is MavenPublication) return@all
-
-        if (artifactId == "plugins"){
-          version = project.version.toString()
-          return@all
-        }
-
-        val id = if (artifactId.endsWith(".gradle.plugin"))
-          artifactId.substringAfter("${group}.").substringBefore(".gradle.plugin")
-        else artifactId
-
-        findProperty("version.$id")?.toString()?.also {pluginVersion->
-          version = pluginVersion
-        } ?: throw Error("No version for artifact: $artifactId")
-
-      }
-    }
-  }
-}
-
-
 gradlePlugin {
   plugins {
     create("curl") {

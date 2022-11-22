@@ -19,6 +19,8 @@ class CurlPlugin : Plugin<Project> {
 
     project.registerBinariesExtension("curl"){
 
+      version = "7_86_0"
+
       git("https://github.com/curl/curl.git", "cd95ee9f771361acf241629d2fe5507e308082a2")
 
 

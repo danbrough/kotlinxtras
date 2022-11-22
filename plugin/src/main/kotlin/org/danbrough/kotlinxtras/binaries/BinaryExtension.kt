@@ -132,11 +132,6 @@ open class BinaryExtension(
 
     if (!::packagesDir.isInitialized)
       packagesDir = xtrasDir.resolve("packages")
-
-    project.findProperty("version.$libName")?.also {
-      version = it.toString()
-      println("SET VERSION TO $version")
-    } ?: println("FAILED TO FIND property: $version.")
   }
 
 }

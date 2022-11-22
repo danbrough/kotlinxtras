@@ -19,14 +19,12 @@ data class InteropsConfig(var name:String,var defFile: File? = null)
 
 @BinariesDSLMarker
 fun BinaryExtension.download(url: String, configure: ArchiveSourceConfig.() -> Unit) {
-  sourceConfig?.also { throw Error("Source already configured") }
   sourceURL = url
   sourceConfig = ArchiveSourceConfig().also(configure)
 }
 
 @BinariesDSLMarker
 fun BinaryExtension.git(url: String, commit: String) {
-  sourceConfig?.also { throw Error("Source already configured") }
   sourceURL = url
   sourceConfig = GitSourceConfig(commit)
 }

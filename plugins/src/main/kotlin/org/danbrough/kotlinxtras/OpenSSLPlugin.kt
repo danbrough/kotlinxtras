@@ -16,8 +16,7 @@ class OpenSSLPlugin : Plugin<Project> {
 
     project.registerBinariesExtension("openssl") {
 
-
-      println("OPEN SSL VERSION: $version")
+      version = "1_1_1s"
 
       git("https://github.com/danbrough/openssl.git","02e6fd7998830218909cbc484ca054c5916fdc59")
 
