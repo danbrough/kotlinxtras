@@ -5,8 +5,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 
 
-
-
 fun BinaryExtension.registerConfigureSourcesTask(target: KonanTarget)=
   project.tasks.register(configureSourcesTaskName(target),Exec::class.java){
     dependsOn(extractSourcesTaskName(target))
@@ -15,8 +13,6 @@ fun BinaryExtension.registerConfigureSourcesTask(target: KonanTarget)=
     workingDir(sourcesDir(target))
     configureTask!!(target)
   }
-
-
 
 
 fun BinaryExtension.registerBuildSourcesTask(target: KonanTarget)=
@@ -34,6 +30,21 @@ fun BinaryExtension.registerBuildSourcesTask(target: KonanTarget)=
       finalizedBy(it)
     }
   }
+
+
+fun BinaryExtension.packageTask(target: KonanTarget)=
+  project.tasks.register(packageTaskName(target),Exec::class.java){
+    buildTask?.also {
+      dependsOn(buildSourcesTaskName(target))
+    }
+    group = XTRAS_TASK_GROUP
+    environment(buildEnvironment(target))
+    workingDir(prefixDir(target))
+    val packageFile = "${libName}_${this@packageTask.version}.tar.gz"
+    outputs.file(packagesDir.resolve(packageFile))
+
+  }
+
 
 
 

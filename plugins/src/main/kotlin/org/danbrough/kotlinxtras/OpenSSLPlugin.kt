@@ -14,9 +14,10 @@ import org.jetbrains.kotlin.konan.target.Family
 class OpenSSLPlugin : Plugin<Project> {
   override fun apply(project: Project) {
 
-
     project.registerBinariesExtension("openssl") {
-      version = "1_1_1s"
+
+
+      println("OPEN SSL VERSION: $version")
 
       git("https://github.com/danbrough/openssl.git","02e6fd7998830218909cbc484ca054c5916fdc59")
 

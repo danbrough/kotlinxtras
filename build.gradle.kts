@@ -15,7 +15,7 @@ println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinComp
 
 
 group = "org.danbrough.kotlinxtras"
-version = "0.0.2-beta01"
+
 
 
 allprojects {

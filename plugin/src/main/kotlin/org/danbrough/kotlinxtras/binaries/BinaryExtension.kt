@@ -37,7 +37,9 @@ typealias SourcesTask = Exec.(KonanTarget) -> Unit
 
 @BinariesDSLMarker
 fun Project.registerBinariesExtension(name:String,configuration: Configuration = DefaultConfiguration(),configure:BinaryExtension.()->Unit):BinaryExtension =
-  registerBinariesExtension(name,configuration).apply{ configure() }
+  registerBinariesExtension(name,configuration).apply{
+    configure()
+  }
 
 @BinariesDSLMarker
 open class BinaryExtension(
@@ -89,7 +91,6 @@ open class BinaryExtension(
 
   internal var installTask: SourcesTask? = null
 
-
   internal var configureTargetTask: ((KonanTarget)->Unit)? = null
 
   val downloadSourcesTaskName: String
@@ -103,6 +104,9 @@ open class BinaryExtension(
 
   fun buildSourcesTaskName(konanTarget: KonanTarget,name:String = libName): String =
     "xtrasBuild${name.capitalized()}${konanTarget.platformName.capitalized()}"
+
+  fun packageTaskName(konanTarget: KonanTarget,name:String = libName): String =
+    "xtrasPackage${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
   open fun sourcesDir(konanTarget: KonanTarget): File =
     xtrasDir.resolve("src/$libName/$version/${konanTarget.platformName}")
@@ -129,6 +133,10 @@ open class BinaryExtension(
     if (!::packagesDir.isInitialized)
       packagesDir = xtrasDir.resolve("packages")
 
+    project.findProperty("version.$libName")?.also {
+      version = it.toString()
+      println("SET VERSION TO $version")
+    } ?: println("FAILED TO FIND property: $version.")
   }
 
 }
