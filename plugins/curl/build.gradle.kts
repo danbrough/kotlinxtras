@@ -9,12 +9,25 @@ plugins {
 }
 
 group = "org.danbrough.kotlinxtras"
-version = "7_86_0a"
+
 
 dependencies {
   compileOnly( kotlin("gradle-plugin"))
   compileOnly( kotlin("gradle-plugin-api"))
   implementation(libs.xtras)
+}
+
+sonatype {
+  configurePublishing {
+    it.afterEvaluate {
+      publications.all {
+        this as MavenPublication
+        println("PUBLICATION:  name:$name : version:$version artifactID:${artifactId} artifacts:${artifacts}")
+        if (artifactId == "curl" || artifactId == "$group.curl.gradle.plugin")
+          version = "7_86_0a"
+      }
+    }
+  }
 }
 
 gradlePlugin {
