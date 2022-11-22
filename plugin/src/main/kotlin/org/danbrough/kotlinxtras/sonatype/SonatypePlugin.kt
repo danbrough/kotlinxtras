@@ -1,7 +1,6 @@
 package org.danbrough.kotlinxtras.sonatype
 
 
-import org.danbrough.kotlinxtras.binaries.KOTLIN_XTRAS_DIR_NAME
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
@@ -52,8 +51,6 @@ open class SonatypeExtension( project: Project) {
   val sonatypePassword: String by project.properties
   var publishDocs: Boolean = project.properties.containsKey("publishDocs")
   var signPublications: Boolean = project.properties.containsKey("signPublications")
-
-  var dokkaDir:File = project.rootProject.buildDir.resolve(KOTLIN_XTRAS_DIR_NAME).resolve("dokka")
 
   var localRepoEnabled:Boolean = true
   var localRepoName:String = "m2"

@@ -1,6 +1,7 @@
 package org.danbrough.kotlinxtras.sonatype
 
 
+import org.danbrough.kotlinxtras.xtrasDocsDir
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
@@ -27,7 +28,7 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
     if (extn.publishDocs) {
       if (plugins.hasPlugin("org.jetbrains.dokka")) {
         tasks.named<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml").configure {
-          outputDirectory.set(extn.dokkaDir)
+          outputDirectory.set(project.xtrasDocsDir)
         }
 
         val javadocJar by tasks.registering(Jar::class) {

@@ -1,5 +1,6 @@
 package org.danbrough.kotlinxtras.binaries
 
+import org.danbrough.kotlinxtras.xtrasDownloadsDir
 import org.gradle.api.tasks.Exec
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -15,7 +16,16 @@ data class ArchiveSourceConfig(
 data class GitSourceConfig(val commit: String) : SourceConfig
 
 
-data class InteropsConfig(var name:String,var defFile: File? = null)
+data class InteropsConfig(
+  //name of the interops task
+  var name:String,
+  //path to the generated (or preexisting) def file
+  var defFile: File? = null,
+  //inputs for the interops task
+  var inputs:File,
+  //to be added to the start of the generated interops file
+  var headers:String? = null
+)
 
 @BinariesDSLMarker
 fun BinaryExtension.download(url: String, configure: ArchiveSourceConfig.() -> Unit) {
@@ -56,6 +66,7 @@ internal fun BinaryExtension.registerGitDownloadTask(
     }
     workingDir = gitRepoDir()
     commandLine(configuration.gitBinary, "remote", "add", "origin", sourceURL)
+
   }
 
   project.tasks.register(downloadSourcesTaskName, Exec::class.java) {
@@ -144,6 +155,7 @@ internal fun BinaryExtension.registerArchiveDownloadTask(srcConfig: ArchiveSourc
   project.tasks.register(downloadSourcesTaskName, Exec::class.java) {
     group = XTRAS_TASK_GROUP
 
+    val downloadsDir = project.xtrasDownloadsDir
     val outputFile = downloadsDir.resolve(sourceURL!!.substringAfterLast('/'))
     inputs.property("url", sourceURL!!)
     outputs.file(outputFile)

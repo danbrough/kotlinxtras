@@ -1,16 +1,11 @@
-
-
-import org.danbrough.kotlinxtras.binaries.buildSources
-import org.danbrough.kotlinxtras.binaries.configureSources
-import org.danbrough.kotlinxtras.hostTriplet
-import org.danbrough.kotlinxtras.platformName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   kotlin("multiplatform") version "1.6.21"
-  id("org.danbrough.kotlinxtras.xtras") version "0.0.3-beta01"
-}
+  id("org.danbrough.kotlinxtras.xtras") version "0.0.3-beta02"
+  id("org.danbrough.kotlinxtras.iconv") version "0.0.3-beta02"
 
+}
 
 
 /*
@@ -32,7 +27,7 @@ kotlin {
 
   val commonMain by sourceSets.getting {
     dependencies {
-      implementation(libs.klog)
+      implementation("org.danbrough:klog:0.0.2-beta01")
     }
   }
 

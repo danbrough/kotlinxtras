@@ -7,11 +7,13 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 fun BinaryExtension.registerConfigureSourcesTask(target: KonanTarget)=
   project.tasks.register(configureSourcesTaskName(target),Exec::class.java){
-    dependsOn(extractSourcesTaskName(target))
+    if (!isPackageBuilt(target))
+      dependsOn(extractSourcesTaskName(target))
     environment(buildEnvironment(target))
     group = XTRAS_TASK_GROUP
     workingDir(sourcesDir(target))
     configureTask!!(target)
+    onlyIf { !isPackageBuilt(target) }
   }
 
 
@@ -29,6 +31,7 @@ fun BinaryExtension.registerBuildSourcesTask(target: KonanTarget)=
     installTask?.also {
       finalizedBy(it)
     }
+    onlyIf { !isPackageBuilt(target) }
   }
 
 
