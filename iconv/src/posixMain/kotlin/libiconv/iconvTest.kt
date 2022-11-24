@@ -1,4 +1,0 @@
-package libiconv
-
-fun test(){
-}

@@ -4,6 +4,7 @@ import org.danbrough.kotlinxtras.buildEnvironment
 import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.xtrasDir
 import org.danbrough.kotlinxtras.xtrasDownloadsDir
+import org.danbrough.kotlinxtras.xtrasLibsDir
 import org.danbrough.kotlinxtras.xtrasPackagesDir
 import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
@@ -83,6 +84,13 @@ open class BinaryExtension(
     installTask = task
   }
 
+  internal var cinteropsConfigTask: (CInteropsConfig.()->Unit)? = null
+
+  @BinariesDSLMarker
+  fun cinterops(configure: CInteropsConfig.()->Unit){
+    cinteropsConfigTask = configure
+  }
+
   internal var sourceConfig: SourceConfig? = null
 
   internal var configureTask: SourcesTask? = null
@@ -92,6 +100,7 @@ open class BinaryExtension(
   internal var installTask: SourcesTask? = null
 
   internal var configureTargetTask: ((KonanTarget) -> Unit)? = null
+
 
   val downloadSourcesTaskName: String
     get() = "xtrasDownloadSources${libName.capitalized()}"
@@ -105,10 +114,13 @@ open class BinaryExtension(
   fun buildSourcesTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasBuild${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
+  fun provideBinariesTaskName(konanTarget: KonanTarget, name: String = libName): String =
+    "xtrasProvide${name.capitalized()}${konanTarget.platformName.capitalized()}"
+
   fun packageTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasPackage${name.capitalized()}${konanTarget.platformName.capitalized()}"
-  fun interopsTaskName(konanTarget: KonanTarget, name: String = libName): String =
-    "xtrasInterops${name.capitalized()}${konanTarget.platformName.capitalized()}"
+  fun generateCInteropsTaskName( name: String = libName): String =
+    "xtrasGenerateCInterops${name.capitalized()}"
 
   fun packageFile(
     konanTarget: KonanTarget,
@@ -120,8 +132,8 @@ open class BinaryExtension(
   open fun sourcesDir(konanTarget: KonanTarget): File =
     project.xtrasDir.resolve("src/$libName/$version/${konanTarget.platformName}")
 
-  open fun prefixDir(konanTarget: KonanTarget): File =
-    project.xtrasDir.resolve("$libName/$version/${konanTarget.platformName}")
+  open fun prefixDir(konanTarget: KonanTarget,packageName:String = libName,packageVersion:String = version): File =
+    project.xtrasLibsDir.resolve("$packageName/$packageVersion/${konanTarget.platformName}")
 
   val konanTargets: Set<KonanTarget>
     get() = project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.targets?.withType(
@@ -138,10 +150,9 @@ open class BinaryExtension(
   open fun buildEnvironment(konanTarget: KonanTarget): Map<String, *> =
     konanTarget.buildEnvironment()
 
-
 }
 
-internal fun Project.registerBinariesExtension(
+private fun Project.registerBinariesExtension(
   extnName: String,
   configuration: Configuration = DefaultConfiguration()
 ): BinaryExtension =
@@ -189,7 +200,15 @@ private fun BinaryExtension.registerXtrasTasks() {
       registerPackageTask(konanTarget)
     }
 
+    registerProvideBinariesTask(konanTarget)
   }
+
+
+      registerGenerateInteropsTask()
+
+
+
+
 
 }
 

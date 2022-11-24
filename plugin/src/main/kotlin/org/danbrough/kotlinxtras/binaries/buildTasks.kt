@@ -13,6 +13,9 @@ fun BinaryExtension.registerConfigureSourcesTask(target: KonanTarget)=
     group = XTRAS_TASK_GROUP
     workingDir(sourcesDir(target))
     configureTask!!(target)
+    doFirst {
+      println("running $name with: ${commandLine.joinToString(" ")}")
+    }
     onlyIf { !isPackageBuilt(target) }
   }
 
@@ -25,7 +28,8 @@ fun BinaryExtension.registerBuildSourcesTask(target: KonanTarget)=
     group = XTRAS_TASK_GROUP
     environment(buildEnvironment(target))
     workingDir(sourcesDir(target))
-    outputs.dir(prefixDir(target))
+    val prefixDir = prefixDir(target)
+    outputs.dir(prefixDir)
 
     buildTask!!(target)
     installTask?.also {

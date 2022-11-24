@@ -13,9 +13,8 @@ plugins {
 
 println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION}")
 
-
-group = "org.danbrough.kotlinxtras"
-
+val xtrasGroup:String  = project.property("project.group")!!.toString()
+group = xtrasGroup
 
 
 allprojects {
@@ -42,9 +41,10 @@ allprojects {
 
 
 subprojects {
+  group = xtrasGroup
 
   afterEvaluate {
-
+    version = libs.versions.xtras.get()
     extensions.findByType(PublishingExtension::class) ?: return@afterEvaluate
 
     publishing {

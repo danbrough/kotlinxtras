@@ -15,18 +15,6 @@ class SonatypePlugin : Plugin<Project> {
       project.createOpenRepoTask(extn)
       project.createCloseRepoTask(extn)
       project.configurePublishing(extn)
-//      project.extensions.findByType<PublishingExtension>()?.apply {
-//        repositories {
-//          maven {
-//            name = "SonaType"
-//            setUrl(extn.publishingURL)
-//            credentials {
-//              username = extn.sonatypeUsername
-//              password = extn.sonatypePassword
-//            }
-//          }
-//        }
-//      }
     }
   }
 }

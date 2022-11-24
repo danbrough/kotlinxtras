@@ -1,33 +1,40 @@
+import org.danbrough.kotlinxtras.binaries.BinaryExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractExecutable
+import org.jetbrains.kotlin.gradle.plugin.mpp.Executable
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
-  kotlin("multiplatform") version "1.6.21"
-  id("org.danbrough.kotlinxtras.xtras") version "0.0.3-beta02"
-  id("org.danbrough.kotlinxtras.iconv") version "0.0.3-beta02"
-
+  kotlin("multiplatform")
+  id("org.danbrough.kotlinxtras.iconv")
 }
 
-
-/*
 iconv {
-
+  cinterops {
+    headersFile = file("src/cinterops/libiconv_header.def")
+  }
 }
-*/
+
 
 repositories {
   mavenCentral()
+  maven(file("../build/m2"))
 }
 
 
 kotlin {
 
-
   linuxX64()
   linuxArm32Hfp()
+  linuxArm64()
 
   val commonMain by sourceSets.getting {
     dependencies {
-      implementation("org.danbrough:klog:0.0.2-beta01")
+      implementation(libs.klog)
+      implementation(libs.org.danbrough.kotlinxtras.common)
     }
   }
 
@@ -38,7 +45,7 @@ kotlin {
     }
   }
 
-  targets.withType<KotlinNativeTarget>().all {
+  targets.withType<KotlinNativeTarget> {
 
     compilations["main"].apply {
       defaultSourceSet.dependsOn(posixMain)
@@ -47,8 +54,35 @@ kotlin {
     binaries {
       executable("iconvDemo") {
         entryPoint = "demo1.main"
+
       }
     }
   }
+}
+
+afterEvaluate {
+
+  val xtras = extensions.getByType(BinaryExtension::class)
+
+  kotlin.targets.withType<KotlinNativeTarget> {
+    binaries.all {
+       if (this is Executable){
+         //println("EXECUTABLE $name ${this.buildType} ${outputKind} ${this.runTaskName}")
+         val ldLibraryPathKey = if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH"
+         val prefixDir = xtras.prefixDir(target.konanTarget)
+         runTask?.environment(ldLibraryPathKey,prefixDir.resolve("lib"))
+       }
+    }
+  }
+
+  tasks.withType(KotlinNativeTest::class.java){
+    val hostTarget = if (HostManager.hostIsMac){
+      KonanTarget.MACOS_X64
+    } else KonanTarget.LINUX_X64
+    val prefixDir = xtras.prefixDir(KonanTarget.LINUX_X64)
+    val ldLibraryPathKey = if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH"
+    environment(ldLibraryPathKey,prefixDir.resolve("lib"))
+  }
 
 }
+

@@ -21,6 +21,7 @@ const val PROPERTY_DOWNLOADS_DIR = "xtras.downloads.dir"
 
 const val PROPERTY_DOCS_DIR = "xtras.docs.dir"
 
+const val PROPERTY_LIBS_DIR = "xtras.libs.dir"
 
 /**
  * Path to the top level xtras directory.
@@ -31,7 +32,7 @@ const val PROPERTY_DOCS_DIR = "xtras.docs.dir"
 val Project.xtrasDir: File
   get() =
     if (hasProperty(PROPERTY_XTRAS_DIR))
-      file(property(PROPERTY_XTRAS_DIR)!!.toString())
+      file(property(PROPERTY_XTRAS_DIR)!!.toString().trim())
     else
       rootProject.buildDir.resolve("xtras")
 
@@ -44,7 +45,7 @@ val Project.xtrasDir: File
 val Project.xtrasDownloadsDir: File
   get() =
     if (hasProperty(PROPERTY_DOWNLOADS_DIR))
-      file(property(PROPERTY_DOWNLOADS_DIR)!!.toString())
+      file(property(PROPERTY_DOWNLOADS_DIR)!!.toString().trim())
     else
       xtrasDir.resolve("downloads")
 
@@ -58,7 +59,7 @@ val Project.xtrasDownloadsDir: File
 val Project.xtrasPackagesDir: File
   get() =
     if (hasProperty(PROPERTY_PACKAGES_DIR))
-      file(property(PROPERTY_PACKAGES_DIR)!!.toString())
+      file(property(PROPERTY_PACKAGES_DIR)!!.toString().trim())
     else
       xtrasDir.resolve("packages")
 
@@ -72,9 +73,25 @@ val Project.xtrasPackagesDir: File
 val Project.xtrasDocsDir: File
   get() =
     if (hasProperty(PROPERTY_DOCS_DIR))
-      file(property(PROPERTY_DOCS_DIR)!!.toString())
+      file(property(PROPERTY_DOCS_DIR)!!.toString().trim())
     else
       xtrasDir.resolve("docs")
+
+
+
+/**
+ * Path to the xtras libs directory.
+ * This is the install prefix for binary packages
+ *
+ * Defaults to `project.xtrasDir.resolve("libs")`
+ */
+val Project.xtrasLibsDir: File
+  get() =
+    if (hasProperty(PROPERTY_LIBS_DIR))
+      file(property(PROPERTY_LIBS_DIR)!!.toString().trim())
+    else
+      xtrasDir.resolve("libs")
+
 
 
 class XtrasPlugin : Plugin<Project> {

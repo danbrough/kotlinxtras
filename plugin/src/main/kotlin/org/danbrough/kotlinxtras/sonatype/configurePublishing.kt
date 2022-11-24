@@ -1,6 +1,7 @@
 package org.danbrough.kotlinxtras.sonatype
 
 
+import org.danbrough.kotlinxtras.binaries.BinaryExtension
 import org.danbrough.kotlinxtras.xtrasDocsDir
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
@@ -8,7 +9,6 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.findByType
-import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.getValue
 import org.gradle.kotlin.dsl.named
@@ -16,12 +16,14 @@ import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.registering
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import java.net.URI
 
 
 internal fun Project.configurePublishing(extn: SonatypeExtension) {
   println("configurePublishing - ${project.group}:${project.name}:${project.version}")
+
 
   extensions.findByType<PublishingExtension>()?.apply {
 
@@ -43,15 +45,35 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
       }
     }
 
-    val sourcesJar by tasks.registering(Jar::class) {
-      archiveClassifier.set("sources")
-      from(kotlinExtension.sourceSets["main"].kotlin)
+    val kotlinMPP = project.extensions.findByType<KotlinMultiplatformExtension>()
+    if (kotlinMPP == null) {
+      val sourceSet = kotlinExtension.sourceSets.findByName("main")?.kotlin
+
+      val sourcesJar = sourceSet?.let {
+        tasks.register("sourcesJar${name.capitalize()}", Jar::class.java) {
+          archiveClassifier.set("sources")
+          from(it)
+        }
+      }
+
+      sourcesJar?.also {
+        publications.all {
+          if (this is MavenPublication)
+            artifact(it)
+        }
+      }
     }
 
-    publications.all {
-      if (this is MavenPublication)
-      artifact(sourcesJar)
+    project.extensions.findByType<BinaryExtension>()?.also {xtras->
+      if (xtras.buildTask != null){
+        //need to be able to publish the binary archive
+        xtras.konanTargets.forEach {
+
+        }
+      }
     }
+
+
 
     if (extn.signPublications) {
       apply<SigningPlugin>()
@@ -61,6 +83,8 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
         }
       }
     }
+
+
 
     repositories {
       maven {

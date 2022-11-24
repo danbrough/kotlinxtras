@@ -1,18 +1,18 @@
 
 
-//import org.danbrough.kotlinxtras.binaries.declareNativeTargets
+import org.danbrough.kotlinxtras.binaries.declareNativeTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   kotlin("multiplatform")
   `maven-publish`
+  id("org.danbrough.kotlinxtras.sonatype")
 }
+
 
 kotlin {
 
-  //declareNativeTargets()
-
-  linuxX64()
+  declareNativeTargets()
 
   val posixMain by sourceSets.creating
 

@@ -3,7 +3,6 @@ package org.danbrough.kotlinxtras.binaries
 import org.danbrough.kotlinxtras.xtrasDownloadsDir
 import org.gradle.api.tasks.Exec
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import java.io.File
 
 
 interface SourceConfig
@@ -16,16 +15,6 @@ data class ArchiveSourceConfig(
 data class GitSourceConfig(val commit: String) : SourceConfig
 
 
-data class InteropsConfig(
-  //name of the interops task
-  var name:String,
-  //path to the generated (or preexisting) def file
-  var defFile: File? = null,
-  //inputs for the interops task
-  var inputs:File,
-  //to be added to the start of the generated interops file
-  var headers:String? = null
-)
 
 @BinariesDSLMarker
 fun BinaryExtension.download(url: String, configure: ArchiveSourceConfig.() -> Unit) {
