@@ -4,7 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 open class BinaryConfigurationExtension {
-  var gitBinary: String = "/usr/gin/git"
+  var gitBinary: String = "/usr/bin/git"
   var wgetBinary: String = "/usr/bin/wget"
   var tarBinary: String = "/usr/bin/tar"
   var autoreconfBinary: String = "/usr/bin/autoreconf"

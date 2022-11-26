@@ -53,7 +53,7 @@ internal fun LibraryExtension.registerGitDownloadTask(
       println("running: ${commandLine.joinToString(" ")}")
     }
     workingDir = gitRepoDir()
-    commandLine(binaryConfiguration, "remote", "add", "origin", sourceURL)
+    commandLine(binaryConfiguration.gitBinary, "remote", "add", "origin", sourceURL)
 
   }
 

@@ -100,6 +100,9 @@ abstract class LibraryExtension(
   fun buildSourcesTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasBuild${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
+  fun provideAllBinariesTaskName(name: String = libName): String =
+    "xtrasProvide${name.capitalized()}"
+
   fun provideBinariesTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasProvide${name.capitalized()}${konanTarget.platformName.capitalized()}"
 

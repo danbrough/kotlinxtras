@@ -84,6 +84,13 @@ gradlePlugin {
       description = "Provides openssl support to multi-platform projects"
     }
 
+    create("sqlite") {
+      id = "$group.sqlite"
+      implementationClass = "$group.SqlitePlugin"
+      displayName = "KotlinXtras sqlite plugin"
+      description = "Provides sqlite support to multi-platform projects"
+    }
+
   }
 }
 
