@@ -22,6 +22,10 @@ const val PROPERTY_DOCS_DIR = "xtras.docs.dir"
 
 const val PROPERTY_LIBS_DIR = "xtras.libs.dir"
 
+
+private fun Project.xtrasPath(name: String): File? =
+  properties[name]?.toString()?.trim()?.let { project.file(it) }
+
 /**
  * Path to the top level xtras directory.
  * This is where sources and binary packages are downloaded and built.
@@ -29,8 +33,7 @@ const val PROPERTY_LIBS_DIR = "xtras.libs.dir"
  * Defaults to `project.rootProject.buildDir.resolve("xtras")`
  */
 val Project.xtrasDir: File
-  get() = properties[PROPERTY_XTRAS_DIR]?.toString()?.trim()?.let { file(it) }
-    ?: rootProject.buildDir.resolve("xtras")
+  get() = xtrasPath(PROPERTY_XTRAS_DIR) ?: rootProject.buildDir.resolve("xtras")
 
 /**
  * Path to the xtras downloads directory.
@@ -39,8 +42,7 @@ val Project.xtrasDir: File
  * Defaults to `project.xtrasDir.resolve("downloads")`
  */
 val Project.xtrasDownloadsDir: File
-  get() = properties[PROPERTY_DOWNLOADS_DIR]?.toString()?.trim()?.let { file(it) }
-    ?: rootProject.buildDir.resolve("downloads")
+  get() = xtrasPath(PROPERTY_DOWNLOADS_DIR) ?: xtrasDir.resolve("downloads")
 
 
 /**
@@ -50,8 +52,8 @@ val Project.xtrasDownloadsDir: File
  * Defaults to `project.xtrasDir.resolve("packages")`
  */
 val Project.xtrasPackagesDir: File
-  get() = properties[PROPERTY_PACKAGES_DIR]?.toString()?.trim()?.let { file(it) }
-    ?: rootProject.buildDir.resolve("packages")
+  get() = xtrasPath(PROPERTY_PACKAGES_DIR) ?: xtrasDir.resolve("packages")
+
 
 
 /**
@@ -61,8 +63,7 @@ val Project.xtrasPackagesDir: File
  * Defaults to `project.xtrasDir.resolve("docs")`
  */
 val Project.xtrasDocsDir: File
-  get() = properties[PROPERTY_DOCS_DIR]?.toString()?.trim()?.let { file(it) }
-    ?: rootProject.buildDir.resolve("docs")
+  get() = xtrasPath(PROPERTY_DOCS_DIR) ?: xtrasDir.resolve("docs")
 
 
 /**
@@ -72,8 +73,7 @@ val Project.xtrasDocsDir: File
  * Defaults to `project.xtrasDir.resolve("libs")`
  */
 val Project.xtrasLibsDir: File
-  get() = properties[PROPERTY_LIBS_DIR]?.toString()?.trim()?.let { file(it) }
-    ?: rootProject.buildDir.resolve("libs")
+  get() = xtrasPath(PROPERTY_LIBS_DIR) ?: xtrasDir.resolve("libs")
 
 
 
