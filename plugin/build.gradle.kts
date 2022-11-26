@@ -12,7 +12,7 @@ repositories {
 }
 
 group = "org.danbrough.kotlinxtras"
-version = "0.0.3-beta01"
+version = "0.0.3-beta05"
 
 dependencies {
   compileOnly(kotlin("gradle-plugin"))

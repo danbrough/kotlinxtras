@@ -127,7 +127,12 @@ abstract class LibraryExtension(
     packageName: String = libName,
     packageVersion: String = version
   ): File =
-    project.xtrasLibsDir.resolve("$packageName/$packageVersion/${konanTarget.platformName}")
+    project.xtrasLibsDir.let {
+      println("xtrasLibsDir: $it")
+      it.resolve("$packageName/$packageVersion/${konanTarget.platformName}").also {
+        println("prefix dir: $it for $libName")
+      }
+    }
 
   val konanTargets: Set<KonanTarget>
     get() = project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.targets?.withType(

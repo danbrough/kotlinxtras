@@ -3,9 +3,7 @@ package org.danbrough.kotlinxtras
 import org.gradle.api.Project
 import java.io.File
 
-
 const val PROPERTY_XTRAS_DIR = "xtras.dir"
-
 
 /**
  * Location of the xtras packages directory
@@ -23,8 +21,9 @@ const val PROPERTY_DOCS_DIR = "xtras.docs.dir"
 const val PROPERTY_LIBS_DIR = "xtras.libs.dir"
 
 
-private fun Project.xtrasPath(name: String): File? =
-  properties[name]?.toString()?.trim()?.let { project.file(it) }
+private fun Project.xtrasPath(name: String,defValue:String? = null): File =
+  properties[name]?.toString()?.trim()?.let { project.file(it) } ?: defValue?.let { rootProject.xtrasDir.resolve(it) }
+  ?: rootProject.buildDir.resolve("xtras")
 
 /**
  * Path to the top level xtras directory.
@@ -32,9 +31,9 @@ private fun Project.xtrasPath(name: String): File? =
  *
  * Defaults to `project.rootProject.buildDir.resolve("xtras")`
  */
-val Project.xtrasDir: File
-  get() = xtrasPath(PROPERTY_XTRAS_DIR) ?: rootProject.buildDir.resolve("xtras")
 
+val Project.xtrasDir: File
+  get() = xtrasPath(PROPERTY_XTRAS_DIR)
 /**
  * Path to the xtras downloads directory.
  * This is where source archives are downloaded to.
@@ -42,7 +41,7 @@ val Project.xtrasDir: File
  * Defaults to `project.xtrasDir.resolve("downloads")`
  */
 val Project.xtrasDownloadsDir: File
-  get() = xtrasPath(PROPERTY_DOWNLOADS_DIR) ?: xtrasDir.resolve("downloads")
+  get() = xtrasPath(PROPERTY_DOWNLOADS_DIR,"downloads")
 
 
 /**
@@ -52,7 +51,7 @@ val Project.xtrasDownloadsDir: File
  * Defaults to `project.xtrasDir.resolve("packages")`
  */
 val Project.xtrasPackagesDir: File
-  get() = xtrasPath(PROPERTY_PACKAGES_DIR) ?: xtrasDir.resolve("packages")
+  get() = xtrasPath(PROPERTY_PACKAGES_DIR,"packages")
 
 
 
@@ -63,8 +62,7 @@ val Project.xtrasPackagesDir: File
  * Defaults to `project.xtrasDir.resolve("docs")`
  */
 val Project.xtrasDocsDir: File
-  get() = xtrasPath(PROPERTY_DOCS_DIR) ?: xtrasDir.resolve("docs")
-
+  get() = xtrasPath(PROPERTY_DOCS_DIR,"docs")
 
 /**
  * Path to the xtras libs directory.
@@ -73,7 +71,6 @@ val Project.xtrasDocsDir: File
  * Defaults to `project.xtrasDir.resolve("libs")`
  */
 val Project.xtrasLibsDir: File
-  get() = xtrasPath(PROPERTY_LIBS_DIR) ?: xtrasDir.resolve("libs")
-
+  get() = xtrasPath(PROPERTY_LIBS_DIR,"libs")
 
 
