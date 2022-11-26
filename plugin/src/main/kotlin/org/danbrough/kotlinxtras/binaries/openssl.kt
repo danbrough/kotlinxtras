@@ -2,7 +2,6 @@ package org.danbrough.kotlinxtras.binaries
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-
 val KonanTarget.opensslPlatform: String
   get() = when (this) {
     KonanTarget.LINUX_X64 -> "linux-x86_64"

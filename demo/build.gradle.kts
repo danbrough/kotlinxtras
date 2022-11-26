@@ -1,8 +1,6 @@
-import org.danbrough.kotlinxtras.binaries.BinaryExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractExecutable
+import org.danbrough.kotlinxtras.binaries.LibraryExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.Executable
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -10,6 +8,8 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 plugins {
   kotlin("multiplatform")
   id("org.danbrough.kotlinxtras.iconv")
+  id("org.danbrough.kotlinxtras.openssl")
+
 }
 
 iconv {
@@ -62,26 +62,26 @@ kotlin {
 
 afterEvaluate {
 
-  val xtras = extensions.getByType(BinaryExtension::class)
+  val xtras = extensions.getByType(LibraryExtension::class)
 
   kotlin.targets.withType<KotlinNativeTarget> {
     binaries.all {
-       if (this is Executable){
-         //println("EXECUTABLE $name ${this.buildType} ${outputKind} ${this.runTaskName}")
-         val ldLibraryPathKey = if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH"
-         val prefixDir = xtras.prefixDir(target.konanTarget)
-         runTask?.environment(ldLibraryPathKey,prefixDir.resolve("lib"))
-       }
+      if (this is Executable) {
+        //println("EXECUTABLE $name ${this.buildType} ${outputKind} ${this.runTaskName}")
+        val ldLibraryPathKey = if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH"
+        val prefixDir = xtras.prefixDir(target.konanTarget)
+        runTask?.environment(ldLibraryPathKey, prefixDir.resolve("lib"))
+      }
     }
   }
 
-  tasks.withType(KotlinNativeTest::class.java){
-    val hostTarget = if (HostManager.hostIsMac){
+  tasks.withType(KotlinNativeTest::class.java) {
+    val hostTarget = if (HostManager.hostIsMac) {
       KonanTarget.MACOS_X64
     } else KonanTarget.LINUX_X64
     val prefixDir = xtras.prefixDir(KonanTarget.LINUX_X64)
     val ldLibraryPathKey = if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH"
-    environment(ldLibraryPathKey,prefixDir.resolve("lib"))
+    environment(ldLibraryPathKey, prefixDir.resolve("lib"))
   }
 
 }

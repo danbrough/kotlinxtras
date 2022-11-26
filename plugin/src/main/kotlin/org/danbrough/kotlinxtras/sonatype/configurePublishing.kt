@@ -1,7 +1,7 @@
 package org.danbrough.kotlinxtras.sonatype
 
 
-import org.danbrough.kotlinxtras.binaries.BinaryExtension
+import org.danbrough.kotlinxtras.binaries.LibraryExtension
 import org.danbrough.kotlinxtras.xtrasDocsDir
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
@@ -64,7 +64,7 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
       }
     }
 
-    project.extensions.findByType<BinaryExtension>()?.also {xtras->
+    project.extensions.findByType<LibraryExtension>()?.also { xtras->
       if (xtras.buildTask != null){
         //need to be able to publish the binary archive
         xtras.konanTargets.forEach {

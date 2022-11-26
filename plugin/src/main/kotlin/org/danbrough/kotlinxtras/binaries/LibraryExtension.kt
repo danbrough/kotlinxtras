@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
-import java.io.Serializable
 
 const val KOTLIN_XTRAS_DIR_NAME = "xtras"
 const val XTRAS_TASK_GROUP = "xtras"
@@ -23,38 +22,25 @@ const val XTRAS_TASK_GROUP = "xtras"
 //@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE,AnnotationTarget.FUNCTION)
 annotation class BinariesDSLMarker
 
-interface Configuration : Serializable {
-  var gitBinary: String
-  var wgetBinary: String
-  var tarBinary: String
-}
-
-data class DefaultConfiguration(
-  override var gitBinary: String = "/usr/bin/git",
-  override var wgetBinary: String = "/usr/bin/wget",
-  override var tarBinary: String = "/usr/bin/tar"
-) : Configuration
-
 
 typealias SourcesTask = Exec.(KonanTarget) -> Unit
 
 @BinariesDSLMarker
-fun Project.registerBinariesExtension(
+fun <T : LibraryExtension> Project.registerLibraryExtension(
   name: String,
-  configuration: Configuration = DefaultConfiguration(),
-  configure: BinaryExtension.() -> Unit
-): BinaryExtension =
-  registerBinariesExtension(name, configuration).apply {
-    configure()
-  }
+  type: Class<T>,
+  configure: T.() -> Unit
+): LibraryExtension =
+  registerLibraryExtension(name, type).apply(configure)
 
 @BinariesDSLMarker
-open class BinaryExtension(
+abstract class LibraryExtension(
   val project: Project,
 //Unique identifier for a binary package
-  var libName: String,
-  var configuration: Configuration = DefaultConfiguration()
+  var libName: String
 ) {
+
+  lateinit var binaryConfiguration: BinaryConfigurationExtension
 
   @BinariesDSLMarker
   open var version: String = "unspecified"
@@ -84,10 +70,10 @@ open class BinaryExtension(
     installTask = task
   }
 
-  internal var cinteropsConfigTask: (CInteropsConfig.()->Unit)? = null
+  internal var cinteropsConfigTask: (CInteropsConfig.() -> Unit)? = null
 
   @BinariesDSLMarker
-  fun cinterops(configure: CInteropsConfig.()->Unit){
+  fun cinterops(configure: CInteropsConfig.() -> Unit) {
     cinteropsConfigTask = configure
   }
 
@@ -119,7 +105,8 @@ open class BinaryExtension(
 
   fun packageTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasPackage${name.capitalized()}${konanTarget.platformName.capitalized()}"
-  fun generateCInteropsTaskName( name: String = libName): String =
+
+  fun generateCInteropsTaskName(name: String = libName): String =
     "xtrasGenerateCInterops${name.capitalized()}"
 
   fun packageFile(
@@ -132,7 +119,11 @@ open class BinaryExtension(
   open fun sourcesDir(konanTarget: KonanTarget): File =
     project.xtrasDir.resolve("src/$libName/$version/${konanTarget.platformName}")
 
-  open fun prefixDir(konanTarget: KonanTarget,packageName:String = libName,packageVersion:String = version): File =
+  open fun prefixDir(
+    konanTarget: KonanTarget,
+    packageName: String = libName,
+    packageVersion: String = version
+  ): File =
     project.xtrasLibsDir.resolve("$packageName/$packageVersion/${konanTarget.platformName}")
 
   val konanTargets: Set<KonanTarget>
@@ -144,7 +135,8 @@ open class BinaryExtension(
     konanTarget: KonanTarget,
     name: String = libName,
     packageVersion: String = version
-  ): Boolean = project.xtrasPackagesDir.resolve(packageFile(konanTarget, name, packageVersion)).exists()
+  ): Boolean =
+    project.xtrasPackagesDir.resolve(packageFile(konanTarget, name, packageVersion)).exists()
 
 
   open fun buildEnvironment(konanTarget: KonanTarget): Map<String, *> =
@@ -152,28 +144,40 @@ open class BinaryExtension(
 
 }
 
-private fun Project.registerBinariesExtension(
+private fun <T : LibraryExtension> Project.registerLibraryExtension(
   extnName: String,
-  configuration: Configuration = DefaultConfiguration()
-): BinaryExtension =
-  extensions.create(extnName, BinaryExtension::class.java, this, extnName, configuration)
+  type: Class<T>
+): T {
+  val configuration = extensions.findByType(BinaryConfigurationExtension::class.java) ?: let {
+    println("APPLYING BINARY PLUGIN")
+    pluginManager.apply(BinaryPlugin::class.java)
+    extensions.getByType(BinaryConfigurationExtension::class.java)
+  }
+  return extensions.create(extnName, type, this)
     .apply {
+      binaryConfiguration = configuration
       project.afterEvaluate {
         registerXtrasTasks()
       }
     }
+}
 
 
-private fun BinaryExtension.registerXtrasTasks() {
+private fun LibraryExtension.registerXtrasTasks() {
   val srcConfig = sourceConfig
 
+  println("registerXtrasTasks for $libName")
   when (srcConfig) {
     is ArchiveSourceConfig -> {
+      println("doing registerArchiveDownloadTask for $libName")
+
       registerArchiveDownloadTask(srcConfig)
     }
 
     is GitSourceConfig -> {
+      println("doing registerGitDownloadTask for $libName")
       registerGitDownloadTask(srcConfig)
+      println("done registerGitDownloadTask for $libName")
     }
   }
 
@@ -204,11 +208,7 @@ private fun BinaryExtension.registerXtrasTasks() {
   }
 
 
-      registerGenerateInteropsTask()
-
-
-
-
+  registerGenerateInteropsTask()
 
 }
 

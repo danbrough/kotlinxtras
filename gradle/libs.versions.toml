@@ -13,7 +13,7 @@ org-danbrough-kotlinxtras-sonatype = { id = "org.danbrough.kotlinxtras.sonatype"
 
 kotlin = "1.7.21"
 dokka = "1.7.20"
-xtras = "0.0.3-beta03"
+xtras = "0.0.3-beta01"
 
 [libraries]
 

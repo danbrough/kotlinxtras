@@ -18,5 +18,6 @@ plugins {
 rootProject.name = "kotlinxtras"
 
 include(":common")
-include(":plugins")
+include(":demo2")
+//include(":plugins")
 includeBuild("plugin")

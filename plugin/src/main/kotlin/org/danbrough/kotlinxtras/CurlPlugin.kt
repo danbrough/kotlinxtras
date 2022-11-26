@@ -9,15 +9,16 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
 import org.gradle.configurationcache.extensions.capitalized
 
+const val XTRAS_CURL_EXTN_NAME = "xtrasCurl"
+
 open class CurlBinaryExtension(project: Project) : LibraryExtension(project,"curl")
 class CurlPlugin : Plugin<Project> {
 
-
   override fun apply(project: Project) {
 
-    project.extensions.findByName("openssl") ?: throw Error("Openssl plugin is required.")
+    project.extensions.findByName(XTRAS_CURL_EXTN_NAME) ?: throw Error("Openssl plugin is required.")
 
-    project.registerLibraryExtension("curl",CurlBinaryExtension::class.java){
+    project.registerLibraryExtension(XTRAS_CURL_EXTN_NAME,CurlBinaryExtension::class.java){
 
       println("CREATED CURL BINARY EXTENSION: $this")
 
@@ -29,10 +30,9 @@ class CurlPlugin : Plugin<Project> {
       configureTarget {target->
         project.tasks.create("autoconf${target.platformName.capitalized()}", Exec::class.java) {
           dependsOn(extractSourcesTaskName(target))
-          val sourcesDir = sourcesDir(target)
-          workingDir(sourcesDir)
-          outputs.file(sourcesDir.resolve("configure"))
-          commandLine("autoreconf", "-fi")
+          workingDir(sourcesDir(target))
+          outputs.file(workingDir.resolve("configure"))
+          commandLine(binaryConfiguration.autoreconfBinary, "-fi")
         }
       }
 
@@ -59,7 +59,7 @@ class CurlPlugin : Plugin<Project> {
 
 
       build {
-        commandLine("make", "install")
+        commandLine(binaryConfiguration.makeBinary, "install")
       }
     }
   }

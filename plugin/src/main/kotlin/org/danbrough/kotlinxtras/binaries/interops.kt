@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.io.PrintWriter
 
-typealias CInteropsTargetWriter = BinaryExtension.(KonanTarget, PrintWriter)->Unit
+typealias CInteropsTargetWriter = LibraryExtension.(KonanTarget, PrintWriter)->Unit
 
 data class CInteropsConfig(
   //name of the interops task
@@ -38,29 +38,34 @@ val defaultCInteropsTargetWriter: CInteropsTargetWriter = { konanTarget,output->
   )
 }
 
-fun BinaryExtension.registerGenerateInteropsTask() {
+fun LibraryExtension.registerGenerateInteropsTask() {
+
 
   val config = CInteropsConfig("xtras${libName.capitalized()}",project.file("src/cinterops/xtras_${libName}.def"))
   cinteropsConfigTask?.invoke(config)
 
   //register empty task if no headers are provided
-  config.headersFile ?:  project.tasks.register(generateCInteropsTaskName()) {
-    group = XTRAS_TASK_GROUP
-    doFirst{
-      println("not generating ${config.defFile} as no headers provided.")
+  if (config.headersFile == null){
+    project.tasks.register(generateCInteropsTaskName()) {
+      group = XTRAS_TASK_GROUP
+      doFirst{
+        println("not generating ${config.defFile} as no headers provided.")
+      }
     }
-  }
 
-  project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply{
-    targets.withType(KotlinNativeTarget::class.java).all {
-      compilations.getByName("main").apply {
-        cinterops.create(config.name){
-          defFile(config.defFile)
-          config.configure?.invoke(this)
+    project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply{
+      targets.withType(KotlinNativeTarget::class.java).all {
+        compilations.getByName("main").apply {
+          cinterops.create(config.name){
+            defFile(config.defFile)
+            config.configure?.invoke(this)
+          }
         }
       }
     }
+    return
   }
+
 
   project.tasks.withType(CInteropProcess::class.java).all {
     dependsOn(generateCInteropsTaskName())

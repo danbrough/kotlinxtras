@@ -8,13 +8,15 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.konan.target.Family
 
-open class OpenSSLBinaryExtension(project: Project) : LibraryExtension(project, "curl")
+const val XTRAS_OPENSSL_EXTN_NAME = "xtrasOpenssl"
+
+open class OpenSSLBinaryExtension(project: Project) : LibraryExtension(project, "openssl")
 
 
 class OpenSSLPlugin : Plugin<Project> {
   override fun apply(project: Project) {
 
-    project.registerLibraryExtension("openssl", OpenSSLBinaryExtension::class.java) {
+    project.registerLibraryExtension(XTRAS_OPENSSL_EXTN_NAME, OpenSSLBinaryExtension::class.java) {
 
       version = "1_1_1s"
 

@@ -1,6 +1,5 @@
 package org.danbrough.kotlinxtras
 
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File
 
@@ -93,10 +92,4 @@ val Project.xtrasLibsDir: File
       xtrasDir.resolve("libs")
 
 
-
-class XtrasPlugin : Plugin<Project> {
-  override fun apply(target: Project) {
-    //do nothing
-  }
-}
 

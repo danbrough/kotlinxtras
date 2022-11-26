@@ -3,7 +3,6 @@ plugins {
   `maven-publish`
   `signing`
   id("org.jetbrains.dokka")
-  id("org.danbrough.kotlinxtras.xtras")
   id("org.danbrough.kotlinxtras.sonatype")
 }
 

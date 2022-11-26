@@ -15,21 +15,20 @@ data class ArchiveSourceConfig(
 data class GitSourceConfig(val commit: String) : SourceConfig
 
 
-
 @BinariesDSLMarker
-fun BinaryExtension.download(url: String, configure: ArchiveSourceConfig.() -> Unit) {
+fun LibraryExtension.download(url: String, configure: ArchiveSourceConfig.() -> Unit) {
   sourceURL = url
   sourceConfig = ArchiveSourceConfig().also(configure)
 }
 
 @BinariesDSLMarker
-fun BinaryExtension.git(url: String, commit: String) {
+fun LibraryExtension.git(url: String, commit: String) {
   sourceURL = url
   sourceConfig = GitSourceConfig(commit)
 }
 
 
-internal fun BinaryExtension.registerGitDownloadTask(
+internal fun LibraryExtension.registerGitDownloadTask(
   srcConfig: GitSourceConfig
 ) {
 
@@ -46,18 +45,19 @@ internal fun BinaryExtension.registerGitDownloadTask(
 
     doFirst {
       project.exec {
-        commandLine(configuration.gitBinary, "init", "--bare", repoDir)
+        commandLine(binaryConfiguration.gitBinary, "init", "--bare", repoDir)
         println("running#: ${commandLine.joinToString(" ")}")
       }
 
 
-      println("running-: ${commandLine.joinToString(" ")}")
+      println("running: ${commandLine.joinToString(" ")}")
     }
     workingDir = gitRepoDir()
-    commandLine(configuration.gitBinary, "remote", "add", "origin", sourceURL)
+    commandLine(binaryConfiguration, "remote", "add", "origin", sourceURL)
 
   }
 
+  println("registering: $downloadSourcesTaskName")
   project.tasks.register(downloadSourcesTaskName, Exec::class.java) {
     inputs.property("url", sourceURL)
     inputs.property("commit", srcConfig.commit)
@@ -67,7 +67,7 @@ internal fun BinaryExtension.registerGitDownloadTask(
     group = XTRAS_TASK_GROUP
     workingDir(repoDir)
     commandLine(
-      configuration.gitBinary,
+      binaryConfiguration.gitBinary,
       "fetch",
       "--depth",
       "1",
@@ -78,7 +78,7 @@ internal fun BinaryExtension.registerGitDownloadTask(
 }
 
 
-internal fun BinaryExtension.registerGitExtractTask(
+internal fun LibraryExtension.registerGitExtractTask(
   srcConfig: GitSourceConfig,
   konanTarget: KonanTarget
 ) {
@@ -98,7 +98,7 @@ internal fun BinaryExtension.registerGitExtractTask(
     actions.add {
       project.exec {
         workingDir = destDir
-        commandLine(configuration.gitBinary, "init")
+        commandLine(binaryConfiguration.gitBinary, "init")
         println("running: ${commandLine.joinToString(" ")}")
       }
     }
@@ -106,7 +106,7 @@ internal fun BinaryExtension.registerGitExtractTask(
     actions.add {
       project.exec {
         workingDir = destDir
-        commandLine(configuration.gitBinary, "remote", "add", "origin", gitRepo)
+        commandLine(binaryConfiguration.gitBinary, "remote", "add", "origin", gitRepo)
         println("running: ${commandLine.joinToString(" ")}")
       }
     }
@@ -123,7 +123,7 @@ internal fun BinaryExtension.registerGitExtractTask(
     actions.add {
       project.exec {
         workingDir = destDir
-        commandLine(configuration.gitBinary, "fetch", "--depth", "1", "origin", srcConfig.commit)
+        commandLine(binaryConfiguration.gitBinary, "fetch", "--depth", "1", "origin", srcConfig.commit)
         println("running: ${commandLine.joinToString(" ")}")
       }
       println("checking out commit:${srcConfig.commit} in $destDir")
@@ -132,7 +132,7 @@ internal fun BinaryExtension.registerGitExtractTask(
     actions.add {
       project.exec {
         workingDir = destDir
-        commandLine(configuration.gitBinary, "checkout", srcConfig.commit)
+        commandLine(binaryConfiguration.gitBinary, "checkout", srcConfig.commit)
         println("running: ${commandLine.joinToString(" ")}")
       }
     }
@@ -140,7 +140,7 @@ internal fun BinaryExtension.registerGitExtractTask(
 }
 
 
-internal fun BinaryExtension.registerArchiveDownloadTask(srcConfig: ArchiveSourceConfig) {
+internal fun LibraryExtension.registerArchiveDownloadTask(srcConfig: ArchiveSourceConfig) {
   project.tasks.register(downloadSourcesTaskName, Exec::class.java) {
     group = XTRAS_TASK_GROUP
 
@@ -148,12 +148,13 @@ internal fun BinaryExtension.registerArchiveDownloadTask(srcConfig: ArchiveSourc
     val outputFile = downloadsDir.resolve(sourceURL!!.substringAfterLast('/'))
     inputs.property("url", sourceURL!!)
     outputs.file(outputFile)
+    enabled = !outputFile.exists()
     doFirst {
       if (!downloadsDir.exists()) downloadsDir.mkdirs()
       println("running: ${commandLine.joinToString(" ")}")
     }
     commandLine(
-      configuration.wgetBinary, "-q",
+      binaryConfiguration.wgetBinary, "-q",
       "-c",
       inputs.properties["url"],
       "-P",
@@ -163,7 +164,7 @@ internal fun BinaryExtension.registerArchiveDownloadTask(srcConfig: ArchiveSourc
 }
 
 
-internal fun BinaryExtension.registerArchiveExtractTask(
+internal fun LibraryExtension.registerArchiveExtractTask(
   srcConfig: ArchiveSourceConfig,
   konanTarget: KonanTarget
 ) {
@@ -180,7 +181,8 @@ internal fun BinaryExtension.registerArchiveExtractTask(
       println("running: ${commandLine.joinToString(" ")}")
     }
     workingDir(destDir)
-    val cmdLine = mutableListOf<String>("tar", srcConfig.tarExtractOptions, archiveFile.absolutePath)
+    val cmdLine =
+      mutableListOf<String>("tar", srcConfig.tarExtractOptions, archiveFile.absolutePath)
     if (srcConfig.stripTopDir) cmdLine += "--strip-components=1"
     commandLine(cmdLine)
   }
