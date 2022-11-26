@@ -152,7 +152,6 @@ private fun <T : LibraryExtension> Project.registerLibraryExtension(
   type: Class<T>
 ): T {
   val configuration = extensions.findByType(BinaryConfigurationExtension::class.java) ?: let {
-    println("APPLYING BINARY PLUGIN")
     pluginManager.apply(BinaryPlugin::class.java)
     extensions.getByType(BinaryConfigurationExtension::class.java)
   }
@@ -169,19 +168,12 @@ private fun <T : LibraryExtension> Project.registerLibraryExtension(
 private fun LibraryExtension.registerXtrasTasks() {
   val srcConfig = sourceConfig
 
-  println("registerXtrasTasks for $libName")
   when (srcConfig) {
-    is ArchiveSourceConfig -> {
-      println("doing registerArchiveDownloadTask for $libName")
-
+    is ArchiveSourceConfig ->
       registerArchiveDownloadTask(srcConfig)
-    }
 
-    is GitSourceConfig -> {
-      println("doing registerGitDownloadTask for $libName")
+    is GitSourceConfig ->
       registerGitDownloadTask(srcConfig)
-      println("done registerGitDownloadTask for $libName")
-    }
   }
 
   konanTargets.forEach { konanTarget ->

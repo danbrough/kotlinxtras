@@ -22,8 +22,7 @@ import java.net.URI
 
 
 internal fun Project.configurePublishing(extn: SonatypeExtension) {
-  println("configurePublishing - ${project.group}:${project.name}:${project.version}")
-
+  //println("configurePublishing - ${project.group}:${project.name}:${project.version}")
 
   extensions.findByType<PublishingExtension>()?.apply {
 

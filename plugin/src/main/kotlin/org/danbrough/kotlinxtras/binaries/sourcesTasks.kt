@@ -57,7 +57,6 @@ internal fun LibraryExtension.registerGitDownloadTask(
 
   }
 
-  println("registering: $downloadSourcesTaskName")
   project.tasks.register(downloadSourcesTaskName, Exec::class.java) {
     inputs.property("url", sourceURL)
     inputs.property("commit", srcConfig.commit)
