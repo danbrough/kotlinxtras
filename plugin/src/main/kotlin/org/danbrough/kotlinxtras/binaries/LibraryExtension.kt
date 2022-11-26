@@ -14,12 +14,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
-const val KOTLIN_XTRAS_DIR_NAME = "xtras"
-const val XTRAS_TASK_GROUP = "xtras"
-
 
 @DslMarker
-//@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE,AnnotationTarget.FUNCTION)
 annotation class BinariesDSLMarker
 
 
@@ -47,6 +43,16 @@ abstract class LibraryExtension(
 
   @BinariesDSLMarker
   open var sourceURL: String? = null
+
+  /**
+   * Konan targets supported by this library.
+   *
+   * By default all configured targets are supported.
+   *
+   * Use [konanTargets] to get the list of supported targets.
+   */
+  @BinariesDSLMarker
+  open var supportedTargets: Set<KonanTarget>? = null
 
   open fun gitRepoDir(): File = project.xtrasDownloadsDir.resolve("repos/$libName")
 
@@ -87,7 +93,6 @@ abstract class LibraryExtension(
 
   internal var configureTargetTask: ((KonanTarget) -> Unit)? = null
 
-
   val downloadSourcesTaskName: String
     get() = "xtrasDownloadSources${libName.capitalized()}"
 
@@ -127,17 +132,8 @@ abstract class LibraryExtension(
     packageName: String = libName,
     packageVersion: String = version
   ): File =
-    project.xtrasLibsDir.let {
-      println("xtrasLibsDir: $it")
-      it.resolve("$packageName/$packageVersion/${konanTarget.platformName}").also {
-        println("prefix dir: $it for $libName")
-      }
-    }
+    project.xtrasLibsDir.resolve("$packageName/$packageVersion/${konanTarget.platformName}")
 
-  val konanTargets: Set<KonanTarget>
-    get() = project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.targets?.withType(
-      KotlinNativeTarget::class.java
-    )?.map { it.konanTarget }?.toSet() ?: emptySet()
 
   open fun isPackageBuilt(
     konanTarget: KonanTarget,
@@ -168,6 +164,12 @@ private fun <T : LibraryExtension> Project.registerLibraryExtension(
       }
     }
 }
+
+val LibraryExtension.konanTargets: Set<KonanTarget>
+  get() = supportedTargets
+    ?: project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.targets?.withType(
+      KotlinNativeTarget::class.java
+    )?.map { it.konanTarget }?.toSet() ?: emptySet()
 
 
 private fun LibraryExtension.registerXtrasTasks() {

@@ -26,8 +26,8 @@ class CurlPlugin : Plugin<Project> {
 
       git("https://github.com/curl/curl.git", "cd95ee9f771361acf241629d2fe5507e308082a2")
 
-
-      val autoConfTaskName: KonanTarget.()-> String = {"xtrasAutoconf${libName.capitalized()}${platformName.capitalized()}"}
+      val autoConfTaskName: KonanTarget.() -> String =
+        { "xtrasAutoconf${libName.capitalized()}${platformName.capitalized()}" }
 
       configureTarget { target ->
         project.tasks.create(target.autoConfTaskName(), Exec::class.java) {
@@ -61,6 +61,15 @@ class CurlPlugin : Plugin<Project> {
 
       build {
         commandLine(binaryConfiguration.makeBinary, "install")
+      }
+
+      cinterops {
+        headers = """
+          |headers = curl/curl.h
+          |linkerOpts =  -lz -lssl -lcrypto -lcurl
+          |#staticLibraries.linux = libcurl.a
+          |#staticLibraries.android = libcurl.a
+          |""".trimMargin()
       }
     }
   }

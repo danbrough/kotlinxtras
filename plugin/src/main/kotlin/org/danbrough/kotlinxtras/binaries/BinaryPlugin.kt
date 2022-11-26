@@ -1,5 +1,6 @@
 package org.danbrough.kotlinxtras.binaries
 
+import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 

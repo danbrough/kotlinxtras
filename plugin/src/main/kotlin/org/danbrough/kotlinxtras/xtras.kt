@@ -3,6 +3,8 @@ package org.danbrough.kotlinxtras
 import org.gradle.api.Project
 import java.io.File
 
+const val XTRAS_TASK_GROUP = "xtras"
+
 const val PROPERTY_XTRAS_DIR = "xtras.dir"
 
 /**
@@ -21,8 +23,10 @@ const val PROPERTY_DOCS_DIR = "xtras.docs.dir"
 const val PROPERTY_LIBS_DIR = "xtras.libs.dir"
 
 
-private fun Project.xtrasPath(name: String,defValue:String? = null): File =
-  properties[name]?.toString()?.trim()?.let { project.file(it) } ?: defValue?.let { rootProject.xtrasDir.resolve(it) }
+private fun Project.xtrasPath(name: String, defValue: String? = null): File =
+  properties[name]?.toString()?.trim()?.let {
+    project.file(it)
+  } ?: defValue?.let { rootProject.xtrasDir.resolve(it) }
   ?: rootProject.buildDir.resolve("xtras")
 
 /**
@@ -34,6 +38,7 @@ private fun Project.xtrasPath(name: String,defValue:String? = null): File =
 
 val Project.xtrasDir: File
   get() = xtrasPath(PROPERTY_XTRAS_DIR)
+
 /**
  * Path to the xtras downloads directory.
  * This is where source archives are downloaded to.
@@ -41,7 +46,7 @@ val Project.xtrasDir: File
  * Defaults to `project.xtrasDir.resolve("downloads")`
  */
 val Project.xtrasDownloadsDir: File
-  get() = xtrasPath(PROPERTY_DOWNLOADS_DIR,"downloads")
+  get() = xtrasPath(PROPERTY_DOWNLOADS_DIR, "downloads")
 
 
 /**
@@ -51,8 +56,7 @@ val Project.xtrasDownloadsDir: File
  * Defaults to `project.xtrasDir.resolve("packages")`
  */
 val Project.xtrasPackagesDir: File
-  get() = xtrasPath(PROPERTY_PACKAGES_DIR,"packages")
-
+  get() = xtrasPath(PROPERTY_PACKAGES_DIR, "packages")
 
 
 /**
@@ -62,7 +66,7 @@ val Project.xtrasPackagesDir: File
  * Defaults to `project.xtrasDir.resolve("docs")`
  */
 val Project.xtrasDocsDir: File
-  get() = xtrasPath(PROPERTY_DOCS_DIR,"docs")
+  get() = xtrasPath(PROPERTY_DOCS_DIR, "docs")
 
 /**
  * Path to the xtras libs directory.
@@ -71,6 +75,6 @@ val Project.xtrasDocsDir: File
  * Defaults to `project.xtrasDir.resolve("libs")`
  */
 val Project.xtrasLibsDir: File
-  get() = xtrasPath(PROPERTY_LIBS_DIR,"libs")
+  get() = xtrasPath(PROPERTY_LIBS_DIR, "libs")
 
 

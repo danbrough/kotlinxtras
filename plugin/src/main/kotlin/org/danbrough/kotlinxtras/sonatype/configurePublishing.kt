@@ -2,6 +2,7 @@ package org.danbrough.kotlinxtras.sonatype
 
 
 import org.danbrough.kotlinxtras.binaries.LibraryExtension
+import org.danbrough.kotlinxtras.binaries.konanTargets
 import org.danbrough.kotlinxtras.xtrasDocsDir
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension

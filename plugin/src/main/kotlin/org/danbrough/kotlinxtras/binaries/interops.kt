@@ -1,5 +1,6 @@
 package org.danbrough.kotlinxtras.binaries
 
+import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
@@ -9,25 +10,31 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.io.PrintWriter
 
-typealias CInteropsTargetWriter = LibraryExtension.(KonanTarget, PrintWriter)->Unit
+typealias CInteropsTargetWriter = LibraryExtension.(KonanTarget, PrintWriter) -> Unit
 
 data class CInteropsConfig(
   //name of the interops task
-  var name:String,
+  var name: String,
   //path to the generated (or preexisting) def file
   var defFile: File,
+
   //to be added to the start of the generated interops file
-  //no file will be generated if this remains null
+  //no file will be generated if this and [headers] remain null
   var headersFile: File? = null,
 
+  /**
+   * Specify the interops headers using a field instead of the [headersFile]
+   */
+  var headers: String? = null,
+
   //writes output to the defs file for a konanTarget
-  var writeTarget: CInteropsTargetWriter  = defaultCInteropsTargetWriter,
+  var writeTarget: CInteropsTargetWriter = defaultCInteropsTargetWriter,
 
   //customize the default config
-  var configure: (DefaultCInteropSettings.()->Unit)? = null
+  var configure: (DefaultCInteropSettings.() -> Unit)? = null
 )
 
-val defaultCInteropsTargetWriter: CInteropsTargetWriter = { konanTarget,output->
+val defaultCInteropsTargetWriter: CInteropsTargetWriter = { konanTarget, output ->
   val prefixDir = prefixDir(konanTarget).absolutePath
   output.println(
     """
@@ -40,23 +47,28 @@ val defaultCInteropsTargetWriter: CInteropsTargetWriter = { konanTarget,output->
 
 fun LibraryExtension.registerGenerateInteropsTask() {
 
+  println("registerGenerateInteropsTask for $this")
 
-  val config = CInteropsConfig("xtras${libName.capitalized()}",project.file("src/cinterops/xtras_${libName}.def"))
+  val config =  CInteropsConfig(
+    "xtras${libName.capitalized()}",
+    project.file("src/cinterops/xtras_${libName}.def")
+  )
+
   cinteropsConfigTask?.invoke(config)
 
   //register empty task if no headers are provided
-  if (config.headersFile == null){
+  if (config.headersFile == null && config.headers == null) {
     project.tasks.register(generateCInteropsTaskName()) {
       group = XTRAS_TASK_GROUP
-      doFirst{
-        println("not generating ${config.defFile} as no headers provided.")
+      doFirst {
+        println("not generating ${config.defFile} as neither headersFile or headers were provided.")
       }
     }
 
-    project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply{
+    project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
       targets.withType(KotlinNativeTarget::class.java).all {
         compilations.getByName("main").apply {
-          cinterops.create(config.name){
+          cinterops.create(config.name) {
             defFile(config.defFile)
             config.configure?.invoke(this)
           }
@@ -73,8 +85,14 @@ fun LibraryExtension.registerGenerateInteropsTask() {
 
   project.tasks.register(generateCInteropsTaskName()) {
     group = XTRAS_TASK_GROUP
-    val headersFile = config.headersFile!!
-    inputs.file(headersFile)
+
+    if (config.headersFile != null && config.headers != null)
+      throw Error("Only one of headersFile or headers should be specified for the cinterops config")
+
+    config.headers?.also { headers ->
+      inputs.property("headers", headers)
+    } ?: inputs.file(config.headersFile!!)
+
     val defFile = config.defFile
     outputs.file(defFile)
 
@@ -83,7 +101,8 @@ fun LibraryExtension.registerGenerateInteropsTask() {
     actions.add {
 
       defFile.printWriter().use { output ->
-        output.println(headersFile.readText())
+        //write the headers
+        output.println(config.headers ?: config.headersFile!!.readText())
 
         konanTargets.forEach { konanTarget ->
           config.writeTarget(this@registerGenerateInteropsTask, konanTarget, output)
@@ -92,7 +111,7 @@ fun LibraryExtension.registerGenerateInteropsTask() {
     }
 
     doLast {
-      println("generated $defFile from $headersFile")
+      println("generated $defFile")
     }
   }
 }

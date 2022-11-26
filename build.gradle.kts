@@ -8,7 +8,7 @@ plugins {
   kotlin("multiplatform") apply false
   `maven-publish`
   id("org.jetbrains.dokka") apply false
-  id("org.danbrough.kotlinxtras.binaries")
+  id("org.danbrough.kotlinxtras.binaries") apply false
   id("org.danbrough.kotlinxtras.sonatype") apply false
 }
 
