@@ -8,27 +8,29 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
 import org.gradle.configurationcache.extensions.capitalized
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 const val XTRAS_CURL_EXTN_NAME = "xtrasCurl"
 
-open class CurlBinaryExtension(project: Project) : LibraryExtension(project,"curl")
+open class CurlBinaryExtension(project: Project) : LibraryExtension(project, "curl")
 class CurlPlugin : Plugin<Project> {
 
   override fun apply(project: Project) {
 
-    project.extensions.findByName(XTRAS_CURL_EXTN_NAME) ?: throw Error("Openssl plugin is required.")
+    project.extensions.findByType(OpenSSLPlugin::class.java)
+      ?: project.pluginManager.apply(OpenSSLPlugin::class.java)
 
-    project.registerLibraryExtension(XTRAS_CURL_EXTN_NAME,CurlBinaryExtension::class.java){
-
-      println("CREATED CURL BINARY EXTENSION: $this")
+    project.registerLibraryExtension(XTRAS_CURL_EXTN_NAME, CurlBinaryExtension::class.java) {
 
       version = "7_86_0"
 
       git("https://github.com/curl/curl.git", "cd95ee9f771361acf241629d2fe5507e308082a2")
 
 
-      configureTarget {target->
-        project.tasks.create("autoconf${target.platformName.capitalized()}", Exec::class.java) {
+      val autoConfTaskName: KonanTarget.()-> String = {"xtrasAutoconf${libName.capitalized()}${platformName.capitalized()}"}
+
+      configureTarget { target ->
+        project.tasks.create(target.autoConfTaskName(), Exec::class.java) {
           dependsOn(extractSourcesTaskName(target))
           workingDir(sourcesDir(target))
           outputs.file(workingDir.resolve("configure"))
@@ -38,25 +40,24 @@ class CurlPlugin : Plugin<Project> {
 
 
       configure { target ->
-        val sourcesDir = sourcesDir(target)
-        dependsOn("autoconf${target.platformName.capitalized()}")
-        val buildOpenSSLTaskName = buildSourcesTaskName(target,"openssl")
-        val buildOpensslTask = project.tasks.getByName(buildOpenSSLTaskName)
-        val opensslDir = buildOpensslTask.outputs.files.files.first()
-        dependsOn(buildOpenSSLTaskName)
-        outputs.file(sourcesDir.resolve("Makefile"))
+        dependsOn(target.autoConfTaskName())
 
-        val args = mutableListOf(
+        val provideOpenSSLTaskName = provideBinariesTaskName(target, "openssl")
+        dependsOn(provideOpenSSLTaskName)
+
+        val provideOpenSSLTask = project.tasks.getByName(provideOpenSSLTaskName)
+        val opensslDir = provideOpenSSLTask.outputs.files.files.first()
+
+        outputs.file(workingDir.resolve("Makefile"))
+
+        commandLine(
           "./configure",
           "--host=${target.hostTriplet}",
           "--with-ssl=$opensslDir",
           "--with-ca-path=/etc/ssl/certs:/etc/security/cacerts:/etc/ca-certificates",
           "--prefix=${prefixDir(target)}"
         )
-
-        commandLine(args)
       }
-
 
       build {
         commandLine(binaryConfiguration.makeBinary, "install")

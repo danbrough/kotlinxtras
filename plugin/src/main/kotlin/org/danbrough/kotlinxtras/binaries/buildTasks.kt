@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 
 fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget)=
-  project.tasks.register(configureSourcesTaskName(target),Exec::class.java){
+  project.tasks.create(configureSourcesTaskName(target),Exec::class.java){
     if (!isPackageBuilt(target))
       dependsOn(extractSourcesTaskName(target))
     environment(buildEnvironment(target))
@@ -22,7 +22,7 @@ fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget)=
 
 
 fun LibraryExtension.registerBuildSourcesTask(target: KonanTarget)=
-  project.tasks.register(buildSourcesTaskName(target),Exec::class.java){
+  project.tasks.create(buildSourcesTaskName(target),Exec::class.java){
 
     group = XTRAS_TASK_GROUP
     environment(buildEnvironment(target))
@@ -40,7 +40,9 @@ fun LibraryExtension.registerBuildSourcesTask(target: KonanTarget)=
       finalizedBy(it)
     }
 
-    //onlyIf { !isPackageBuilt(target) }
+    doLast {
+      println("doLast in $name")
+    }
   }
 
 

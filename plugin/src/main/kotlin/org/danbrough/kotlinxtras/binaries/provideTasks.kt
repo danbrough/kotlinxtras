@@ -13,8 +13,11 @@ fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget) {
   project.tasks.create(provideBinariesTaskName(target)) {
     group = XTRAS_TASK_GROUP
     provideAllTask.dependsOn(this)
+    project.tasks.getByName(XTRAS_PROVIDE_ALL_TASK_NAME).dependsOn(this)
     buildTask?.also {
-      dependsOn(buildSourcesTaskName(target))
+      val buildSourcesTask = project.tasks.getByName(buildSourcesTaskName(target))
+      dependsOn(buildSourcesTask)
+      outputs.dir(buildSourcesTask.outputs.files.first())
     }
   }
 }
