@@ -1,7 +1,0 @@
-headers = sqlite3.h sqlite3ext.h
-linkerOpts = -ldl -lsqlite3
-linkerOpts.mingw = -ldl -lsqlite3 -lpthread
-headers = sqlite3.h
-headerFilter = sqlite3*.h
-
-
