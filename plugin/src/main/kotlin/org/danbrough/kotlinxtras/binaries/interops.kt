@@ -56,7 +56,20 @@ fun LibraryExtension.registerGenerateInteropsTask() {
 
   cinteropsConfigTask?.invoke(config)
 
-  //register empty task if no headers are provided
+
+
+  project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
+    targets.withType(KotlinNativeTarget::class.java).all {
+      compilations.getByName("main").apply {
+        cinterops.create(config.name) {
+          defFile(config.defFile)
+          config.configure?.invoke(this)
+        }
+      }
+    }
+  }
+
+/*  //register empty task if no headers are provided
   if (config.headersFile == null && config.headers == null) {
     project.tasks.register(generateCInteropsTaskName()) {
       group = XTRAS_TASK_GROUP
@@ -64,20 +77,8 @@ fun LibraryExtension.registerGenerateInteropsTask() {
         println("not generating ${config.defFile} as neither headersFile or headers were provided.")
       }
     }
-
-    project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
-      targets.withType(KotlinNativeTarget::class.java).all {
-        compilations.getByName("main").apply {
-          cinterops.create(config.name) {
-            defFile(config.defFile)
-            config.configure?.invoke(this)
-          }
-        }
-      }
-    }
     return
-  }
-
+  }*/
 
   project.tasks.withType(CInteropProcess::class.java).all {
     dependsOn(generateCInteropsTaskName())
