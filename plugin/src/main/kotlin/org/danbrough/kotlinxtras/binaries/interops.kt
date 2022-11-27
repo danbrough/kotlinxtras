@@ -1,6 +1,8 @@
 package org.danbrough.kotlinxtras.binaries
 
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
+import org.danbrough.kotlinxtras.xtrasCInteropsDir
+import org.danbrough.kotlinxtras.xtrasLibsDir
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
@@ -53,7 +55,7 @@ fun LibraryExtension.registerGenerateInteropsTask() {
 
   val config =  CInteropsConfig(
     "xtras${libName.capitalized()}",
-    project.file("src/cinterops/xtras_${libName}.def")
+    project.xtrasCInteropsDir.resolve("xtras_${libName}.def")
   )
 
   cinteropsConfigTask?.invoke(config)
@@ -95,10 +97,12 @@ fun LibraryExtension.registerGenerateInteropsTask() {
       inputs.property("headers", headers)
     } ?: inputs.file(config.headersFile!!)
 
+    inputs.property("xtrasLibs",project.xtrasLibsDir)
+
     val defFile = config.defFile
     outputs.file(defFile)
 
-    dependsOn(konanTargets.map { provideBinariesTaskName(it) })
+    dependsOn(provideAllBinariesTaskName())
 
     actions.add {
 

@@ -158,7 +158,7 @@ internal fun LibraryExtension.registerGitExtractTask(
 }
 
 
-internal fun LibraryExtension.registerArchiveDownloadTask(srcConfig: ArchiveSourceConfig) {
+internal fun LibraryExtension.registerArchiveDownloadTask() {
   project.tasks.register(downloadSourcesTaskName, Exec::class.java) {
     group = XTRAS_TASK_GROUP
 

@@ -17,7 +17,7 @@ private val androidNdkDir = konanDir.resolve(
 
 private val buildPathEnvironment = "/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/opt/local/bin"
 
-private val androidNdkApiVersion = 21
+private const val androidNdkApiVersion = 21
 
 val KonanTarget.platformName: String
   get() {

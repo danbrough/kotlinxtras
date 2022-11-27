@@ -1,12 +1,6 @@
 package org.danbrough.kotlinxtras.binaries
 
-import org.danbrough.kotlinxtras.buildEnvironment
-import org.danbrough.kotlinxtras.platformName
-import org.danbrough.kotlinxtras.xtrasDir
-import org.danbrough.kotlinxtras.xtrasDownloadsDir
-import org.danbrough.kotlinxtras.xtrasLibsDir
-import org.danbrough.kotlinxtras.xtrasPackagesDir
-import org.danbrough.kotlinxtras.xtrasSupportedTargets
+import org.danbrough.kotlinxtras.*
 import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
 import org.gradle.configurationcache.extensions.capitalized
@@ -45,7 +39,7 @@ abstract class LibraryExtension(
   open var sourceURL: String? = null
 
   @BinariesDSLMarker
-  open var publishingGroup: String = "${project.group}.binaries"
+  open var publishingGroup: String = "org.danbrough.kotlinxtras.binaries"
 
   @BinariesDSLMarker
   open var buildEnabled: Boolean = false
@@ -158,15 +152,15 @@ private fun <T : LibraryExtension> Project.registerLibraryExtension(
   extnName: String,
   type: Class<T>
 ): T {
-  val configuration = extensions.findByType(BinaryConfigurationExtension::class.java) ?: let {
+  val configuration = extensions.findByName(XTRAS_BINARIES_EXTN_NAME) ?: let {
     logger.info("applying BinaryPlugin to $name")
     pluginManager.apply(BinaryPlugin::class.java)
-    extensions.getByType(BinaryConfigurationExtension::class.java)
+    extensions.getByName(XTRAS_BINARIES_EXTN_NAME)
   }
 
   return extensions.create(extnName, type, this)
     .apply {
-      binaryConfiguration = configuration
+      binaryConfiguration = configuration as BinaryConfigurationExtension
       project.afterEvaluate {
         registerXtrasTasks()
       }
@@ -191,30 +185,35 @@ private fun LibraryExtension.registerXtrasTasks() {
 
   project.logger.info("registerXtrasTasks for $libName")
 
-  when (srcConfig) {
-    is ArchiveSourceConfig ->
-      registerArchiveDownloadTask(srcConfig)
+  if (buildTask != null && buildEnabled) {
+    when (srcConfig) {
+      is ArchiveSourceConfig -> {
+        registerArchiveDownloadTask()
+      }
 
-    is GitSourceConfig ->
-      registerGitDownloadTask(srcConfig)
+      is GitSourceConfig -> {
+        registerGitDownloadTask(srcConfig)
+      }
+    }
   }
+
 
   konanTargets.forEach { konanTarget ->
 
     configureTargetTask?.invoke(konanTarget)
 
-    when (srcConfig) {
-      is ArchiveSourceConfig -> {
-        registerArchiveExtractTask(srcConfig, konanTarget)
-      }
-
-      is GitSourceConfig -> {
-        registerGitExtractTask(srcConfig, konanTarget)
-      }
-    }
-
-
     if (buildTask != null && buildEnabled) {
+
+      when (srcConfig) {
+        is ArchiveSourceConfig -> {
+          registerArchiveExtractTask(srcConfig, konanTarget)
+        }
+
+        is GitSourceConfig -> {
+          registerGitExtractTask(srcConfig, konanTarget)
+        }
+      }
+
       configureTask?.also {
         registerConfigureSourcesTask(konanTarget)
       }

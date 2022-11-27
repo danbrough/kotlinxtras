@@ -22,6 +22,7 @@ const val PROPERTY_DOCS_DIR = "xtras.docs.dir"
 
 const val PROPERTY_LIBS_DIR = "xtras.libs.dir"
 
+const val PROPERTY_CINTEROPS_DIR = "xtras.cinterops.dir"
 
 private fun Project.xtrasPath(name: String, defValue: String? = null): File =
   properties[name]?.toString()?.trim()?.let {
@@ -57,6 +58,16 @@ val Project.xtrasDownloadsDir: File
  */
 val Project.xtrasPackagesDir: File
   get() = xtrasPath(PROPERTY_PACKAGES_DIR, "packages")
+
+
+/**
+ * Path to the xtras cinterops directory.
+ * This is where cinterop files are generated from headers.
+ *
+ * Defaults to `project.xtrasDir.resolve("cinterops")`
+ */
+val Project.xtrasCInteropsDir: File
+  get() = xtrasPath(PROPERTY_CINTEROPS_DIR, "cinterops")
 
 
 /**

@@ -6,13 +6,7 @@ import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.findByType
-import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.getValue
-import org.gradle.kotlin.dsl.named
-import org.gradle.kotlin.dsl.provideDelegate
-import org.gradle.kotlin.dsl.registering
+import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -47,7 +41,7 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
     if (kotlinMPP == null) {
       //create a default sources jar from the main sources
       project.extensions.findByType<KotlinProjectExtension>()?.apply {
-        sourceSets?.findByName("main")?.kotlin?.also {srcDir->
+        sourceSets.findByName("main")?.kotlin?.also { srcDir->
           val sourcesJarTask = tasks.register("sourcesJar${name.capitalize()}", Jar::class.java) {
             archiveClassifier.set("sources")
             from(srcDir)
