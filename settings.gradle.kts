@@ -14,9 +14,10 @@ plugins {
   id("de.fayard.refreshVersions") version "0.51.0"
 }
 
-
 rootProject.name = "kotlinxtras"
+
+includeBuild("plugin")
 
 include(":common")
 include(":plugins")
-includeBuild("plugin")
+
