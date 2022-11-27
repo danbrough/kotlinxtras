@@ -48,7 +48,7 @@ abstract class LibraryExtension(
   open var publishingGroup: String = "${project.group}.binaries"
 
   @BinariesDSLMarker
-  open var buildingEnabled: Boolean = false
+  open var buildEnabled: Boolean = false
 
   /**
    * Konan targets supported by this library.
@@ -214,7 +214,7 @@ private fun LibraryExtension.registerXtrasTasks() {
     }
 
 
-    if (buildTask != null && buildingEnabled) {
+    if (buildTask != null && buildEnabled) {
       configureTask?.also {
         registerConfigureSourcesTask(konanTarget)
       }
