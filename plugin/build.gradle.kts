@@ -13,15 +13,13 @@ repositories {
 
 
 group = "org.danbrough.kotlinxtras"
-version = "0.0.3-beta05"
+version = "0.0.3-beta01"
 
 dependencies {
   compileOnly(kotlin("gradle-plugin"))
   compileOnly(kotlin("gradle-plugin-api"))
   compileOnly("org.jetbrains.dokka:dokka-gradle-plugin:${libs.versions.dokka.get()}")
 }
-
-//publishing.repositories.maven(file("../build/m2")){ name = "M2" }
 
 sonatype {
   localRepoLocation = project.file("../build/m2")

@@ -18,7 +18,6 @@ fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget)=
       println("running $name with: ${commandLine.joinToString(" ")}")
     }
     enabled = !isPackageBuilt(target)
-    //onlyIf { !isPackageBuilt(target) }
   }
 
 

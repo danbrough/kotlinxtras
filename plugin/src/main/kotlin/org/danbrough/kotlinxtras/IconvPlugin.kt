@@ -19,7 +19,6 @@ class IconvPlugin : Plugin<Project> {
 
       download("https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz") {
         stripTopDir = true
-        tarExtractOptions = "xfz"
       }
 
       configure { target ->

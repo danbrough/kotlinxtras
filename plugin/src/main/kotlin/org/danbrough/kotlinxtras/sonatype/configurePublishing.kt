@@ -16,14 +16,14 @@ import org.gradle.kotlin.dsl.registering
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import java.net.URI
 
 
 internal fun Project.configurePublishing(extn: SonatypeExtension) {
-  //println("configurePublishing - ${project.group}:${project.name}:${project.version}")
 
   extensions.findByType<PublishingExtension>()?.apply {
+    logger.debug("configurePublishing - ${project.group}:${project.name}:${project.version}")
 
     if (extn.publishDocs) {
       if (plugins.hasPlugin("org.jetbrains.dokka")) {
@@ -45,19 +45,18 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
 
     val kotlinMPP = project.extensions.findByType<KotlinMultiplatformExtension>()
     if (kotlinMPP == null) {
-      val sourceSet = kotlinExtension.sourceSets.findByName("main")?.kotlin
+      //create a default sources jar from the main sources
+      project.extensions.findByType<KotlinProjectExtension>()?.apply {
+        sourceSets?.findByName("main")?.kotlin?.also {srcDir->
+          val sourcesJarTask = tasks.register("sourcesJar${name.capitalize()}", Jar::class.java) {
+            archiveClassifier.set("sources")
+            from(srcDir)
+          }
 
-      val sourcesJar = sourceSet?.let {
-        tasks.register("sourcesJar${name.capitalize()}", Jar::class.java) {
-          archiveClassifier.set("sources")
-          from(it)
-        }
-      }
-
-      sourcesJar?.also {
-        publications.all {
-          if (this is MavenPublication)
-            artifact(it)
+          publications.all {
+            if (this is MavenPublication)
+              artifact(sourcesJarTask)
+          }
         }
       }
     }
@@ -93,60 +92,3 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
     extn.configurePublishing(this, this@configurePublishing)
   }
 }
-
-
-/*
-tasks.dokkaHtml.configure {
-  outputDirectory.set(buildDir.resolve("dokka"))
-//  finalizedBy("copyDocs")
-}
-
-val javadocJar by tasks.registering(Jar::class) {
-  archiveClassifier.set("javadoc")
-  from(tasks.dokkaHtml)
-}
-
-val sourcesJar by tasks.registering(Jar::class) {
-  archiveClassifier.set("sources")
-  from(sourceSets["main"].allJava)
-}
-
-
-publishing {
-
-  publications.all {
-    group = project.group
-    version = project.version
-    if (this !is MavenPublication) return@all
-    if (project.hasProperty("publishDocs"))
-      artifact(javadocJar)
-    artifact(sourcesJar)
-    if (hasProperty("signPublications"))
-      signing.sign(this)
-  }
-
-  repositories {
-    maven("../build/m2"){
-      name = "M2"
-    }
-
-    maven{
-      name = "SonaType"
-      url = uri("https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/${System.getenv("SONATYPE_REPO_ID")}")
-      credentials{
-        username = property("sonatypeUsername")?.toString()
-        password = property("sonatypePassword")?.toString()
-      }
-    }
-  }
-
-  publications.all {
-    if (this !is MavenPublication) return@all
-
-    xtrasPom()
-  }
-
-
-}
-
- */

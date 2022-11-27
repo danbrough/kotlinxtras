@@ -23,8 +23,7 @@ class OpenSSLPlugin : Plugin<Project> {
       git("https://github.com/danbrough/openssl.git", "02e6fd7998830218909cbc484ca054c5916fdc59")
 
       configure { target ->
-        val sourcesDir = sourcesDir(target)
-        outputs.file(sourcesDir.resolve("Makefile"))
+        outputs.file(workingDir.resolve("Makefile"))
         val args = mutableListOf(
           "./Configure",
           target.opensslPlatform,
@@ -40,7 +39,7 @@ class OpenSSLPlugin : Plugin<Project> {
 
 
       build { target ->
-        commandLine("make", "install_sw")
+        commandLine(binaryConfiguration.makeBinary, "install_sw")
         outputs.dir(prefixDir(target))
       }
 

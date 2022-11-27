@@ -8,7 +8,7 @@ import java.io.File
 
 class SonatypePlugin : Plugin<Project> {
   override fun apply(project: Project) {
-    println("sonatype configuring ${project.name}")
+    project.logger.info("sonatype configuring ${project.name}")
     val extn = project.extensions.create("sonatype", SonatypeExtension::class.java, project)
 
     project.afterEvaluate {

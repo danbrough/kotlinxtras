@@ -14,6 +14,7 @@ open class SqliteBinaryExtension(project: Project) : LibraryExtension(project,"s
 class SqlitePlugin : Plugin<Project> {
 
   override fun apply(project: Project) {
+
     project.registerLibraryExtension(XTRAS_SQLITE_EXTN_NAME,SqliteBinaryExtension::class.java) {
       version = "3.40.0"
 

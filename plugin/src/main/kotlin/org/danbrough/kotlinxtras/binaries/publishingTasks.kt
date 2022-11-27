@@ -29,7 +29,7 @@ fun LibraryExtension.registerPublishingTask(target: KonanTarget) {
     MavenPublication::class.java
   ) {
     artifactId = name
-    groupId = "${project.group}.binaries"
+    groupId = this@registerPublishingTask.publishingGroup
     version = this@registerPublishingTask.version
     artifact(registerPackageTask(target))
   }

@@ -6,6 +6,7 @@ import org.danbrough.kotlinxtras.xtrasDir
 import org.danbrough.kotlinxtras.xtrasDownloadsDir
 import org.danbrough.kotlinxtras.xtrasLibsDir
 import org.danbrough.kotlinxtras.xtrasPackagesDir
+import org.danbrough.kotlinxtras.xtrasSupportedTargets
 import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
 import org.gradle.configurationcache.extensions.capitalized
@@ -13,7 +14,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
-
 
 @DslMarker
 annotation class BinariesDSLMarker
@@ -44,6 +44,12 @@ abstract class LibraryExtension(
   @BinariesDSLMarker
   open var sourceURL: String? = null
 
+  @BinariesDSLMarker
+  open var publishingGroup: String = "${project.group}.binaries"
+
+  @BinariesDSLMarker
+  open var buildingEnabled: Boolean = false
+
   /**
    * Konan targets supported by this library.
    *
@@ -52,7 +58,7 @@ abstract class LibraryExtension(
    * Use [konanTargets] to get the list of supported targets.
    */
   @BinariesDSLMarker
-  open var supportedTargets: Set<KonanTarget>? = null
+  open var supportedTargets: List<KonanTarget>? = null
 
   open fun gitRepoDir(): File = project.xtrasDownloadsDir.resolve("repos/$libName")
 
@@ -169,17 +175,21 @@ private fun <T : LibraryExtension> Project.registerLibraryExtension(
 
 /**
  * Returns the [LibraryExtension.supportedTargets] if configured else returns all the configured
- * kotlin targets.
+ * kotlin multi-platform targets.
+ * If this isn't a kotlin multiplatform project then it returns
+ *
  */
-val LibraryExtension.konanTargets: Set<KonanTarget>
+val LibraryExtension.konanTargets: List<KonanTarget>
   get() = supportedTargets
     ?: project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.targets?.withType(
       KotlinNativeTarget::class.java
-    )?.map { it.konanTarget }?.toSet() ?: emptySet()
+    )?.map { it.konanTarget } ?: project.xtrasSupportedTargets
 
 
 private fun LibraryExtension.registerXtrasTasks() {
   val srcConfig = sourceConfig
+
+  project.logger.info("registerXtrasTasks for $libName")
 
   when (srcConfig) {
     is ArchiveSourceConfig ->
@@ -203,20 +213,19 @@ private fun LibraryExtension.registerXtrasTasks() {
       }
     }
 
-    configureTask?.also {
-      registerConfigureSourcesTask(konanTarget)
-    }
 
-    buildTask?.also {
+    if (buildTask != null && buildingEnabled) {
+      configureTask?.also {
+        registerConfigureSourcesTask(konanTarget)
+      }
       registerBuildSourcesTask(konanTarget)
       registerPublishingTask(konanTarget)
+    } else {
+      project.logger.info("buildSupport disabled for $libName as either buildTask is null or buildingEnabled is false")
     }
 
     registerProvideBinariesTask(konanTarget)
-
-
   }
-
 
   registerGenerateInteropsTask()
 

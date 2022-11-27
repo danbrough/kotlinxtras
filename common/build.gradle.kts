@@ -1,6 +1,4 @@
-
-
-import org.danbrough.kotlinxtras.binaries.declareNativeTargets
+import org.danbrough.kotlinxtras.declareSupportedTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -12,7 +10,7 @@ plugins {
 
 kotlin {
 
-  declareNativeTargets()
+  declareSupportedTargets()
 
   val posixMain by sourceSets.creating
 

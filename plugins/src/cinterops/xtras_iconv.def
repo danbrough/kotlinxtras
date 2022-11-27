@@ -1,0 +1,4 @@
+headers = iconv.h libcharset.h
+linkerOpts = -liconv
+package = libiconv
+

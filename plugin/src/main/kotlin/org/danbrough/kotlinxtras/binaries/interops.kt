@@ -4,8 +4,10 @@ import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
+import org.jetbrains.kotlin.gradle.plugin.mpp.Executable
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.io.PrintWriter
@@ -47,7 +49,7 @@ val defaultCInteropsTargetWriter: CInteropsTargetWriter = { konanTarget, output 
 
 fun LibraryExtension.registerGenerateInteropsTask() {
 
-  println("registerGenerateInteropsTask for $this")
+  project.logger.info("registerGenerateInteropsTask for $this")
 
   val config =  CInteropsConfig(
     "xtras${libName.capitalized()}",
@@ -59,6 +61,7 @@ fun LibraryExtension.registerGenerateInteropsTask() {
 
 
   project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
+    val libPathKey = if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH"
     targets.withType(KotlinNativeTarget::class.java).all {
       compilations.getByName("main").apply {
         cinterops.create(config.name) {
@@ -66,19 +69,17 @@ fun LibraryExtension.registerGenerateInteropsTask() {
           config.configure?.invoke(this)
         }
       }
-    }
-  }
 
-/*  //register empty task if no headers are provided
-  if (config.headersFile == null && config.headers == null) {
-    project.tasks.register(generateCInteropsTaskName()) {
-      group = XTRAS_TASK_GROUP
-      doFirst {
-        println("not generating ${config.defFile} as neither headersFile or headers were provided.")
+      binaries.withType(Executable::class.java).filter { it.runTask != null }.forEach {
+        val env = it.runTask!!.environment
+        if (env.containsKey(libPathKey))
+          env[libPathKey] = env[libPathKey]!!.toString() + File.pathSeparatorChar +prefixDir(konanTarget).resolve("lib")
+        else
+          env[libPathKey] = prefixDir(konanTarget).resolve("lib")
+        project.logger.debug("Setting $libPathKey for $konanTarget to ${env[libPathKey]}")
       }
     }
-    return
-  }*/
+  }
 
   project.tasks.withType(CInteropProcess::class.java).all {
     dependsOn(generateCInteropsTaskName())

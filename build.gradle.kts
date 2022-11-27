@@ -1,6 +1,5 @@
 
 //import org.danbrough.kotlinxtras.xtrasPom
-import org.danbrough.kotlinxtras.xtrasDir
 import org.danbrough.kotlinxtras.xtrasPom
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
@@ -17,12 +16,10 @@ println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinComp
 val xtrasGroup:String  = project.property("project.group")!!.toString()
 group = xtrasGroup
 
-
-println("XTRAS_DIR: ${project.xtrasDir}")
-
 allprojects {
 
   repositories {
+    maven(rootProject.buildDir.resolve("m2"))
     maven("https://s01.oss.sonatype.org/content/groups/staging/")
     mavenCentral()
   }
