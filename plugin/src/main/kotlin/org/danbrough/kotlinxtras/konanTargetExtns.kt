@@ -63,7 +63,7 @@ val KonanTarget.hostTriplet: String
     KonanTarget.WATCHOS_SIMULATOR_ARM64 -> "aarch64-watchossimulator-darwin"
     KonanTarget.WATCHOS_X64 -> "x86_64-watchos-darwin"
     KonanTarget.WATCHOS_X86 -> "x86-watchos-darwin"
-    else -> TODO("Add hostTriple for $this")
+    else -> TODO("Add KonanTarget.hostTriplet for $this")
 
   }
 
