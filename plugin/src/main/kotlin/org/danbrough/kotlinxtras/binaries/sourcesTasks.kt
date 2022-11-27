@@ -19,7 +19,14 @@ data class GitSourceConfig(val commit: String) : SourceConfig
 @BinariesDSLMarker
 fun LibraryExtension.download(url: String, configure: ArchiveSourceConfig.() -> Unit) {
   sourceURL = url
-  sourceConfig = ArchiveSourceConfig().also(configure)
+  sourceConfig = ArchiveSourceConfig().apply{
+    tarExtractOptions = when {
+      url.endsWith(".tar.gz",true) -> "xfz"
+      url.endsWith(".tar.bz2",true) -> "xfj"
+      else -> ""
+    }
+    configure()
+  }
 }
 
 @BinariesDSLMarker
@@ -115,10 +122,21 @@ internal fun LibraryExtension.registerGitExtractTask(
   project.tasks.register(extractSourcesTaskName) {
     group = XTRAS_TASK_GROUP
     dependsOn(initTaskName)
+
     val destDir = sourcesDir(konanTarget)
 
     inputs.property("commit", srcConfig.commit)
     outputs.dir(destDir)
+
+
+    actions.add {
+      project.exec {
+        workingDir = destDir
+        commandLine(binaryConfiguration.gitBinary, "clean","-xdf")
+        println("running: ${commandLine.joinToString(" ")}")
+      }
+      println("cleaning $destDir")
+    }
 
     actions.add {
       project.exec {

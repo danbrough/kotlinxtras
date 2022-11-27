@@ -15,12 +15,14 @@ class SqlitePlugin : Plugin<Project> {
 
   override fun apply(project: Project) {
     project.registerLibraryExtension(XTRAS_SQLITE_EXTN_NAME,SqliteBinaryExtension::class.java) {
-      version = "3.39.4"
+      version = "3.40.0"
 
-      download("https://www.sqlite.org/2022/sqlite-autoconf-3390400.tar.gz") {
+      download("https://www.sqlite.org/2022/sqlite-autoconf-3400000.tar.gz") {
         stripTopDir = true
         tarExtractOptions = "xfz"
       }
+
+     // git("https://github.com/sqlite/sqlite.git","2f2c5e2061cfebfad6b9aca4950d960caec073d8")
 
       configure { target->
         commandLine(
@@ -34,6 +36,17 @@ class SqlitePlugin : Plugin<Project> {
 
       build {
         commandLine(binaryConfiguration.makeBinary,"install")
+      }
+
+      cinterops {
+        headers = """
+          headers = sqlite3.h sqlite3ext.h
+          linkerOpts = -ldl -lsqlite3
+          linkerOpts.mingw = -ldl -lsqlite3 -lpthread
+          headers = sqlite3.h
+          headerFilter = sqlite3*.h
+          
+          """.trimIndent()
       }
     }
   }

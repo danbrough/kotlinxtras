@@ -153,9 +153,11 @@ private fun <T : LibraryExtension> Project.registerLibraryExtension(
   type: Class<T>
 ): T {
   val configuration = extensions.findByType(BinaryConfigurationExtension::class.java) ?: let {
+    logger.info("applying BinaryPlugin to $name")
     pluginManager.apply(BinaryPlugin::class.java)
     extensions.getByType(BinaryConfigurationExtension::class.java)
   }
+
   return extensions.create(extnName, type, this)
     .apply {
       binaryConfiguration = configuration
@@ -165,6 +167,10 @@ private fun <T : LibraryExtension> Project.registerLibraryExtension(
     }
 }
 
+/**
+ * Returns the [LibraryExtension.supportedTargets] if configured else returns all the configured
+ * kotlin targets.
+ */
 val LibraryExtension.konanTargets: Set<KonanTarget>
   get() = supportedTargets
     ?: project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.targets?.withType(
@@ -203,10 +209,12 @@ private fun LibraryExtension.registerXtrasTasks() {
 
     buildTask?.also {
       registerBuildSourcesTask(konanTarget)
-      registerPackageTask(konanTarget)
+      registerPublishingTask(konanTarget)
     }
 
     registerProvideBinariesTask(konanTarget)
+
+
   }
 
 

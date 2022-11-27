@@ -18,10 +18,8 @@ const val XTRAS_PROVIDE_ALL_TASK_NAME = "xtrasProvideAll"
 class BinaryPlugin : Plugin<Project> {
   override fun apply(target: Project) {
     target.extensions.create(XTRAS_BINARIES_EXTN_NAME, BinaryConfigurationExtension::class.java)
-      .apply {
-        target.tasks.create(XTRAS_PROVIDE_ALL_TASK_NAME) {
-          group = XTRAS_TASK_GROUP
-        }
-      }
+    target.tasks.create(XTRAS_PROVIDE_ALL_TASK_NAME) {
+      group = XTRAS_TASK_GROUP
+    }
   }
 }
