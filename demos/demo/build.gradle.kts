@@ -10,13 +10,10 @@ plugins {
   id("org.danbrough.kotlinxtras.iconv")
 }
 
-xtrasIconv {
-  
-}
 
 repositories {
+  maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
-  maven(file("../build/m2"))
 }
 
 
