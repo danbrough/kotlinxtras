@@ -1,6 +1,18 @@
 package org.danbrough.kotlinxtras.binaries
 
-import org.danbrough.kotlinxtras.*
+import org.danbrough.kotlinxtras.PROPERTY_CINTEROPS_DIR
+import org.danbrough.kotlinxtras.PROPERTY_DOCS_DIR
+import org.danbrough.kotlinxtras.PROPERTY_DOWNLOADS_DIR
+import org.danbrough.kotlinxtras.PROPERTY_LIBS_DIR
+import org.danbrough.kotlinxtras.PROPERTY_PACKAGES_DIR
+import org.danbrough.kotlinxtras.PROPERTY_XTRAS_DIR
+import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
+import org.danbrough.kotlinxtras.xtrasCInteropsDir
+import org.danbrough.kotlinxtras.xtrasDir
+import org.danbrough.kotlinxtras.xtrasDocsDir
+import org.danbrough.kotlinxtras.xtrasDownloadsDir
+import org.danbrough.kotlinxtras.xtrasLibsDir
+import org.danbrough.kotlinxtras.xtrasPackagesDir
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -31,14 +43,23 @@ class BinaryPlugin : Plugin<Project> {
           description = "Prints out the xtras configuration details"
           doFirst {
             println(
-              """|Properties:
-            |$PROPERTY_XTRAS_DIR=${project.xtrasDir}
-            |$PROPERTY_LIBS_DIR=${project.xtrasLibsDir}
-            |$PROPERTY_DOWNLOADS_DIR=${project.xtrasDownloadsDir}
-            |$PROPERTY_PACKAGES_DIR=${project.xtrasPackagesDir}
-            |$PROPERTY_DOCS_DIR=${project.xtrasDocsDir}
-            |$PROPERTY_CINTEROPS_DIR=${project.xtrasCInteropsDir}
-            |""".trimMargin()
+              """
+                
+                Binaries:
+                  xtras.bin.git:            $gitBinary
+                  xtras.bin.wget:           $wgetBinary
+                  xtras.bin.tar:            $tarBinary
+                  xtras.bin.autoreconf:     $autoreconfBinary
+                  xtras.bin.make:           $makeBinary                
+                
+                Paths:
+                  $PROPERTY_XTRAS_DIR:            ${project.xtrasDir}
+                  $PROPERTY_LIBS_DIR:       ${project.xtrasLibsDir}
+                  $PROPERTY_DOWNLOADS_DIR:  ${project.xtrasDownloadsDir}
+                  $PROPERTY_PACKAGES_DIR:   ${project.xtrasPackagesDir}
+                  $PROPERTY_DOCS_DIR:       ${project.xtrasDocsDir}
+                  $PROPERTY_CINTEROPS_DIR:  ${project.xtrasCInteropsDir}
+                """.trimIndent()
             )
           }
         }
