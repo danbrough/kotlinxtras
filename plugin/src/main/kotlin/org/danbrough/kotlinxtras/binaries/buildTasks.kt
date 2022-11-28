@@ -28,7 +28,6 @@ fun LibraryExtension.registerBuildSourcesTask(target: KonanTarget)=
     environment(buildEnvironment(target))
     workingDir(sourcesDir(target))
     val prefixDir = prefixDir(target)
-    outputs.dir(prefixDir)
     enabled = !prefixDir.exists()
     if (enabled)
       configureTask?.also {
