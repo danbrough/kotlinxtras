@@ -104,6 +104,11 @@ class OpenSSLPlugin : Plugin<Project> {
 That creates a plugin that allows you to automatically download openSSL sources, cross compile them 
 and build cinterop bindings for kotlin.
 You can also download precompiled binaries from maven.
+In the case of curl,openssl,iconv,sqlite (at present) you don't need to write these yourself as they
+are provided, (with precompiled binaries for linuxArm32Hfp,linuuxArm64, linuxX64, macosX64,macosArm64,androidNativeX86 .. and the rest ..)
+But as you can see, writing your own for projects using the "./configure, make install" logic isn't hard.
+
+
 
 
 ## News
