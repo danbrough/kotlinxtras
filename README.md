@@ -79,7 +79,6 @@ class OpenSSLPlugin : Plugin<Project> {
 
       build { target ->
         commandLine(binaryConfiguration.makeBinary, "install_sw")
-        outputs.dir(prefixDir(target))
       }
 
       cinterops {
