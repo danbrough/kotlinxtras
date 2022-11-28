@@ -41,6 +41,7 @@ class BinaryPlugin : Plugin<Project> {
         target.tasks.register("xtrasConfig") {
           group = XTRAS_TASK_GROUP
           description = "Prints out the xtras configuration details"
+
           doFirst {
             println(
               """
