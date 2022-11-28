@@ -5,8 +5,12 @@ Common Kotlin packages with support for linux_arm32_hfp, linux_arm64 and Android
 
 ## Description
 
-This repo is intended to serve as a hub for tweaking common kotlin libraries for unsupported platforms.
-In particular the non linuxX64 platforms get neglected as well as the android native targets.
+This repo is serving two purposes at the moment.
+One is for tweaks of popular kotlin multiplatform packages for android native and linuxArm64, linuxArm32Hfp support.
+That you'll find in the [repos](./repos/) folder.
+
+The other is a complimentary plugin for cross-compiling native libraries for kotlin multiplatform.
+
 Precompiled versions will be published at `mavenCentral()` under [my repository](https://repo.maven.apache.org/maven2/org/danbrough/).  
 They might take a while to get there so pre-releases can be found in [the sonatype staging section](https://s01.oss.sonatype.org/content/groups/staging/org/danbrough/)  
 So you don't need to download this project and compile it, unless you want to.  
@@ -35,6 +39,71 @@ Due to the need for absolute hard-coded paths in cinterop def files this repo wi
 for building custom packages.  
 You can also use the "consumer" plugin from this project to automatically download precompiled binaries to link against.  
 See the sqlite,curl_standalone,sqldelight in the [demos](./demos) folder for example.
+
+## The plugin.
+
+The plugin is used for cross-compiling kotlin multiplatform projects with native library support.
+There are demos in the [demos](./demos/) folder but it looks something like this:  
+
+```kotlin
+
+const val XTRAS_OPENSSL_EXTN_NAME = "xtrasOpenssl"
+
+open class OpenSSLBinaryExtension(project: Project) : LibraryExtension(project, "openssl")
+
+
+class OpenSSLPlugin : Plugin<Project> {
+  override fun apply(project: Project) {
+
+    project.registerLibraryExtension(XTRAS_OPENSSL_EXTN_NAME, OpenSSLBinaryExtension::class.java) {
+
+      version = "1_1_1s"
+
+      git("https://github.com/danbrough/openssl.git", "02e6fd7998830218909cbc484ca054c5916fdc59")
+
+      configure { target ->
+        outputs.file(workingDir.resolve("Makefile"))
+        val args = mutableListOf(
+          "./Configure",
+          target.opensslPlatform,
+          "no-tests",
+          "threads",
+          "--prefix=${prefixDir(target)}"
+        )
+        if (target.family == Family.ANDROID) args += "-D__ANDROID_API__=21"
+        else if (target.family == Family.MINGW) args += "--cross-compile-prefix=${target.hostTriplet}-"
+
+        commandLine(args)
+      }
+
+
+      build { target ->
+        commandLine(binaryConfiguration.makeBinary, "install_sw")
+        outputs.dir(prefixDir(target))
+      }
+
+      cinterops {
+        headers = """
+          #staticLibraries =  libcrypto.a libssl.a
+          headers = openssl/ssl.h openssl/err.h openssl/bio.h openssl/evp.h
+          linkerOpts.linux = -ldl -lc -lm -lssl -lcrypto
+          linkerOpts.android = -ldl -lc -lm -lssl -lcrypto
+          linkerOpts.macos = -ldl -lc -lm -lssl -lcrypto
+          linkerOpts.mingw = -lm -lssl -lcrypto
+          compilerOpts.android = -D__ANDROID_API__=21
+          compilerOpts =  -Wno-macro-redefined -Wno-deprecated-declarations  -Wno-incompatible-pointer-types-discards-qualifiers
+          #compilerOpts = -static
+          
+          """.trimIndent()
+      }
+    }
+  }
+}
+```
+
+That creates a plugin that allows you to automatically download openSSL sources, cross compile them 
+and build cinterop bindings for kotlin.
+You can also download precompiled binaries from maven.
 
 
 ## News
