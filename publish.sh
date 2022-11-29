@@ -7,8 +7,9 @@ REPO=${1-M2}
 echo publishing to $REPO
 OPTS="${@:2}"
 
-[ "$REPO" == "SonaType" ] && OPTS="$OPTS -Dorg.gradle.unsafe.configuration-cache=false -PsignPublications -PpublishDocs"
+if [ "$REPO" == "SonaType" ]; then
+	[ -z "$SONATYPE_REPO_ID" ] && echo SONATYPE_REPO_ID not set && exit 1
+	OPTS=""$OPTS" -Dorg.gradle.unsafe.configuration-cache=false -PsignPublications -PpublishDocs"
+fi
 
-./gradlew $OPTS publishAllPublicationsTo${REPO}Repository
-
-
+./gradlew "$OPTS" publishAllPublicationsTo${REPO}Repository

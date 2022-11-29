@@ -1,6 +1,7 @@
 package org.danbrough.kotlinxtras.sonatype
 
 
+import org.danbrough.kotlinxtras.projectProperty
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
@@ -19,7 +20,8 @@ class SonatypePlugin : Plugin<Project> {
   }
 }
 
-open class SonatypeExtension( project: Project) {
+
+open class SonatypeExtension(val project: Project) {
   companion object {
     const val SONATYPE_TASK_GROUP = "sonatype"
     const val REPOSITORY_ID = "sonatypeRepositoryId"
@@ -28,26 +30,29 @@ open class SonatypeExtension( project: Project) {
 
   internal var configurePublishing: PublishingExtension.(project: Project) -> Unit = {}
 
-  fun configurePublishing(configure:PublishingExtension.(project: Project) -> Unit){
+  fun configurePublishing(configure: PublishingExtension.(project: Project) -> Unit) {
     configurePublishing = configure
   }
 
-  val sonatypeUrlBase: String = "https://s01.oss.sonatype.org"
-  val sonatypeProfileId: String by project.properties
-  val sonatypeRepositoryId: String by project.properties
-  val sonatypeUsername: String by project.properties
-  val sonatypePassword: String by project.properties
-  var publishDocs: Boolean = project.properties.containsKey("publishDocs")
-  var signPublications: Boolean = project.properties.containsKey("signPublications")
 
-  var localRepoEnabled:Boolean = true
-  var localRepoName:String = "m2"
-  var localRepoLocation : File =  project.rootProject.buildDir.resolve(localRepoName)
+  var sonatypeUrlBase: String = "https://s01.oss.sonatype.org"
+  var sonatypeProfileId: String = project.projectProperty("sonatypeProfileId")
+  var sonatypeRepositoryId: String = project.projectProperty(REPOSITORY_ID)
+  var sonatypeUsername: String = project.projectProperty("sonatypeUsername")
+  var sonatypePassword: String = project.projectProperty("sonatypePassword")
+  var publishDocs: Boolean = project.projectProperty("publishDocs",false)
+  var signPublications: Boolean = project.projectProperty("signPublications",false)
 
-  private val sonatypeSnapshot: String by project.properties
+
+  var localRepoEnabled: Boolean = true
+  var localRepoName: String = "m2"
+  var localRepoLocation: File = project.rootProject.buildDir.resolve(localRepoName)
+
+  var sonatypeSnapshot: Boolean  = project.projectProperty("sonatypeSnapshot",false)
+
 
   val publishingURL: String
-    get() = if (sonatypeSnapshot.toBoolean())
+    get() = if (sonatypeSnapshot)
       "$sonatypeUrlBase/content/repositories/snapshots/"
     else if (sonatypeRepositoryId.isNotBlank())
       "$sonatypeUrlBase/service/local/staging/deployByRepositoryId/$sonatypeRepositoryId"
@@ -59,5 +64,9 @@ open class SonatypeExtension( project: Project) {
     "SonatypeExtension[urlBase=$sonatypeUrlBase,stagingProfileId=$sonatypeProfileId,sonatypeUsername=$sonatypeUsername]"
 
 }
+
+
+
+
 
 

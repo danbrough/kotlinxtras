@@ -15,7 +15,7 @@ plugins {
 }
 
 
-rootProject.name = "kotlinxtras_iconv_demo"
+rootProject.name = "iconv_demo"
 
 
 

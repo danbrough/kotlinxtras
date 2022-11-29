@@ -1,3 +1,14 @@
+
+
+dependencyResolutionManagement {
+  versionCatalogs {
+    create("libs") {
+      from(files("../gradle/libs.versions.toml"))
+    }
+  }
+}
+
+
 pluginManagement {
 
   repositories {
@@ -7,13 +18,5 @@ pluginManagement {
     mavenCentral()
     google()
   }
-}
 
-
-dependencyResolutionManagement {
-  versionCatalogs {
-    val libs by creating {
-      from(files("../gradle/libs.versions.toml"))
-    }
-  }
 }

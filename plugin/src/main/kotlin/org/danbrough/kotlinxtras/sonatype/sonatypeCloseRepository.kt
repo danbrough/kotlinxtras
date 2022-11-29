@@ -6,7 +6,7 @@ import java.io.PrintWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.Charset
-import java.util.*
+import java.util.Base64
 
 internal fun sonatypeCloseRepository(
   stagingProfileId: String,
@@ -16,7 +16,7 @@ internal fun sonatypeCloseRepository(
   password: String,
   urlBase: String
 ) {
-  println("sonatypeOpenRepository: ")
+  println("sonatypeOpenRepository()")
   val url = "$urlBase/service/local/staging/profiles/$stagingProfileId/finish"
   URL(url).openConnection().apply {
     this as HttpURLConnection
