@@ -43,13 +43,11 @@ open class SonatypeExtension(val project: Project) {
   var publishDocs: Boolean = project.projectProperty("publishDocs",false)
   var signPublications: Boolean = project.projectProperty("signPublications",false)
 
-
   var localRepoEnabled: Boolean = true
   var localRepoName: String = "m2"
   var localRepoLocation: File = project.rootProject.buildDir.resolve(localRepoName)
 
   var sonatypeSnapshot: Boolean  = project.projectProperty("sonatypeSnapshot",false)
-
 
   val publishingURL: String
     get() = if (sonatypeSnapshot)
@@ -58,7 +56,6 @@ open class SonatypeExtension(val project: Project) {
       "$sonatypeUrlBase/service/local/staging/deployByRepositoryId/$sonatypeRepositoryId"
     else
       "$sonatypeUrlBase/service/local/staging/deploy/maven2/"
-
 
   override fun toString() =
     "SonatypeExtension[urlBase=$sonatypeUrlBase,stagingProfileId=$sonatypeProfileId,sonatypeUsername=$sonatypeUsername]"
