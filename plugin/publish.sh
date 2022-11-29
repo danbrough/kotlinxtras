@@ -7,7 +7,7 @@ echo publishing to $REPO
 
 if [ "$REPO" == "SonaType" ]; then
 	[ -z "$SONATYPE_REPO_ID" ] && echo SONATYPE_REPO_ID not set && exit 1
-	OPTS=-Dorg.gradle.unsafe.configuration-cache=false -PsignPublications=true -PpublishDocs=true
+	OPTS="-Dorg.gradle.unsafe.configuration-cache=false -PsignPublications=true -PpublishDocs=true"
 fi
 
 
