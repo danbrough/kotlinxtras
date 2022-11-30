@@ -1,3 +1,4 @@
+import org.danbrough.kotlinxtras.projectProperty
 import org.danbrough.kotlinxtras.xtrasPom
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
@@ -14,7 +15,7 @@ repositories {
 
 
 group = "org.danbrough.kotlinxtras"
-version = "0.0.3-beta02"
+version = "0.0.3-beta01"
 
 dependencies {
   compileOnly(kotlin("gradle-plugin"))
@@ -26,12 +27,15 @@ sonatype {
   localRepoLocation = project.file("../build/m2")
 
   configurePublishing {
+
     publications.all {
       if (this is MavenPublication)
         xtrasPom()
     }
   }
+
 }
+
 
 kotlin {
   jvmToolchain {

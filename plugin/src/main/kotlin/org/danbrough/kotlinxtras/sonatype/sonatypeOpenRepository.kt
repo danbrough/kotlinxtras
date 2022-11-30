@@ -94,28 +94,23 @@ internal fun Project.createOpenRepoTask(extn: SonatypeExtension) {
         extn.sonatypePassword,
         extn.sonatypeUrlBase
       )
+
       println("Received response: $response")
 
       project.rootProject.file("gradle.properties").readLines().also { lines ->
         var wroteRepoId = false
-        var writeRepoDescription = false
+
         project.rootProject.file("gradle.properties").printWriter().use { output ->
           lines.forEach {
             if (it.startsWith(SonatypeExtension.REPOSITORY_ID)) {
               wroteRepoId = true
               output.println("${SonatypeExtension.REPOSITORY_ID}=${response.repositoryId}")
-            } else if (it.startsWith(SonatypeExtension.DESCRIPTION)) {
-              writeRepoDescription = true
-              output.println("${SonatypeExtension.DESCRIPTION}=${response.description}")
             } else {
               output.println(it)
             }
           }
           if (!wroteRepoId) {
             output.println("${SonatypeExtension.REPOSITORY_ID}=${response.repositoryId}")
-          }
-          if (!writeRepoDescription) {
-            output.println("${SonatypeExtension.DESCRIPTION}=${response.description}")
           }
         }
       }

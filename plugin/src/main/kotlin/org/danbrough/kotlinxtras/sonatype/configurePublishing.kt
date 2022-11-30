@@ -67,7 +67,9 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
     repositories {
       maven {
         name = "SonaType"
-        url = URI(extn.publishingURL)
+        url = URI(extn.publishingURL).also{
+          println("SonaType publishing url: $it")
+        }
         credentials {
           username = extn.sonatypeUsername
           password = extn.sonatypePassword

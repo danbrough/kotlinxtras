@@ -1,5 +1,6 @@
 
 //import org.danbrough.kotlinxtras.xtrasPom
+import org.danbrough.kotlinxtras.projectProperty
 import org.danbrough.kotlinxtras.xtrasPom
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
@@ -15,6 +16,8 @@ println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinComp
 
 val xtrasGroup:String  = project.property("project.group")!!.toString()
 group = xtrasGroup
+
+println("MESSAGE IS ${project.projectProperty<String>("message","no message")}")
 
 allprojects {
 

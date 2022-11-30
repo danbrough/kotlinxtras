@@ -9,7 +9,6 @@ import java.io.File
 
 class SonatypePlugin : Plugin<Project> {
   override fun apply(project: Project) {
-    project.logger.info("sonatype configuring ${project.name}")
     val extn = project.extensions.create("sonatype", SonatypeExtension::class.java, project)
 
     project.afterEvaluate {
@@ -24,7 +23,7 @@ class SonatypePlugin : Plugin<Project> {
 open class SonatypeExtension(val project: Project) {
   companion object {
     const val SONATYPE_TASK_GROUP = "sonatype"
-    const val REPOSITORY_ID = "sonatypeRepositoryId"
+    const val REPOSITORY_ID = "sonatypeRepoId"
     const val DESCRIPTION = "description"
   }
 
@@ -34,10 +33,9 @@ open class SonatypeExtension(val project: Project) {
     configurePublishing = configure
   }
 
-
   var sonatypeUrlBase: String = "https://s01.oss.sonatype.org"
   var sonatypeProfileId: String = project.projectProperty("sonatypeProfileId")
-  var sonatypeRepositoryId: String = project.projectProperty(REPOSITORY_ID)
+  var sonatypeRepoId: String = project.projectProperty(REPOSITORY_ID,"")
   var sonatypeUsername: String = project.projectProperty("sonatypeUsername")
   var sonatypePassword: String = project.projectProperty("sonatypePassword")
   var publishDocs: Boolean = project.projectProperty("publishDocs",false)
@@ -50,12 +48,14 @@ open class SonatypeExtension(val project: Project) {
   var sonatypeSnapshot: Boolean  = project.projectProperty("sonatypeSnapshot",false)
 
   val publishingURL: String
-    get() = if (sonatypeSnapshot)
+    get() = (if (sonatypeSnapshot)
       "$sonatypeUrlBase/content/repositories/snapshots/"
-    else if (sonatypeRepositoryId.isNotBlank())
-      "$sonatypeUrlBase/service/local/staging/deployByRepositoryId/$sonatypeRepositoryId"
+    else if (sonatypeRepoId.isNotBlank())
+      "$sonatypeUrlBase/service/local/staging/deployByRepositoryId/$sonatypeRepoId"
     else
-      "$sonatypeUrlBase/service/local/staging/deploy/maven2/"
+      "$sonatypeUrlBase/service/local/staging/deploy/maven2/").also {
+        println("SonatypeExtension::publishingURL $it repoID is: $sonatypeRepoId")
+    }
 
   override fun toString() =
     "SonatypeExtension[urlBase=$sonatypeUrlBase,stagingProfileId=$sonatypeProfileId,sonatypeUsername=$sonatypeUsername]"

@@ -6,7 +6,7 @@ import java.io.PrintWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.Charset
-import java.util.Base64
+import java.util.*
 
 internal fun sonatypeCloseRepository(
   stagingProfileId: String,
@@ -61,7 +61,7 @@ internal fun Project.createCloseRepoTask(extn:SonatypeExtension){
 
       sonatypeCloseRepository(
         extn.sonatypeProfileId,
-        extn.sonatypeRepositoryId,
+        extn.sonatypeRepoId,
         description,
         extn.sonatypeUsername,
         extn.sonatypePassword,
