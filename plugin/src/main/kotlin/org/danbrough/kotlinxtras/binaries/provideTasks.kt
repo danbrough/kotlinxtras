@@ -38,7 +38,8 @@ fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget) {
       if (buildTask == null) throw Error("buildTask not configured for $libName")
       val buildSourcesTask = project.tasks.getByName(buildSourcesTaskName(target))
       dependsOn(buildSourcesTask)
-      outputs.dir(buildSourcesTask.outputs.files.first())
+      //println("BUILD SOURCES TASK OUTPUTS: ${buildSourcesTask.outputs.files.files}")
+      //outputs.dir(buildSourcesTask.outputs.files.first())
       return@register
     }
 

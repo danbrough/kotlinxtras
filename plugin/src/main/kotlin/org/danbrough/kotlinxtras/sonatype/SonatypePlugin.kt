@@ -1,7 +1,6 @@
 package org.danbrough.kotlinxtras.sonatype
 
 
-import org.danbrough.kotlinxtras.projectProperty
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
@@ -24,7 +23,12 @@ open class SonatypeExtension(val project: Project) {
   companion object {
     const val SONATYPE_TASK_GROUP = "sonatype"
     const val REPOSITORY_ID = "sonatypeRepoId"
-    const val DESCRIPTION = "description"
+    const val PROFILE_ID = "sonatypeProfileId"
+    const val DESCRIPTION = "sonatypeDescription"
+    const val USERNAME = "sonatypeUsername"
+    const val PASSWORD = "sonatypePassword"
+    const val PUBLISH_DOCS = "publishDocs"
+    const val SIGN_APPLICATIONS = "signApplications"
   }
 
   internal var configurePublishing: PublishingExtension.(project: Project) -> Unit = {}
@@ -34,19 +38,21 @@ open class SonatypeExtension(val project: Project) {
   }
 
   var sonatypeUrlBase: String = "https://s01.oss.sonatype.org"
-  var sonatypeProfileId: String = project.projectProperty("sonatypeProfileId")
-  var sonatypeRepoId: String = project.projectProperty(REPOSITORY_ID,"")
-  var sonatypeUsername: String = project.projectProperty("sonatypeUsername")
-  var sonatypePassword: String = project.projectProperty("sonatypePassword")
-  var publishDocs: Boolean = project.projectProperty("publishDocs",false)
-  var signPublications: Boolean = project.projectProperty("signPublications",false)
+  var sonatypeProfileId: String? = null
+  var sonatypeRepoId: String? = null
+  var sonatypeUsername: String? = null
+  var sonatypePassword: String? = null
+  var publishDocs: Boolean = false
+  var signPublications: Boolean = false
 
   var localRepoEnabled: Boolean = true
   var localRepoName: String = "m2"
   var localRepoLocation: File = project.rootProject.buildDir.resolve(localRepoName)
 
-  var sonatypeSnapshot: Boolean  = project.projectProperty("sonatypeSnapshot",false)
+  var sonatypeSnapshot: Boolean  = false
 
+  //lateinit var publishingURL:String
+/*
   val publishingURL: String
     get() = (if (sonatypeSnapshot)
       "$sonatypeUrlBase/content/repositories/snapshots/"
@@ -56,10 +62,10 @@ open class SonatypeExtension(val project: Project) {
       "$sonatypeUrlBase/service/local/staging/deploy/maven2/").also {
         println("SonatypeExtension::publishingURL $it repoID is: $sonatypeRepoId")
     }
+*/
 
   override fun toString() =
     "SonatypeExtension[urlBase=$sonatypeUrlBase,stagingProfileId=$sonatypeProfileId,sonatypeUsername=$sonatypeUsername]"
-
 }
 
 

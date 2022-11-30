@@ -1,4 +1,3 @@
-
 //import org.danbrough.kotlinxtras.xtrasPom
 import org.danbrough.kotlinxtras.projectProperty
 import org.danbrough.kotlinxtras.xtrasPom
@@ -14,10 +13,8 @@ plugins {
 
 println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION}")
 
-val xtrasGroup:String  = project.property("project.group")!!.toString()
+val xtrasGroup = projectProperty<String>("project.group")
 group = xtrasGroup
-
-println("MESSAGE IS ${project.projectProperty<String>("message","no message")}")
 
 allprojects {
 

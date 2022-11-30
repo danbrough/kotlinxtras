@@ -1,12 +1,19 @@
 package org.danbrough.kotlinxtras.sonatype
 
 
+import org.danbrough.kotlinxtras.projectProperty
 import org.danbrough.kotlinxtras.xtrasDocsDir
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.apply
+import org.gradle.kotlin.dsl.findByType
+import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.getValue
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.provideDelegate
+import org.gradle.kotlin.dsl.registering
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -18,6 +25,37 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
 
   extensions.findByType<PublishingExtension>()?.apply {
     logger.debug("configurePublishing - ${project.group}:${project.name}:${project.version}")
+
+    /*
+        const val SONATYPE_TASK_GROUP = "sonatype"
+    const val REPOSITORY_ID = "sonatypeRepoId"
+    const val PROFILE_ID = "sonatypeProfileId"
+    const val DESCRIPTION = "sonatypeDescription"
+    const val USERNAME = "sonatypeUsername"
+    const val PASSWORD = "sonatypePassword"
+    const val PUBLISH_DOCS = "publishDocs"
+    const val SIGN_APPLICATIONS = "signApplications"
+     */
+
+    extn.sonatypeRepoId = project.projectProperty(SonatypeExtension.REPOSITORY_ID, null)
+    extn.sonatypeProfileId = project.projectProperty(SonatypeExtension.PROFILE_ID)
+    extn.sonatypeUsername = project.projectProperty(SonatypeExtension.USERNAME)
+    extn.sonatypePassword = project.projectProperty(SonatypeExtension.PASSWORD)
+    extn.publishDocs = project.projectProperty(SonatypeExtension.PUBLISH_DOCS, false)
+    extn.signPublications = project.projectProperty(SonatypeExtension.SIGN_APPLICATIONS, false)
+
+    extn.configurePublishing(this, this@configurePublishing)
+
+    val publishingURL = if (extn.sonatypeSnapshot)
+      "${extn.sonatypeUrlBase}/content/repositories/snapshots/"
+    else if (!extn.sonatypeRepoId.isNullOrBlank())
+      "${extn.sonatypeUrlBase}/service/local/staging/deployByRepositoryId/${extn.sonatypeRepoId}"
+    else
+      "${extn.sonatypeUrlBase}/service/local/staging/deploy/maven2/"
+
+
+    println("SonatypeExtension::publishingURL $publishingURL repoID is: ${extn.sonatypeRepoId}")
+
 
     if (extn.publishDocs) {
       if (plugins.hasPlugin("org.jetbrains.dokka")) {
@@ -41,7 +79,7 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
     if (kotlinMPP == null) {
       //create a default sources jar from the main sources
       project.extensions.findByType<KotlinProjectExtension>()?.apply {
-        sourceSets.findByName("main")?.kotlin?.also { srcDir->
+        sourceSets.findByName("main")?.kotlin?.also { srcDir ->
           val sourcesJarTask = tasks.register("sourcesJar${name.capitalize()}", Jar::class.java) {
             archiveClassifier.set("sources")
             from(srcDir)
@@ -67,9 +105,7 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
     repositories {
       maven {
         name = "SonaType"
-        url = URI(extn.publishingURL).also{
-          println("SonaType publishing url: $it")
-        }
+        url = URI(publishingURL)
         credentials {
           username = extn.sonatypeUsername
           password = extn.sonatypePassword
@@ -85,6 +121,5 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
       }
     }
 
-    extn.configurePublishing(this, this@configurePublishing)
   }
 }

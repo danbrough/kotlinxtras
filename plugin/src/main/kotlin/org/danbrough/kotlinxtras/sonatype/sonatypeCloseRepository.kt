@@ -6,14 +6,14 @@ import java.io.PrintWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.Charset
-import java.util.*
+import java.util.Base64
 
 internal fun sonatypeCloseRepository(
-  stagingProfileId: String,
-  repoId:String,
-  description: String,
-  username: String,
-  password: String,
+  stagingProfileId: String?,
+  repoId:String?,
+  description: String?,
+  username: String?,
+  password: String?,
   urlBase: String
 ) {
   println("sonatypeOpenRepository()")
@@ -55,7 +55,7 @@ internal fun Project.createCloseRepoTask(extn:SonatypeExtension){
       "Closes the sonatype repository as specified by the ${SonatypeExtension.REPOSITORY_ID} gradle property"
     group = SONATYPE_TASK_GROUP
     doLast {
-      if (extn.sonatypeProfileId.isBlank()) throw Error("sonatype.stagingProfileId not set")
+      if (extn.sonatypeProfileId.isNullOrBlank()) throw Error("sonatype.${SonatypeExtension.PROFILE_ID} not set")
       val description =
         project.properties[SonatypeExtension.DESCRIPTION]?.toString() ?: ""
 

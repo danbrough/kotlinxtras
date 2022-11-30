@@ -17,8 +17,8 @@ class CurlPlugin : Plugin<Project> {
 
   override fun apply(project: Project) {
 
-    project.extensions.findByType(OpenSSLPlugin::class.java)
-      ?: project.pluginManager.apply(OpenSSLPlugin::class.java)
+/*    project.extensions.findByType(OpenSSLPlugin::class.java)
+      ?: throw Error("org.danbrough.kotlinxtras.openssl plugin not present")*/
 
     project.registerLibraryExtension(XTRAS_CURL_EXTN_NAME, CurlBinaryExtension::class.java) {
 
@@ -46,6 +46,8 @@ class CurlPlugin : Plugin<Project> {
         dependsOn(provideOpenSSLTaskName)
 
         val provideOpenSSLTask = project.tasks.getByName(provideOpenSSLTaskName)
+        println("CurlPlugin: provideOpenSSLTask: $provideOpenSSLTask outputs: ${provideOpenSSLTask.outputs.files.files}")
+        //println("openssl working dir: ${provideOpenSSLTask.work}")
         val opensslDir = provideOpenSSLTask.outputs.files.files.first()
 
         outputs.file(workingDir.resolve("Makefile"))

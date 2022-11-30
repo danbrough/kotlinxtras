@@ -8,7 +8,7 @@ import java.io.PrintWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.Charset
-import java.util.*
+import java.util.Base64
 import javax.xml.parsers.DocumentBuilderFactory
 
 
@@ -83,15 +83,15 @@ internal fun Project.createOpenRepoTask(extn: SonatypeExtension) {
       """.trimMargin()
     group = SONATYPE_TASK_GROUP
     doLast {
-      if (extn.sonatypeProfileId.isBlank()) throw Error("sonatype.stagingProfileId not set")
+      if (extn.sonatypeProfileId.isNullOrBlank()) throw Error("sonatype.stagingProfileId not set")
       val description =
         project.properties[SonatypeExtension.DESCRIPTION]?.toString() ?: ""
 
       val response = sonatypeOpenRepository(
-        extn.sonatypeProfileId,
+        extn.sonatypeProfileId!!,
         description,
-        extn.sonatypeUsername,
-        extn.sonatypePassword,
+        extn.sonatypeUsername!!,
+        extn.sonatypePassword!!,
         extn.sonatypeUrlBase
       )
 
