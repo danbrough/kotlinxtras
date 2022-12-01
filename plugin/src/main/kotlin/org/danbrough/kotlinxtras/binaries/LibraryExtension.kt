@@ -1,6 +1,12 @@
 package org.danbrough.kotlinxtras.binaries
 
-import org.danbrough.kotlinxtras.*
+import org.danbrough.kotlinxtras.buildEnvironment
+import org.danbrough.kotlinxtras.platformName
+import org.danbrough.kotlinxtras.xtrasDir
+import org.danbrough.kotlinxtras.xtrasDownloadsDir
+import org.danbrough.kotlinxtras.xtrasLibsDir
+import org.danbrough.kotlinxtras.xtrasPackagesDir
+import org.danbrough.kotlinxtras.xtrasSupportedTargets
 import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
 import org.gradle.configurationcache.extensions.capitalized
@@ -27,10 +33,9 @@ fun <T : LibraryExtension> Project.registerLibraryExtension(
 abstract class LibraryExtension(
   val project: Project,
 //Unique identifier for a binary package
-  var libName: String
+  var libName: String,
+  val binaryConfiguration: BinaryConfigurationExtension
 ) {
-
-  lateinit var binaryConfiguration: BinaryConfigurationExtension
 
   @BinariesDSLMarker
   open var version: String = "unspecified"
@@ -158,9 +163,8 @@ private fun <T : LibraryExtension> Project.registerLibraryExtension(
     extensions.getByName(XTRAS_BINARIES_EXTN_NAME)
   }
 
-  return extensions.create(extnName, type, this)
+  return extensions.create(extnName, type, this,configuration as BinaryConfigurationExtension)
     .apply {
-      binaryConfiguration = configuration as BinaryConfigurationExtension
       project.afterEvaluate {
         registerXtrasTasks()
       }

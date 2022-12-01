@@ -1,34 +1,76 @@
+import org.danbrough.kotlinxtras.projectProperty
+import org.danbrough.kotlinxtras.xtrasPom
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
-  id("org.danbrough.kotlinxtras.openssl")
-  //id("org.danbrough.kotlinxtras.curl")
-
-  id("org.danbrough.kotlinxtras.binaries")
-  id("org.danbrough.kotlinxtras.sonatype")
-
-
-  id("org.danbrough.kotlinxtras.iconv")
-  id("org.danbrough.kotlinxtras.sqlite")
-
+  `kotlin-dsl`
   `maven-publish`
+  alias(libs.plugins.org.jetbrains.dokka)
+  alias(libs.plugins.org.danbrough.kotlinxtras.sonatype)
+  alias(libs.plugins.org.danbrough.kotlinxtras.binaries)
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+
+  compileOnly(kotlin("gradle-plugin"))
+  compileOnly(kotlin("gradle-plugin-api"))
+  compileOnly("org.jetbrains.dokka:dokka-gradle-plugin:${libs.versions.dokka.get()}")
+//  implementation("org.danbrough.kotlinxtras:plugin:${libs.versions.xtras.get()}")
+  implementation(project(":plugin"))
+
 }
 
 
-xtrasIconv {
-  buildEnabled = true
-}
-
-xtrasSqlite {
-  buildEnabled = true
-}
-
-
-xtrasOpenssl {
-  buildEnabled = true
-}
-
-
-//xtrasCurl {
-//  buildEnabled = true
+//kotlin {
+//  jvmToolchain {
+//    languageVersion.set(JavaLanguageVersion.of(11))
+//  }
 //}
+//
+//tasks.withType<KotlinJvmCompile> {
+//  kotlinOptions {
+//    jvmTarget = "11"
+//  }
+//}
+
+gradlePlugin {
+  plugins {
+
+
+    create("curl") {
+      id = "$group.curl"
+      implementationClass = "$group.CurlPlugin"
+      displayName = "KotlinXtras curl plugin"
+      description = "Provides curl support to multi-platform projects"
+    }
+
+    create("iconv") {
+      id = "$group.iconv"
+      implementationClass = "$group.IconvPlugin"
+      displayName = "KotlinXtras iconv plugin"
+      description = "Provides iconv support to multi-platform projects"
+    }
+
+    create("openssl") {
+      id = "$group.openssl"
+      implementationClass = "$group.OpenSSLPlugin"
+      displayName = "KotlinXtras openssl plugin"
+      description = "Provides openssl support to multi-platform projects"
+    }
+
+    create("sqlite") {
+      id = "$group.sqlite"
+      implementationClass = "$group.SqlitePlugin"
+      displayName = "KotlinXtras sqlite plugin"
+      description = "Provides sqlite support to multi-platform projects"
+    }
+
+  }
+}
+
 
 

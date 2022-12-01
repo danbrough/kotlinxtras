@@ -9,7 +9,7 @@ import org.gradle.api.Project
 
 const val XTRAS_SQLITE_EXTN_NAME = "xtrasSqlite"
 
-open class SqliteBinaryExtension(project: Project) : LibraryExtension(project,"sqlite")
+open class SqliteBinaryExtension(project: Project,binariesExtension:BinaryConfigurationExtension) : LibraryExtension(project,"sqlite",binariesExtension)
 
 class SqlitePlugin : Plugin<Project> {
 
@@ -46,6 +46,7 @@ class SqlitePlugin : Plugin<Project> {
           linkerOpts.mingw = -ldl -lsqlite3 -lpthread
           headers = sqlite3.h
           headerFilter = sqlite3*.h
+          compilerOpts = -fPIC 
           
           """.trimIndent()
       }

@@ -5,6 +5,7 @@ import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.xtrasLibsDir
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.dependencies
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget) {
@@ -18,7 +19,6 @@ fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget) {
       group = XTRAS_TASK_GROUP
       description = "Provide all binaries from all LibraryExtensions"
     }
-
 
   val provideAllFromExtensionTask =
     project.tasks.findByName(provideAllBinariesTaskName()) ?: project.tasks.create(
@@ -34,7 +34,7 @@ fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget) {
     group = XTRAS_TASK_GROUP
     description = "Provide all binaries for the $libName LibraryExtension"
 
-    if (buildEnabled){
+    if (buildEnabled && target.family.isAppleFamily == HostManager.hostIsMac){
       if (buildTask == null) throw Error("buildTask not configured for $libName")
       val buildSourcesTask = project.tasks.getByName(buildSourcesTaskName(target))
       dependsOn(buildSourcesTask)

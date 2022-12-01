@@ -1,4 +1,4 @@
-//import org.danbrough.kotlinxtras.xtrasPom
+
 import org.danbrough.kotlinxtras.projectProperty
 import org.danbrough.kotlinxtras.xtrasPom
 import org.gradle.api.tasks.testing.logging.TestLogEvent
@@ -7,8 +7,8 @@ plugins {
   kotlin("multiplatform") apply false
   `maven-publish`
   id("org.jetbrains.dokka") apply false
-  id("org.danbrough.kotlinxtras.binaries") apply false
-  id("org.danbrough.kotlinxtras.sonatype") apply false
+  alias(libs.plugins.org.danbrough.kotlinxtras.binaries) apply false
+  alias(libs.plugins.org.danbrough.kotlinxtras.sonatype) apply false
 }
 
 println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION}")

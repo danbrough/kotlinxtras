@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 const val XTRAS_CURL_EXTN_NAME = "xtrasCurl"
 
-open class CurlBinaryExtension(project: Project) : LibraryExtension(project, "curl")
+open class CurlBinaryExtension(project: Project,binariesExtension:BinaryConfigurationExtension) : LibraryExtension(project, "curl",binariesExtension)
 class CurlPlugin : Plugin<Project> {
 
   override fun apply(project: Project) {

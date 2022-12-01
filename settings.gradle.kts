@@ -7,6 +7,9 @@ pluginManagement {
     mavenCentral()
     google()
   }
+
+
+  //includeBuild("./plugin")
 }
 
 
@@ -16,8 +19,9 @@ plugins {
 
 rootProject.name = "kotlinxtras"
 
-includeBuild("plugin")
 
+include(":plugin")
 include(":common")
 include(":plugins")
+
 

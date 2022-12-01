@@ -22,6 +22,7 @@ open class BinaryConfigurationExtension {
   var tarBinary: String = "/usr/bin/tar"
   var autoreconfBinary: String = "/usr/bin/autoreconf"
   var makeBinary: String = "/usr/bin/make"
+  var defaultBuildSupport:Boolean = false
 }
 
 const val XTRAS_BINARIES_EXTN_NAME = "xtrasBinaries"

@@ -9,7 +9,7 @@ import org.gradle.api.Project
 
 const val XTRAS_ICONV_EXTN_NAME = "xtrasIconv"
 
-open class IconvBinaryExtension(project: Project) : LibraryExtension(project, "iconv")
+open class IconvBinaryExtension(project: Project,binariesExtension:BinaryConfigurationExtension) : LibraryExtension(project, "iconv",binariesExtension)
 
 class IconvPlugin : Plugin<Project> {
   override fun apply(project: Project) {
