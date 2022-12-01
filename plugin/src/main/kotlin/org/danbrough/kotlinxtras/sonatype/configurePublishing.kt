@@ -42,7 +42,7 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
     extn.sonatypeUsername = project.projectProperty(SonatypeExtension.USERNAME)
     extn.sonatypePassword = project.projectProperty(SonatypeExtension.PASSWORD)
     extn.publishDocs = project.projectProperty(SonatypeExtension.PUBLISH_DOCS, false)
-    extn.signPublications = project.projectProperty(SonatypeExtension.SIGN_APPLICATIONS, false)
+    extn.signPublications = project.projectProperty(SonatypeExtension.SIGN_PUBLICATIONS, false)
 
     extn.configurePublishing(this, this@configurePublishing)
 

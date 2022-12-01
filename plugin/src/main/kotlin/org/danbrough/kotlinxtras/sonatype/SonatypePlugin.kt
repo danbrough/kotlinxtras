@@ -28,7 +28,7 @@ open class SonatypeExtension(val project: Project) {
     const val USERNAME = "sonatypeUsername"
     const val PASSWORD = "sonatypePassword"
     const val PUBLISH_DOCS = "publishDocs"
-    const val SIGN_APPLICATIONS = "signApplications"
+    const val SIGN_PUBLICATIONS = "signPublications"
   }
 
   internal var configurePublishing: PublishingExtension.(project: Project) -> Unit = {}
