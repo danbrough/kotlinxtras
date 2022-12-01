@@ -151,9 +151,10 @@ fun KonanTarget.buildEnvironment(): MutableMap<String, *> = mutableMapOf(
                 "$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/x86_64-unknown-linux-gnu/bin/ranlib"*/
     }
 
-    KonanTarget.MACOS_X64 -> {
+    KonanTarget.MACOS_X64,KonanTarget.MACOS_ARM64 -> {
       this["CC"] = "gcc"
       this["CXX"] = "g++"
+      this["LD"] = "lld"
     }
 
 
@@ -204,6 +205,8 @@ export CXX=$TARGET-g++
     }
   }
 
+  if (HostManager.hostIsMac)
+    path.add(0, konanDir.resolve("dependencies/apple-llvm-20200714-macos-x64-essentials/bin").absolutePath)
   path.add(0, konanDir.resolve("dependencies/llvm-11.1.0-linux-x64-essentials/bin").absolutePath)
   this["PATH"] = path.joinToString(File.pathSeparator)
 }
