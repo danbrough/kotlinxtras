@@ -23,15 +23,15 @@ fun LibraryExtension.registerPackageTask(target: KonanTarget) =
 
 
 fun LibraryExtension.registerPublishingTask(target: KonanTarget) {
-  //only enable publishing if the PublishingExtension is present
-  project.extensions.findByType(PublishingExtension::class.java)?.publications?.register(
-    "$libName${target.platformName.capitalized()}",
-    MavenPublication::class.java
-  ) {
-    artifactId = name
-    groupId = this@registerPublishingTask.publishingGroup
-    version = this@registerPublishingTask.version
-    artifact(registerPackageTask(target))
-  }
+  //only enable publishing if the PublishingExtension is present and the target is able to be built
+    project.extensions.findByType(PublishingExtension::class.java)?.publications?.register(
+      "$libName${target.platformName.capitalized()}",
+      MavenPublication::class.java
+    ) {
+      artifactId = name
+      groupId = this@registerPublishingTask.publishingGroup
+      version = this@registerPublishingTask.version
+      artifact(registerPackageTask(target))
+    }
 }
 

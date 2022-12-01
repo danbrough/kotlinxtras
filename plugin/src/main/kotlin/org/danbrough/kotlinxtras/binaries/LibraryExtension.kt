@@ -13,6 +13,7 @@ import org.gradle.api.tasks.Exec
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -213,7 +214,9 @@ private fun LibraryExtension.registerXtrasTasks() {
 
     configureTargetTask?.invoke(konanTarget)
 
-    if (buildTask != null && buildEnabled) {
+    if (buildTask != null && buildEnabled && HostManager.hostIsMac == konanTarget.family.isAppleFamily) {
+
+      println("ADDING BUILD SUPPORT FOR $libName with $konanTarget")
 
       when (srcConfig) {
         is ArchiveSourceConfig -> {
