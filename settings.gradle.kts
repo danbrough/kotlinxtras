@@ -18,10 +18,10 @@ plugins {
 }
 
 rootProject.name = "kotlinxtras"
-
+val includeCommon:String by settings 
 
 include(":plugin")
-include(":common")
+if (includeCommon.toBoolean()) include(":common")
 include(":plugins")
 
 
