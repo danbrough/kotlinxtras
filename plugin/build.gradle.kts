@@ -14,8 +14,9 @@ repositories {
   mavenCentral()
 }
 
+val publishingVersion = "0.0.3-beta05"
 group = "org.danbrough.kotlinxtras"
-version = "0.0.3-beta05"
+version = publishingVersion
 
 dependencies {
   compileOnly(kotlin("gradle-plugin"))
@@ -28,8 +29,10 @@ sonatype {
 
   configurePublishing {
     publications.all {
-      if (this is MavenPublication)
+      if (this is MavenPublication) {
+        version = publishingVersion
         xtrasPom()
+      }
     }
   }
 }

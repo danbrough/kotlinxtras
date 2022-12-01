@@ -24,7 +24,7 @@ import java.net.URI
 internal fun Project.configurePublishing(extn: SonatypeExtension) {
 
   extensions.findByType<PublishingExtension>()?.apply {
-    logger.debug("configurePublishing - ${project.group}:${project.name}:${project.version}")
+    println("configurePublishing - ${project.group}:${project.name}:${project.version}")
 
     /*
         const val SONATYPE_TASK_GROUP = "sonatype"
