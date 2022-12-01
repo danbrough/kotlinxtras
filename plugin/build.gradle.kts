@@ -1,4 +1,3 @@
-import org.danbrough.kotlinxtras.projectProperty
 import org.danbrough.kotlinxtras.xtrasPom
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
@@ -14,7 +13,7 @@ repositories {
   mavenCentral()
 }
 
-val publishingVersion = "0.0.3-beta06"
+val publishingVersion = "0.0.3-beta10"
 group = "org.danbrough.kotlinxtras"
 version = publishingVersion
 

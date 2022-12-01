@@ -4,22 +4,22 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 plugins {
   kotlin("multiplatform")
   `maven-publish`
-  id("org.danbrough.kotlinxtras.sonatype")
-  listOf("binaries","openssl","iconv","sqlite").forEach {
-    id("org.danbrough.kotlinxtras.$it") version libs.versions.xtras.get()
-  }
+  //id("org.danbrough.kotlinxtras.sonatype")
+//  listOf("openssl","iconv","sqlite").forEach {
+//    id("org.danbrough.kotlinxtras.$it") version libs.versions.xtras.get()
+//  }
 }
 
-xtrasIconv {
-  buildEnabled = true
-}
-
-xtrasOpenssl {
-  buildEnabled = true
-}
-xtrasSqlite {
-  buildEnabled = true
-}
+//xtrasIconv {
+//  buildEnabled = true
+//}
+//
+//xtrasOpenssl {
+//  buildEnabled = true
+//}
+//xtrasSqlite {
+//  buildEnabled = true
+//}
 
 
 kotlin{
