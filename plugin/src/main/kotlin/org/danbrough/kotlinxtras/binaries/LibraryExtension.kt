@@ -1,5 +1,6 @@
 package org.danbrough.kotlinxtras.binaries
 
+import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.buildEnvironment
 import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.xtrasDir
@@ -163,7 +164,7 @@ private fun <T : LibraryExtension> Project.registerLibraryExtension(
     extensions.getByName(XTRAS_BINARIES_EXTN_NAME)
   }
 
-  return extensions.create(extnName, type, this,configuration as BinaryConfigurationExtension)
+  return extensions.create(extnName, type, this, configuration as BinaryConfigurationExtension)
     .apply {
       project.afterEvaluate {
         registerXtrasTasks()
@@ -201,6 +202,12 @@ private fun LibraryExtension.registerXtrasTasks() {
     }
   }
 
+  val provideAllTargetsTask = project.tasks.create(
+    provideAllBinariesTaskName()
+  ) {
+    group = XTRAS_TASK_GROUP
+    description = "Provide all binaries from a LibraryExtension"
+  }
 
   konanTargets.forEach { konanTarget ->
 
@@ -227,7 +234,8 @@ private fun LibraryExtension.registerXtrasTasks() {
       project.logger.info("buildSupport disabled for $libName as either buildTask is null or buildingEnabled is false")
     }
 
-    registerProvideBinariesTask(konanTarget)
+    provideAllTargetsTask.dependsOn(registerProvideBinariesTask(konanTarget))
+
   }
 
   registerGenerateInteropsTask()
