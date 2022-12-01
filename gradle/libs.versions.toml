@@ -17,7 +17,7 @@ org-danbrough-kotlinxtras-binaries = { id = "org.danbrough.kotlinxtras.binaries"
 kotlin = "1.7.10"
 ##  ??? = "1.8.0-Beta"
 dokka = "1.7.20"
-xtras = "0.0.3-beta03"
+xtras = "0.0.3-beta05"
 
 [libraries]
 
