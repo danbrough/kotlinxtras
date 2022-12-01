@@ -14,7 +14,7 @@ repositories {
   mavenCentral()
 }
 
-val publishingVersion = "0.0.3-beta05"
+val publishingVersion = "0.0.3-beta06"
 group = "org.danbrough.kotlinxtras"
 version = publishingVersion
 
