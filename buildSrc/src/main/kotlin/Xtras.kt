@@ -1,7 +1,10 @@
 import org.gradle.api.publish.maven.MavenPublication
 
 object Xtras {
-  val projectGroup = "org.danbrough.kotlinxtras"
+  const val projectGroup = "org.danbrough.kotlinxtras"
+  const val version = "0.0.3-beta12"
+  const val publishingVersion = "0.0.3-beta12"
+
 
   fun MavenPublication.xtrasPom() {
     pom {

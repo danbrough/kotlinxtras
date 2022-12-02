@@ -1,3 +1,4 @@
+
 import Xtras.xtrasPom
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
@@ -5,21 +6,19 @@ plugins {
   kotlin("multiplatform") apply false
   `maven-publish`
   id("org.jetbrains.dokka") apply false
-  alias(libs.plugins.org.danbrough.kotlinxtras.binaries)
-  alias(libs.plugins.org.danbrough.kotlinxtras.sonatype) apply false
+  id("${Xtras.projectGroup}.sonatype") version Xtras.version apply false
 }
 
 println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION}")
 
-val xtrasGroup = Xtras.projectGroup
-val xtrasVersion = libs.versions.xtras.get()
+val xtrasVersion = "0.0.3-beta02"
 
 group = Xtras.projectGroup
 
 allprojects {
 
   repositories {
-    maven("https://s01.oss.sonatype.org/content/groups/staging/")
+    //maven("https://s01.oss.sonatype.org/content/groups/staging/")
     mavenCentral()
   }
 
@@ -40,8 +39,9 @@ allprojects {
 
 
 subprojects {
-  group = xtrasGroup
-  version = xtrasVersion
+  group = Xtras.projectGroup
+  version = Xtras.publishingVersion
+
 
   afterEvaluate {
     extensions.findByType(PublishingExtension::class)?.also {

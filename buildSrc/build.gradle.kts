@@ -1,11 +1,17 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import java.util.*
 
 plugins {
   `kotlin-dsl`
 }
 
+val kotlinVersion = Properties().let{
+  it.load(file("../versions.properties").reader())
+  it["version.kotlin"]!!.toString()
+}
+
 dependencies {
- implementation(kotlin("gradle-plugin"))
+ implementation(kotlin("gradle-plugin",kotlinVersion))
 }
 
 repositories {

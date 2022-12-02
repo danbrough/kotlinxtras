@@ -2,8 +2,8 @@ import org.danbrough.kotlinxtras.IconvBinaryExtension
 
 
 plugins {
-  id("org.danbrough.kotlinxtras.sonatype")
-  id("org.danbrough.kotlinxtras.iconv") version libs.versions.xtras.get()
+  id("${Xtras.projectGroup}.sonatype") version Xtras.version
+  id("${Xtras.projectGroup}.iconv") version Xtras.version
 }
 
 xtrasBinaries {

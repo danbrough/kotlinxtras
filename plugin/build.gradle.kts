@@ -1,38 +1,20 @@
-import Xtras.xtrasPom
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-
 plugins {
   `kotlin-dsl`
   `maven-publish`
-  alias(libs.plugins.org.jetbrains.dokka)
-  alias(libs.plugins.org.danbrough.kotlinxtras.sonatype)
+  id("org.jetbrains.dokka")
+  id("${Xtras.projectGroup}.sonatype")
 }
 
 repositories {
   mavenCentral()
 }
 
-val publishingVersion = libs.versions.xtrasPublish.get()
-group = Xtras.projectGroup
-version = publishingVersion
 
 dependencies {
   compileOnly(kotlin("gradle-plugin"))
   compileOnly(kotlin("gradle-plugin-api"))
-  compileOnly("org.jetbrains.dokka:dokka-gradle-plugin:${libs.versions.dokka.get()}")
-}
+  compileOnly("org.jetbrains.dokka:dokka-gradle-plugin:_")
 
-sonatype {
-  localRepoLocation = project.file("../build/m2")
-
-  configurePublishing {
-    publications.all {
-      if (this is MavenPublication) {
-        version = publishingVersion
-        xtrasPom()
-      }
-    }
-  }
 }
 
 gradlePlugin {
