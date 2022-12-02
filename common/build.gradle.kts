@@ -1,30 +1,17 @@
-import org.danbrough.kotlinxtras.declareSupportedTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   kotlin("multiplatform")
-  `maven-publish`
-  //id("org.danbrough.kotlinxtras.sonatype")
-//  listOf("openssl","iconv","sqlite").forEach {
-//    id("org.danbrough.kotlinxtras.$it") version libs.versions.xtras.get()
-//  }
+  id("org.danbrough.kotlinxtras.sonatype")
 }
 
-//xtrasIconv {
-//  buildEnabled = true
-//}
-//
-//xtrasOpenssl {
-//  buildEnabled = true
-//}
-//xtrasSqlite {
-//  buildEnabled = true
-//}
 
+kotlin {
 
-kotlin{
-
-  declareSupportedTargets()
+  //declareSupportedTargets()
+  linuxArm64()
+  linuxX64()
+  androidNativeArm32()
 
   val posixMain by sourceSets.creating
 
@@ -44,4 +31,6 @@ kotlin{
         defaultSourceSet.dependsOn(posix64Main)
     }
   }
+
+
 }

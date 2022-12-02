@@ -1,13 +1,6 @@
 package org.danbrough.kotlinxtras.binaries
 
-import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
-import org.danbrough.kotlinxtras.buildEnvironment
-import org.danbrough.kotlinxtras.platformName
-import org.danbrough.kotlinxtras.xtrasDir
-import org.danbrough.kotlinxtras.xtrasDownloadsDir
-import org.danbrough.kotlinxtras.xtrasLibsDir
-import org.danbrough.kotlinxtras.xtrasPackagesDir
-import org.danbrough.kotlinxtras.xtrasSupportedTargets
+import org.danbrough.kotlinxtras.*
 import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
 import org.gradle.configurationcache.extensions.capitalized
@@ -35,8 +28,7 @@ fun <T : LibraryExtension> Project.registerLibraryExtension(
 abstract class LibraryExtension(
   val project: Project,
 //Unique identifier for a binary package
-  var libName: String,
-  val binaryConfiguration: BinaryConfigurationExtension
+  var libName: String
 ) {
 
   @BinariesDSLMarker
@@ -46,20 +38,35 @@ abstract class LibraryExtension(
   open var sourceURL: String? = null
 
   @BinariesDSLMarker
-  open var publishingGroup: String = "org.danbrough.kotlinxtras.binaries"
+  open var publishingGroup: String = "$XTRAS_PACKAGE.binaries"
 
   @BinariesDSLMarker
   open var buildEnabled: Boolean = false
 
+
+  val binaries: BinaryConfigurationExtension by lazy {
+    project.extensions.findByType(BinaryConfigurationExtension::class.java) ?: let {
+      project.plugins.apply(XTRAS_BINARY_PLUGIN_ID)
+      project.extensions.getByType(BinaryConfigurationExtension::class.java)
+    }
+  }
+
+
   /**
-   * Konan targets supported by this library.
-   *
-   * By default all configured targets are supported.
-   *
-   * Use [konanTargets] to get the list of supported targets.
+   * This can be manually configured or by default it will be set to all the kotlin multi-platform targets.
+   * If not a kotlin mpp project then it will be set to [xtrasSupportedTargets]
    */
   @BinariesDSLMarker
-  open var supportedTargets: List<KonanTarget>? = null
+  open var supportedTargets: List<KonanTarget> = emptyList()
+
+  /**
+   * This can be manually configured or it will default to the [supportedTargets] filtered by whether they can
+   * be built on the host platform.
+   * ```kotlin supportedTargets.filter { it.family.isAppleFamily == HostManager.hostIsMac }```
+   */
+
+  @BinariesDSLMarker
+  val supportedBuildTargets: List<KonanTarget> = emptyList()
 
   open fun gitRepoDir(): File = project.xtrasDownloadsDir.resolve("repos/$libName")
 
@@ -158,38 +165,34 @@ abstract class LibraryExtension(
 private fun <T : LibraryExtension> Project.registerLibraryExtension(
   extnName: String,
   type: Class<T>
-): T {
-  val configuration = extensions.findByName(XTRAS_BINARIES_EXTN_NAME) ?: let {
-    logger.info("applying BinaryPlugin to $name")
-    pluginManager.apply(BinaryPlugin::class.java)
-    extensions.getByName(XTRAS_BINARIES_EXTN_NAME)
-  }
+): T = extensions.create(extnName, type, this)
+  .apply {
+    plugins.apply("$XTRAS_PACKAGE.binaries")
+    println("Xtras: CREATED: $extnName")
+    project.afterEvaluate {
 
-  return extensions.create(extnName, type, this, configuration as BinaryConfigurationExtension)
-    .apply {
-      project.afterEvaluate {
-        registerXtrasTasks()
-      }
+      registerXtrasTasks()
     }
-}
-
-/**
- * Returns the [LibraryExtension.supportedTargets] if configured else returns all the configured
- * kotlin multi-platform targets.
- * If this isn't a kotlin multiplatform project then it returns
- *
- */
-val LibraryExtension.konanTargets: List<KonanTarget>
-  get() = supportedTargets
-    ?: project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.targets?.withType(
-      KotlinNativeTarget::class.java
-    )?.map { it.konanTarget } ?: project.xtrasSupportedTargets
+  }
 
 
 private fun LibraryExtension.registerXtrasTasks() {
   val srcConfig = sourceConfig
 
-  project.logger.info("registerXtrasTasks for $libName")
+  println("LibraryExtension.registerXtrasTasks for $libName")
+
+
+
+  if (supportedTargets.isEmpty()) {
+    supportedTargets =
+      project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.targets?.withType(
+        KotlinNativeTarget::class.java
+      )?.map { it.konanTarget } ?: xtrasSupportedTargets
+  }
+
+  if (supportedBuildTargets.isEmpty())
+    supportedTargets = supportedTargets.filter { it.family.isAppleFamily == HostManager.hostIsMac }
+
 
   if (buildTask != null && buildEnabled) {
     when (srcConfig) {
@@ -210,34 +213,35 @@ private fun LibraryExtension.registerXtrasTasks() {
     description = "Provide all binaries from a LibraryExtension"
   }
 
-  konanTargets.forEach { konanTarget ->
+  supportedTargets.forEach { target ->
 
-    configureTargetTask?.invoke(konanTarget)
+    configureTargetTask?.invoke(target)
 
-    if (buildTask != null && buildEnabled && HostManager.hostIsMac == konanTarget.family.isAppleFamily) {
+    if (buildTask != null && buildEnabled && HostManager.hostIsMac == target.family.isAppleFamily) {
 
-      println("ADDING BUILD SUPPORT FOR $libName with $konanTarget")
+      println("Adding build support for $libName with $target")
 
       when (srcConfig) {
         is ArchiveSourceConfig -> {
-          registerArchiveExtractTask(srcConfig, konanTarget)
+          println("registering archive extract task")
+          registerArchiveExtractTask(srcConfig, target)
         }
 
         is GitSourceConfig -> {
-          registerGitExtractTask(srcConfig, konanTarget)
+          registerGitExtractTask(srcConfig, target)
         }
       }
 
       configureTask?.also {
-        registerConfigureSourcesTask(konanTarget)
+        registerConfigureSourcesTask(target)
       }
-      registerBuildSourcesTask(konanTarget)
-      registerPublishingTask(konanTarget)
+      registerBuildSourcesTask(target)
+      registerPublishingTask(target)
     } else {
       project.logger.info("buildSupport disabled for $libName as either buildTask is null or buildingEnabled is false")
     }
 
-    provideAllTargetsTask.dependsOn(registerProvideBinariesTask(konanTarget))
+    provideAllTargetsTask.dependsOn(registerProvideBinariesTask(target))
 
   }
 

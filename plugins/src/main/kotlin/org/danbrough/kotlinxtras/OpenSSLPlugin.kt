@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.konan.target.Family
 
 const val XTRAS_OPENSSL_EXTN_NAME = "xtrasOpenssl"
 
-open class OpenSSLBinaryExtension(project: Project,binariesExtension:BinaryConfigurationExtension) : LibraryExtension(project, "openssl",binariesExtension)
+open class OpenSSLBinaryExtension(project: Project) : LibraryExtension(project, "openssl")
 
 
 class OpenSSLPlugin : Plugin<Project> {
@@ -39,7 +39,7 @@ class OpenSSLPlugin : Plugin<Project> {
 
 
       build { target ->
-        commandLine(binaryConfiguration.makeBinary, "install_sw")
+        commandLine(binaries.makeBinary, "install_sw")
         outputs.dir(prefixDir(target))
       }
 

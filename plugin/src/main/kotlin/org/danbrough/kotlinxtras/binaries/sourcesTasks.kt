@@ -23,7 +23,7 @@ fun LibraryExtension.download(url: String, configure: ArchiveSourceConfig.() -> 
     tarExtractOptions = when {
       url.endsWith(".tar.gz",true) -> "xfz"
       url.endsWith(".tar.bz2",true) -> "xfj"
-      else -> ""
+      else -> throw Error("Missing tarExtractOptions for $url")
     }
     configure()
   }
@@ -53,7 +53,7 @@ internal fun LibraryExtension.registerGitDownloadTask(
 
     doFirst {
       project.exec {
-        commandLine(binaryConfiguration.gitBinary, "init", "--bare", repoDir)
+        commandLine(binaries.gitBinary, "init", "--bare", repoDir)
         println("running#: ${commandLine.joinToString(" ")}")
       }
 
@@ -61,7 +61,7 @@ internal fun LibraryExtension.registerGitDownloadTask(
       println("running: ${commandLine.joinToString(" ")}")
     }
     workingDir = gitRepoDir()
-    commandLine(binaryConfiguration.gitBinary, "remote", "add", "origin", sourceURL)
+    commandLine(binaries.gitBinary, "remote", "add", "origin", sourceURL)
 
   }
 
@@ -74,7 +74,7 @@ internal fun LibraryExtension.registerGitDownloadTask(
     group = XTRAS_TASK_GROUP
     workingDir(repoDir)
     commandLine(
-      binaryConfiguration.gitBinary,
+      binaries.gitBinary,
       "fetch",
       "--depth",
       "1",
@@ -105,7 +105,7 @@ internal fun LibraryExtension.registerGitExtractTask(
     actions.add {
       project.exec {
         workingDir = destDir
-        commandLine(binaryConfiguration.gitBinary, "init")
+        commandLine(binaries.gitBinary, "init")
         println("running: ${commandLine.joinToString(" ")}")
       }
     }
@@ -113,7 +113,7 @@ internal fun LibraryExtension.registerGitExtractTask(
     actions.add {
       project.exec {
         workingDir = destDir
-        commandLine(binaryConfiguration.gitBinary, "remote", "add", "origin", gitRepo)
+        commandLine(binaries.gitBinary, "remote", "add", "origin", gitRepo)
         println("running: ${commandLine.joinToString(" ")}")
       }
     }
@@ -132,7 +132,7 @@ internal fun LibraryExtension.registerGitExtractTask(
     actions.add {
       project.exec {
         workingDir = destDir
-        commandLine(binaryConfiguration.gitBinary, "clean","-xdf")
+        commandLine(binaries.gitBinary, "clean","-xdf")
         println("running: ${commandLine.joinToString(" ")}")
       }
       println("cleaning $destDir")
@@ -141,7 +141,7 @@ internal fun LibraryExtension.registerGitExtractTask(
     actions.add {
       project.exec {
         workingDir = destDir
-        commandLine(binaryConfiguration.gitBinary, "fetch", "--depth", "1", "origin", srcConfig.commit)
+        commandLine(binaries.gitBinary, "fetch", "--depth", "1", "origin", srcConfig.commit)
         println("running: ${commandLine.joinToString(" ")}")
       }
       println("checking out commit:${srcConfig.commit} in $destDir")
@@ -150,7 +150,7 @@ internal fun LibraryExtension.registerGitExtractTask(
     actions.add {
       project.exec {
         workingDir = destDir
-        commandLine(binaryConfiguration.gitBinary, "checkout", srcConfig.commit)
+        commandLine(binaries.gitBinary, "checkout", srcConfig.commit)
         println("running: ${commandLine.joinToString(" ")}")
       }
     }
@@ -172,7 +172,7 @@ internal fun LibraryExtension.registerArchiveDownloadTask() {
       println("running: ${commandLine.joinToString(" ")}")
     }
     commandLine(
-      binaryConfiguration.wgetBinary, "-q",
+      binaries.wgetBinary, "-q",
       "-c",
       inputs.properties["url"],
       "-P",

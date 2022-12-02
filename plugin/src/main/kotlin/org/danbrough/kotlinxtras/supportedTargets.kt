@@ -1,8 +1,6 @@
 package org.danbrough.kotlinxtras
 
-import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 /**
@@ -44,8 +42,7 @@ fun KotlinMultiplatformExtension.declareSupportedTargets() {
 
 }
 
-val Project.xtrasSupportedTargets: List<KonanTarget>
-  get() = setOf(
+val xtrasSupportedTargets: List<KonanTarget> = listOf(
     KonanTarget.LINUX_X64,
     KonanTarget.LINUX_ARM32_HFP,
     KonanTarget.LINUX_ARM64,
@@ -56,4 +53,4 @@ val Project.xtrasSupportedTargets: List<KonanTarget>
     KonanTarget.MACOS_X64,
     KonanTarget.MACOS_ARM64,
     KonanTarget.MINGW_X64,
-  ).filter { HostManager.hostIsMac == it.family.isAppleFamily }
+  )

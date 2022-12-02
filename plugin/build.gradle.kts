@@ -1,4 +1,4 @@
-import org.danbrough.kotlinxtras.xtrasPom
+import Xtras.xtrasPom
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
@@ -6,15 +6,14 @@ plugins {
   `maven-publish`
   alias(libs.plugins.org.jetbrains.dokka)
   alias(libs.plugins.org.danbrough.kotlinxtras.sonatype)
-  alias(libs.plugins.org.danbrough.kotlinxtras.binaries)
 }
 
 repositories {
   mavenCentral()
 }
 
-val publishingVersion = "0.0.3-beta10"
-group = "org.danbrough.kotlinxtras"
+val publishingVersion = libs.versions.xtrasPublish.get()
+group = Xtras.projectGroup
 version = publishingVersion
 
 dependencies {
@@ -33,18 +32,6 @@ sonatype {
         xtrasPom()
       }
     }
-  }
-}
-
-kotlin {
-  jvmToolchain {
-    languageVersion.set(JavaLanguageVersion.of(11))
-  }
-}
-
-tasks.withType<KotlinJvmCompile> {
-  kotlinOptions {
-    jvmTarget = "11"
   }
 }
 

@@ -110,7 +110,7 @@ fun LibraryExtension.registerGenerateInteropsTask() {
         //write the headers
         output.println(config.headers ?: config.headersFile!!.readText())
 
-        konanTargets.forEach { konanTarget ->
+        supportedTargets.forEach { konanTarget ->
           config.writeTarget(this@registerGenerateInteropsTask, konanTarget, output)
         }
       }

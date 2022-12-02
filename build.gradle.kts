@@ -1,5 +1,4 @@
-import org.danbrough.kotlinxtras.projectProperty
-import org.danbrough.kotlinxtras.xtrasPom
+import Xtras.xtrasPom
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
@@ -12,8 +11,10 @@ plugins {
 
 println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION}")
 
-val xtrasGroup = projectProperty<String>("project.group")
-group = xtrasGroup
+val xtrasGroup = Xtras.projectGroup
+val xtrasVersion = libs.versions.xtras.get()
+
+group = Xtras.projectGroup
 
 allprojects {
 
@@ -40,15 +41,15 @@ allprojects {
 
 subprojects {
   group = xtrasGroup
+  version = xtrasVersion
 
   afterEvaluate {
-    version = libs.versions.xtras.get()
-    extensions.findByType(PublishingExtension::class) ?: return@afterEvaluate
-
-    publishing {
-      publications.all {
-        if (this !is MavenPublication) return@all
-        xtrasPom()
+    extensions.findByType(PublishingExtension::class)?.also {
+      publishing {
+        publications.all {
+          if (this !is MavenPublication) return@all
+          xtrasPom()
+        }
       }
     }
   }

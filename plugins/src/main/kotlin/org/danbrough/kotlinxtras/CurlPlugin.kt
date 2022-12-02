@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 const val XTRAS_CURL_EXTN_NAME = "xtrasCurl"
 
-open class CurlBinaryExtension(project: Project,binariesExtension:BinaryConfigurationExtension) : LibraryExtension(project, "curl",binariesExtension)
+open class CurlBinaryExtension(project: Project) : LibraryExtension(project, "curl")
 class CurlPlugin : Plugin<Project> {
 
   override fun apply(project: Project) {
@@ -34,7 +34,7 @@ class CurlPlugin : Plugin<Project> {
           dependsOn(extractSourcesTaskName(target))
           workingDir(sourcesDir(target))
           outputs.file(workingDir.resolve("configure"))
-          commandLine(binaryConfiguration.autoreconfBinary, "-fi")
+          commandLine(binaries.autoreconfBinary, "-fi")
         }
       }
 
@@ -62,16 +62,17 @@ class CurlPlugin : Plugin<Project> {
       }
 
       build {
-        commandLine(binaryConfiguration.makeBinary, "install")
+        commandLine(binaries.makeBinary, "install")
       }
 
       cinterops {
         headers = """
-          |headers = curl/curl.h
-          |linkerOpts =  -lz -lssl -lcrypto -lcurl
-          |#staticLibraries.linux = libcurl.a
-          |#staticLibraries.android = libcurl.a
-          |""".trimMargin()
+          headers = curl/curl.h
+          linkerOpts =  -lz -lssl -lcrypto -lcurl
+          #staticLibraries.linux = libcurl.a
+          #staticLibraries.android = libcurl.a
+          
+          """.trimIndent()
       }
     }
   }

@@ -10,6 +10,9 @@ class SonatypePlugin : Plugin<Project> {
   override fun apply(project: Project) {
     val extn = project.extensions.create("sonatype", SonatypeExtension::class.java, project)
 
+    val publishingPluginId = "org.gradle.maven-publish"
+    project.plugins.findPlugin(publishingPluginId) ?: project.pluginManager.apply(publishingPluginId)
+
     project.afterEvaluate {
       project.createOpenRepoTask(extn)
       project.createCloseRepoTask(extn)

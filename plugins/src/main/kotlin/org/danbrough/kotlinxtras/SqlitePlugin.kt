@@ -9,7 +9,7 @@ import org.gradle.api.Project
 
 const val XTRAS_SQLITE_EXTN_NAME = "xtrasSqlite"
 
-open class SqliteBinaryExtension(project: Project,binariesExtension:BinaryConfigurationExtension) : LibraryExtension(project,"sqlite",binariesExtension)
+open class SqliteBinaryExtension(project: Project) : LibraryExtension(project,"sqlite")
 
 class SqlitePlugin : Plugin<Project> {
 
@@ -36,7 +36,7 @@ class SqlitePlugin : Plugin<Project> {
       }
 
       build {
-        commandLine(binaryConfiguration.makeBinary,"install")
+        commandLine(binaries.makeBinary,"install")
       }
 
       cinterops {

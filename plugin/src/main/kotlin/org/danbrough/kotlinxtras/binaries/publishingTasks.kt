@@ -18,7 +18,7 @@ fun LibraryExtension.registerPackageTask(target: KonanTarget) =
     val outputFile = project.xtrasPackagesDir.resolve(packageFile(target))
     workingDir(prefixDir(target))
     outputs.file(outputFile)
-    commandLine(binaryConfiguration.tarBinary, "-f", outputFile, "-cpz", "--exclude=share", "./")
+    commandLine(binaries.tarBinary, "-f", outputFile, "-cpz", "--exclude=share", "./")
   }
 
 

@@ -16,7 +16,7 @@ fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget) =
     if (buildEnabled && target.family.isAppleFamily == HostManager.hostIsMac) {
       if (buildTask == null) throw Error("buildTask not configured for $libName")
 
-      dependsOn(buildSourcesTaskName(target))
+      dependsOn(buildSourcesTaskName(target).also{println("$name ADDING DEPENDENCY on $it")})
       //println("BUILD SOURCES TASK OUTPUTS: ${buildSourcesTask.outputs.files.files}")
       //outputs.dir(buildSourcesTask.outputs.files.first())
       return@register
@@ -24,7 +24,7 @@ fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget) =
 
     //Download the prebuilt binaries from maven
 
-    val binaries =
+    val binariesConfiguration =
       project.configurations.create("configuration${libName.capitalized()}Binaries${target.platformName.capitalized()}") {
         isVisible = false
         isTransitive = false
@@ -33,7 +33,7 @@ fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget) =
       }
 
     project.dependencies {
-      binaries("$publishingGroup:$libName${target.platformName.capitalized()}:$version")
+      binariesConfiguration("$publishingGroup:$libName${target.platformName.capitalized()}:$version")
     }
 
     val outputDir = project.xtrasLibsDir.resolve("$libName/$version/${target.platformName}")
@@ -51,14 +51,14 @@ fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget) =
 
     actions.add {
       project.exec {
-        println("BINARIES FILES: ${binaries.files}")
-        val archives = binaries.resolve()
+        println("BINARIES FILES: ${binariesConfiguration.files}")
+        val archives = binariesConfiguration.resolve()
         if (archives.size != 1) throw Error("Expecting one file in $archives")
         val archive = archives.first()
 
         project.logger.info("extracting ${archive.absolutePath} to $workingDir")
         workingDir(outputDir)
-        commandLine(binaryConfiguration.tarBinary, "xfz", archive.absolutePath)
+        commandLine(binaries.tarBinary, "xfz", archive.absolutePath)
       }
     }
 
