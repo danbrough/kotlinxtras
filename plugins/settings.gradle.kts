@@ -22,6 +22,6 @@ pluginManagement {
     google()
   }
 
-  includeBuild("../plugin")
+  //includeBuild("../plugin")
 
 }

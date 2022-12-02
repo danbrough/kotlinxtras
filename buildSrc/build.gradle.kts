@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
- implementation(kotlin("gradle-plugin",libs.versions.kotlin.get()))
+ implementation(kotlin("gradle-plugin"))
 }
 
 repositories {
