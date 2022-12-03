@@ -1,12 +1,12 @@
 
-import Xtras.xtrasPom
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-  kotlin("multiplatform") apply false
+
+  kotlin("multiplatform")  apply false
   `maven-publish`
   id("org.jetbrains.dokka") apply false
-  id("${Xtras.projectGroup}.sonatype") version Xtras.version apply false
+  xtras("sonatype") version Xtras.version apply false
 }
 
 println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION}")

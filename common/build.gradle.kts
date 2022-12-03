@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   kotlin("multiplatform")
-  id("org.danbrough.kotlinxtras.sonatype")
+  id("${Xtras.projectGroup}.sonatype")
 }
 
 

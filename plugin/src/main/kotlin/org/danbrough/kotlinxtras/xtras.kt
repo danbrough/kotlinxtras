@@ -14,19 +14,19 @@ const val PROPERTY_XTRAS_DIR = "xtras.dir"
 /**
  * Location of the xtras packages directory
  */
-const val PROPERTY_PACKAGES_DIR = "xtras.packages.dir"
+const val PROPERTY_PACKAGES_DIR = "$PROPERTY_XTRAS_DIR.packages"
 
 
 /**
  * Location of the xtras downloads directory
  */
-const val PROPERTY_DOWNLOADS_DIR = "xtras.downloads.dir"
+const val PROPERTY_DOWNLOADS_DIR = "$PROPERTY_XTRAS_DIR.downloads"
 
-const val PROPERTY_DOCS_DIR = "xtras.docs.dir"
+const val PROPERTY_DOCS_DIR = "$PROPERTY_XTRAS_DIR.docs"
 
-const val PROPERTY_LIBS_DIR = "xtras.libs.dir"
+const val PROPERTY_LIBS_DIR = "$PROPERTY_XTRAS_DIR.libs"
 
-const val PROPERTY_CINTEROPS_DIR = "xtras.cinterops.dir"
+const val PROPERTY_CINTEROPS_DIR = "$PROPERTY_XTRAS_DIR.cinterops"
 
 private fun Project.xtrasPath(name: String, defValue: String? = null): File =
   properties[name]?.toString()?.trim()?.let {

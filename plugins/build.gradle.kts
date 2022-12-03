@@ -3,7 +3,8 @@ plugins {
   `maven-publish`
   id("org.jetbrains.dokka")
   id("${Xtras.projectGroup}.sonatype")
-  id("${Xtras.projectGroup}.binaries")
+  //id("${Xtras.projectGroup}.binaries")
+  xtras("binaries")
 }
 
 

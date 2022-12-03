@@ -1,6 +1,14 @@
 package org.danbrough.kotlinxtras.binaries
 
-import org.danbrough.kotlinxtras.*
+import org.danbrough.kotlinxtras.XTRAS_PACKAGE
+import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
+import org.danbrough.kotlinxtras.buildEnvironment
+import org.danbrough.kotlinxtras.platformName
+import org.danbrough.kotlinxtras.xtrasDir
+import org.danbrough.kotlinxtras.xtrasDownloadsDir
+import org.danbrough.kotlinxtras.xtrasLibsDir
+import org.danbrough.kotlinxtras.xtrasPackagesDir
+import org.danbrough.kotlinxtras.xtrasSupportedTargets
 import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
 import org.gradle.configurationcache.extensions.capitalized
@@ -40,15 +48,10 @@ abstract class LibraryExtension(
   @BinariesDSLMarker
   open var publishingGroup: String = "$XTRAS_PACKAGE.binaries"
 
+
   @BinariesDSLMarker
-  open var buildEnabled: Boolean = false
-
-
-  val binaries: BinaryConfigurationExtension by lazy {
-    project.extensions.findByType(BinaryConfigurationExtension::class.java) ?: let {
-      project.plugins.apply(XTRAS_BINARY_PLUGIN_ID)
-      project.extensions.getByType(BinaryConfigurationExtension::class.java)
-    }
+  open var buildEnabled: Boolean = project.binariesExtension.enableBuildSupportByDefault.also {
+    println("LibraryExtension::buildEnabled initialized to $it")
   }
 
 
@@ -83,11 +86,6 @@ abstract class LibraryExtension(
   @BinariesDSLMarker
   fun configureTarget(configure: (KonanTarget) -> Unit) {
     configureTargetTask = configure
-  }
-
-  @BinariesDSLMarker
-  fun install(task: SourcesTask) {
-    installTask = task
   }
 
   internal var cinteropsConfigTask: (CInteropsConfig.() -> Unit)? = null
@@ -160,6 +158,14 @@ abstract class LibraryExtension(
   open fun buildEnvironment(konanTarget: KonanTarget): Map<String, *> =
     konanTarget.buildEnvironment()
 
+  val binaries: BinaryExtension
+    inline get() = project.binariesExtension
+
+  init {
+    project.afterEvaluate {
+      println("LibraryExtension after evaluate: ")
+    }
+  }
 }
 
 private fun <T : LibraryExtension> Project.registerLibraryExtension(
@@ -180,8 +186,6 @@ private fun LibraryExtension.registerXtrasTasks() {
   val srcConfig = sourceConfig
 
   println("LibraryExtension.registerXtrasTasks for $libName")
-
-
 
   if (supportedTargets.isEmpty()) {
     supportedTargets =

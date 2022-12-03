@@ -1,14 +1,15 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import java.util.*
 
 plugins {
   `kotlin-dsl`
 }
 
-val kotlinVersion = Properties().let{
+/*val kotlinVersion = Properties().let{
   it.load(file("../versions.properties").reader())
   it["version.kotlin"]!!.toString()
-}
+}*/
+
+val kotlinVersion = "1.7.10"
 
 dependencies {
  implementation(kotlin("gradle-plugin",kotlinVersion))
