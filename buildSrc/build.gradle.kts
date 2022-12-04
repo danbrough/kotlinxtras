@@ -4,15 +4,8 @@ plugins {
   `kotlin-dsl`
 }
 
-/*val kotlinVersion = Properties().let{
-  it.load(file("../versions.properties").reader())
-  it["version.kotlin"]!!.toString()
-}*/
-
-val kotlinVersion = "1.7.10"
-
 dependencies {
- implementation(kotlin("gradle-plugin",kotlinVersion))
+ implementation(kotlin("gradle-plugin","1.7.10"))
 }
 
 repositories {

@@ -29,8 +29,18 @@ fun <T : LibraryExtension> Project.registerLibraryExtension(
   name: String,
   type: Class<T>,
   configure: T.() -> Unit
-): LibraryExtension =
-  registerLibraryExtension(name, type).apply(configure)
+) {
+  project.binariesExtension
+  extensions.create(name, type, this)
+  extensions.configure<T>(name) {
+    /*plugins.apply("$XTRAS_PACKAGE.binaries")
+  println("Xtras: CREATED: $extnName")*/
+    configure()
+    project.afterEvaluate {
+      registerXtrasTasks()
+    }
+  }
+}
 
 @BinariesDSLMarker
 abstract class LibraryExtension(
@@ -50,9 +60,7 @@ abstract class LibraryExtension(
 
 
   @BinariesDSLMarker
-  open var buildEnabled: Boolean = project.binariesExtension.enableBuildSupportByDefault.also {
-    println("LibraryExtension::buildEnabled initialized to $it")
-  }
+  open var buildEnabled: Boolean = false
 
 
   /**
@@ -161,31 +169,13 @@ abstract class LibraryExtension(
   val binaries: BinaryExtension
     inline get() = project.binariesExtension
 
-  init {
-    project.afterEvaluate {
-      println("LibraryExtension after evaluate: ")
-    }
-  }
 }
-
-private fun <T : LibraryExtension> Project.registerLibraryExtension(
-  extnName: String,
-  type: Class<T>
-): T = extensions.create(extnName, type, this)
-  .apply {
-    plugins.apply("$XTRAS_PACKAGE.binaries")
-    println("Xtras: CREATED: $extnName")
-    project.afterEvaluate {
-
-      registerXtrasTasks()
-    }
-  }
 
 
 private fun LibraryExtension.registerXtrasTasks() {
   val srcConfig = sourceConfig
 
-  println("LibraryExtension.registerXtrasTasks for $libName")
+  project.logger.info("LibraryExtension.registerXtrasTasks for $libName")
 
   if (supportedTargets.isEmpty()) {
     supportedTargets =

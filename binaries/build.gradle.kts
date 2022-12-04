@@ -1,17 +1,38 @@
 plugins {
   xtras("sonatype")
-  xtras("iconv") version Xtras.version
+
+  xtras("iconv", Xtras.version)
+  xtras("openssl", Xtras.version)
+  xtras("sqlite", Xtras.version)
+
 }
 
 xtrasBinaries {
-  enableBuildSupportByDefault = true
-  println("XtrasBinaries run: enableBuildSupportByDefault = $enableBuildSupportByDefault")
+
 }
 
 xtrasIconv {
-  println("XtrasIconv run: buildEnabled: $buildEnabled")
-  println("XtrasIconv run binaryConfiguration.enableBuildSupportByDefault =  ${binaries.enableBuildSupportByDefault}")
+  buildEnabled = true
 }
+
+xtrasOpenssl {
+  buildEnabled = true
+}
+/*
+
+xtrasCurl {
+  buildEnabled = true
+}
+*/
+
+xtrasSqlite {
+  buildEnabled = true
+}
+
+
+
+
+
 
 
 

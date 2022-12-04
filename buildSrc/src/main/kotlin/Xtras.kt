@@ -13,5 +13,8 @@ object Xtras {
 
 
 
-fun PluginDependenciesSpec.xtras(plugin:String,group:String = Xtras.projectGroup): PluginDependencySpec =
-  id("$group.$plugin")
+fun PluginDependenciesSpec.xtras(plugin:String): PluginDependencySpec =
+  id("${Xtras.projectGroup}.$plugin")
+
+fun PluginDependenciesSpec.xtras(plugin:String,version:String): PluginDependencySpec =
+  id("${Xtras.projectGroup}.$plugin").version(version)

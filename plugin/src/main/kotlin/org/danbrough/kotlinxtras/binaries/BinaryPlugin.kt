@@ -24,7 +24,7 @@ open class BinaryExtension {
   var tarBinary: String = "/usr/bin/tar"
   var autoreconfBinary: String = "/usr/bin/autoreconf"
   var makeBinary: String = "/usr/bin/make"
-  var enableBuildSupportByDefault: Boolean = false
+  var cmakeBinary: String = "/usr/bin/cmake"
 }
 
 const val XTRAS_BINARIES_EXTN_NAME = "xtrasBinaries"
@@ -35,15 +35,17 @@ class BinaryPlugin : Plugin<Project> {
       .apply {
 
         val binaryPropertyPrefix = "xtras.bin"
-        val binaryProperty: (String,String)->String = { exe,defValue->
-          target.projectProperty("$binaryPropertyPrefix.$exe",defValue)
+        val binaryProperty: (String, String) -> String = { exe, defValue ->
+          target.projectProperty("$binaryPropertyPrefix.$exe", defValue)
         }
 
-        gitBinary = binaryProperty("git","/usr/bin/git")
-        wgetBinary = binaryProperty("wget","/usr/bin/wget")
-        tarBinary = binaryProperty("tar","/usr/bin/tar")
-        autoreconfBinary = binaryProperty("autoreconf","/usr/bin/autoreconf")
-        makeBinary =      binaryProperty("make","/usr/bin/make")
+
+        gitBinary = binaryProperty("git", gitBinary)
+        wgetBinary = binaryProperty("wget", wgetBinary)
+        tarBinary = binaryProperty("tar", tarBinary)
+        autoreconfBinary = binaryProperty("autoreconf", autoreconfBinary)
+        makeBinary = binaryProperty("make", makeBinary)
+        cmakeBinary = binaryProperty("cmake", cmakeBinary)
 
 
         target.tasks.register("xtrasConfig") {
@@ -54,15 +56,13 @@ class BinaryPlugin : Plugin<Project> {
             println(
               """
                 
-                Properties:
-                  enableBuildSupportByDefault: $enableBuildSupportByDefault
-                
                 Binaries:
                   $binaryPropertyPrefix.git:            $gitBinary
                   $binaryPropertyPrefix.wget:           $wgetBinary
                   $binaryPropertyPrefix.tar:            $tarBinary
                   $binaryPropertyPrefix.autoreconf:     $autoreconfBinary
-                  $binaryPropertyPrefix.make:           $makeBinary                
+                  $binaryPropertyPrefix.make:           $makeBinary
+                  $binaryPropertyPrefix.cmake:          $cmakeBinary
                 
                 Paths:
                   $PROPERTY_XTRAS_DIR:            ${project.xtrasDir}
@@ -82,9 +82,6 @@ class BinaryPlugin : Plugin<Project> {
 
 val Project.binariesExtension: BinaryExtension
   get() = project.extensions.findByType(BinaryExtension::class.java) ?: let {
-    println("Project.binariesExtension::applying $XTRAS_BINARY_PLUGIN_ID")
     project.plugins.apply(XTRAS_BINARY_PLUGIN_ID)
-    project.extensions.getByType(BinaryExtension::class.java).also {
-      println("Project.binariesExtension::got $XTRAS_BINARY_PLUGIN_ID buildEnabledDefault: ${it.enableBuildSupportByDefault}")
-    }
+    project.extensions.getByType(BinaryExtension::class.java)
   }
