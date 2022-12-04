@@ -4,6 +4,8 @@ plugins {
   xtras("iconv", Xtras.version)
   xtras("openssl", Xtras.version)
   xtras("sqlite", Xtras.version)
+ // xtras("curl", Xtras.version)
+
 
 }
 
@@ -18,12 +20,6 @@ xtrasIconv {
 xtrasOpenssl {
   buildEnabled = true
 }
-/*
-
-xtrasCurl {
-  buildEnabled = true
-}
-*/
 
 xtrasSqlite {
   buildEnabled = true

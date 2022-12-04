@@ -1,0 +1,4 @@
+headers = zlib.h zconf.h
+staticLibraries = libz.a
+#linkerOpts =  -lz
+package = demo.zlib

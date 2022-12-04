@@ -5,7 +5,8 @@ plugins {
 }
 
 dependencies {
- implementation(kotlin("gradle-plugin","1.7.10"))
+  implementation(kotlin("gradle-plugin", "1.7.10"))
+
 }
 
 repositories {
@@ -24,3 +25,6 @@ tasks.withType<KotlinJvmCompile> {
     jvmTarget = "11"
   }
 }
+
+
+

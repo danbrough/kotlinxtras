@@ -1,0 +1,20 @@
+headers = zlib.h zconf.h
+staticLibraries = libz.a
+#linkerOpts =  -lz
+package = demo.zlib
+compilerOpts.linux_x64 = -I/usr/local/kotlinxtras/build/xtras/libs/zlib/1.2.13/linuxX64/include 
+linkerOpts.linux_x64 = -L/usr/local/kotlinxtras/build/xtras/libs/zlib/1.2.13/linuxX64/lib 
+libraryPaths.linux_x64 = /usr/local/kotlinxtras/build/xtras/libs/zlib/1.2.13/linuxX64/lib     
+
+compilerOpts.linux_arm64 = -I/usr/local/kotlinxtras/build/xtras/libs/zlib/1.2.13/linuxArm64/include 
+linkerOpts.linux_arm64 = -L/usr/local/kotlinxtras/build/xtras/libs/zlib/1.2.13/linuxArm64/lib 
+libraryPaths.linux_arm64 = /usr/local/kotlinxtras/build/xtras/libs/zlib/1.2.13/linuxArm64/lib     
+
+compilerOpts.linux_arm32_hfp = -I/usr/local/kotlinxtras/build/xtras/libs/zlib/1.2.13/linuxArm32Hfp/include 
+linkerOpts.linux_arm32_hfp = -L/usr/local/kotlinxtras/build/xtras/libs/zlib/1.2.13/linuxArm32Hfp/lib 
+libraryPaths.linux_arm32_hfp = /usr/local/kotlinxtras/build/xtras/libs/zlib/1.2.13/linuxArm32Hfp/lib     
+
+compilerOpts.android_x86 = -I/usr/local/kotlinxtras/build/xtras/libs/zlib/1.2.13/androidNativeX86/include 
+linkerOpts.android_x86 = -L/usr/local/kotlinxtras/build/xtras/libs/zlib/1.2.13/androidNativeX86/lib 
+libraryPaths.android_x86 = /usr/local/kotlinxtras/build/xtras/libs/zlib/1.2.13/androidNativeX86/lib     
+

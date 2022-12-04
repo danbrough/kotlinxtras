@@ -43,7 +43,6 @@ class IconvPlugin : Plugin<Project> {
           |linkerOpts = -liconv
           |package = libiconv
           |""".trimMargin()
-
       }
     }
   }

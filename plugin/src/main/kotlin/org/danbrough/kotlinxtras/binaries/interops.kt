@@ -5,7 +5,6 @@ import org.danbrough.kotlinxtras.xtrasCInteropsDir
 import org.danbrough.kotlinxtras.xtrasLibsDir
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.mpp.Executable
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
@@ -24,10 +23,10 @@ data class CInteropsConfig(
 
   //to be added to the start of the generated interops file
   //no file will be generated if this and [headers] remain null
-  var headersFile: File? = null,
+  var headerFile: File? = null,
 
   /**
-   * Specify the interops headers using a field instead of the [headersFile]
+   * Specify the interops headers using a field instead of the [headerFile]
    */
   var headers: String? = null,
 
@@ -35,7 +34,7 @@ data class CInteropsConfig(
   var writeTarget: CInteropsTargetWriter = defaultCInteropsTargetWriter,
 
   //customize the default config
-  var configure: (DefaultCInteropSettings.() -> Unit)? = null
+  var configure: (CInteropsConfig.() -> Unit)? = null
 )
 
 val defaultCInteropsTargetWriter: CInteropsTargetWriter = { konanTarget, output ->
@@ -60,15 +59,12 @@ fun LibraryExtension.registerGenerateInteropsTask() {
 
   cinteropsConfigTask?.invoke(config)
 
-
-
   project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
     val libPathKey = if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH"
     targets.withType(KotlinNativeTarget::class.java).all {
       compilations.getByName("main").apply {
         cinterops.create(config.name) {
           defFile(config.defFile)
-          config.configure?.invoke(this)
         }
       }
 
@@ -90,12 +86,12 @@ fun LibraryExtension.registerGenerateInteropsTask() {
   project.tasks.register(generateCInteropsTaskName()) {
     group = XTRAS_TASK_GROUP
 
-    if (config.headersFile != null && config.headers != null)
+    if (config.headerFile != null && config.headers != null)
       throw Error("Only one of headersFile or headers should be specified for the cinterops config")
 
     config.headers?.also { headers ->
       inputs.property("headers", headers)
-    } ?: inputs.file(config.headersFile!!)
+    } ?: inputs.file(config.headerFile!!)
 
     inputs.property("xtrasLibs",project.xtrasLibsDir)
 
@@ -108,7 +104,7 @@ fun LibraryExtension.registerGenerateInteropsTask() {
 
       defFile.printWriter().use { output ->
         //write the headers
-        output.println(config.headers ?: config.headersFile!!.readText())
+        output.println(config.headers ?: config.headerFile!!.readText())
 
         supportedTargets.forEach { konanTarget ->
           config.writeTarget(this@registerGenerateInteropsTask, konanTarget, output)
