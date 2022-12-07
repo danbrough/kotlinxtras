@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 
 fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget)=
-  project.tasks.create(configureSourcesTaskName(target),Exec::class.java){
+  project.tasks.register(configureSourcesTaskName(target),Exec::class.java){
     if (!isPackageBuilt(target))
       dependsOn(extractSourcesTaskName(target))
     environment(buildEnvironment(target))
@@ -17,32 +17,32 @@ fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget)=
     doFirst {
       println("running $name with: ${commandLine.joinToString(" ")}")
     }
-    enabled = !isPackageBuilt(target)
+   // enabled = !isPackageBuilt(target)
   }
 
 
 fun LibraryExtension.registerBuildSourcesTask(target: KonanTarget)=
-  project.tasks.create(buildSourcesTaskName(target),Exec::class.java){
+  project.tasks.register(buildSourcesTaskName(target),Exec::class.java){
 
     group = XTRAS_TASK_GROUP
     environment(buildEnvironment(target))
     workingDir(sourcesDir(target))
-    val prefixDir = prefixDir(target)
-    enabled = !prefixDir.exists()
+    outputs.dir(buildDir(target))
+
+    //val buildDir = buildDir(target)
+    //enabled = !buildDir.exists()
     if (enabled)
       configureTask?.also {
         dependsOn(configureSourcesTaskName(target))
       }
 
+
     buildTask!!(target)
     installTask?.also {
       finalizedBy(it)
     }
-
-    doLast {
-      println("doLast in $name")
-    }
   }
+
 
 
 

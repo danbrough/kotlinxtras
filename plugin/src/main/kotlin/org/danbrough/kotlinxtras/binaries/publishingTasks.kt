@@ -13,25 +13,48 @@ fun LibraryExtension.registerPackageTask(target: KonanTarget) =
   project.tasks.register(packageTaskName(target), Exec::class.java) {
     group = XTRAS_TASK_GROUP
     description = "Archives the built package into the packages directory"
-    enabled = !isPackageBuilt(target) && buildTask != null
-    dependsOn(provideBinariesTaskName(target))
+    enabled = buildEnabled
+    dependsOn(buildSourcesTaskName(target))
     val outputFile = project.xtrasPackagesDir.resolve(packageFile(target))
-    workingDir(prefixDir(target))
+    workingDir(buildDir(target))
     outputs.file(outputFile)
     commandLine(binaries.tarBinary, "-f", outputFile, "-cpz", "--exclude=share", "./")
   }
 
 
+/*fun LibraryExtension.registerCopyPackageToLibsTask(target: KonanTarget) =
+  project.tasks.register(
+    "xtrasExtractPackageToLibs${libName.capitalized()}${target.platformName.capitalized()}",
+    Exec::class.java
+  ) {
+    group = XTRAS_TASK_GROUP
+    description = "Extracts the packaged archive to the LibraryExtension.libsDir"
+    enabled = buildEnabled
+    dependsOn(packageTaskName(target))
+    val outputFile = project.xtrasPackagesDir.resolve(packageFile(target))
+    workingDir(libsDir(target))
+    outputs.dir(libsDir(target))
+    commandLine(binaries.tarBinary, "-f", outputFile, "-xpz", "./")
+  }*/
+
 fun LibraryExtension.registerPublishingTask(target: KonanTarget) {
-  //only enable publishing if the PublishingExtension is present and the target is able to be built
-    project.extensions.findByType(PublishingExtension::class.java)?.publications?.register(
+  project.logger.info("LibraryExtension.registerPublishingTask: $target group:$publishingGroup version:$version")
+  if (!buildEnabled) return
+  val packageTask = registerPackageTask(target)
+  project.extensions.getByType(PublishingExtension::class.java).apply {
+    publications.register(
       "$libName${target.platformName.capitalized()}",
       MavenPublication::class.java
     ) {
       artifactId = name
       groupId = this@registerPublishingTask.publishingGroup
       version = this@registerPublishingTask.version
-      artifact(registerPackageTask(target))
+      artifact(packageTask)
     }
+  }
+
+
+
+
 }
 

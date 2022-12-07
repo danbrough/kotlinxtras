@@ -16,7 +16,7 @@ repositories {
 dependencies {
   compileOnly(kotlin("gradle-plugin"))
   compileOnly(kotlin("gradle-plugin-api"))
-  compileOnly(project(":plugin"))
+  api(project(":plugin"))
 }
 
 

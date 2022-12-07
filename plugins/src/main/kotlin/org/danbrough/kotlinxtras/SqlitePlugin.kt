@@ -30,7 +30,7 @@ class SqlitePlugin : Plugin<Project> {
           "./configure",
           "--host=${target.hostTriplet}",
           "--disable-readline",
-          "--prefix=${prefixDir(target)}",
+          "--prefix=${buildDir(target)}",
         )
         outputs.file(workingDir.resolve("Makefile"))
       }

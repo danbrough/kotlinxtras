@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
   kotlin("multiplatform")
-  id("org.danbrough.kotlinxtras.binaries")
+  id("org.danbrough.kotlinxtras.curl") version "0.0.3-beta13"
 }
 
 
@@ -17,15 +17,18 @@ repositories {
   mavenCentral()
 }
 
+xtrasCurl {
+  buildEnabled = true
+}
 
 kotlin {
 
   linuxX64()
-  linuxArm32Hfp()
+/*  linuxArm32Hfp()
   linuxArm64()
   macosX64()
   macosArm64()
-  androidNativeX86()
+  androidNativeX86()*/
 
   val commonMain by sourceSets.getting {
     dependencies {

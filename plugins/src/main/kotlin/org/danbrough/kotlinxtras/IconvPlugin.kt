@@ -28,7 +28,7 @@ class IconvPlugin : Plugin<Project> {
           "-C",
           "--enable-static",
           "--host=${target.hostTriplet}",
-          "--prefix=${prefixDir(target)}"
+          "--prefix=${buildDir(target)}"
         )
         outputs.file(workingDir.resolve("Makefile"))
       }

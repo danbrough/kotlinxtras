@@ -13,12 +13,13 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 const val XTRAS_CURL_EXTN_NAME = "xtrasCurl"
 
 open class CurlBinaryExtension(project: Project) : LibraryExtension(project, "curl")
+
 class CurlPlugin : Plugin<Project> {
 
   override fun apply(project: Project) {
 
-/*    project.extensions.findByType(OpenSSLPlugin::class.java)
-      ?: throw Error("org.danbrough.kotlinxtras.openssl plugin not present")*/
+    project.extensions.findByType(OpenSSLPlugin::class.java)
+      ?: project.pluginManager.apply(OpenSSLPlugin::class.java)
 
     project.registerLibraryExtension(XTRAS_CURL_EXTN_NAME, CurlBinaryExtension::class.java) {
 
@@ -43,12 +44,17 @@ class CurlPlugin : Plugin<Project> {
         dependsOn(target.autoConfTaskName())
 
         val provideOpenSSLTaskName = provideBinariesTaskName(target, "openssl")
-        dependsOn(provideOpenSSLTaskName)
+
 
         val provideOpenSSLTask = project.tasks.getByName(provideOpenSSLTaskName)
+        dependsOn(provideOpenSSLTask)
+
         println("CurlPlugin: provideOpenSSLTask: $provideOpenSSLTask outputs: ${provideOpenSSLTask.outputs.files.files}")
         //println("openssl working dir: ${provideOpenSSLTask.work}")
-        val opensslDir = provideOpenSSLTask.outputs.files.files.first()
+        val openSSL = project.extensions.getByType(OpenSSLBinaryExtension::class.java)
+
+        val opensslDir = openSSL.buildDir(target)
+        println("OPEN SSL DIR: $opensslDir")
 
         outputs.file(workingDir.resolve("Makefile"))
 
@@ -57,7 +63,7 @@ class CurlPlugin : Plugin<Project> {
           "--host=${target.hostTriplet}",
           "--with-ssl=$opensslDir",
           "--with-ca-path=/etc/ssl/certs:/etc/security/cacerts:/etc/ca-certificates",
-          "--prefix=${prefixDir(target)}"
+          "--prefix=${buildDir(target)}"
         )
       }
 

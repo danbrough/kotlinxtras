@@ -11,9 +11,8 @@ plugins {
 
 println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION}")
 
-val xtrasVersion = "0.0.3-beta02"
-
 group = Xtras.projectGroup
+version = Xtras.publishingVersion
 
 allprojects {
 

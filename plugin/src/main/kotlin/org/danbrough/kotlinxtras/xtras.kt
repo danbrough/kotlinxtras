@@ -24,6 +24,8 @@ const val PROPERTY_DOWNLOADS_DIR = "$PROPERTY_XTRAS_DIR.downloads"
 
 const val PROPERTY_DOCS_DIR = "$PROPERTY_XTRAS_DIR.docs"
 
+const val PROPERTY_BUILD_DIR = "$PROPERTY_XTRAS_DIR.build"
+
 const val PROPERTY_LIBS_DIR = "$PROPERTY_XTRAS_DIR.libs"
 
 const val PROPERTY_CINTEROPS_DIR = "$PROPERTY_XTRAS_DIR.cinterops"
@@ -55,6 +57,15 @@ val Project.xtrasDownloadsDir: File
 
 
 /**
+ * Path to the xtras build directory.
+ * This is the prefix directory for compiled source code.
+ *
+ * Defaults to `project.xtrasDir.resolve("build")`
+ */
+val Project.xtrasBuildDir: File
+  get() = xtrasPath(PROPERTY_BUILD_DIR, "build")
+
+/**
  * Path to the xtras packages directory.
  * This is where binary archives are stored.
  *
@@ -82,6 +93,8 @@ val Project.xtrasCInteropsDir: File
  */
 val Project.xtrasDocsDir: File
   get() = xtrasPath(PROPERTY_DOCS_DIR, "docs")
+
+
 
 /**
  * Path to the xtras libs directory.

@@ -38,7 +38,7 @@ data class CInteropsConfig(
 )
 
 val defaultCInteropsTargetWriter: CInteropsTargetWriter = { konanTarget, output ->
-  val prefixDir = prefixDir(konanTarget).absolutePath
+  val prefixDir = buildDir(konanTarget).absolutePath
   output.println(
     """
          |compilerOpts.${konanTarget.name} = -I$prefixDir/include 
@@ -71,9 +71,9 @@ fun LibraryExtension.registerGenerateInteropsTask() {
       binaries.withType(Executable::class.java).filter { it.runTask != null }.forEach {
         val env = it.runTask!!.environment
         if (env.containsKey(libPathKey))
-          env[libPathKey] = env[libPathKey]!!.toString() + File.pathSeparatorChar +prefixDir(konanTarget).resolve("lib")
+          env[libPathKey] = env[libPathKey]!!.toString() + File.pathSeparatorChar +buildDir(konanTarget).resolve("lib")
         else
-          env[libPathKey] = prefixDir(konanTarget).resolve("lib")
+          env[libPathKey] = buildDir(konanTarget).resolve("lib")
         project.logger.debug("Setting $libPathKey for $konanTarget to ${env[libPathKey]}")
       }
     }

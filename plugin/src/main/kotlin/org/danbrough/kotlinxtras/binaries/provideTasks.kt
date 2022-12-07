@@ -15,10 +15,7 @@ fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget) =
 
     if (buildEnabled && target.family.isAppleFamily == HostManager.hostIsMac) {
       if (buildTask == null) throw Error("buildTask not configured for $libName")
-
-      dependsOn(buildSourcesTaskName(target).also{println("$name ADDING DEPENDENCY on $it")})
-      //println("BUILD SOURCES TASK OUTPUTS: ${buildSourcesTask.outputs.files.files}")
-      //outputs.dir(buildSourcesTask.outputs.files.first())
+      dependsOn(packageTaskName(target))
       return@register
     }
 
@@ -39,6 +36,7 @@ fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget) =
     val outputDir = project.xtrasLibsDir.resolve("$libName/$version/${target.platformName}")
     outputs.dir(outputDir)
 
+
     actions.add {
       project.logger.info("deleting $outputDir")
       outputDir.deleteRecursively()
@@ -51,7 +49,7 @@ fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget) =
 
     actions.add {
       project.exec {
-        println("BINARIES FILES: ${binariesConfiguration.files}")
+        //println("BINARIES FILES: ${binariesConfiguration.files}")
         val archives = binariesConfiguration.resolve()
         if (archives.size != 1) throw Error("Expecting one file in $archives")
         val archive = archives.first()

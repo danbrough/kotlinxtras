@@ -8,7 +8,6 @@ pluginManagement {
     google()
   }
 
-
 }
 
 plugins {

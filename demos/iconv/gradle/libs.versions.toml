@@ -5,14 +5,14 @@
 
 [versions]
 
-kotlin = "1.7.21"
+kotlin = "1.7.22"
 ##  ⬆ = "1.8.0-Beta"
 
-xtras = "0.0.3-beta01"
+xtras = "0.0.3-beta12"
 
 [libraries]
 
-klog = "org.danbrough:klog:0.0.2-beta01"
+klog = "org.danbrough:klog:0.0.1-beta07"
 
 org-danbrough-kotlinxtras-common = {group = "org.danbrough.kotlinxtras", name = "common", version.ref = "xtras"}
 

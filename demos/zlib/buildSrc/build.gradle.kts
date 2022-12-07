@@ -7,14 +7,12 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
   `kotlin-dsl`
-  id("org.danbrough.kotlinxtras.binaries") version "0.0.3-beta12"
+  id("org.danbrough.kotlinxtras.binaries") version "0.0.3-beta13"
 
 }
 
 dependencies {
   implementation(kotlin("gradle-plugin","1.7.10"))
-  implementation("org.danbrough.kotlinxtras.binaries:org.danbrough.kotlinxtras.binaries.gradle.plugin:0.0.3-beta12")
-
 }
 
 repositories {

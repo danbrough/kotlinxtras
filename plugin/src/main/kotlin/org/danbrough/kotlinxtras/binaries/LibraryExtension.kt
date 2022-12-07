@@ -4,12 +4,14 @@ import org.danbrough.kotlinxtras.XTRAS_PACKAGE
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.buildEnvironment
 import org.danbrough.kotlinxtras.platformName
+import org.danbrough.kotlinxtras.xtrasBuildDir
 import org.danbrough.kotlinxtras.xtrasDir
 import org.danbrough.kotlinxtras.xtrasDownloadsDir
 import org.danbrough.kotlinxtras.xtrasLibsDir
 import org.danbrough.kotlinxtras.xtrasPackagesDir
 import org.danbrough.kotlinxtras.xtrasSupportedTargets
 import org.gradle.api.Project
+import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.tasks.Exec
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -147,13 +149,20 @@ abstract class LibraryExtension(
   open fun sourcesDir(konanTarget: KonanTarget): File =
     project.xtrasDir.resolve("src/$libName/$version/${konanTarget.platformName}")
 
-  open fun prefixDir(
+  open fun buildDir(
+    konanTarget: KonanTarget,
+    packageName: String = libName,
+    packageVersion: String = version
+  ): File =
+    project.xtrasBuildDir.resolve("$packageName/$packageVersion/${konanTarget.platformName}")
+
+
+  open fun libsDir(
     konanTarget: KonanTarget,
     packageName: String = libName,
     packageVersion: String = version
   ): File =
     project.xtrasLibsDir.resolve("$packageName/$packageVersion/${konanTarget.platformName}")
-
 
   open fun isPackageBuilt(
     konanTarget: KonanTarget,
@@ -200,6 +209,11 @@ private fun LibraryExtension.registerXtrasTasks() {
     }
   }
 
+  project.extensions.findByType(PublishingExtension::class.java) ?: run {
+    project.logger.info("LibraryExtension.registerXtrasTask() applying maven-publish.")
+    project.pluginManager.apply("org.gradle.maven-publish")
+  }
+
   val provideAllTargetsTask = project.tasks.create(
     provideAllBinariesTaskName()
   ) {
@@ -213,7 +227,7 @@ private fun LibraryExtension.registerXtrasTasks() {
 
     if (buildTask != null && buildEnabled && HostManager.hostIsMac == target.family.isAppleFamily) {
 
-      println("Adding build support for $libName with $target")
+      //println("Adding build support for $libName with $target")
 
       when (srcConfig) {
         is ArchiveSourceConfig -> {
@@ -230,6 +244,7 @@ private fun LibraryExtension.registerXtrasTasks() {
         registerConfigureSourcesTask(target)
       }
       registerBuildSourcesTask(target)
+      registerCopyPackageToLibsTask(target)
       registerPublishingTask(target)
     } else {
       project.logger.info("buildSupport disabled for $libName as either buildTask is null or buildingEnabled is false")
