@@ -216,11 +216,14 @@ private fun LibraryExtension.registerXtrasTasks() {
     project.extensions.getByType(PublishingExtension::class.java)
   }
 
+
+  project.repositories.findByName("xtras") ?:
   project.repositories.maven {
     name = "xtras"
     url = project.xtrasMavenDir.toURI()
   }
 
+  publishing.repositories.findByName("xtras") ?:
   publishing.repositories.maven {
     name = "xtras"
     url = project.xtrasMavenDir.toURI()
