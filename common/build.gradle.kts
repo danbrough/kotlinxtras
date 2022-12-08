@@ -8,11 +8,8 @@ plugins {
 
 kotlin {
 
-  //declareSupportedTargets()
-  linuxArm64()
-  linuxX64()
-  androidNativeArm32()
-
+  declareSupportedTargets()
+  
 
   val posixMain by sourceSets.creating
 
