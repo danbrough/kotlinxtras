@@ -80,7 +80,7 @@ abstract class LibraryExtension(
    */
 
   @BinariesDSLMarker
-  val supportedBuildTargets: List<KonanTarget> = emptyList()
+  var supportedBuildTargets: List<KonanTarget> = emptyList()
 
   open fun gitRepoDir(): File = project.xtrasDownloadsDir.resolve("repos/$libName")
 
@@ -195,7 +195,9 @@ private fun LibraryExtension.registerXtrasTasks() {
   }
 
   if (supportedBuildTargets.isEmpty())
-    supportedTargets = supportedTargets.filter { it.family.isAppleFamily == HostManager.hostIsMac }
+    supportedBuildTargets =
+      if (HostManager.hostIsMac) supportedTargets.filter { it.family.isAppleFamily } else supportedTargets
+
 
 
   if (buildTask != null && buildEnabled) {
@@ -217,23 +219,22 @@ private fun LibraryExtension.registerXtrasTasks() {
   }
 
 
-  project.repositories.findByName("xtras") ?:
-  project.repositories.maven {
+  project.repositories.findByName("xtras") ?: project.repositories.maven {
     name = "xtras"
     url = project.xtrasMavenDir.toURI()
   }
 
-  publishing.repositories.findByName("xtras") ?:
-  publishing.repositories.maven {
+  publishing.repositories.findByName("xtras") ?: publishing.repositories.maven {
     name = "xtras"
     url = project.xtrasMavenDir.toURI()
   }
 
   val xtrasProvideAllTaskName = "xtrasProvideAll"
-  val provideAllGlobalTask = project.tasks.findByName("xtrasProvideAll") ?: project.tasks.create(xtrasProvideAllTaskName){
-    group = XTRAS_TASK_GROUP
-    description = "Provide all binaries from all LibraryExtensions"
-  }
+  val provideAllGlobalTask =
+    project.tasks.findByName("xtrasProvideAll") ?: project.tasks.create(xtrasProvideAllTaskName) {
+      group = XTRAS_TASK_GROUP
+      description = "Provide all binaries from all LibraryExtensions"
+    }
 
   val provideAllTargetsTask = project.tasks.create(
     provideAllBinariesTaskName()
