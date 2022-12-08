@@ -59,12 +59,6 @@ fun LibraryExtension.registerPublishingTask(target: KonanTarget) {
   project.extensions.findByType(PublishingExtension::class.java)?.apply {
     val packageTask = registerPackageTask(target)
 
-    val packageAllInLibraryTask = project.tasks.findByName("xtrasPackage${libName.capitalized()}")
-      ?: project.tasks.create("xtrasPackage${libName.capitalized()}") {
-        group = XTRAS_TASK_GROUP
-        description = "Package all targets for $libName"
-      }
-
     publications.register(
       "$libName${target.platformName.capitalized()}", MavenPublication::class.java
     ) {
