@@ -2,7 +2,7 @@ plugins {
   `kotlin-dsl`
   `maven-publish`
   id("org.jetbrains.dokka")
-  id("${Xtras.projectGroup}.sonatype")
+  xtras("sonatype")
 }
 
 repositories {
