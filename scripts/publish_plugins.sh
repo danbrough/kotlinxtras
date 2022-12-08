@@ -1,6 +1,5 @@
 #!/bin/bash
-cd "$(dirname "$0")" 
-
+cd "$(dirname "$0")" && cd ..
 
 REPO=${1-Xtras}
 echo publishing to $REPO
