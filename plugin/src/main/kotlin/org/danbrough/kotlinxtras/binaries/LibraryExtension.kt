@@ -255,7 +255,6 @@ private fun LibraryExtension.registerXtrasTasks() {
 
       when (srcConfig) {
         is ArchiveSourceConfig -> {
-          println("registering archive extract task")
           registerArchiveExtractTask(srcConfig, target)
         }
 
@@ -268,7 +267,6 @@ private fun LibraryExtension.registerXtrasTasks() {
         registerConfigureSourcesTask(target)
       }
       registerBuildSourcesTask(target)
-      //registerCopyPackageToLibsTask(target)
       registerPublishingTask(target)
     } else {
       project.logger.info("buildSupport disabled for $libName as either buildTask is null or buildingEnabled is false")
