@@ -6,11 +6,33 @@ import org.danbrough.kotlinxtras.xtrasPackagesDir
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-fun LibraryExtension.registerPackageTask(target: KonanTarget) =
-  project.tasks.register(packageTaskName(target), Exec::class.java) {
+fun LibraryExtension.registerPackageTask(target: KonanTarget): TaskProvider<Exec> {
+
+  val packageAllTaskName = "xtrasPackageAll"
+
+  val packageAllTask =project.tasks.findByName(packageAllTaskName) ?:
+  project.tasks.create(packageAllTaskName){
+    group = XTRAS_TASK_GROUP
+    description = "Package all targets in project"
+  }
+
+  val packageAllInLibraryTaskName = "xtrasPackage${libName.capitalized()}"
+
+  val packageAllInLibraryTask =
+    project.tasks.findByName(packageAllInLibraryTaskName) ?: project.tasks.create(
+      packageAllInLibraryTaskName
+    ) {
+      group = XTRAS_TASK_GROUP
+      description = "Package all targets for $libName"
+    }.also {
+      packageAllTask.dependsOn(it)
+    }
+
+  return project.tasks.register(packageTaskName(target), Exec::class.java) {
     group = XTRAS_TASK_GROUP
     description = "Archives the built package into the packages directory"
     enabled = buildEnabled
@@ -25,7 +47,10 @@ fun LibraryExtension.registerPackageTask(target: KonanTarget) =
     doLast {
       println("$name: created package: $outputFile")
     }
+  }.also {
+    packageAllInLibraryTask.dependsOn(it)
   }
+}
 
 fun LibraryExtension.registerPublishingTask(target: KonanTarget) {
   if (!buildEnabled) return
@@ -33,9 +58,15 @@ fun LibraryExtension.registerPublishingTask(target: KonanTarget) {
 
   project.extensions.findByType(PublishingExtension::class.java)?.apply {
     val packageTask = registerPackageTask(target)
+
+    val packageAllInLibraryTask = project.tasks.findByName("xtrasPackage${libName.capitalized()}")
+      ?: project.tasks.create("xtrasPackage${libName.capitalized()}") {
+        group = XTRAS_TASK_GROUP
+        description = "Package all targets for $libName"
+      }
+
     publications.register(
-      "$libName${target.platformName.capitalized()}",
-      MavenPublication::class.java
+      "$libName${target.platformName.capitalized()}", MavenPublication::class.java
     ) {
       artifactId = name
       groupId = this@registerPublishingTask.publishingGroup
@@ -43,8 +74,6 @@ fun LibraryExtension.registerPublishingTask(target: KonanTarget) {
       artifact(packageTask)
     }
   }
-
-
 
 
 }
