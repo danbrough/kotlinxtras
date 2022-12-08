@@ -226,6 +226,11 @@ private fun LibraryExtension.registerXtrasTasks() {
     url = project.xtrasMavenDir.toURI()
   }
 
+  val xtrasProvideAllTaskName = "xtrasProvideAll"
+  val provideAllGlobalTask = project.tasks.findByName("xtrasProvideAll") ?: project.tasks.create(xtrasProvideAllTaskName){
+    group = XTRAS_TASK_GROUP
+    description = "Provide all binaries from all LibraryExtensions"
+  }
 
   val provideAllTargetsTask = project.tasks.create(
     provideAllBinariesTaskName()
@@ -233,6 +238,8 @@ private fun LibraryExtension.registerXtrasTasks() {
     group = XTRAS_TASK_GROUP
     description = "Provide all binaries from a LibraryExtension"
   }
+
+  provideAllGlobalTask.dependsOn(provideAllTargetsTask)
 
   supportedTargets.forEach { target ->
 
