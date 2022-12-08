@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.konan.target.KonanTarget
+
 plugins {
   //`maven-publish`
 /*
@@ -11,6 +13,7 @@ plugins {
 }
 
 xtrasBinaries {
+
 
 }
 
@@ -34,5 +37,6 @@ xtrasCurl {
 */
 
 xtrasOpenssl {
+  supportedTargets = listOf(KonanTarget.LINUX_X64,KonanTarget.ANDROID_X86)
   buildEnabled = true
 }

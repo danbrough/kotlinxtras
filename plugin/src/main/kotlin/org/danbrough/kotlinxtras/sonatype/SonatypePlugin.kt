@@ -1,6 +1,7 @@
 package org.danbrough.kotlinxtras.sonatype
 
 
+import org.danbrough.kotlinxtras.xtrasMavenDir
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
@@ -49,8 +50,8 @@ open class SonatypeExtension(val project: Project) {
   var signPublications: Boolean = false
 
   var localRepoEnabled: Boolean = true
-  var localRepoName: String = "m2"
-  var localRepoLocation: File = project.rootProject.buildDir.resolve(localRepoName)
+  var localRepoName: String = "xtras"
+  var localRepoLocation: File = project.xtrasMavenDir
 
   var sonatypeSnapshot: Boolean  = false
 

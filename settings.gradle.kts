@@ -1,7 +1,7 @@
 pluginManagement {
 
   repositories {
-    maven(file("build/m2"))
+    maven(file("build/xtras/maven"))
     maven("https://s01.oss.sonatype.org/content/groups/staging")
     gradlePluginPortal()
     mavenCentral()
@@ -18,15 +18,21 @@ plugins {
 }
 
 rootProject.name = "kotlinxtras"
-val pluginsOnly: String by settings
 
-include(":plugin")
-include(":plugins")
+val pluginsOnly: String? by settings
 
+//-PpluginsOnly=true or not specified
+if (pluginsOnly == null || pluginsOnly.toBoolean()) {
+  include(":plugin")
+  include(":plugins")
+}
+
+//-PpluginsOnly=false or not specified
 if (!pluginsOnly.toBoolean()) {
   include(":common")
   include(":binaries")
 }
+
 
 
 

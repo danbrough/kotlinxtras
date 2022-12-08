@@ -18,30 +18,21 @@ fun LibraryExtension.registerPackageTask(target: KonanTarget) =
     val outputFile = project.xtrasPackagesDir.resolve(packageFile(target))
     workingDir(buildDir(target))
     outputs.file(outputFile)
+    onlyIf {
+      !outputFile.exists()
+    }
     commandLine(binaries.tarBinary, "-f", outputFile, "-cpz", "--exclude=share", "./")
+    doLast {
+      println("$name: created package: $outputFile")
+    }
   }
 
-
-/*fun LibraryExtension.registerCopyPackageToLibsTask(target: KonanTarget) =
-  project.tasks.register(
-    "xtrasExtractPackageToLibs${libName.capitalized()}${target.platformName.capitalized()}",
-    Exec::class.java
-  ) {
-    group = XTRAS_TASK_GROUP
-    description = "Extracts the packaged archive to the LibraryExtension.libsDir"
-    enabled = buildEnabled
-    dependsOn(packageTaskName(target))
-    val outputFile = project.xtrasPackagesDir.resolve(packageFile(target))
-    workingDir(libsDir(target))
-    outputs.dir(libsDir(target))
-    commandLine(binaries.tarBinary, "-f", outputFile, "-xpz", "./")
-  }*/
-
 fun LibraryExtension.registerPublishingTask(target: KonanTarget) {
-  project.logger.info("LibraryExtension.registerPublishingTask: $target group:$publishingGroup version:$version")
   if (!buildEnabled) return
-  val packageTask = registerPackageTask(target)
-  project.extensions.getByType(PublishingExtension::class.java).apply {
+  project.logger.info("LibraryExtension.registerPublishingTask: $target group:$publishingGroup version:$version")
+
+  project.extensions.findByType(PublishingExtension::class.java)?.apply {
+    val packageTask = registerPackageTask(target)
     publications.register(
       "$libName${target.platformName.capitalized()}",
       MavenPublication::class.java

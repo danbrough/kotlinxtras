@@ -18,6 +18,9 @@ fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget)=
       println("running $name with: ${commandLine.joinToString(" ")}")
     }
    // enabled = !isPackageBuilt(target)
+    onlyIf {
+      !isPackageBuilt(target)
+    }
   }
 
 
@@ -28,10 +31,11 @@ fun LibraryExtension.registerBuildSourcesTask(target: KonanTarget)=
     environment(buildEnvironment(target))
     workingDir(sourcesDir(target))
     outputs.dir(buildDir(target))
-
+    onlyIf {
+      !isPackageBuilt(target)
+    }
     //val buildDir = buildDir(target)
     //enabled = !buildDir.exists()
-    if (enabled)
       configureTask?.also {
         dependsOn(configureSourcesTaskName(target))
       }

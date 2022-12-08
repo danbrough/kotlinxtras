@@ -8,6 +8,7 @@ import org.danbrough.kotlinxtras.xtrasBuildDir
 import org.danbrough.kotlinxtras.xtrasDir
 import org.danbrough.kotlinxtras.xtrasDownloadsDir
 import org.danbrough.kotlinxtras.xtrasLibsDir
+import org.danbrough.kotlinxtras.xtrasMavenDir
 import org.danbrough.kotlinxtras.xtrasPackagesDir
 import org.danbrough.kotlinxtras.xtrasSupportedTargets
 import org.gradle.api.Project
@@ -209,10 +210,22 @@ private fun LibraryExtension.registerXtrasTasks() {
     }
   }
 
-  project.extensions.findByType(PublishingExtension::class.java) ?: run {
+  val publishing = project.extensions.findByType(PublishingExtension::class.java) ?: let {
     project.logger.info("LibraryExtension.registerXtrasTask() applying maven-publish.")
     project.pluginManager.apply("org.gradle.maven-publish")
+    project.extensions.getByType(PublishingExtension::class.java)
   }
+
+  project.repositories.maven {
+    name = "xtras"
+    url = project.xtrasMavenDir.toURI()
+  }
+
+  publishing.repositories.maven {
+    name = "xtras"
+    url = project.xtrasMavenDir.toURI()
+  }
+
 
   val provideAllTargetsTask = project.tasks.create(
     provideAllBinariesTaskName()
@@ -244,7 +257,7 @@ private fun LibraryExtension.registerXtrasTasks() {
         registerConfigureSourcesTask(target)
       }
       registerBuildSourcesTask(target)
-      registerCopyPackageToLibsTask(target)
+      //registerCopyPackageToLibsTask(target)
       registerPublishingTask(target)
     } else {
       project.logger.info("buildSupport disabled for $libName as either buildTask is null or buildingEnabled is false")

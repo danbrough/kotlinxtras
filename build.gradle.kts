@@ -1,5 +1,6 @@
 
 import org.gradle.api.tasks.testing.logging.TestLogEvent
+import org.gradle.configurationcache.extensions.capitalized
 
 plugins {
 
@@ -54,3 +55,7 @@ subprojects {
   }
 }
 
+tasks.register("publishXtras"){
+  dependsOn(project.getTasksByName("publishAllPublicationsTo${Xtras.repoName.capitalized()}Repository",true))
+
+}

@@ -18,6 +18,11 @@ const val PROPERTY_PACKAGES_DIR = "$PROPERTY_XTRAS_DIR.packages"
 
 
 /**
+ * Location of the xtras packages directory
+ */
+const val PROPERTY_MAVEN_DIR = "$PROPERTY_XTRAS_DIR.maven"
+
+/**
  * Location of the xtras downloads directory
  */
 const val PROPERTY_DOWNLOADS_DIR = "$PROPERTY_XTRAS_DIR.downloads"
@@ -73,6 +78,16 @@ val Project.xtrasBuildDir: File
  */
 val Project.xtrasPackagesDir: File
   get() = xtrasPath(PROPERTY_PACKAGES_DIR, "packages")
+
+
+/**
+ * Path to the xtras maven directory.
+ * This is where binary archives are published to.
+ *
+ * Defaults to `project.xtrasDir.resolve("maven")`
+ */
+val Project.xtrasMavenDir: File
+  get() = xtrasPath(PROPERTY_MAVEN_DIR, "maven")
 
 
 /**

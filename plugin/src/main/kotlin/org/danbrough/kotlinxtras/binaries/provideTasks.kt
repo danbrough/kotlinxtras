@@ -5,7 +5,6 @@ import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.xtrasLibsDir
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.dependencies
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget) =
@@ -13,11 +12,11 @@ fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget) =
     group = XTRAS_TASK_GROUP
     description = "Provide all binaries for the $libName LibraryExtension"
 
-    if (buildEnabled && target.family.isAppleFamily == HostManager.hostIsMac) {
+/*    if (buildEnabled && target.family.isAppleFamily == HostManager.hostIsMac) {
       if (buildTask == null) throw Error("buildTask not configured for $libName")
       dependsOn(packageTaskName(target))
       return@register
-    }
+    }*/
 
     //Download the prebuilt binaries from maven
 
@@ -35,7 +34,6 @@ fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget) =
 
     val outputDir = project.xtrasLibsDir.resolve("$libName/$version/${target.platformName}")
     outputs.dir(outputDir)
-
 
     actions.add {
       project.logger.info("deleting $outputDir")

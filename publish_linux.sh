@@ -2,7 +2,7 @@
 cd "$(dirname "$0")" 
 
 
-REPO=${1-M2}
+REPO=${1-Xtras}
 echo publishing to $REPO
 
 OPTS=""
@@ -12,6 +12,7 @@ if [ "$REPO" == "SonaType" ]; then
 fi
 
 
-./gradlew $OPTS publishAllPublicationsTo${REPO}Repository
+./gradlew -Pplugins=true $OPTS publishAllPublicationsTo${REPO}Repository
+./gradlew -Pplugins=true $OPTS publishAllPublicationsTo${REPO}Repository
 
 
