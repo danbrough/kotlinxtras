@@ -39,7 +39,6 @@ class BinaryPlugin : Plugin<Project> {
           target.projectProperty("$binaryPropertyPrefix.$exe", defValue)
         }
 
-
         gitBinary = binaryProperty("git", gitBinary)
         wgetBinary = binaryProperty("wget", wgetBinary)
         tarBinary = binaryProperty("tar", tarBinary)

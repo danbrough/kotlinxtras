@@ -7,7 +7,7 @@ echo publishing to $REPO
 
 
 if [ "$REPO" == "SonaType" ]; then
-	OPTS="-Dorg.gradle.unsafe.configuration-cache=false -PsignPublications=true -PpublishDocs=true"
+	OPTS="-PsignPublications=true -PpublishDocs=true"
 fi
 
 echo OPTS $OPTS

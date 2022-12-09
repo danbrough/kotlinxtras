@@ -5,9 +5,8 @@ import org.gradle.api.tasks.Exec
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 
-
-fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget)=
-  project.tasks.register(configureSourcesTaskName(target),Exec::class.java){
+fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget) =
+  project.tasks.register(configureSourcesTaskName(target), Exec::class.java) {
     if (!isPackageBuilt(target))
       dependsOn(extractSourcesTaskName(target))
     environment(buildEnvironment(target))
@@ -17,29 +16,28 @@ fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget)=
     doFirst {
       println("running $name with: ${commandLine.joinToString(" ")}")
     }
-   // enabled = !isPackageBuilt(target)
+    // enabled = !isPackageBuilt(target)
     onlyIf {
       !isPackageBuilt(target)
     }
   }
 
 
-fun LibraryExtension.registerBuildSourcesTask(target: KonanTarget)=
-  project.tasks.register(buildSourcesTaskName(target),Exec::class.java){
+fun LibraryExtension.registerBuildSourcesTask(target: KonanTarget) =
+  project.tasks.register(buildSourcesTaskName(target), Exec::class.java) {
 
     group = XTRAS_TASK_GROUP
     environment(buildEnvironment(target))
     workingDir(sourcesDir(target))
     outputs.dir(buildDir(target))
+
     onlyIf {
       !isPackageBuilt(target)
     }
-    //val buildDir = buildDir(target)
-    //enabled = !buildDir.exists()
-      configureTask?.also {
-        dependsOn(configureSourcesTaskName(target))
-      }
 
+    configureTask?.also {
+      dependsOn(configureSourcesTaskName(target))
+    }
 
     buildTask!!(target)
     installTask?.also {
