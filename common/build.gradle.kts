@@ -3,9 +3,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   kotlin("multiplatform")
-  id("${Xtras.projectGroup}.sonatype")
+  xtras("sonatype")
 }
 
+
+version = "0.0.1-beta01"
 
 kotlin {
 
