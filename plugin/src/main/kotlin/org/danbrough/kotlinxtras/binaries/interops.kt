@@ -18,15 +18,20 @@ typealias CInteropsTargetWriter = LibraryExtension.(KonanTarget, PrintWriter) ->
 data class CInteropsConfig(
   //name of the interops task
   var name: String,
+
+  //package for the interops
+  var interopsPackage: String? = null,
+
   //path to the generated (or preexisting) def file
-  var defFile: File,
+  //if pre-existing then [interopsPackage], [headers] and [headersFile] should not be set
+  var defFile: File? = null,
 
   //to be added to the start of the generated interops file
   //no file will be generated if this and [headers] remain null
   var headerFile: File? = null,
 
   /**
-   * Specify the interops headers using a field instead of the [headerFile]
+   * Specify the interops headers instead of the [headerFile]
    */
   var headers: String? = null,
 
@@ -38,12 +43,12 @@ data class CInteropsConfig(
 )
 
 val defaultCInteropsTargetWriter: CInteropsTargetWriter = { konanTarget, output ->
-  val prefixDir = buildDir(konanTarget).absolutePath
+  val libsDir = libsDir(konanTarget).absolutePath
   output.println(
     """
-         |compilerOpts.${konanTarget.name} = -I$prefixDir/include 
-         |linkerOpts.${konanTarget.name} = -L$prefixDir/lib 
-         |libraryPaths.${konanTarget.name} = $prefixDir/lib     
+         |compilerOpts.${konanTarget.name} = -I$libsDir/include 
+         |linkerOpts.${konanTarget.name} = -L$libsDir/lib 
+         |libraryPaths.${konanTarget.name} = $libsDir/lib     
          |""".trimMargin()
   )
 }
@@ -52,28 +57,36 @@ fun LibraryExtension.registerGenerateInteropsTask() {
 
   project.logger.info("registerGenerateInteropsTask for $this")
 
-  val config =  CInteropsConfig(
+  val config = CInteropsConfig(
     "xtras${libName.capitalized()}",
-    project.xtrasCInteropsDir.resolve("xtras_${libName}.def")
+    "${this::class.java.`package`.name}.$libName",
+    null
   )
 
-  cinteropsConfigTask?.invoke(config)
+  cinteropsConfigTasks.forEach {
+    it.invoke(config)
+  }
+
+  val generateConfig = config.defFile == null
+  if (generateConfig)
+    config.defFile = project.xtrasCInteropsDir.resolve("xtras_${libName}.def")
 
   project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
     val libPathKey = if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH"
     targets.withType(KotlinNativeTarget::class.java).all {
       compilations.getByName("main").apply {
         cinterops.create(config.name) {
-          defFile(config.defFile)
+          defFile(config.defFile!!)
         }
       }
 
       binaries.withType(Executable::class.java).filter { it.runTask != null }.forEach {
         val env = it.runTask!!.environment
         if (env.containsKey(libPathKey))
-          env[libPathKey] = env[libPathKey]!!.toString() + File.pathSeparatorChar +buildDir(konanTarget).resolve("lib")
+          env[libPathKey] =
+            env[libPathKey]!!.toString() + File.pathSeparatorChar + libsDir(konanTarget).resolve("lib")
         else
-          env[libPathKey] = buildDir(konanTarget).resolve("lib")
+          env[libPathKey] = libsDir(konanTarget).resolve("lib")
         project.logger.debug("Setting $libPathKey for $konanTarget to ${env[libPathKey]}")
       }
     }
@@ -83,37 +96,41 @@ fun LibraryExtension.registerGenerateInteropsTask() {
     dependsOn(generateCInteropsTaskName())
   }
 
-  project.tasks.register(generateCInteropsTaskName()) {
-    group = XTRAS_TASK_GROUP
+  if (generateConfig)
+    project.tasks.register(generateCInteropsTaskName()) {
+      group = XTRAS_TASK_GROUP
 
-    if (config.headerFile != null && config.headers != null)
-      throw Error("Only one of headersFile or headers should be specified for the cinterops config")
+      if (config.headerFile != null && config.headers != null)
+        throw Error("Only one of headersFile or headers should be specified for the cinterops config")
 
-    config.headers?.also { headers ->
-      inputs.property("headers", headers)
-    } ?: inputs.file(config.headerFile!!)
+      config.headers?.also { headers ->
+        inputs.property("headers", headers)
+      } ?: config.headerFile?.also { inputs.file(it) }
 
-    inputs.property("xtrasLibs",project.xtrasLibsDir)
+      inputs.property("xtrasLibs", project.xtrasLibsDir)
 
-    val defFile = config.defFile
-    outputs.file(defFile)
+      outputs.file(config.defFile!!)
 
-    dependsOn(provideAllBinariesTaskName())
+      dependsOn(provideAllBinariesTaskName())
 
-    actions.add {
+      actions.add {
 
-      defFile.printWriter().use { output ->
-        //write the headers
-        output.println(config.headers ?: config.headerFile!!.readText())
+        config.defFile!!.printWriter().use { output ->
+          //write the package
+          output.println("package = ${config.interopsPackage}")
+          //write the headers
+          (config.headers ?: config.headerFile?.readText())?.also {
+            output.println(it)
+          }
 
-        supportedTargets.forEach { konanTarget ->
-          config.writeTarget(this@registerGenerateInteropsTask, konanTarget, output)
+          supportedTargets.forEach { konanTarget ->
+            config.writeTarget(this@registerGenerateInteropsTask, konanTarget, output)
+          }
         }
       }
-    }
 
-    doLast {
-      println("generated $defFile")
+      doLast {
+        println("generated ${config.defFile}")
+      }
     }
-  }
 }

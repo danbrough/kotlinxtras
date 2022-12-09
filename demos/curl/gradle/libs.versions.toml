@@ -3,17 +3,19 @@
 [plugins]
 
 
+
 [versions]
 
 kotlin = "1.7.22"
 ##  ⬆ = "1.8.0-Beta"
+##  ⬆ = "1.8.0-RC"
 
-xtras = "0.0.3-beta12"
+xtras = "0.0.3-beta16"
 
 [libraries]
 
 klog = "org.danbrough:klog:0.0.2-beta01"
 
-org-danbrough-kotlinxtras-common = {group = "org.danbrough.kotlinxtras", name = "common", version.ref = "xtras"}
+org-danbrough-kotlinxtras-common = {group = "org.danbrough.kotlinxtras", name = "common", version= "0.0.1-beta01"}
 
 kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }

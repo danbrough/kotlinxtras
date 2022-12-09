@@ -12,17 +12,26 @@ plugins {
 
 
 repositories {
-  maven("/usr/local/kotlinxtras/build/m2")
+  maven("/usr/local/kotlinxtras/build/xtras/maven")
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
 }
 
+xtrasCurl {
+
+
+  cinterops {
+    interopsPackage = "libcurl"
+  }
+
+}
 
 kotlin {
 
   linuxX64()
   linuxArm32Hfp()
   linuxArm64()
+
   macosX64()
   macosArm64()
   androidNativeX86()
@@ -41,6 +50,7 @@ kotlin {
     compilations["main"].apply {
       defaultSourceSet.dependsOn(posixMain)
     }
+
 
     binaries {
       executable("curlDemo") {

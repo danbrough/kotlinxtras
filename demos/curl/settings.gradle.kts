@@ -1,7 +1,7 @@
 pluginManagement {
 
   repositories {
-    maven("/usr/local/kotlinxtras/build/m2")
+    maven("/usr/local/kotlinxtras/build/xtras/maven")
     maven("https://s01.oss.sonatype.org/content/groups/staging")
     gradlePluginPortal()
     mavenCentral()

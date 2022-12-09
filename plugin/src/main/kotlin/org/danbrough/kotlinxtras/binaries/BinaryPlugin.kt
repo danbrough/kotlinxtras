@@ -25,6 +25,8 @@ open class BinaryExtension {
   var autoreconfBinary: String = "/usr/bin/autoreconf"
   var makeBinary: String = "/usr/bin/make"
   var cmakeBinary: String = "/usr/bin/cmake"
+
+  var libraryExtensions = mutableListOf<LibraryExtension>()
 }
 
 const val XTRAS_BINARIES_EXTN_NAME = "xtrasBinaries"

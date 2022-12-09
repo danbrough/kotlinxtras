@@ -1,16 +1,6 @@
 package org.danbrough.kotlinxtras.binaries
 
-import org.danbrough.kotlinxtras.XTRAS_PACKAGE
-import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
-import org.danbrough.kotlinxtras.buildEnvironment
-import org.danbrough.kotlinxtras.platformName
-import org.danbrough.kotlinxtras.xtrasBuildDir
-import org.danbrough.kotlinxtras.xtrasDir
-import org.danbrough.kotlinxtras.xtrasDownloadsDir
-import org.danbrough.kotlinxtras.xtrasLibsDir
-import org.danbrough.kotlinxtras.xtrasMavenDir
-import org.danbrough.kotlinxtras.xtrasPackagesDir
-import org.danbrough.kotlinxtras.xtrasSupportedTargets
+import org.danbrough.kotlinxtras.*
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.tasks.Exec
@@ -38,6 +28,7 @@ fun <T : LibraryExtension> Project.registerLibraryExtension(
   extensions.configure<T>(name) {
     /*plugins.apply("$XTRAS_PACKAGE.binaries")
   println("Xtras: CREATED: $extnName")*/
+    project.binariesExtension.libraryExtensions.add(this)
     configure()
     project.afterEvaluate {
       registerXtrasTasks()
@@ -61,10 +52,8 @@ abstract class LibraryExtension(
   @BinariesDSLMarker
   open var publishingGroup: String = "$XTRAS_PACKAGE.binaries"
 
-
   @BinariesDSLMarker
   open var buildEnabled: Boolean = false
-
 
   /**
    * This can be manually configured or by default it will be set to all the kotlin multi-platform targets.
@@ -99,11 +88,11 @@ abstract class LibraryExtension(
     configureTargetTask = configure
   }
 
-  internal var cinteropsConfigTask: (CInteropsConfig.() -> Unit)? = null
+  internal var cinteropsConfigTasks = mutableListOf<CInteropsConfig.() -> Unit>()
 
   @BinariesDSLMarker
   fun cinterops(configure: CInteropsConfig.() -> Unit) {
-    cinteropsConfigTask = configure
+    cinteropsConfigTasks.add(configure)
   }
 
   internal var sourceConfig: SourceConfig? = null
