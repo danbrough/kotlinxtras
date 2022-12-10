@@ -1,20 +1,6 @@
 package org.danbrough.kotlinxtras.binaries
 
-import org.danbrough.kotlinxtras.PROPERTY_CINTEROPS_DIR
-import org.danbrough.kotlinxtras.PROPERTY_DOCS_DIR
-import org.danbrough.kotlinxtras.PROPERTY_DOWNLOADS_DIR
-import org.danbrough.kotlinxtras.PROPERTY_LIBS_DIR
-import org.danbrough.kotlinxtras.PROPERTY_PACKAGES_DIR
-import org.danbrough.kotlinxtras.PROPERTY_XTRAS_DIR
-import org.danbrough.kotlinxtras.XTRAS_BINARY_PLUGIN_ID
-import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
-import org.danbrough.kotlinxtras.projectProperty
-import org.danbrough.kotlinxtras.xtrasCInteropsDir
-import org.danbrough.kotlinxtras.xtrasDir
-import org.danbrough.kotlinxtras.xtrasDocsDir
-import org.danbrough.kotlinxtras.xtrasDownloadsDir
-import org.danbrough.kotlinxtras.xtrasLibsDir
-import org.danbrough.kotlinxtras.xtrasPackagesDir
+import org.danbrough.kotlinxtras.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -35,7 +21,6 @@ class BinaryPlugin : Plugin<Project> {
   override fun apply(target: Project) {
     target.extensions.create(XTRAS_BINARIES_EXTN_NAME, BinaryExtension::class.java)
       .apply {
-
         val binaryPropertyPrefix = "xtras.bin"
         val binaryProperty: (String, String) -> String = { exe, defValue ->
           target.projectProperty("$binaryPropertyPrefix.$exe", defValue)
