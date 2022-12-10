@@ -2,15 +2,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   kotlin("multiplatform")
-  id("org.danbrough.kotlinxtras.curl")
-  id("org.danbrough.kotlinxtras.openssl")
-
+  xtras("curl",Xtras.version)
 }
 
 
 repositories {
   maven("/usr/local/kotlinxtras/build/xtras/maven")
-  maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
 }
 
@@ -32,8 +29,8 @@ kotlin {
 
   val commonMain by sourceSets.getting {
     dependencies {
-      implementation("org.danbrough:klog:_")
-      implementation("org.danbrough.kotlinxtras:common:_")
+      implementation("org.danbrough:klog:0.0.2-beta01")
+      implementation("org.danbrough.kotlinxtras:common:0.0.1-beta01")
     }
   }
 

@@ -30,6 +30,7 @@ if (pluginsOnly == null || pluginsOnly.toBoolean()) {
 //-PpluginsOnly=false or not specified
 if (!pluginsOnly.toBoolean()) {
   include(":common")
+  include(":demo")
   include(":binaries")
 }
 

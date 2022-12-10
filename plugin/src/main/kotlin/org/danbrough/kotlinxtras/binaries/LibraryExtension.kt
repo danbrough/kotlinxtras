@@ -23,12 +23,10 @@ fun <T : LibraryExtension> Project.registerLibraryExtension(
   type: Class<T>,
   configure: T.() -> Unit
 ) {
-  project.binariesExtension
+  val binaries = project.binariesExtension
   extensions.create(name, type, this)
   extensions.configure<T>(name) {
-    /*plugins.apply("$XTRAS_PACKAGE.binaries")
-  println("Xtras: CREATED: $extnName")*/
-    project.binariesExtension.libraryExtensions.add(this)
+    binaries.libraryExtensions.add(this)
     configure()
     project.afterEvaluate {
       registerXtrasTasks()

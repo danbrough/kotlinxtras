@@ -59,7 +59,7 @@ fun LibraryExtension.registerGenerateInteropsTask() {
 
   val config = CInteropsConfig(
     "xtras${libName.capitalized()}",
-    "${this::class.java.`package`.name}.$libName",
+    "$publishingGroup.$libName",
     null
   )
 
