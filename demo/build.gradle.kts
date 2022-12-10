@@ -29,8 +29,8 @@ kotlin {
 
   val commonMain by sourceSets.getting {
     dependencies {
-      implementation("org.danbrough:klog:0.0.2-beta01")
-      implementation("org.danbrough.kotlinxtras:common:0.0.1-beta01")
+      implementation("org.danbrough:klog:_")
+      implementation(project(":common"))
     }
   }
 
