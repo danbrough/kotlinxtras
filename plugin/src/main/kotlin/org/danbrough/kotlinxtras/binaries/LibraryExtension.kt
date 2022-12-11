@@ -18,14 +18,13 @@ annotation class BinariesDSLMarker
 typealias SourcesTask = Exec.(KonanTarget) -> Unit
 
 @BinariesDSLMarker
-fun <T : LibraryExtension> Project.registerLibraryExtension(
+fun Project.registerLibraryExtension(
   name: String,
-  type: Class<T>,
-  configure: T.() -> Unit
-) {
+  configure: LibraryExtension.() -> Unit
+): LibraryExtension {
   val binaries = project.binariesExtension
-  extensions.create(name, type, this)
-  extensions.configure<T>(name) {
+  return extensions.create(name, LibraryExtension::class.java, this).apply {
+    libName = name
     binaries.libraryExtensions.add(this)
     configure()
     project.afterEvaluate {
@@ -35,11 +34,11 @@ fun <T : LibraryExtension> Project.registerLibraryExtension(
 }
 
 @BinariesDSLMarker
-abstract class LibraryExtension(
-  val project: Project,
-//Unique identifier for a binary package
-  var libName: String
-) {
+abstract class LibraryExtension(val project: Project) {
+
+  //Unique identifier for a binary package
+  @BinariesDSLMarker
+  lateinit var libName: String
 
   @BinariesDSLMarker
   open var version: String = "unspecified"

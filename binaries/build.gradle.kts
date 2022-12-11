@@ -1,36 +1,21 @@
+import org.danbrough.kotlinxtras.enableCurl
+import org.danbrough.kotlinxtras.enableOpenssl
+import org.danbrough.kotlinxtras.enableSqlite
+import org.danbrough.kotlinxtras.enableIconv
+
 plugins {
-  `maven-publish`
-  xtras("sonatype",Xtras.version)
-
-  xtras("iconv", Xtras.version)
-  xtras("sqlite", Xtras.version)
-
-  xtras("openssl", Xtras.version)
-  xtras("curl", Xtras.version)
-
-
+  `kotlin-dsl`
+  xtras("sonatype", Xtras.version)
+  xtras("core", Xtras.version)
 }
 
-xtrasBinaries {
-
-
+dependencies {
+  implementation(project(":plugins"))
 }
 
-
-xtrasIconv {
-  buildEnabled = true
-}
-
-xtrasSqlite {
-  buildEnabled = true
-}
-
-xtrasCurl {
-  buildEnabled = true
-}
+enableIconv()
+enableOpenssl()
+enableCurl()
+enableSqlite()
 
 
-xtrasOpenssl {
-  //supportedTargets = listOf(KonanTarget.LINUX_X64,KonanTarget.ANDROID_X86)
-  buildEnabled = true
-}

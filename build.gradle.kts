@@ -8,6 +8,8 @@ plugins {
   `maven-publish`
   id("org.jetbrains.dokka") apply false
   xtras("sonatype") version Xtras.version apply false
+  xtras("binaries") version Xtras.version apply false
+
 }
 
 println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION}")
