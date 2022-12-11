@@ -1,9 +1,10 @@
+import org.danbrough.kotlinxtras.enableCurl
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
   kotlin("multiplatform")
-  id("org.danbrough.kotlinxtras.curl")
-  id("org.danbrough.kotlinxtras.openssl")
+  id("org.danbrough.kotlinxtras.core")
 
 }
 
@@ -14,7 +15,8 @@ repositories {
   mavenCentral()
 }
 
-xtrasCurl {
+
+enableCurl {
   cinterops {
     interopsPackage = "libcurl"
   }
@@ -37,7 +39,9 @@ kotlin {
     }
   }
 
-  val posixMain by sourceSets.creating
+  val posixMain by sourceSets.creating{
+    dependsOn(commonMain)
+  }
 
   targets.withType<KotlinNativeTarget> {
 
@@ -49,9 +53,17 @@ kotlin {
     binaries {
       executable("curlDemo") {
         entryPoint = "demo1.main"
-
+        runTask?.environment("CA_CERT_FILE",file("cacert.pem"))
+        findProperty("args")?.also {
+          runTask?.args(it.toString())
+        }
       }
     }
   }
 }
 
+
+
+tasks.create("run"){
+  dependsOn("runCurlDemoDebugExecutable${if (HostManager.hostIsMac) "MacosX64" else "LinuxX64"}")
+}
