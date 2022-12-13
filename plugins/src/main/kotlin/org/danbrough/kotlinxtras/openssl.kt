@@ -33,9 +33,8 @@ fun Project.enableOpenssl(extnName: String = XTRAS_OPENSSL_EXTN_NAME,config:Libr
     }
 
 
-    build { target ->
+    build {
       commandLine(binaries.makeBinary, "install_sw")
-      outputs.dir(buildDir(target))
     }
 
     cinterops {

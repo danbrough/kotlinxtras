@@ -2,6 +2,7 @@ import org.danbrough.kotlinxtras.binaries.LibraryExtension
 import org.danbrough.kotlinxtras.binaries.git
 import org.danbrough.kotlinxtras.binaries.registerLibraryExtension
 import org.danbrough.kotlinxtras.xtrasDir
+import org.danbrough.kotlinxtras.hostTriplet
 import org.danbrough.kotlinxtras.xtrasMavenDir
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -17,6 +18,8 @@ repositories {
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
 }
+
+
 
 
 registerLibraryExtension("uuid") {
@@ -49,8 +52,10 @@ registerLibraryExtension("uuid") {
 
   configure { target ->
     dependsOn(target.autoGenTaskName())
+
     commandLine(
       "./configure",
+      "--host=${target.hostTriplet}",
       "--enable-libuuid",
       "--enable-uuidgen",
       "--disable-all-programs",
@@ -66,6 +71,9 @@ registerLibraryExtension("uuid") {
 
 kotlin {
   linuxX64()
+  macosX64()
+  linuxArm64()
+  androidNativeX86()
 
   val commonMain by sourceSets.getting {
     dependencies {

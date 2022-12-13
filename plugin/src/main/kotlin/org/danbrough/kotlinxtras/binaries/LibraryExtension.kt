@@ -5,8 +5,12 @@ import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.tasks.Exec
 import org.gradle.configurationcache.extensions.capitalized
+import org.gradle.kotlin.dsl.findByType
+import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -97,8 +101,6 @@ abstract class LibraryExtension(val project: Project) {
   internal var configureTask: SourcesTask? = null
 
   internal var buildTask: SourcesTask? = null
-
-  internal var installTask: SourcesTask? = null
 
   internal var configureTargetTask: ((KonanTarget) -> Unit)? = null
 
@@ -259,6 +261,24 @@ private fun LibraryExtension.registerXtrasTasks() {
     }
 
     provideAllTargetsTask.dependsOn(registerProvideBinariesTask(target))
+
+    project.extensions.findByType(KotlinMultiplatformExtension::class)?.apply {
+    /*  targets.withType(KotlinNativeTarget::class.java) {
+        compilations["main"]
+      }*/
+      project.tasks.withType(KotlinNativeCompile::class.java) {
+        val konanTarget = KonanTarget.Companion.predefinedTargets[target.toString()]!!
+        dependsOn(provideBinariesTaskName(konanTarget))
+      }
+
+      project.tasks.withType(CInteropProcess::class.java) {
+        dependsOn(provideBinariesTaskName(konanTarget))
+      }
+    }
+
+
+
+
 
   }
 
