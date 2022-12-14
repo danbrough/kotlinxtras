@@ -60,5 +60,4 @@ subprojects {
 
 tasks.register("publishXtras"){
   dependsOn(project.getTasksByName("publishAllPublicationsTo${Xtras.repoName.capitalized()}Repository",true))
-
 }

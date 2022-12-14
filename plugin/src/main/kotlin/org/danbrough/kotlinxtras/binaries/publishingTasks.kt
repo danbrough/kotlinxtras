@@ -37,7 +37,7 @@ fun LibraryExtension.registerPackageTask(target: KonanTarget): TaskProvider<Exec
     description = "Archives the built package into the packages directory"
     enabled = buildEnabled
     dependsOn(buildSourcesTaskName(target))
-    val outputFile = project.xtrasPackagesDir.resolve(packageFile(target))
+    val outputFile = project.xtrasPackagesDir.resolve(packageFileName(target))
     workingDir(buildDir(target))
     outputs.file(outputFile)
     onlyIf {
@@ -47,6 +47,7 @@ fun LibraryExtension.registerPackageTask(target: KonanTarget): TaskProvider<Exec
     doLast {
       println("$name: created package: $outputFile")
     }
+    finalizedBy("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository")
   }.also {
     packageAllInLibraryTask.dependsOn(it)
   }

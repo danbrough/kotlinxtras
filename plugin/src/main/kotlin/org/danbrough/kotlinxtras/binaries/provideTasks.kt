@@ -2,7 +2,6 @@ package org.danbrough.kotlinxtras.binaries
 
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.platformName
-import org.danbrough.kotlinxtras.xtrasLibsDir
 import org.danbrough.kotlinxtras.xtrasPackagesDir
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
@@ -62,7 +61,7 @@ fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget): TaskProvi
 
     outputs.dir(outputDir)
 
-    val packageFile = project.xtrasPackagesDir.resolve(packageFile(target))
+    val packageFile = project.xtrasPackagesDir.resolve(packageFileName(target))
     if (packageFile.exists()) {
       println("found packageFile: $packageFile")
       outputs.file(packageFile)

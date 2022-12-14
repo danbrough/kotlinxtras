@@ -6,7 +6,6 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.tasks.Exec
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.findByType
-import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
@@ -128,7 +127,7 @@ abstract class LibraryExtension(val project: Project) {
   fun generateCInteropsTaskName(name: String = libName): String =
     "xtrasGenerateCInterops${name.capitalized()}"
 
-  fun packageFile(
+  fun packageFileName(
     konanTarget: KonanTarget,
     name: String = libName,
     packageVersion: String = version
@@ -158,7 +157,7 @@ abstract class LibraryExtension(val project: Project) {
     name: String = libName,
     packageVersion: String = version
   ): Boolean =
-    project.xtrasPackagesDir.resolve(packageFile(konanTarget, name, packageVersion)).exists()
+    project.xtrasPackagesDir.resolve(packageFileName(konanTarget, name, packageVersion)).exists()
 
 
   open fun buildEnvironment(konanTarget: KonanTarget): Map<String, *> =

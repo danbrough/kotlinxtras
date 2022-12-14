@@ -1,13 +1,10 @@
-import org.danbrough.kotlinxtras.binaries.LibraryExtension
 import org.danbrough.kotlinxtras.binaries.git
 import org.danbrough.kotlinxtras.binaries.registerLibraryExtension
-import org.danbrough.kotlinxtras.xtrasDir
 import org.danbrough.kotlinxtras.hostTriplet
-import org.danbrough.kotlinxtras.xtrasMavenDir
+import org.danbrough.kotlinxtras.platformName
+import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.gradle.configurationcache.extensions.capitalized
-import org.danbrough.kotlinxtras.platformName
 
 plugins {
   kotlin("multiplatform")
@@ -18,8 +15,6 @@ repositories {
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
 }
-
-
 
 
 registerLibraryExtension("uuid") {
@@ -69,9 +64,75 @@ registerLibraryExtension("uuid") {
 
 }
 
+
+tasks.register("provideThang") {
+
+  val configuration = project.configurations.create("configuration")
+
+  project.dependencies {
+    configuration("org.danbrough.kotlinxtras.binaries:curlLinuxArm64:7_86_0#")
+  }
+
+  doFirst {
+    println("running $name")
+  }
+
+  runCatching {
+    configuration.resolve().also {
+      println("provideThang resolved: $it")
+      outputs.file(it.first())
+    }
+  }.exceptionOrNull()?.also {
+    println("provideThang failed: ${it.message}")
+  }
+
+
+  doLast {
+    println("finished $name")
+  }
+
+  finalizedBy("provideThangFinalized")
+}
+
+tasks.register("provideThangFinalized") {
+  doFirst {
+    println("$name started")
+  }
+
+  doLast {
+    println("$name ended")
+    tasks.getByName("provideThang").also {
+      println("provideThangFinalized: provideThang did work: ${it.didWork} provideThang outputs: ${it.outputs.files.files}")
+    }
+  }
+
+}
+
+tasks.register("thang") {
+  dependsOn("provideThang")
+  doFirst {
+    println("running thang ..")
+  }
+
+  actions.add {
+    println("thang doing action")
+  }
+
+  doLast {
+    println("finished running thang.")
+    tasks.getByName("provideThang").outputs.files.files.also {
+      println("provideThang outputs: $it")
+    }
+  }
+}
+
+
 kotlin {
+
   linuxX64()
-  macosX64()
+
+
+  //macosX64()
   linuxArm64()
   androidNativeX86()
 
