@@ -14,7 +14,7 @@ dependencies {
 }
 
 enableIconv()
-enableOpenssl()
+
 enableCurl()
 enableSqlite()
 

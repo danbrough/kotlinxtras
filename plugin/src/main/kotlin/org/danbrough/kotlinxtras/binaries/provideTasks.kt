@@ -42,7 +42,7 @@ fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget): TaskProvi
     group = XTRAS_TASK_GROUP
     description = "Provide all binaries for the $libName LibraryExtension"
 
-    
+
     //val outputDir = project.xtrasLibsDir.resolve("$libName/$version/${target.platformName}")
     val outputDir = libsDir(target)
 

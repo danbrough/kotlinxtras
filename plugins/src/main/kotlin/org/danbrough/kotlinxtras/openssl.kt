@@ -24,7 +24,7 @@ fun Project.enableOpenssl(extnName: String = XTRAS_OPENSSL_EXTN_NAME,config:Libr
         target.opensslPlatform,
         "no-tests",
         "threads",
-        "--prefix=${buildDir(target)}"
+        "--prefix=${libsDir(target)}"
       )
       if (target.family == Family.ANDROID) args += "-D__ANDROID_API__=21"
       else if (target.family == Family.MINGW) args += "--cross-compile-prefix=${target.hostTriplet}-"

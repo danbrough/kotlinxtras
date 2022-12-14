@@ -19,12 +19,11 @@ repositories {
 
 registerLibraryExtension("uuid") {
   version = "2.38.1"
+
   git(
     "https://git.kernel.org/pub/scm/utils/util-linux/util-linux.git",
     "54a4d5c3ec33f2f743309ec883b9854818a25e31"
   )
-
-  buildEnabled = true
 
   cinterops {
     headers = """
@@ -40,6 +39,7 @@ registerLibraryExtension("uuid") {
     project.tasks.create(target.autoGenTaskName(), Exec::class.java) {
       dependsOn(extractSourcesTaskName(target))
       workingDir(sourcesDir(target))
+      onlyIf { !isPackageBuilt(target) }
       outputs.file(workingDir.resolve("configure"))
       commandLine("./autogen.sh")
     }
@@ -65,40 +65,10 @@ registerLibraryExtension("uuid") {
 }
 
 
-tasks.register("thang") {
-
-  val configuration = project.configurations.create("configuration")
-
-  project.dependencies {
-    configuration("org.danbrough.kotlinxtras.binaries:curlLinuxArm64:7_86_0")
-  }
-
-  doFirst {
-    println("running $name")
-  }
-
-  runCatching {
-    configuration.resolve().also {
-      println("thang resolved: $it")
-      outputs.file(it.first())
-    }
-  }.exceptionOrNull()?.also {
-    println("thang failed: ${it.message}")
-  }
-
-
-  doLast {
-    println("finished $name outputs: ${outputs.files.files}")
-  }
-}
-
-
-
 kotlin {
 
   linuxX64()
-
-
+  linuxArm32Hfp()
   //macosX64()
   linuxArm64()
   androidNativeX86()
@@ -114,6 +84,7 @@ kotlin {
   }
 
   targets.withType<KotlinNativeTarget> {
+
     compilations["main"].apply {
       defaultSourceSet.dependsOn(posixMain)
     }

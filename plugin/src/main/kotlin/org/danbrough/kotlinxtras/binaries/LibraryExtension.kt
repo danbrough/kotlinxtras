@@ -52,8 +52,6 @@ abstract class LibraryExtension(val project: Project) {
   @BinariesDSLMarker
   open var publishingGroup: String = "$XTRAS_PACKAGE.binaries"
 
-  @BinariesDSLMarker
-  open var buildEnabled: Boolean = false
 
   /**
    * This can be manually configured or by default it will be set to all the kotlin multi-platform targets.
@@ -187,7 +185,7 @@ private fun LibraryExtension.registerXtrasTasks() {
 
 
 
-  if (buildTask != null && buildEnabled) {
+  if (buildTask != null) {
     when (srcConfig) {
       is ArchiveSourceConfig -> {
         registerArchiveDownloadTask()
@@ -236,7 +234,7 @@ private fun LibraryExtension.registerXtrasTasks() {
 
     configureTargetTask?.invoke(target)
 
-    if (buildTask != null && buildEnabled && HostManager.hostIsMac == target.family.isAppleFamily) {
+    if (buildTask != null && HostManager.hostIsMac == target.family.isAppleFamily) {
 
       //println("Adding build support for $libName with $target")
 
@@ -254,7 +252,7 @@ private fun LibraryExtension.registerXtrasTasks() {
         registerConfigureSourcesTask(target)
       }
       registerBuildSourcesTask(target)
-      //registerPublishingTask(target)
+      registerPublishingTask(target)
     } else {
       project.logger.info("buildSupport disabled for $libName as either buildTask is null or buildingEnabled is false")
     }

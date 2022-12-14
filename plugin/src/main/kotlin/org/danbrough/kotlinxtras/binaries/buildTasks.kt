@@ -40,6 +40,7 @@ fun LibraryExtension.registerBuildSourcesTask(target: KonanTarget) =
     }
 
     buildTask!!(target)
+
   }
 
 

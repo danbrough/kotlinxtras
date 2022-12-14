@@ -42,24 +42,30 @@ internal fun LibraryExtension.registerGitDownloadTask(
 
   val configRepoTaskName = "${downloadSourcesTaskName}_configRepo"
 
+
   project.tasks.register(configRepoTaskName, Exec::class.java) {
     val repoDir = gitRepoDir()
     inputs.property("url", sourceURL)
 
-    //outputs.file(repoDir.resolve("config"))
+    outputs.file(repoDir.resolve("config"))
     onlyIf {
       !repoDir.resolve("config").exists()
     }
+/*
+
+*/
 
     doFirst {
+      //repoDir.deleteRecursively()
+
       project.exec {
         commandLine(binaries.gitBinary, "init", "--bare", repoDir)
         println("running#: ${commandLine.joinToString(" ")}")
       }
 
-
       println("running: ${commandLine.joinToString(" ")}")
     }
+    outputs.dir(repoDir)
     workingDir = gitRepoDir()
     commandLine(binaries.gitBinary, "remote", "add", "origin", sourceURL)
 
@@ -98,13 +104,18 @@ internal fun LibraryExtension.registerGitExtractTask(
     val gitRepo = project.tasks.getAt(downloadSourcesTaskName).outputs.files.first()
     val destDir = sourcesDir(konanTarget)
     outputs.dir(destDir)
+
+    doFirst {
+      println("Running $name")
+    }
+
     onlyIf {
-      !destDir.resolve(".git").exists()
+      !destDir.resolve(".git").exists() && !isPackageBuilt(konanTarget)
     }
 
     actions.add {
       project.exec {
-        workingDir = destDir
+        workingDir(destDir)
         commandLine(binaries.gitBinary, "init")
         println("running: ${commandLine.joinToString(" ")}")
       }
@@ -112,7 +123,7 @@ internal fun LibraryExtension.registerGitExtractTask(
 
     actions.add {
       project.exec {
-        workingDir = destDir
+        workingDir(destDir)
         commandLine(binaries.gitBinary, "remote", "add", "origin", gitRepo)
         println("running: ${commandLine.joinToString(" ")}")
       }
@@ -127,6 +138,7 @@ internal fun LibraryExtension.registerGitExtractTask(
 
     inputs.property("commit", srcConfig.commit)
     outputs.dir(destDir)
+    onlyIf { !isPackageBuilt(konanTarget) }
 
 
     actions.add {
@@ -135,7 +147,6 @@ internal fun LibraryExtension.registerGitExtractTask(
         commandLine(binaries.gitBinary, "clean","-xdf")
         println("running: ${commandLine.joinToString(" ")}")
       }
-      println("cleaning $destDir")
     }
 
     actions.add {
