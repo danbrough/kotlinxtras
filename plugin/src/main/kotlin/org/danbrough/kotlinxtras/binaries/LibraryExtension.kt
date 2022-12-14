@@ -254,7 +254,7 @@ private fun LibraryExtension.registerXtrasTasks() {
         registerConfigureSourcesTask(target)
       }
       registerBuildSourcesTask(target)
-      registerPublishingTask(target)
+      //registerPublishingTask(target)
     } else {
       project.logger.info("buildSupport disabled for $libName as either buildTask is null or buildingEnabled is false")
     }

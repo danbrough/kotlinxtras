@@ -65,12 +65,12 @@ registerLibraryExtension("uuid") {
 }
 
 
-tasks.register("provideThang") {
+tasks.register("thang") {
 
   val configuration = project.configurations.create("configuration")
 
   project.dependencies {
-    configuration("org.danbrough.kotlinxtras.binaries:curlLinuxArm64:7_86_0#")
+    configuration("org.danbrough.kotlinxtras.binaries:curlLinuxArm64:7_86_0")
   }
 
   doFirst {
@@ -79,52 +79,19 @@ tasks.register("provideThang") {
 
   runCatching {
     configuration.resolve().also {
-      println("provideThang resolved: $it")
+      println("thang resolved: $it")
       outputs.file(it.first())
     }
   }.exceptionOrNull()?.also {
-    println("provideThang failed: ${it.message}")
+    println("thang failed: ${it.message}")
   }
 
 
   doLast {
-    println("finished $name")
-  }
-
-  finalizedBy("provideThangFinalized")
-}
-
-tasks.register("provideThangFinalized") {
-  doFirst {
-    println("$name started")
-  }
-
-  doLast {
-    println("$name ended")
-    tasks.getByName("provideThang").also {
-      println("provideThangFinalized: provideThang did work: ${it.didWork} provideThang outputs: ${it.outputs.files.files}")
-    }
-  }
-
-}
-
-tasks.register("thang") {
-  dependsOn("provideThang")
-  doFirst {
-    println("running thang ..")
-  }
-
-  actions.add {
-    println("thang doing action")
-  }
-
-  doLast {
-    println("finished running thang.")
-    tasks.getByName("provideThang").outputs.files.files.also {
-      println("provideThang outputs: $it")
-    }
+    println("finished $name outputs: ${outputs.files.files}")
   }
 }
+
 
 
 kotlin {

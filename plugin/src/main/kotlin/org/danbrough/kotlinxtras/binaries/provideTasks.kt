@@ -42,20 +42,7 @@ fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget): TaskProvi
     group = XTRAS_TASK_GROUP
     description = "Provide all binaries for the $libName LibraryExtension"
 
-    /*    if (buildEnabled && target.family.isAppleFamily == HostManager.hostIsMac) {
-      if (buildTask == null) throw Error("buildTask not configured for $libName")
-      dependsOn(packageTaskName(target))
-      return@register
-    }*/
-
-    //Download the prebuilt binaries from maven
-    println("Configuring $name")
-
-    doFirst {
-      println("Running $name")
-    }
-
-
+    
     //val outputDir = project.xtrasLibsDir.resolve("$libName/$version/${target.platformName}")
     val outputDir = libsDir(target)
 
