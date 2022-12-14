@@ -5,8 +5,11 @@ import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.tasks.Exec
 import org.gradle.configurationcache.extensions.capitalized
+import org.gradle.kotlin.dsl.findByType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -18,14 +21,13 @@ annotation class BinariesDSLMarker
 typealias SourcesTask = Exec.(KonanTarget) -> Unit
 
 @BinariesDSLMarker
-fun <T : LibraryExtension> Project.registerLibraryExtension(
+fun Project.registerLibraryExtension(
   name: String,
-  type: Class<T>,
-  configure: T.() -> Unit
-) {
+  configure: LibraryExtension.() -> Unit
+): LibraryExtension {
   val binaries = project.binariesExtension
-  extensions.create(name, type, this)
-  extensions.configure<T>(name) {
+  return extensions.create(name, LibraryExtension::class.java, this).apply {
+    libName = name
     binaries.libraryExtensions.add(this)
     configure()
     project.afterEvaluate {
@@ -35,11 +37,11 @@ fun <T : LibraryExtension> Project.registerLibraryExtension(
 }
 
 @BinariesDSLMarker
-abstract class LibraryExtension(
-  val project: Project,
-//Unique identifier for a binary package
-  var libName: String
-) {
+abstract class LibraryExtension(val project: Project) {
+
+  //Unique identifier for a binary package
+  @BinariesDSLMarker
+  lateinit var libName: String
 
   @BinariesDSLMarker
   open var version: String = "unspecified"
@@ -50,8 +52,6 @@ abstract class LibraryExtension(
   @BinariesDSLMarker
   open var publishingGroup: String = "$XTRAS_PACKAGE.binaries"
 
-  @BinariesDSLMarker
-  open var buildEnabled: Boolean = false
 
   /**
    * This can be manually configured or by default it will be set to all the kotlin multi-platform targets.
@@ -99,8 +99,6 @@ abstract class LibraryExtension(
 
   internal var buildTask: SourcesTask? = null
 
-  internal var installTask: SourcesTask? = null
-
   internal var configureTargetTask: ((KonanTarget) -> Unit)? = null
 
   val downloadSourcesTaskName: String
@@ -127,7 +125,7 @@ abstract class LibraryExtension(
   fun generateCInteropsTaskName(name: String = libName): String =
     "xtrasGenerateCInterops${name.capitalized()}"
 
-  fun packageFile(
+  fun packageFileName(
     konanTarget: KonanTarget,
     name: String = libName,
     packageVersion: String = version
@@ -157,7 +155,7 @@ abstract class LibraryExtension(
     name: String = libName,
     packageVersion: String = version
   ): Boolean =
-    project.xtrasPackagesDir.resolve(packageFile(konanTarget, name, packageVersion)).exists()
+    project.xtrasPackagesDir.resolve(packageFileName(konanTarget, name, packageVersion)).exists()
 
 
   open fun buildEnvironment(konanTarget: KonanTarget): Map<String, *> =
@@ -187,7 +185,7 @@ private fun LibraryExtension.registerXtrasTasks() {
 
 
 
-  if (buildTask != null && buildEnabled) {
+  if (buildTask != null) {
     when (srcConfig) {
       is ArchiveSourceConfig -> {
         registerArchiveDownloadTask()
@@ -236,7 +234,7 @@ private fun LibraryExtension.registerXtrasTasks() {
 
     configureTargetTask?.invoke(target)
 
-    if (buildTask != null && buildEnabled && HostManager.hostIsMac == target.family.isAppleFamily) {
+    if (buildTask != null && HostManager.hostIsMac == target.family.isAppleFamily) {
 
       //println("Adding build support for $libName with $target")
 
@@ -260,6 +258,24 @@ private fun LibraryExtension.registerXtrasTasks() {
     }
 
     provideAllTargetsTask.dependsOn(registerProvideBinariesTask(target))
+
+    project.extensions.findByType(KotlinMultiplatformExtension::class)?.apply {
+    /*  targets.withType(KotlinNativeTarget::class.java) {
+        compilations["main"]
+      }*/
+      project.tasks.withType(KotlinNativeCompile::class.java) {
+        val konanTarget = KonanTarget.Companion.predefinedTargets[target.toString()]!!
+        dependsOn(provideBinariesTaskName(konanTarget))
+      }
+
+      project.tasks.withType(CInteropProcess::class.java) {
+        dependsOn(provideBinariesTaskName(konanTarget))
+      }
+    }
+
+
+
+
 
   }
 

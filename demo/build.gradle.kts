@@ -1,21 +1,18 @@
+import org.danbrough.kotlinxtras.enableCurl
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   kotlin("multiplatform")
-  xtras("curl",Xtras.version)
+  xtras("core",Xtras.version)
 }
 
 
-repositories {
-  maven("/usr/local/kotlinxtras/build/xtras/maven")
-  mavenCentral()
-}
-
-xtrasCurl {
+enableCurl {
   cinterops {
     interopsPackage = "libcurl"
   }
 }
+
 
 kotlin {
 
@@ -34,7 +31,9 @@ kotlin {
     }
   }
 
-  val posixMain by sourceSets.creating
+  val posixMain by sourceSets.creating{
+    dependsOn(commonMain)
+  }
 
   targets.withType<KotlinNativeTarget> {
 

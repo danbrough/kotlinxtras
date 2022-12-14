@@ -31,8 +31,11 @@ if (pluginsOnly == null || pluginsOnly.toBoolean()) {
 if (!pluginsOnly.toBoolean()) {
   include(":common")
   include(":demo")
+  //include(":demo2")
   include(":binaries")
 }
+
+//includeBuild("./plugins")
 
 
 

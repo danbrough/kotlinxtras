@@ -40,9 +40,7 @@ fun LibraryExtension.registerBuildSourcesTask(target: KonanTarget) =
     }
 
     buildTask!!(target)
-    installTask?.also {
-      finalizedBy(it)
-    }
+
   }
 
 

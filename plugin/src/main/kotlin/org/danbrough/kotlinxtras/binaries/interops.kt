@@ -55,7 +55,7 @@ val defaultCInteropsTargetWriter: CInteropsTargetWriter = { konanTarget, output 
 
 fun LibraryExtension.registerGenerateInteropsTask() {
 
-  project.logger.info("registerGenerateInteropsTask for $this")
+  project.logger.info("registerGenerateInteropsTask() for $this")
 
   val config = CInteropsConfig(
     "xtras${libName.capitalized()}",
@@ -107,11 +107,11 @@ fun LibraryExtension.registerGenerateInteropsTask() {
         inputs.property("headers", headers)
       } ?: config.headerFile?.also { inputs.file(it) }
 
-      inputs.property("xtrasLibs", project.xtrasLibsDir)
+      inputs.property("targets", supportedBuildTargets)
 
       outputs.file(config.defFile!!)
 
-      dependsOn(provideAllBinariesTaskName())
+      //dependsOn(provideAllBinariesTaskName())
 
       actions.add {
 
