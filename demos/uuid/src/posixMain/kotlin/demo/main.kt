@@ -17,7 +17,7 @@ import kotlinx.cinterop.pointed
 import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.toKString
 import kotlinx.cinterop.value
-import org.danbrough.kotlinxtras.binaries.uuid.*
+import org.danbrough.kotlinxtras.xtras.uuid.*
 
 
 val log = klog("DEMO") {
