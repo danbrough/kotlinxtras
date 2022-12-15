@@ -7,6 +7,8 @@ const val XTRAS_PACKAGE = "org.danbrough.kotlinxtras"
 
 const val XTRAS_BINARY_PLUGIN_ID = "$XTRAS_PACKAGE.binaries"
 
+const val XTRAS_BINARIES_PUBLISHING_GROUP = "$XTRAS_PACKAGE.binaries"
+
 const val XTRAS_TASK_GROUP = "xtras"
 
 const val PROPERTY_XTRAS_DIR = "xtras.dir"

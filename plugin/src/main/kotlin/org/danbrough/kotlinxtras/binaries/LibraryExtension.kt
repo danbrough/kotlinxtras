@@ -51,7 +51,7 @@ abstract class LibraryExtension(val project: Project) {
   open var sourceURL: String? = null
 
   @BinariesDSLMarker
-  var publishingGroup: String = project.group.toString()
+  var publishingGroup: String = XTRAS_BINARIES_PUBLISHING_GROUP
 
 
   /**
