@@ -32,7 +32,7 @@ if (!pluginsOnly.toBoolean()) {
   include(":common")
   //include(":demo")
   //include(":demo2")
-  include(":binaries")
+  include(":xtras")
 }
 
 //includeBuild("./plugins")

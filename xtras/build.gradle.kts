@@ -15,10 +15,7 @@ dependencies {
   implementation(project(":core"))
 }
 
-enableIconv{
-  println("init enableIconv-------------------------------------")
-}
-
+enableIconv()
 enableCurl()
 enableSqlite()
 
