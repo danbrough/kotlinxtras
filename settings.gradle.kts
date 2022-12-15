@@ -24,13 +24,13 @@ val pluginsOnly: String? by settings
 //-PpluginsOnly=true or not specified
 if (pluginsOnly == null || pluginsOnly.toBoolean()) {
   include(":plugin")
-  include(":plugins")
+  include(":core")
 }
 
 //-PpluginsOnly=false or not specified
 if (!pluginsOnly.toBoolean()) {
   include(":common")
-  include(":demo")
+  //include(":demo")
   //include(":demo2")
   include(":binaries")
 }

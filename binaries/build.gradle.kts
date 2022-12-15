@@ -10,7 +10,7 @@ plugins {
 }
 
 dependencies {
-  implementation(project(":plugins"))
+  implementation(project(":core"))
 }
 
 enableIconv()

@@ -50,7 +50,7 @@ abstract class LibraryExtension(val project: Project) {
   open var sourceURL: String? = null
 
   @BinariesDSLMarker
-  open var publishingGroup: String = "$XTRAS_PACKAGE.binaries"
+  open var publishingGroup: String = project.group.toString()
 
 
   /**
@@ -215,6 +215,7 @@ private fun LibraryExtension.registerXtrasTasks() {
   }
 
   val xtrasProvideAllTaskName = "xtrasProvideAll"
+
   val provideAllGlobalTask =
     project.tasks.findByName("xtrasProvideAll") ?: project.tasks.create(xtrasProvideAllTaskName) {
       group = XTRAS_TASK_GROUP
@@ -257,17 +258,18 @@ private fun LibraryExtension.registerXtrasTasks() {
       project.logger.info("buildSupport disabled for $libName as either buildTask is null or buildingEnabled is false")
     }
 
-    provideAllTargetsTask.dependsOn(registerProvideBinariesTask(target))
+    if (HostManager.hostIsMac == target.family.isAppleFamily)
+      provideAllTargetsTask.dependsOn(registerProvideBinariesTask(target))
 
     project.extensions.findByType(KotlinMultiplatformExtension::class)?.apply {
     /*  targets.withType(KotlinNativeTarget::class.java) {
         compilations["main"]
       }*/
-      project.tasks.withType(KotlinNativeCompile::class.java) {
+ /*     project.tasks.withType(KotlinNativeCompile::class.java) {
         val konanTarget = KonanTarget.Companion.predefinedTargets[target.toString()]!!
-        dependsOn(provideBinariesTaskName(konanTarget))
+        //dependsOn(provideBinariesTaskName(konanTarget))
       }
-
+*/
       project.tasks.withType(CInteropProcess::class.java) {
         dependsOn(provideBinariesTaskName(konanTarget))
       }

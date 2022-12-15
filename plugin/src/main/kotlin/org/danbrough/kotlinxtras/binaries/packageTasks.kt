@@ -51,7 +51,7 @@ fun LibraryExtension.registerPackageTask(target: KonanTarget): TaskProvider<Exec
       !outputFile.exists()
     }
 
-    commandLine(binaries.tarBinary, "-f", outputFile, "-cpz", "--exclude=share", "./")
+    commandLine(binaries.tarBinary, "-f", outputFile, "-cpz", "--exclude=share","--exclude=**pkgconfig", "./")
     doLast {
       val result = executionResult.get()
       println("$name: created package: $outputFile result: $result")
