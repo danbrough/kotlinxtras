@@ -29,6 +29,7 @@ fun Project.registerLibraryExtension(
   return extensions.create(name, LibraryExtension::class.java, this).apply {
     libName = name
     binaries.libraryExtensions.add(this)
+
     configure()
     project.afterEvaluate {
       registerXtrasTasks()
@@ -50,7 +51,7 @@ abstract class LibraryExtension(val project: Project) {
   open var sourceURL: String? = null
 
   @BinariesDSLMarker
-  open var publishingGroup: String = project.group.toString()
+  var publishingGroup: String = project.group.toString()
 
 
   /**
@@ -197,6 +198,7 @@ private fun LibraryExtension.registerXtrasTasks() {
     }
   }
 
+
   val publishing = project.extensions.findByType(PublishingExtension::class.java) ?: let {
     project.logger.info("LibraryExtension.registerXtrasTask() applying maven-publish.")
     project.pluginManager.apply("org.gradle.maven-publish")
@@ -262,21 +264,18 @@ private fun LibraryExtension.registerXtrasTasks() {
       provideAllTargetsTask.dependsOn(registerProvideBinariesTask(target))
 
     project.extensions.findByType(KotlinMultiplatformExtension::class)?.apply {
-    /*  targets.withType(KotlinNativeTarget::class.java) {
-        compilations["main"]
-      }*/
- /*     project.tasks.withType(KotlinNativeCompile::class.java) {
-        val konanTarget = KonanTarget.Companion.predefinedTargets[target.toString()]!!
-        //dependsOn(provideBinariesTaskName(konanTarget))
-      }
-*/
+      /*  targets.withType(KotlinNativeTarget::class.java) {
+          compilations["main"]
+        }*/
+      /*     project.tasks.withType(KotlinNativeCompile::class.java) {
+             val konanTarget = KonanTarget.Companion.predefinedTargets[target.toString()]!!
+             //dependsOn(provideBinariesTaskName(konanTarget))
+           }
+     */
       project.tasks.withType(CInteropProcess::class.java) {
         dependsOn(provideBinariesTaskName(konanTarget))
       }
     }
-
-
-
 
 
   }
