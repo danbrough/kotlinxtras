@@ -27,6 +27,7 @@ fun Project.enableCurl(name: String = XTRAS_CURL_EXTN_NAME,config:LibraryExtensi
 
     configureTarget { target ->
       project.tasks.create(target.autoConfTaskName(), Exec::class.java) {
+        onlyIf { !isPackageBuilt(target) }
         dependsOn(extractSourcesTaskName(target))
         workingDir(sourcesDir(target))
         outputs.file(workingDir.resolve("configure"))

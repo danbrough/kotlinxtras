@@ -87,7 +87,7 @@ fun LibraryExtension.registerGenerateInteropsTask() {
             env[libPathKey]!!.toString() + File.pathSeparatorChar + libsDir(konanTarget).resolve("lib")
         else
           env[libPathKey] = libsDir(konanTarget).resolve("lib")
-        project.logger.debug("Setting $libPathKey for $konanTarget to ${env[libPathKey]}")
+        project.logger.info("Setting $libPathKey for $konanTarget to ${env[libPathKey]}")
       }
     }
   }
