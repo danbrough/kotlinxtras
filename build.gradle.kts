@@ -8,7 +8,7 @@ plugins {
   `maven-publish`
   id("org.jetbrains.dokka") apply false
   xtras("sonatype") version Xtras.version apply false
-  xtras("binaries") version Xtras.version apply false
+//  xtras("binaries") version Xtras.version apply false
 
 }
 

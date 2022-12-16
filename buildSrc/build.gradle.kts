@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-  implementation(kotlin("gradle-plugin","1.7.22"))
+  implementation(kotlin("gradle-plugin"))
 
 }
 
