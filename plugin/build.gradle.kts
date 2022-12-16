@@ -2,7 +2,7 @@ plugins {
   `kotlin-dsl`
   `maven-publish`
   id("org.jetbrains.dokka")
-  xtras("sonatype")
+ xtras("sonatype")
 }
 
 repositories {
@@ -16,6 +16,18 @@ dependencies {
   compileOnly("org.jetbrains.dokka:dokka-gradle-plugin:_")
 
 }
+
+/*
+
+publishing {
+  repositories {
+    maven(rootProject.buildDir.resolve("xtras/maven")){
+      name = "xtras"
+    }
+  }
+}
+
+*/
 
 gradlePlugin {
   plugins {

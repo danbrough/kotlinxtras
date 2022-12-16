@@ -5,16 +5,12 @@ import org.jetbrains.kotlin.konan.target.HostManager
 plugins {
   kotlin("multiplatform")
   id("org.danbrough.kotlinxtras.core")
-
 }
 
-
 repositories {
-  maven("/usr/local/kotlinxtras/build/xtras/maven")
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
 }
-
 
 enableCurl {
   cinterops {
@@ -51,7 +47,7 @@ kotlin {
 
 
     binaries {
-      executable("curlDemo") {
+      executable("demo") {
         entryPoint = "demo1.main"
         runTask?.environment("CA_CERT_FILE",file("cacert.pem"))
         findProperty("args")?.also {

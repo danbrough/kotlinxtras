@@ -27,6 +27,7 @@ fun Project.enableCurl(name: String = XTRAS_CURL_EXTN_NAME,config:LibraryExtensi
 
     configureTarget { target ->
       project.tasks.create(target.autoConfTaskName(), Exec::class.java) {
+        onlyIf { !isPackageBuilt(target) }
         dependsOn(extractSourcesTaskName(target))
         workingDir(sourcesDir(target))
         outputs.file(workingDir.resolve("configure"))
@@ -40,23 +41,17 @@ fun Project.enableCurl(name: String = XTRAS_CURL_EXTN_NAME,config:LibraryExtensi
 
       val provideOpenSSLTaskName = provideBinariesTaskName(target, "openssl")
 
-
       val provideOpenSSLTask = project.tasks.getByName(provideOpenSSLTaskName)
       dependsOn(provideOpenSSLTask)
 
-      println("CurlPlugin: provideOpenSSLTask: $provideOpenSSLTask outputs: ${provideOpenSSLTask.outputs.files.files}")
-      //println("openssl working dir: ${provideOpenSSLTask.work}")
-
-
-      val opensslDir = openSSL.buildDir(target)
-      println("OPEN SSL DIR: $opensslDir")
+      //println("CurlPlugin: provideOpenSSLTask: $provideOpenSSLTask outputs: ${provideOpenSSLTask.outputs.files.files}")
 
       outputs.file(workingDir.resolve("Makefile"))
 
       commandLine(
         "./configure",
         "--host=${target.hostTriplet}",
-        "--with-ssl=$opensslDir",
+        "--with-ssl=${openSSL.libsDir(target)}",
         "--with-ca-path=/etc/ssl/certs:/etc/security/cacerts:/etc/ca-certificates",
         "--prefix=${buildDir(target)}"
       )

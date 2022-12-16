@@ -1,23 +1,19 @@
 package demo
 
+import demo.uuid.uuid.uuid_generate_random
+import demo.uuid.uuid.uuid_generate_time
+import demo.uuid.uuid.uuid_t
+import demo.uuid.uuid.uuid_unparse_lower
 import klog.KLogWriters
 import klog.KMessageFormatters
 import klog.Level
 import klog.colored
 import klog.klog
 import kotlinx.cinterop.ByteVar
-import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.UByteVar
-import kotlinx.cinterop.UByteVarOf
-import kotlinx.cinterop.alloc
 import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.nativeHeap.free
-import kotlinx.cinterop.pointed
-import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.toKString
-import kotlinx.cinterop.value
-import org.danbrough.kotlinxtras.binaries.uuid.*
 
 
 val log = klog("DEMO") {
@@ -35,6 +31,7 @@ fun main() {
   memScoped {
 
     val uuid:uuid_t = allocArray<UByteVar>(16)
+    val uuidStr = allocArray<ByteVar>(37)
 
     uuid_generate_random(uuid)
 
@@ -44,8 +41,12 @@ fun main() {
         printf("generate uuid=%s\n", uuid_str);
      */
 
-    val uuidStr = allocArray<ByteVar>(37)
+
     uuid_unparse_lower(uuid,uuidStr)
-    log.debug("UUID: ${uuidStr.toKString()}")
+    log.debug("uuid_generate_random:\t${uuidStr.toKString()}")
+
+    uuid_generate_time(uuid)
+    uuid_unparse_lower(uuid,uuidStr)
+    log.debug("uuid_generate_time:\t${uuidStr.toKString()}")
   }
 }

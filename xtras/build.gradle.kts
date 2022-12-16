@@ -9,12 +9,13 @@ plugins {
   xtras("core", Xtras.version)
 }
 
+group = "${Xtras.projectGroup}.xtras"
+
 dependencies {
-  implementation(project(":plugins"))
+  implementation(project(":core"))
 }
 
 enableIconv()
-
 enableCurl()
 enableSqlite()
 
