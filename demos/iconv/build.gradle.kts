@@ -4,22 +4,19 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.danbrough.kotlinxtras.enableIconv
 
 plugins {
   kotlin("multiplatform")
-//  id("org.danbrough.kotlinxtras.iconv")
-  id("org.danbrough.kotlinxtras.binaries") version "0.0.3-beta12"
-  id("org.danbrough.kotlinxtras.iconv") version "0.0.3-beta12"
+  id("org.danbrough.kotlinxtras.core")
 
 }
 
 
-xtrasIconv {
-  buildEnabled = true
-}
+enableIconv()
+
 
 repositories {
-  maven("/usr/local/kotlinxtras/build/m2")
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
 }
@@ -36,8 +33,8 @@ kotlin {
 
   val commonMain by sourceSets.getting {
     dependencies {
-      implementation(libs.klog)
-      implementation(libs.org.danbrough.kotlinxtras.common)
+      implementation("org.danbrough:klog:_")
+      implementation("org.danbrough.kotlinxtras:common:_")
     }
   }
 
@@ -50,7 +47,7 @@ kotlin {
     }
 
     binaries {
-      executable("iconvDemo") {
+      executable("demo") {
         entryPoint = "demo1.main"
 
       }

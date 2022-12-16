@@ -47,7 +47,7 @@ kotlin {
 
 
     binaries {
-      executable("curlDemo") {
+      executable("demo") {
         entryPoint = "demo1.main"
         runTask?.environment("CA_CERT_FILE",file("cacert.pem"))
         findProperty("args")?.also {

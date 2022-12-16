@@ -4,6 +4,7 @@ import org.danbrough.kotlinxtras.hostTriplet
 import org.danbrough.kotlinxtras.platformName
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
@@ -16,9 +17,13 @@ repositories {
   mavenCentral()
 }
 
+group="demo.uuid"
 
 registerLibraryExtension("uuid") {
   version = "2.38.1"
+
+
+  publishingGroup = "demo.uuid"
 
   git(
     "https://git.kernel.org/pub/scm/utils/util-linux/util-linux.git",
@@ -28,7 +33,10 @@ registerLibraryExtension("uuid") {
   cinterops {
     headers = """
       headers = uuid/uuid.h 
-      linkerOpts = -luuid 
+      #for dynamic linking
+      #linkerOpts = -luuid
+      #or use this for static linking
+      staticLibraries = libuuid.a
       """.trimIndent()
   }
 
@@ -52,7 +60,7 @@ registerLibraryExtension("uuid") {
       "./configure",
       "--host=${target.hostTriplet}",
       "--enable-libuuid",
-      "--enable-uuidgen",
+      //"--enable-uuidgen",
       "--disable-all-programs",
       "--prefix=${buildDir(target)}"
     )
@@ -67,11 +75,17 @@ registerLibraryExtension("uuid") {
 
 kotlin {
 
-  linuxX64()
-  linuxArm32Hfp()
-  //macosX64()
-  linuxArm64()
-  androidNativeX86()
+  if (HostManager.hostIsMac) {
+    macosX64()
+    macosArm64()
+  } else {
+    linuxX64()
+    //linuxArm32Hfp()
+
+    linuxArm64()
+    //androidNativeX86()
+  }
+
 
   val commonMain by sourceSets.getting {
     dependencies {
@@ -90,7 +104,7 @@ kotlin {
     }
 
     binaries {
-      executable("demo") {
+      executable("iconvDemo") {
         entryPoint = "demo.main"
       }
     }
