@@ -1,10 +1,10 @@
-
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.configurationcache.extensions.capitalized
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
 plugins {
 
-  kotlin("multiplatform")  apply false
+  kotlin("multiplatform") apply false
   `maven-publish`
   id("org.jetbrains.dokka") apply false
   xtras("sonatype") version Xtras.version apply false
@@ -16,6 +16,8 @@ println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinComp
 
 group = Xtras.projectGroup
 version = Xtras.publishingVersion
+
+
 
 allprojects {
 
@@ -38,7 +40,26 @@ allprojects {
       false
     }
   }
+
+  extensions.findByType(JavaPluginExtension::class.java)?.apply {
+
+    toolchain.languageVersion.set(JavaLanguageVersion.of(11))
+   // sourceCompatibility = JavaVersion.VERSION_11
+
+  }
+
+  extensions.findByType(KotlinJvmProjectExtension::class.java)?.apply {
+    this.jvmToolchain {
+      check(this is JavaToolchainSpec)
+      languageVersion.set(JavaLanguageVersion.of(11))
+    }
+  }
+
+  tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions.jvmTarget = "11"
+  }
 }
+
 
 
 subprojects {
@@ -58,6 +79,3 @@ subprojects {
   }
 }
 
-tasks.register("publishXtras"){
-  dependsOn(project.getTasksByName("publishAllPublicationsTo${Xtras.repoName.capitalized()}Repository",true))
-}

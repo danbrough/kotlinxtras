@@ -17,23 +17,7 @@ dependencies {
 
 }
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(11))
-    sourceCompatibility = JavaVersion.VERSION_11
-}
 
-kotlin {
-  jvmToolchain {
-    check(this is JavaToolchainSpec)
-    languageVersion.set(JavaLanguageVersion.of(11))
-  }
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile> {
-  kotlinOptions {
-    jvmTarget = "11"
-  }
-}
 
 
 
