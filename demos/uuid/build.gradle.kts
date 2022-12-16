@@ -104,7 +104,7 @@ kotlin {
     }
 
     binaries {
-      executable("iconvDemo") {
+      executable("uuidDemo") {
         entryPoint = "demo.main"
       }
     }
