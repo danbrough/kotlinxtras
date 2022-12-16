@@ -4,6 +4,7 @@ import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.xtrasPackagesDir
 import org.gradle.api.Task
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.dependencies
@@ -12,6 +13,8 @@ import java.io.File
 
 
 fun LibraryExtension.resolveBinariesFromMaven(target: KonanTarget): File? {
+
+
   val binariesConfiguration =
     project.configurations.create("configuration${libName.capitalized()}Binaries${target.platformName.capitalized()}") {
       isVisible = false
@@ -20,15 +23,26 @@ fun LibraryExtension.resolveBinariesFromMaven(target: KonanTarget): File? {
       isCanBeResolved = true
     }
 
+  val mavenID = "$publishingGroup:$libName${target.platformName.capitalized()}:$version"
+  project.logger.info("LibraryExtension.resolveBinariesFromMaven():$target $mavenID")
+
+  project.repositories.all {
+    if (this is MavenArtifactRepository) {
+      project.logger.info("LibraryExtension.resolveBinariesFromMaven():$target REPO: ${this.name}:${this.url}")
+    }
+  }
   project.dependencies {
-    binariesConfiguration("$publishingGroup:$libName${target.platformName.capitalized()}:$version")
+    binariesConfiguration(mavenID)
   }
 
-  return runCatching {
-    binariesConfiguration.resolve().first()
+  runCatching {
+    return binariesConfiguration.resolve().first().also {
+      project.logger.info("LibraryExtension.resolveBinariesFromMaven():$target found ${it.absolutePath}")
+    }
   }.exceptionOrNull()?.let {
-    null
+    project.logger.info("LibraryExtension.resolveBinariesFromMaven():$target Failed for $mavenID: ${it.message}")
   }
+  return null
 }
 
 fun LibraryExtension.registerProvideBinariesTask(target: KonanTarget): TaskProvider<Task> =

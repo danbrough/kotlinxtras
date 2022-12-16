@@ -5,16 +5,12 @@ import org.jetbrains.kotlin.konan.target.HostManager
 plugins {
   kotlin("multiplatform")
   id("org.danbrough.kotlinxtras.core")
-
 }
 
-
 repositories {
-  maven("/usr/local/kotlinxtras/build/xtras/maven")
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
 }
-
 
 enableCurl {
   cinterops {
