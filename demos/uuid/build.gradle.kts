@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
   kotlin("multiplatform")
-  id("org.danbrough.kotlinxtras.core")
+  id("org.danbrough.kotlinxtras.binaries")
 }
 
 repositories {

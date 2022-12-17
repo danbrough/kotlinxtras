@@ -16,7 +16,7 @@ data class ArchiveSourceConfig(
 data class GitSourceConfig(val commit: String) : SourceConfig
 
 
-@BinariesDSLMarker
+@XtrasDSLMarker
 fun LibraryExtension.download(url: String, configure: ArchiveSourceConfig.() -> Unit) {
   sourceURL = url
   sourceConfig = ArchiveSourceConfig().apply{
@@ -29,7 +29,7 @@ fun LibraryExtension.download(url: String, configure: ArchiveSourceConfig.() -> 
   }
 }
 
-@BinariesDSLMarker
+@XtrasDSLMarker
 fun LibraryExtension.git(url: String, commit: String) {
   sourceURL = url
   sourceConfig = GitSourceConfig(commit)
