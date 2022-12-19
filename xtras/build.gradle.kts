@@ -9,8 +9,6 @@ plugins {
   xtras("core", Xtras.version)
 }
 
-group = "${Xtras.projectGroup}.xtras"
-
 dependencies {
   implementation(project(":core"))
 }
