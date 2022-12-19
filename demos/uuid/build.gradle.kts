@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
   kotlin("multiplatform")
-  id("org.danbrough.kotlinxtras.core")
+  id("org.danbrough.kotlinxtras.binaries")
 }
 
 repositories {
@@ -109,5 +109,9 @@ kotlin {
       }
     }
   }
+}
+
+tasks.create("run"){
+  dependsOn("runUuidDemoDebugExecutable${if (HostManager.hostIsMac) "MacosX64" else "LinuxX64"}")
 }
 

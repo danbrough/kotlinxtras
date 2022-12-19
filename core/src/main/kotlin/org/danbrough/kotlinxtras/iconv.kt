@@ -11,6 +11,7 @@ const val XTRAS_ICONV_EXTN_NAME = "iconv"
 
 fun Project.enableIconv(name: String = XTRAS_ICONV_EXTN_NAME,config:LibraryExtension.()->Unit = {}) =
   project.registerLibraryExtension(name) {
+    publishingGroup = CORE_PUBLISHING_PACKAGE
     version = "1.17"
 
     download("https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz") {

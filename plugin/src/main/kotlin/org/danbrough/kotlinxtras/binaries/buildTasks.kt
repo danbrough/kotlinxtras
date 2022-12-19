@@ -28,12 +28,15 @@ fun LibraryExtension.registerBuildSourcesTask(target: KonanTarget) =
 
     group = XTRAS_TASK_GROUP
     environment(buildEnvironment(target))
+
     workingDir(sourcesDir(target))
     outputs.dir(buildDir(target))
 
     onlyIf {
       !isPackageBuilt(target)
     }
+
+    dependsOn(extractSourcesTaskName(target))
 
     configureTask?.also {
       dependsOn(configureSourcesTaskName(target))

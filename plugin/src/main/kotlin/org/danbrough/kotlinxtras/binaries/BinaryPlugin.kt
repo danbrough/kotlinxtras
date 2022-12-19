@@ -11,6 +11,7 @@ open class BinaryExtension {
   var autoreconfBinary: String = "/usr/bin/autoreconf"
   var makeBinary: String = "/usr/bin/make"
   var cmakeBinary: String = "/usr/bin/cmake"
+  var goBinary: String = "/usr/bin/go"
 
   var libraryExtensions = mutableListOf<LibraryExtension>()
 }
@@ -28,6 +29,7 @@ class BinaryPlugin : Plugin<Project> {
 
         gitBinary = binaryProperty("git", gitBinary)
         wgetBinary = binaryProperty("wget", wgetBinary)
+        goBinary = binaryProperty("go", goBinary)
         tarBinary = binaryProperty("tar", tarBinary)
         autoreconfBinary = binaryProperty("autoreconf", autoreconfBinary)
         makeBinary = binaryProperty("make", makeBinary)
@@ -46,6 +48,7 @@ class BinaryPlugin : Plugin<Project> {
                   $binaryPropertyPrefix.git:            $gitBinary
                   $binaryPropertyPrefix.wget:           $wgetBinary
                   $binaryPropertyPrefix.tar:            $tarBinary
+                  $binaryPropertyPrefix.go:             $goBinary
                   $binaryPropertyPrefix.autoreconf:     $autoreconfBinary
                   $binaryPropertyPrefix.make:           $makeBinary
                   $binaryPropertyPrefix.cmake:          $cmakeBinary

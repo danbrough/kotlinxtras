@@ -13,6 +13,7 @@ const val XTRAS_OPENSSL_EXTN_NAME = "openssl"
 fun Project.enableOpenssl(extnName: String = XTRAS_OPENSSL_EXTN_NAME,config:LibraryExtension.()->Unit = {}):LibraryExtension =
   registerLibraryExtension(extnName) {
 
+    publishingGroup = CORE_PUBLISHING_PACKAGE
     version = "1_1_1s"
 
     git("https://github.com/danbrough/openssl.git", "02e6fd7998830218909cbc484ca054c5916fdc59")

@@ -47,11 +47,15 @@ kotlin {
     }
 
     binaries {
-      executable("demo") {
+      executable("iconvDemo") {
         entryPoint = "demo1.main"
 
       }
     }
   }
+}
+
+tasks.create("run"){
+  dependsOn("runIconvDemoDebugExecutable${if (HostManager.hostIsMac) "MacosX64" else "LinuxX64"}")
 }
 

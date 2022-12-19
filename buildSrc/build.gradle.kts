@@ -13,24 +13,15 @@ repositories {
   mavenCentral()
 }
 
-java {
-  toolchain.languageVersion.set(JavaLanguageVersion.of(11))
-  //sourceCompatibility = JavaVersion.VERSION_11
-}
 
+val javaLangVersion = 11
+
+java {
+  toolchain.languageVersion.set(JavaLanguageVersion.of(javaLangVersion))
+}
 
 kotlin {
   jvmToolchain {
-    check(this is JavaToolchainSpec)
-    languageVersion.set(JavaLanguageVersion.of(11))
+    languageVersion.set(JavaLanguageVersion.of(javaLangVersion))
   }
 }
-
-tasks.withType<KotlinJvmCompile> {
-  kotlinOptions {
-    jvmTarget = "11"
-  }
-}
-
-
-

@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 const val XTRAS_CURL_EXTN_NAME = "curl"
 
 fun Project.enableCurl(name: String = XTRAS_CURL_EXTN_NAME,config:LibraryExtension.()->Unit = {}):LibraryExtension {
-
   val openSSL =
     (extensions.findByName(XTRAS_OPENSSL_EXTN_NAME) ?: enableOpenssl()) as LibraryExtension
 
   return registerLibraryExtension(name) {
+    publishingGroup = CORE_PUBLISHING_PACKAGE
 
     version = "7_86_0"
 

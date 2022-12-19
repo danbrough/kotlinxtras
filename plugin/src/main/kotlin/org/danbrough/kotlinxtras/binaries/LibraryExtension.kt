@@ -9,18 +9,17 @@ import org.gradle.kotlin.dsl.findByType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 @DslMarker
-annotation class BinariesDSLMarker
+annotation class XtrasDSLMarker
 
 
 typealias SourcesTask = Exec.(KonanTarget) -> Unit
 
-@BinariesDSLMarker
+@XtrasDSLMarker
 fun Project.registerLibraryExtension(
   name: String,
   configure: LibraryExtension.() -> Unit
@@ -37,28 +36,31 @@ fun Project.registerLibraryExtension(
   }
 }
 
-@BinariesDSLMarker
+@XtrasDSLMarker
 abstract class LibraryExtension(val project: Project) {
 
   //Unique identifier for a binary package
-  @BinariesDSLMarker
+  @XtrasDSLMarker
   lateinit var libName: String
 
-  @BinariesDSLMarker
+  @XtrasDSLMarker
   open var version: String = "unspecified"
 
-  @BinariesDSLMarker
+  @XtrasDSLMarker
   open var sourceURL: String? = null
 
-  @BinariesDSLMarker
-  var publishingGroup: String = XTRAS_BINARIES_PUBLISHING_GROUP
+  @XtrasDSLMarker
+  var publishingGroup: String = project.group.toString()
+
+  @XtrasDSLMarker
+  var isPublishingEnabled:Boolean = false
 
 
   /**
    * This can be manually configured or by default it will be set to all the kotlin multi-platform targets.
    * If not a kotlin mpp project then it will be set to [xtrasSupportedTargets]
    */
-  @BinariesDSLMarker
+  @XtrasDSLMarker
   open var supportedTargets: List<KonanTarget> = emptyList()
 
   /**
@@ -67,29 +69,29 @@ abstract class LibraryExtension(val project: Project) {
    * ```kotlin supportedTargets.filter { it.family.isAppleFamily == HostManager.hostIsMac }```
    */
 
-  @BinariesDSLMarker
+  @XtrasDSLMarker
   var supportedBuildTargets: List<KonanTarget> = emptyList()
 
   open fun gitRepoDir(): File = project.xtrasDownloadsDir.resolve("repos/$libName")
 
-  @BinariesDSLMarker
+  @XtrasDSLMarker
   fun configure(task: SourcesTask) {
     configureTask = task
   }
 
-  @BinariesDSLMarker
+  @XtrasDSLMarker
   fun build(task: SourcesTask) {
     buildTask = task
   }
 
-  @BinariesDSLMarker
+  @XtrasDSLMarker
   fun configureTarget(configure: (KonanTarget) -> Unit) {
     configureTargetTask = configure
   }
 
   internal var cinteropsConfigTasks = mutableListOf<CInteropsConfig.() -> Unit>()
 
-  @BinariesDSLMarker
+  @XtrasDSLMarker
   fun cinterops(configure: CInteropsConfig.() -> Unit) {
     cinteropsConfigTasks.add(configure)
   }
@@ -130,33 +132,68 @@ abstract class LibraryExtension(val project: Project) {
     konanTarget: KonanTarget,
     name: String = libName,
     packageVersion: String = version
-  ): String =
-    "xtras_${name}_${konanTarget.platformName}_${packageVersion}.tar.gz"
+  ): String = packageFileName.invoke(konanTarget, name, packageVersion)
 
-  open fun sourcesDir(konanTarget: KonanTarget): File =
-    project.xtrasDir.resolve("src/$libName/$version/${konanTarget.platformName}")
+  var packageFileName: (
+    konanTarget: KonanTarget,
+    name: String,
+    packageVersion: String
+  ) -> String =
+    { konanTarget, name, packageVersion -> "xtras_${name}_${konanTarget.platformName}_${packageVersion}.tar.gz" }
 
-  open fun buildDir(
+  var sourcesDir: (KonanTarget) -> File =
+    { project.xtrasDir.resolve("src/$libName/$version/${it.platformName}") }
+
+  @XtrasDSLMarker
+  fun sourcesDir(srcDir: (KonanTarget) -> File) {
+    sourcesDir = srcDir
+  }
+
+  fun buildDir(
     konanTarget: KonanTarget,
     packageName: String = libName,
     packageVersion: String = version
   ): File =
+    buildDir.invoke(konanTarget, packageName, packageVersion)
+
+  var buildDir: (
+    konanTarget: KonanTarget,
+    packageName: String,
+    packageVersion: String
+  ) -> File = { konanTarget, packageName, packageVersion ->
     project.xtrasBuildDir.resolve("$packageName/$packageVersion/${konanTarget.platformName}")
+  }
 
-
-  open fun libsDir(
+  @XtrasDSLMarker
+  fun libsDir(
     konanTarget: KonanTarget,
     packageName: String = libName,
     packageVersion: String = version
-  ): File =
-    project.xtrasLibsDir.resolve("$packageName/$packageVersion/${konanTarget.platformName}")
+  ): File = libsDir.invoke(konanTarget, packageName, packageVersion)
 
-  open fun isPackageBuilt(
+  var libsDir: (konanTarget: KonanTarget, packageName: String, packageVersion: String) -> File =
+    { konanTarget, packageName, packageVersion -> project.xtrasLibsDir.resolve("$packageName/$packageVersion/${konanTarget.platformName}") }
+
+  fun isPackageBuilt(
     konanTarget: KonanTarget,
     name: String = libName,
     packageVersion: String = version
-  ): Boolean =
-    project.xtrasPackagesDir.resolve(packageFileName(konanTarget, name, packageVersion)).exists()
+  ): Boolean = isPackageBuilt.invoke(konanTarget, name, packageVersion)
+
+  var isPackageBuilt: (
+    konanTarget: KonanTarget,
+    name: String,
+    packageVersion: String
+  ) -> Boolean =
+    { konanTarget, name, packageVersion ->
+      project.xtrasPackagesDir.resolve(
+        packageFileName(
+          konanTarget,
+          name,
+          packageVersion
+        )
+      ).exists()
+    }
 
 
   open fun buildEnvironment(konanTarget: KonanTarget): Map<String, *> =
@@ -164,6 +201,11 @@ abstract class LibraryExtension(val project: Project) {
 
   val binaries: BinaryExtension
     inline get() = project.binariesExtension
+
+  fun addBuildFlags(target: KonanTarget,env:MutableMap<String,Any>){
+    env["CFLAGS"] = "${env["CFLAGS"]?:""} -I${libsDir(target)}/include"
+    env["LDFLAGS"] = "${env["LDFLAGS"]?:""} -L${libsDir(target)}/lib"
+  }
 
 }
 
@@ -186,15 +228,13 @@ private fun LibraryExtension.registerXtrasTasks() {
 
 
 
-  if (buildTask != null) {
-    when (srcConfig) {
-      is ArchiveSourceConfig -> {
-        registerArchiveDownloadTask()
-      }
+  when (srcConfig) {
+    is ArchiveSourceConfig -> {
+      registerArchiveDownloadTask()
+    }
 
-      is GitSourceConfig -> {
-        registerGitDownloadTask(srcConfig)
-      }
+    is GitSourceConfig -> {
+      registerGitDownloadTask(srcConfig)
     }
   }
 
@@ -249,13 +289,18 @@ private fun LibraryExtension.registerXtrasTasks() {
         is GitSourceConfig -> {
           registerGitExtractTask(srcConfig, target)
         }
+
+        is DirectorySourceConfig -> {
+          registerDirectorySourcesTask(srcConfig,target)
+        }
       }
 
       configureTask?.also {
         registerConfigureSourcesTask(target)
       }
       registerBuildSourcesTask(target)
-      registerPublishingTask(target)
+      if (isPublishingEnabled)
+        registerPublishingTask(target)
     } else {
       project.logger.info("buildSupport disabled for $libName as either buildTask is null or buildingEnabled is false")
     }

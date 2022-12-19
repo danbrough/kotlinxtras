@@ -122,4 +122,3 @@ val Project.xtrasDocsDir: File
 val Project.xtrasLibsDir: File
   get() = xtrasPath(PROPERTY_LIBS_DIR, "libs")
 
-
