@@ -30,11 +30,29 @@ dependencies {
 //  }
 //}
 
+val javaLangVersion = 11
 
-tasks.withType(JavaCompile::class) {
-  sourceCompatibility = JavaVersion.VERSION_11.toString()
-  targetCompatibility = JavaVersion.VERSION_11.toString()
+java {
+  toolchain.languageVersion.set(JavaLanguageVersion.of(javaLangVersion))
 }
+
+kotlin {
+  jvmToolchain {
+    languageVersion.set(JavaLanguageVersion.of(javaLangVersion))
+  }
+}
+tasks.withType(JavaCompile::class.java) {
+  targetCompatibility = javaLangVersion.toString()
+  sourceCompatibility = javaLangVersion.toString()
+}
+
+tasks.withType<KotlinJvmCompile> {
+  kotlinOptions {
+    jvmTarget = javaLangVersion.toString()
+  }
+}
+
+
 
 
 

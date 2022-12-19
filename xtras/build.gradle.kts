@@ -15,8 +15,19 @@ dependencies {
   implementation(project(":core"))
 }
 
-enableIconv()
-enableCurl()
-enableSqlite()
+enableIconv{
+  isPublishingEnabled = true
+}
 
+enableOpenssl{
+  isPublishingEnabled = true
+}
+
+enableCurl{
+  isPublishingEnabled = true
+}
+
+enableSqlite{
+  isPublishingEnabled = true
+}
 

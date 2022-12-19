@@ -14,20 +14,9 @@ dependencies {
   compileOnly(kotlin("gradle-plugin"))
   compileOnly(kotlin("gradle-plugin-api"))
   compileOnly("org.jetbrains.dokka:dokka-gradle-plugin:_")
-
 }
 
-/*
 
-publishing {
-  repositories {
-    maven(rootProject.buildDir.resolve("xtras/maven")){
-      name = "xtras"
-    }
-  }
-}
-
-*/
 
 gradlePlugin {
   plugins {

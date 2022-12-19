@@ -2,8 +2,10 @@ package org.danbrough.kotlinxtras.binaries
 
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.xtrasDownloadsDir
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.File
 
 
 interface SourceConfig
@@ -19,14 +21,21 @@ data class GitSourceConfig(val commit: String) : SourceConfig
 @XtrasDSLMarker
 fun LibraryExtension.download(url: String, configure: ArchiveSourceConfig.() -> Unit) {
   sourceURL = url
-  sourceConfig = ArchiveSourceConfig().apply{
+  sourceConfig = ArchiveSourceConfig().apply {
     tarExtractOptions = when {
-      url.endsWith(".tar.gz",true) -> "xfz"
-      url.endsWith(".tar.bz2",true) -> "xfj"
+      url.endsWith(".tar.gz", true) -> "xfz"
+      url.endsWith(".tar.bz2", true) -> "xfj"
       else -> throw Error("Missing tarExtractOptions for $url")
     }
     configure()
   }
+}
+
+data class DirectorySourceConfig(var file: File) : SourceConfig
+
+@XtrasDSLMarker
+fun LibraryExtension.sourceDir(file: File) {
+  sourceConfig = DirectorySourceConfig(file)
 }
 
 @XtrasDSLMarker
@@ -35,6 +44,14 @@ fun LibraryExtension.git(url: String, commit: String) {
   sourceConfig = GitSourceConfig(commit)
 }
 
+internal fun LibraryExtension.registerDirectorySourcesTask(
+  srcConfig: DirectorySourceConfig, konanTarget: KonanTarget
+) {
+  project.tasks.register(extractSourcesTaskName(konanTarget), Copy::class.java) {
+    from(srcConfig.file)
+    destinationDir = sourcesDir(konanTarget)
+  }
+}
 
 internal fun LibraryExtension.registerGitDownloadTask(
   srcConfig: GitSourceConfig
@@ -51,9 +68,9 @@ internal fun LibraryExtension.registerGitDownloadTask(
     onlyIf {
       !repoDir.resolve("config").exists()
     }
-/*
+    /*
 
-*/
+    */
 
     doFirst {
       //repoDir.deleteRecursively()
@@ -144,7 +161,7 @@ internal fun LibraryExtension.registerGitExtractTask(
     actions.add {
       project.exec {
         workingDir = destDir
-        commandLine(binaries.gitBinary, "clean","-xdf")
+        commandLine(binaries.gitBinary, "clean", "-xdf")
         println("running: ${commandLine.joinToString(" ")}")
       }
     }

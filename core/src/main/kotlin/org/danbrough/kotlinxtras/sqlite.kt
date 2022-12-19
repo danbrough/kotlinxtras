@@ -12,7 +12,7 @@ const val XTRAS_SQLITE_EXTN_NAME = "sqlite"
 fun Project.enableSqlite(name: String = XTRAS_SQLITE_EXTN_NAME,config:LibraryExtension.()->Unit = {}): LibraryExtension =
 
   registerLibraryExtension(name) {
-    
+    publishingGroup = CORE_PUBLISHING_PACKAGE
     version = "3.40.0"
 
     download("https://www.sqlite.org/2022/sqlite-autoconf-3400000.tar.gz") {

@@ -108,6 +108,7 @@ val KonanTarget.goArch: String
   }
 
 
+
 fun KonanTarget.buildEnvironment(): MutableMap<String, *> = mutableMapOf(
   "CGO_ENABLED" to 1, "GOARM" to 7, "GOOS" to goOS, "GOARCH" to goArch,
   "GOBIN" to buildCacheDir.resolve("$name/bin"),
@@ -210,6 +211,8 @@ export CXX=$TARGET-g++
   path.add(0, konanDir.resolve("dependencies/llvm-11.1.0-linux-x64-essentials/bin").absolutePath)
   this["PATH"] = path.joinToString(File.pathSeparator)
 }
+
+
 
 
 

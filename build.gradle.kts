@@ -18,8 +18,8 @@ group = Xtras.projectGroup
 version = Xtras.publishingVersion
 
 
-
 allprojects {
+
 
   repositories {
     maven(file("build/xtras/maven"))
@@ -41,23 +41,7 @@ allprojects {
     }
   }
 
-  extensions.findByType(JavaPluginExtension::class.java)?.apply {
 
-    toolchain.languageVersion.set(JavaLanguageVersion.of(11))
-   // sourceCompatibility = JavaVersion.VERSION_11
-
-  }
-
-  extensions.findByType(KotlinJvmProjectExtension::class.java)?.apply {
-    this.jvmToolchain {
-      check(this is JavaToolchainSpec)
-      languageVersion.set(JavaLanguageVersion.of(11))
-    }
-  }
-
-  tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.jvmTarget = "11"
-  }
 }
 
 
@@ -66,8 +50,21 @@ subprojects {
   group = Xtras.projectGroup
   version = Xtras.publishingVersion
 
-
   afterEvaluate {
+
+    extensions.findByType(JavaPluginExtension::class.java)?.apply {
+      toolchain.languageVersion.set(JavaLanguageVersion.of(Xtras.javaLangVersion))
+    }
+
+
+    extensions.findByType(org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension::class.java)
+      ?.apply {
+        jvmToolchain {
+          languageVersion.set(JavaLanguageVersion.of(Xtras.javaLangVersion))
+        }
+      }
+
+
     extensions.findByType(PublishingExtension::class)?.also {
       publishing {
         publications.all {
