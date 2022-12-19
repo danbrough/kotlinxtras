@@ -111,3 +111,7 @@ kotlin {
   }
 }
 
+tasks.create("run"){
+  dependsOn("runUuidDemoDebugExecutable${if (HostManager.hostIsMac) "MacosX64" else "LinuxX64"}")
+}
+
