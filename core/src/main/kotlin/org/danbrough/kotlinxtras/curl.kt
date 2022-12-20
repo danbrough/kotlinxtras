@@ -39,7 +39,7 @@ fun Project.enableCurl(name: String = XTRAS_CURL_EXTN_NAME,config:LibraryExtensi
     configure { target ->
       dependsOn(target.autoConfTaskName())
 
-      val provideOpenSSLTaskName = provideBinariesTaskName(target, "openssl")
+      val provideOpenSSLTaskName = resolveArchiveTaskName(target, "openssl")
 
       val provideOpenSSLTask = project.tasks.getByName(provideOpenSSLTaskName)
       dependsOn(provideOpenSSLTask)

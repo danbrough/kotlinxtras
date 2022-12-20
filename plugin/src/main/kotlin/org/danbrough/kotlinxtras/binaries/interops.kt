@@ -7,6 +7,7 @@ import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.Executable
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -73,6 +74,7 @@ fun LibraryExtension.registerGenerateInteropsTask() {
 
   project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
     val libPathKey = if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH"
+
     targets.withType(KotlinNativeTarget::class.java).all {
       compilations.getByName("main").apply {
         cinterops.create(config.name) {

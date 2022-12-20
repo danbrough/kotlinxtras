@@ -5,7 +5,7 @@ import org.gradle.api.tasks.Exec
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 
-fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget) =
+private fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget) =
   project.tasks.register(configureSourcesTaskName(target), Exec::class.java) {
     if (!isPackageBuilt(target))
       dependsOn(extractSourcesTaskName(target))
@@ -14,7 +14,7 @@ fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget) =
     workingDir(sourcesDir(target))
     configureTask!!(target)
     doFirst {
-      println("running $name with: ${commandLine.joinToString(" ")}")
+      project.log("running $name with: ${commandLine.joinToString(" ")}")
     }
     // enabled = !isPackageBuilt(target)
     onlyIf {
@@ -23,7 +23,11 @@ fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget) =
   }
 
 
-fun LibraryExtension.registerBuildSourcesTask(target: KonanTarget) =
+fun LibraryExtension.registerBuildTasks(target: KonanTarget) {
+  configureTask?.also {
+    registerConfigureSourcesTask(target)
+  }
+
   project.tasks.register(buildSourcesTaskName(target), Exec::class.java) {
 
     group = XTRAS_TASK_GROUP
@@ -45,6 +49,7 @@ fun LibraryExtension.registerBuildSourcesTask(target: KonanTarget) =
     buildTask!!(target)
 
   }
+}
 
 
 

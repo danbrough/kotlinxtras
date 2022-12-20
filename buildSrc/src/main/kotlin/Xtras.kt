@@ -7,8 +7,8 @@ import org.gradle.plugin.use.PluginDependencySpec
 
 object Xtras {
   const val projectGroup = "org.danbrough.kotlinxtras"
-  const val version = "0.0.3-beta05"
-  const val publishingVersion = "0.0.3-beta05"
+  const val version = "0.0.3-beta06"
+  const val publishingVersion = "0.0.3-beta06"
   const val repoName = "xtras"
   const val javaLangVersion = 11
 }

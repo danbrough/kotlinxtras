@@ -29,3 +29,7 @@ enableSqlite{
   isPublishingEnabled = true
 }
 
+gradlePlugin {
+  isAutomatedPublishing = false
+}
+

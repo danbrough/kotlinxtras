@@ -53,7 +53,10 @@ abstract class LibraryExtension(val project: Project) {
   var publishingGroup: String = project.group.toString()
 
   @XtrasDSLMarker
-  var isPublishingEnabled:Boolean = false
+  var isPublishingEnabled: Boolean = false
+
+  @XtrasDSLMarker
+  var isBuildingEnabled: Boolean = true
 
 
   /**
@@ -116,11 +119,23 @@ abstract class LibraryExtension(val project: Project) {
   fun buildSourcesTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasBuild${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
-  fun provideAllBinariesTaskName(name: String = libName): String =
-    "xtrasProvide${name.capitalized()}"
+  fun resolveArchiveTaskName(konanTarget: KonanTarget,name:String = libName):String =
+  "xtrasResolveArchive${libName.capitalized()}${konanTarget.platformName.capitalized()}"
 
+  fun extractLibsTaskName(konanTarget: KonanTarget,name:String = libName):String =
+    "xtrasExtractLibs${libName.capitalized()}${konanTarget.platformName.capitalized()}"
+
+  fun createArchiveTaskName(konanTarget: KonanTarget,name:String = libName):String =
+    "xtrasCreateArchive${libName.capitalized()}${konanTarget.platformName.capitalized()}"
+
+  fun resolveAllTaskName(name: String = libName): String =
+    "xtrasResolve${name.capitalized()}"
+
+  fun archiveFile(target:KonanTarget,name:String = libName):File =  project.xtrasPackagesDir.resolve(packageFileName(target))
+/*
   fun provideBinariesTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasProvide${name.capitalized()}${konanTarget.platformName.capitalized()}"
+*/
 
   fun packageTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasPackage${name.capitalized()}${konanTarget.platformName.capitalized()}"
@@ -202,9 +217,9 @@ abstract class LibraryExtension(val project: Project) {
   val binaries: BinaryExtension
     inline get() = project.binariesExtension
 
-  fun addBuildFlags(target: KonanTarget,env:MutableMap<String,Any>){
-    env["CFLAGS"] = "${env["CFLAGS"]?:""} -I${libsDir(target)}/include"
-    env["LDFLAGS"] = "${env["LDFLAGS"]?:""} -L${libsDir(target)}/lib"
+  fun addBuildFlags(target: KonanTarget, env: MutableMap<String, Any>) {
+    env["CFLAGS"] = "${env["CFLAGS"] ?: ""} -I${libsDir(target)}/include"
+    env["LDFLAGS"] = "${env["LDFLAGS"] ?: ""} -L${libsDir(target)}/lib"
   }
 
 }
@@ -256,22 +271,22 @@ private fun LibraryExtension.registerXtrasTasks() {
     url = project.xtrasMavenDir.toURI()
   }
 
-  val xtrasProvideAllTaskName = "xtrasProvideAll"
+  val xtrasResolveAllTaskName = "xtrasResolveAll"
 
-  val provideAllGlobalTask =
-    project.tasks.findByName("xtrasProvideAll") ?: project.tasks.create(xtrasProvideAllTaskName) {
+  val resolveAllGlobalTask =
+    project.tasks.findByName("xtrasResolveAll") ?: project.tasks.create(xtrasResolveAllTaskName) {
       group = XTRAS_TASK_GROUP
-      description = "Provide all binaries from all LibraryExtensions"
+      description = "Resolve all binaries from all LibraryExtensions"
     }
 
-  val provideAllTargetsTask = project.tasks.create(
-    provideAllBinariesTaskName()
+  val resolveAllTargetsTask = project.tasks.create(
+    resolveAllTaskName()
   ) {
     group = XTRAS_TASK_GROUP
     description = "Provide all binaries from a LibraryExtension"
   }
 
-  provideAllGlobalTask.dependsOn(provideAllTargetsTask)
+  resolveAllGlobalTask.dependsOn(resolveAllTargetsTask)
 
   supportedTargets.forEach { target ->
 
@@ -291,22 +306,20 @@ private fun LibraryExtension.registerXtrasTasks() {
         }
 
         is DirectorySourceConfig -> {
-          registerDirectorySourcesTask(srcConfig,target)
+          registerDirectorySourcesTask(srcConfig, target)
         }
       }
 
-      configureTask?.also {
-        registerConfigureSourcesTask(target)
-      }
-      registerBuildSourcesTask(target)
-      if (isPublishingEnabled)
-        registerPublishingTask(target)
+      registerBuildTasks(target)
+      registerArchiveTasks(target)
+
+//      registerPublishingTasks(target)
     } else {
-      project.logger.info("buildSupport disabled for $libName as either buildTask is null or buildingEnabled is false")
+      project.log("buildSupport disabled for $libName:${target.platformName}")
     }
 
-    if (HostManager.hostIsMac == target.family.isAppleFamily)
-      provideAllTargetsTask.dependsOn(registerProvideBinariesTask(target))
+/*    if (HostManager.hostIsMac == target.family.isAppleFamily)
+      provideAllTargetsTask.dependsOn(registerProvideBinariesTask(target))*/
 
     project.extensions.findByType(KotlinMultiplatformExtension::class)?.apply {
       /*  targets.withType(KotlinNativeTarget::class.java) {
@@ -318,15 +331,16 @@ private fun LibraryExtension.registerXtrasTasks() {
            }
      */
       project.tasks.withType(CInteropProcess::class.java) {
-        dependsOn(provideBinariesTaskName(konanTarget))
+        dependsOn(extractLibsTaskName(konanTarget))
       }
+
+
     }
 
 
   }
 
   registerGenerateInteropsTask()
-
 }
 
 
