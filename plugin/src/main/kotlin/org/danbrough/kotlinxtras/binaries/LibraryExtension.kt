@@ -120,25 +120,22 @@ abstract class LibraryExtension(val project: Project) {
     "xtrasBuild${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
   fun resolveArchiveTaskName(konanTarget: KonanTarget,name:String = libName):String =
-  "xtrasResolveArchive${libName.capitalized()}${konanTarget.platformName.capitalized()}"
+  "xtrasResolveArchive${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
   fun extractLibsTaskName(konanTarget: KonanTarget,name:String = libName):String =
-    "xtrasExtractLibs${libName.capitalized()}${konanTarget.platformName.capitalized()}"
+    "xtrasExtractLibs${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
   fun createArchiveTaskName(konanTarget: KonanTarget,name:String = libName):String =
-    "xtrasCreateArchive${libName.capitalized()}${konanTarget.platformName.capitalized()}"
+    "xtrasCreateArchive${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
-  fun resolveAllTaskName(name: String = libName): String =
-    "xtrasResolve${name.capitalized()}"
-
-  fun archiveFile(target:KonanTarget,name:String = libName):File =  project.xtrasPackagesDir.resolve(packageFileName(target))
+  fun archiveFile(target:KonanTarget,name:String = libName):File =  project.xtrasPackagesDir.resolve(packageFileName(target,name))
 /*
   fun provideBinariesTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasProvide${name.capitalized()}${konanTarget.platformName.capitalized()}"
 */
 
-  fun packageTaskName(konanTarget: KonanTarget, name: String = libName): String =
-    "xtrasPackage${name.capitalized()}${konanTarget.platformName.capitalized()}"
+/*  fun packageTaskName(konanTarget: KonanTarget, name: String = libName): String =
+    "xtrasPackage${name.capitalized()}${konanTarget.platformName.capitalized()}"*/
 
   fun generateCInteropsTaskName(name: String = libName): String =
     "xtrasGenerateCInterops${name.capitalized()}"
@@ -228,7 +225,7 @@ abstract class LibraryExtension(val project: Project) {
 private fun LibraryExtension.registerXtrasTasks() {
   val srcConfig = sourceConfig
 
-  project.logger.info("LibraryExtension.registerXtrasTasks for $libName")
+  project.log("LibraryExtension.registerXtrasTasks for $libName")
 
   if (supportedTargets.isEmpty()) {
     supportedTargets =
@@ -255,7 +252,7 @@ private fun LibraryExtension.registerXtrasTasks() {
 
 
   val publishing = project.extensions.findByType(PublishingExtension::class.java) ?: let {
-    project.logger.info("LibraryExtension.registerXtrasTask() applying maven-publish.")
+    project.log("LibraryExtension.registerXtrasTask() applying maven-publish.")
     project.pluginManager.apply("org.gradle.maven-publish")
     project.extensions.getByType(PublishingExtension::class.java)
   }
@@ -271,22 +268,6 @@ private fun LibraryExtension.registerXtrasTasks() {
     url = project.xtrasMavenDir.toURI()
   }
 
-  val xtrasResolveAllTaskName = "xtrasResolveAll"
-
-  val resolveAllGlobalTask =
-    project.tasks.findByName("xtrasResolveAll") ?: project.tasks.create(xtrasResolveAllTaskName) {
-      group = XTRAS_TASK_GROUP
-      description = "Resolve all binaries from all LibraryExtensions"
-    }
-
-  val resolveAllTargetsTask = project.tasks.create(
-    resolveAllTaskName()
-  ) {
-    group = XTRAS_TASK_GROUP
-    description = "Provide all binaries from a LibraryExtension"
-  }
-
-  resolveAllGlobalTask.dependsOn(resolveAllTargetsTask)
 
   supportedTargets.forEach { target ->
 

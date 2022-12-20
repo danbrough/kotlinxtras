@@ -20,11 +20,12 @@ private fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): TaskP
     description = "Unpacks $libName:${target.platformName} into the ${libsDir(target)} directory"
     dependsOn(resolveArchiveTaskName(target))
     outputs.dir(libsDir(target))
-    actions.add{
-      project.exec{
-        val archiveFile = project.tasks.getByName(createArchiveTaskName(target)).outputs.files.first()
+    actions.add {
+      project.exec {
+        val archiveFile =
+          project.tasks.getByName(resolveArchiveTaskName(target)).outputs.files.first()
         workingDir(libsDir(target))
-        commandLine("tar","xvpfz", archiveFile.absolutePath,"./")
+        commandLine("tar", "xvpfz", archiveFile.absolutePath, "./")
       }
     }
   }
@@ -36,12 +37,20 @@ private fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): Tas
     dependsOn(buildSourcesTaskName(target))
     val archiveFile = archiveFile(target)
     outputs.file(archiveFile)
-    actions.add{
-      project.exec{
+    actions.add {
+      project.exec {
         workingDir(buildDir(target))
-        commandLine("tar","cvpfz", archiveFile.absolutePath,"--exclude=share","--exclude=libs/pkgconfig*","./")
+        commandLine(
+          "tar",
+          "cvpfz",
+          archiveFile.absolutePath,
+          "--exclude=share",
+          "--exclude=libs/pkgconfig*",
+          "./"
+        )
       }
     }
+    finalizedBy("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository")
   }
 
 
@@ -83,22 +92,23 @@ private fun LibraryExtension.registerResolveArchiveTask(target: KonanTarget): Ta
     group = XTRAS_TASK_GROUP
     description = "Resolves binary archive for $libName:${target.platformName}"
 
-    val archiveFile = archiveFile(target)
-    if (!archiveFile.exists()) {
-      resolveBinariesFromMaven(target)?.also {
-        project.log("$name: resolved ${it.absolutePath}")
-        outputs.file(it)
-        return@register
-      } ?: run {
-        project.log("$name: $target not available.")
-        if (!isBuildingEnabled) throw Error("$libName:${target.platformName} not available from maven and isBuildingEnabled is false.")
-      }
+    finalizedBy(extractLibsTaskName(target))
 
+    resolveBinariesFromMaven(target)?.also {
+      project.log("$name: resolved ${it.absolutePath}")
+      outputs.file(it)
+
+    } ?: run {
+      project.log("$name: $target not available.")
+      if (!isBuildingEnabled) throw Error("$libName:${target.platformName} not available from maven and isBuildingEnabled is false.")
+
+      val createArchiveTask = project.tasks.getByName(createArchiveTaskName(target))
       //need to build the package
-      dependsOn(createArchiveTaskName(target))
+      dependsOn(createArchiveTask)
+      outputs.file(createArchiveTask.outputs.files.first())
     }
 
-    outputs.file(archiveFile)
+
   }
 
 fun LibraryExtension.registerArchiveTasks(target: KonanTarget) {
@@ -106,8 +116,6 @@ fun LibraryExtension.registerArchiveTasks(target: KonanTarget) {
 
   registerCreateArchiveTask(target)
   registerExtractLibsTask(target)
-  val archiveTask = registerResolveArchiveTask(target)
-
 
   if (isPublishingEnabled)
     project.extensions.findByType(PublishingExtension::class.java)?.apply {
@@ -118,7 +126,7 @@ fun LibraryExtension.registerArchiveTasks(target: KonanTarget) {
         artifactId = name
         groupId = this@registerArchiveTasks.publishingGroup
         version = this@registerArchiveTasks.version
-        artifact(archiveTask)
+        artifact(registerResolveArchiveTask(target))
       }
     }
 
