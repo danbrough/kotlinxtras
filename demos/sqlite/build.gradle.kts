@@ -1,9 +1,14 @@
-import org.danbrough.kotlinxtras.binaries.CurrentVersions.enableSqlite
+
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.danbrough.kotlinxtras.enableSqlite
 
 plugins {
   kotlin("multiplatform")
-  id("org.danbrough.kotlinxtras.consumer")
+  id("org.danbrough.kotlinxtras.core")
+}
+
+enableSqlite {
+
 }
 
 
@@ -17,31 +22,22 @@ repositories {
 }
 
 
-
-binaries {
-  enableSqlite()
-}
-
 kotlin {
 
-  linuxX64()
-  linuxArm64()
-  linuxArm32Hfp()
-
-  androidNativeX86()
-  androidNativeX64()
-  androidNativeArm32()
-  androidNativeArm64()
-
-  macosArm64()
-  macosX64()
-
+  if (org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac){
+    macosArm64()
+    macosX64()
+  } else {
+    linuxX64()
+    linuxArm64()
+    linuxArm32Hfp()
+    androidNativeX86()
+  }
 
   val commonMain by sourceSets.getting {
     dependencies {
-      implementation(libs.klog)
-      implementation(libs.kotlinx.coroutines.core)
-      implementation(libs.sqlite)
+      implementation("org.danbrough:klog:_")
+      implementation("org.danbrough.kotlinx:kotlinx-coroutines-core:_")
     }
   }
 
@@ -56,9 +52,9 @@ kotlin {
     }
 
     binaries {
-      executable("sqliteDemo1") {
+      executable("sqliteDemo") {
         println("LINK TASK: $linkTask type; ${linkTask::class.java}")
-        entryPoint = "demo1.main"
+        entryPoint = "demo.main"
         runTask?.apply {
           properties["message"]?.also {
             args(it.toString())

@@ -53,9 +53,6 @@ abstract class LibraryExtension(val project: Project) {
   var publishingGroup: String = project.group.toString()
 
   @XtrasDSLMarker
-  var isPublishingEnabled: Boolean = false
-
-  @XtrasDSLMarker
   var isBuildingEnabled: Boolean = true
 
 

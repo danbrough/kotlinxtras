@@ -115,19 +115,18 @@ fun LibraryExtension.registerArchiveTasks(target: KonanTarget) {
   registerCreateArchiveTask(target)
   registerExtractLibsTask(target)
 
-  if (isPublishingEnabled)
-    project.extensions.findByType(PublishingExtension::class.java)?.apply {
-      publications.register(
-        "$libName${target.platformName.capitalized()}",
-        MavenPublication::class.java
-      ) {
-        artifactId = name
-        groupId = this@registerArchiveTasks.publishingGroup
-        version = this@registerArchiveTasks.version
-        artifact(registerResolveArchiveTask(target))
-      }
+  project.extensions.findByType(PublishingExtension::class.java)?.apply {
+    publications.register(
+      "$libName${target.platformName.capitalized()}",
+      MavenPublication::class.java
+    ) {
+      artifactId = name
+      groupId = this@registerArchiveTasks.publishingGroup
+      version = this@registerArchiveTasks.version
+      artifact(registerResolveArchiveTask(target))
     }
 
 
+  }
 }
 
