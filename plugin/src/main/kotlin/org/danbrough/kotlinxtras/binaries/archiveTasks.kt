@@ -107,8 +107,6 @@ private fun LibraryExtension.registerResolveArchiveTask(target: KonanTarget): Ta
       dependsOn(createArchiveTask)
       outputs.file(createArchiveTask.outputs.files.first())
     }
-
-
   }
 
 fun LibraryExtension.registerArchiveTasks(target: KonanTarget) {
