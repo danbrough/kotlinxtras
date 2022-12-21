@@ -9,6 +9,8 @@ Staging repo: https://s01.oss.sonatype.org/content/groups/staging/
 https://github.com/danbrough/kotlinx.serialization.git  
 upstream: https://github.com/Kotlin/kotlinx.serialization
 
+- 1.4.1 upstream supports linuxArm32 and linuxArm64. Have released a version for android native.
+
 ### KotlinX Coroutines
 
 https://github.com:danbrough/kotlinx.coroutines.git

@@ -14,18 +14,18 @@ dependencies {
 }
 
 enableIconv{
-  isPublishingEnabled = true
 }
 
 enableOpenssl{
-  isPublishingEnabled = true
 }
 
 enableCurl{
-  isPublishingEnabled = true
 }
 
 enableSqlite{
-  isPublishingEnabled = true
+}
+
+gradlePlugin {
+  isAutomatedPublishing = false
 }
 
