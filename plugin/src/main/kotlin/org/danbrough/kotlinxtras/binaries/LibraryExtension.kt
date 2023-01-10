@@ -6,8 +6,10 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.tasks.Exec
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.findByType
+import org.jetbrains.dokka.utilities.cast
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -23,18 +25,17 @@ typealias SourcesTask = Exec.(KonanTarget) -> Unit
 fun Project.registerLibraryExtension(
   name: String,
   configure: LibraryExtension.() -> Unit
-): LibraryExtension {
-  val binaries = project.binariesExtension
-  return extensions.create(name, LibraryExtension::class.java, this).apply {
+): LibraryExtension =
+  extensions.create(name, LibraryExtension::class.java, this).apply {
     libName = name
-    binaries.libraryExtensions.add(this)
+    project.binariesExtension.libraryExtensions.add(this)
 
     configure()
     project.afterEvaluate {
       registerXtrasTasks()
     }
   }
-}
+
 
 @XtrasDSLMarker
 abstract class LibraryExtension(val project: Project) {
@@ -116,23 +117,23 @@ abstract class LibraryExtension(val project: Project) {
   fun buildSourcesTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasBuild${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
-  fun resolveArchiveTaskName(konanTarget: KonanTarget,name:String = libName):String =
-  "xtrasResolveArchive${name.capitalized()}${konanTarget.platformName.capitalized()}"
+  fun resolveArchiveTaskName(konanTarget: KonanTarget, name: String = libName): String =
+    "xtrasResolveArchive${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
-  fun extractLibsTaskName(konanTarget: KonanTarget,name:String = libName):String =
+  fun extractLibsTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasExtractLibs${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
-  fun createArchiveTaskName(konanTarget: KonanTarget,name:String = libName):String =
+  fun createArchiveTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasCreateArchive${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
-  fun archiveFile(target:KonanTarget,name:String = libName):File =  project.xtrasPackagesDir.resolve(packageFileName(target,name))
-/*
-  fun provideBinariesTaskName(konanTarget: KonanTarget, name: String = libName): String =
-    "xtrasProvide${name.capitalized()}${konanTarget.platformName.capitalized()}"
-*/
+  fun archiveFile(target: KonanTarget, name: String = libName): File =
+    project.xtrasPackagesDir.resolve(packageFileName(target, name))/*
+      fun provideBinariesTaskName(konanTarget: KonanTarget, name: String = libName): String =
+        "xtrasProvide${name.capitalized()}${konanTarget.platformName.capitalized()}"
+    */
 
-/*  fun packageTaskName(konanTarget: KonanTarget, name: String = libName): String =
-    "xtrasPackage${name.capitalized()}${konanTarget.platformName.capitalized()}"*/
+  /*  fun packageTaskName(konanTarget: KonanTarget, name: String = libName): String =
+      "xtrasPackage${name.capitalized()}${konanTarget.platformName.capitalized()}"*/
 
   fun generateCInteropsTaskName(name: String = libName): String =
     "xtrasGenerateCInterops${name.capitalized()}"
@@ -143,11 +144,7 @@ abstract class LibraryExtension(val project: Project) {
     packageVersion: String = version
   ): String = packageFileName.invoke(konanTarget, name, packageVersion)
 
-  var packageFileName: (
-    konanTarget: KonanTarget,
-    name: String,
-    packageVersion: String
-  ) -> String =
+  var packageFileName: (konanTarget: KonanTarget, name: String, packageVersion: String) -> String =
     { konanTarget, name, packageVersion -> "xtras_${name}_${konanTarget.platformName}_${packageVersion}.tar.gz" }
 
   var sourcesDir: (KonanTarget) -> File =
@@ -162,16 +159,12 @@ abstract class LibraryExtension(val project: Project) {
     konanTarget: KonanTarget,
     packageName: String = libName,
     packageVersion: String = version
-  ): File =
-    buildDir.invoke(konanTarget, packageName, packageVersion)
+  ): File = buildDir.invoke(konanTarget, packageName, packageVersion)
 
-  var buildDir: (
-    konanTarget: KonanTarget,
-    packageName: String,
-    packageVersion: String
-  ) -> File = { konanTarget, packageName, packageVersion ->
-    project.xtrasBuildDir.resolve("$packageName/$packageVersion/${konanTarget.platformName}")
-  }
+  var buildDir: (konanTarget: KonanTarget, packageName: String, packageVersion: String) -> File =
+    { konanTarget, packageName, packageVersion ->
+      project.xtrasBuildDir.resolve("$packageName/$packageVersion/${konanTarget.platformName}")
+    }
 
   @XtrasDSLMarker
   fun libsDir(
@@ -189,24 +182,14 @@ abstract class LibraryExtension(val project: Project) {
     packageVersion: String = version
   ): Boolean = isPackageBuilt.invoke(konanTarget, name, packageVersion)
 
-  var isPackageBuilt: (
-    konanTarget: KonanTarget,
-    name: String,
-    packageVersion: String
-  ) -> Boolean =
+  var isPackageBuilt: (konanTarget: KonanTarget, name: String, packageVersion: String) -> Boolean =
     { konanTarget, name, packageVersion ->
-      project.xtrasPackagesDir.resolve(
-        packageFileName(
-          konanTarget,
-          name,
-          packageVersion
-        )
-      ).exists()
+      project.xtrasPackagesDir.resolve(packageFileName(konanTarget, name, packageVersion)).exists()
     }
 
 
   open fun buildEnvironment(konanTarget: KonanTarget): Map<String, *> =
-    konanTarget.buildEnvironment()
+    project.binariesExtension.environment(konanTarget)
 
   val binaries: BinaryExtension
     inline get() = project.binariesExtension
@@ -228,12 +211,12 @@ private fun LibraryExtension.registerXtrasTasks() {
     supportedTargets =
       project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.targets?.withType(
         KotlinNativeTarget::class.java
-      )?.map { it.konanTarget } ?: xtrasSupportedTargets
+      )?.map { it.konanTarget }
+        ?: xtrasSupportedTargets
   }
 
-  if (supportedBuildTargets.isEmpty())
-    supportedBuildTargets =
-      if (HostManager.hostIsMac) supportedTargets.filter { it.family.isAppleFamily } else supportedTargets
+  if (supportedBuildTargets.isEmpty()) supportedBuildTargets =
+    if (HostManager.hostIsMac) supportedTargets.filter { it.family.isAppleFamily } else supportedTargets
 
 
 
@@ -295,32 +278,39 @@ private fun LibraryExtension.registerXtrasTasks() {
     } else {
       project.log("buildSupport disabled for $libName:${target.platformName}")
     }
-
-/*    if (HostManager.hostIsMac == target.family.isAppleFamily)
-      provideAllTargetsTask.dependsOn(registerProvideBinariesTask(target))*/
-
-    project.extensions.findByType(KotlinMultiplatformExtension::class)?.apply {
-      /*  targets.withType(KotlinNativeTarget::class.java) {
-          compilations["main"]
-        }*/
-      /*     project.tasks.withType(KotlinNativeCompile::class.java) {
-             val konanTarget = KonanTarget.Companion.predefinedTargets[target.toString()]!!
-             //dependsOn(provideBinariesTaskName(konanTarget))
-           }
-     */
-      project.tasks.withType(CInteropProcess::class.java) {
-        dependsOn(extractLibsTaskName(konanTarget))
-      }
-
-
-    }
-
-
   }
 
   registerGenerateInteropsTask()
+
+
+  /*    if (HostManager.hostIsMac == target.family.isAppleFamily)
+        provideAllTargetsTask.dependsOn(registerProvideBinariesTask(target))*/
+
+  project.extensions.findByType(KotlinMultiplatformExtension::class)?.apply {
+
+    /*  targets.withType(KotlinNativeTarget::class.java) {
+        compilations["main"]
+      }*//*     project.tasks.withType(KotlinNativeCompile::class.java) {
+               val konanTarget = KonanTarget.Companion.predefinedTargets[target.toString()]!!
+               //dependsOn(provideBinariesTaskName(konanTarget))
+             }
+       */
+    project.tasks.withType(CInteropProcess::class.java) {
+      dependsOn(extractLibsTaskName(konanTarget))
+    }
+  }
+
+
+  project.tasks.withType(KotlinNativeTest::class.java).all {
+    val ldLibKey = if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH"
+    val konanTarget = if (HostManager.hostIsMac) KonanTarget.MACOS_X64 else KonanTarget.LINUX_X64
+    val libPath = environment[ldLibKey]
+    val newLibPath = (libPath?.let { "$it${File.pathSeparator}" }
+      ?: "") + project.binariesExtension.libraryExtensions.map {
+      it.libsDir(konanTarget).resolve("lib")
+    }.joinToString(File.pathSeparator)
+    println("$ldLibKey = $newLibPath")
+    environment(ldLibKey, newLibPath)
+  }
+
 }
-
-
-
-

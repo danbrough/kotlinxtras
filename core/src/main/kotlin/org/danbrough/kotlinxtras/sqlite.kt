@@ -9,13 +9,14 @@ import org.gradle.api.Project
 const val XTRAS_SQLITE_EXTN_NAME = "sqlite"
 
 
-fun Project.enableSqlite(name: String = XTRAS_SQLITE_EXTN_NAME,config:LibraryExtension.()->Unit = {}): LibraryExtension =
+fun Project.enableSqlite(extnName: String = XTRAS_SQLITE_EXTN_NAME, config:LibraryExtension.()->Unit = {}): LibraryExtension =
+  extensions.findByName(extnName) as? LibraryExtension ?:
 
-  registerLibraryExtension(name) {
+  registerLibraryExtension(extnName) {
     publishingGroup = CORE_PUBLISHING_PACKAGE
-    version = "3.40.0"
+    version = "3.40.1"
 
-    download("https://www.sqlite.org/2022/sqlite-autoconf-3400000.tar.gz") {
+    download("https://www.sqlite.org/2022/sqlite-autoconf-3400100.tar.gz") {
       stripTopDir = true
       tarExtractOptions = "xfz"
     }

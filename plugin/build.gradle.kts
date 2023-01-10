@@ -19,6 +19,7 @@ dependencies {
 
 
 gradlePlugin {
+
   plugins {
 
     create("binariesPlugin") {

@@ -9,8 +9,10 @@ import org.gradle.api.Project
 const val XTRAS_ICONV_EXTN_NAME = "iconv"
 
 
-fun Project.enableIconv(name: String = XTRAS_ICONV_EXTN_NAME,config:LibraryExtension.()->Unit = {}) =
-  project.registerLibraryExtension(name) {
+fun Project.enableIconv(extnName: String = XTRAS_ICONV_EXTN_NAME, config:LibraryExtension.()->Unit = {}) =
+  extensions.findByName(extnName) as? LibraryExtension ?:
+
+  project.registerLibraryExtension(extnName) {
     publishingGroup = CORE_PUBLISHING_PACKAGE
     version = "1.17"
 

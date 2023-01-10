@@ -12,6 +12,7 @@ const val XTRAS_OPENSSL_EXTN_NAME = "openssl"
 
 
 fun Project.enableOpenssl(extnName: String = XTRAS_OPENSSL_EXTN_NAME,config:LibraryExtension.()->Unit = {}):LibraryExtension =
+  extensions.findByName(extnName) as? LibraryExtension ?:
   registerLibraryExtension(extnName) {
 
     publishingGroup = CORE_PUBLISHING_PACKAGE
@@ -81,15 +82,6 @@ val KonanTarget.opensslPlatform: String
     KonanTarget.IOS_SIMULATOR_ARM64 -> "iossimulator-xcrun"
     KonanTarget.IOS_X64 -> "ios64-cross"
 
-    KonanTarget.TVOS_ARM64 -> TODO()
-    KonanTarget.TVOS_SIMULATOR_ARM64 -> TODO()
-    KonanTarget.TVOS_X64 -> TODO()
-    KonanTarget.WASM32 -> TODO()
-    KonanTarget.WATCHOS_ARM32 -> TODO()
-    KonanTarget.WATCHOS_ARM64 -> TODO()
-    KonanTarget.WATCHOS_SIMULATOR_ARM64 -> TODO()
-    KonanTarget.WATCHOS_X64 -> TODO()
-    KonanTarget.WATCHOS_X86 -> TODO()
-    is KonanTarget.ZEPHYR -> TODO()
+    else -> throw Error("$this not supported")
   }
 

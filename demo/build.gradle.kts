@@ -7,12 +7,6 @@ plugins {
 }
 
 
-enableCurl {
-  cinterops {
-    interopsPackage = "libcurl"
-  }
-}
-
 
 kotlin {
 
