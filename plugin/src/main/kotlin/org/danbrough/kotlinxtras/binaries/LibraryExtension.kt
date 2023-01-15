@@ -1,12 +1,18 @@
 package org.danbrough.kotlinxtras.binaries
 
-import org.danbrough.kotlinxtras.*
+import org.danbrough.kotlinxtras.platformName
+import org.danbrough.kotlinxtras.xtrasBuildDir
+import org.danbrough.kotlinxtras.xtrasDir
+import org.danbrough.kotlinxtras.xtrasDownloadsDir
+import org.danbrough.kotlinxtras.xtrasLibsDir
+import org.danbrough.kotlinxtras.xtrasMavenDir
+import org.danbrough.kotlinxtras.xtrasPackagesDir
+import org.danbrough.kotlinxtras.xtrasSupportedTargets
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.tasks.Exec
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.findByType
-import org.jetbrains.dokka.utilities.cast
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
@@ -188,7 +194,7 @@ abstract class LibraryExtension(val project: Project) {
     }
 
 
-  open fun buildEnvironment(konanTarget: KonanTarget): Map<String, *> =
+  open fun buildEnvironment(konanTarget: KonanTarget): Map<String, Any?> =
     project.binariesExtension.environment(konanTarget)
 
   val binaries: BinaryExtension
@@ -309,7 +315,7 @@ private fun LibraryExtension.registerXtrasTasks() {
       ?: "") + project.binariesExtension.libraryExtensions.map {
       it.libsDir(konanTarget).resolve("lib")
     }.joinToString(File.pathSeparator)
-    println("$ldLibKey = $newLibPath")
+   // println("$ldLibKey = $newLibPath")
     environment(ldLibKey, newLibPath)
   }
 

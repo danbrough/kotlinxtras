@@ -63,7 +63,7 @@ open class BinaryExtension {
       "dependencies/target-toolchain-2-linux-android_ndk"
   )
 
-  private val envs: MutableMap<KonanTarget, MutableMap<String, Any>?> = mutableMapOf()
+  private val envs: MutableMap<KonanTarget, MutableMap<String, Any?>?> = mutableMapOf()
 
 
   @XtrasDSLMarker
@@ -77,14 +77,14 @@ open class BinaryExtension {
   )
 
 
-  fun environment(target: KonanTarget): MutableMap<String, Any> {
-    return envs[target] ?: mutableMapOf<String, Any>().also {
+  fun environment(target: KonanTarget): MutableMap<String, Any?> {
+    return envs[target] ?: mutableMapOf<String, Any?>().also {
       envs[target] = it
       configureEnv(target, it)
     }
   }
 
-  private fun configureEnv(target: KonanTarget, env: MutableMap<String, Any>) {
+  private fun configureEnv(target: KonanTarget, env: MutableMap<String, Any?>) {
     env["KONAN_BUILD"] = 1
 
     env["ANDROID_NDK_HOME"] = androidNdkDir.absolutePath
@@ -182,14 +182,20 @@ open class BinaryExtension {
     basePath.add(0, konanDir.resolve("dependencies/llvm-11.1.0-linux-x64-essentials/bin").absolutePath)
 
     env["PATH"] = basePath.joinToString(File.pathSeparator)
-
+    env["GOARCH"] = target.goArch
+    env["GOOS"] = target.goOS
+    env["GOARM"] = 7
+    env["CGO_CFLAGS"] = env["CFLAGS"]
+    env["CGO_LDFLAGS"] = env["LDFLAGS"]
+    env["CGO_ENABLED"] = 1
+    env["MAKE"] = "make -j4"
     envConfig?.invoke(target, env)
   }
 
-  private var envConfig: ((KonanTarget, MutableMap<String, Any>) -> Unit)? = null
+  private var envConfig: ((KonanTarget, MutableMap<String, Any?>) -> Unit)? = null
 
   @XtrasDSLMarker
-  fun initEnvironment(config: (KonanTarget, MutableMap<String, Any>) -> Unit) {
+  fun initEnvironment(config: (KonanTarget, MutableMap<String, Any?>) -> Unit) {
     envConfig = config
   }
 
