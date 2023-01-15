@@ -23,6 +23,8 @@ upstream: https://github.com/Kotlin/kotlinx.coroutines.git
 https://github.com:danbrough/kotlinx.atomicfu.git
 upstream: https://github.com/Kotlin/kotlinx-atomicfu
 
+- 0.19.0 on branch danbrough-0.19.0
+
 ### KotlinX DateTime 
 
 https://github.com/danbrough/kotlinx-datetime.git  
