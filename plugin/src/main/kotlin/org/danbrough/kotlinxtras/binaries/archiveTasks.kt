@@ -24,7 +24,9 @@ private fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): TaskP
       project.exec {
         val archiveFile =
           project.tasks.getByName(resolveArchiveTaskName(target)).outputs.files.first()
+
         workingDir(libsDir(target))
+        project.log("extracting: $archiveFile to $workingDir")
         commandLine("tar", "xvpfz", archiveFile.absolutePath, "./")
       }
     }
