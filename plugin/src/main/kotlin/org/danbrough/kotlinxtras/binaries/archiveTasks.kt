@@ -24,7 +24,9 @@ private fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): TaskP
       project.exec {
         val archiveFile =
           project.tasks.getByName(resolveArchiveTaskName(target)).outputs.files.first()
+
         workingDir(libsDir(target))
+        project.log("extracting: $archiveFile to $workingDir")
         commandLine("tar", "xvpfz", archiveFile.absolutePath, "./")
       }
     }
@@ -110,10 +112,11 @@ private fun LibraryExtension.registerResolveArchiveTask(target: KonanTarget): Ta
   }
 
 fun LibraryExtension.registerArchiveTasks(target: KonanTarget) {
-  project.log("LibraryExtension.registerPublishingTask: $target group:$publishingGroup version:$version")
+  project.log("LibraryExtension.registerArchiveTasks: $target group:$publishingGroup version:$version")
 
   registerCreateArchiveTask(target)
   registerExtractLibsTask(target)
+
 
   project.extensions.findByType(PublishingExtension::class.java)?.apply {
     publications.register(
@@ -124,9 +127,12 @@ fun LibraryExtension.registerArchiveTasks(target: KonanTarget) {
       groupId = this@registerArchiveTasks.publishingGroup
       version = this@registerArchiveTasks.version
       artifact(registerResolveArchiveTask(target))
+      project.tasks.getByName("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository").apply {
+        mustRunAfter(resolveArchiveTaskName(target),createArchiveTaskName(target))
+      }
     }
-
-
   }
+
 }
+
 

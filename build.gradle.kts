@@ -1,6 +1,4 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.gradle.configurationcache.extensions.capitalized
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
 plugins {
 
@@ -19,7 +17,6 @@ version = Xtras.publishingVersion
 
 
 allprojects {
-
 
   repositories {
     maven(file("build/xtras/maven"))
@@ -40,8 +37,6 @@ allprojects {
       false
     }
   }
-
-
 }
 
 

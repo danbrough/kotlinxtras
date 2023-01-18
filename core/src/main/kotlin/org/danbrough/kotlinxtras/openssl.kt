@@ -8,25 +8,31 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-const val XTRAS_OPENSSL_EXTN_NAME = "openssl"
+const val OPENSSL_EXTN_NAME = "openssl"
 
+const val OPENSSL_VERSION = "1_1_1s"
+const val OPENSSL_GIT_COMMIT = "02e6fd7998830218909cbc484ca054c5916fdc59"
+const val OPENSSL_GIT_URL = "https://github.com/danbrough/openssl.git"
 
-fun Project.enableOpenssl(extnName: String = XTRAS_OPENSSL_EXTN_NAME,config:LibraryExtension.()->Unit = {}):LibraryExtension =
-  registerLibraryExtension(extnName) {
+fun Project.enableOpenssl(
+  extnName: String = OPENSSL_EXTN_NAME,
+  versionName: String = OPENSSL_VERSION,
+  commit: String = OPENSSL_GIT_COMMIT,
+  gitURL:String = OPENSSL_GIT_URL,
+  config: LibraryExtension.() -> Unit = {}
+): LibraryExtension =
+  extensions.findByName(extnName) as? LibraryExtension ?: registerLibraryExtension(extnName) {
 
     publishingGroup = CORE_PUBLISHING_PACKAGE
-    version = "1_1_1s"
 
-    git("https://github.com/danbrough/openssl.git", "02e6fd7998830218909cbc484ca054c5916fdc59")
+    version = versionName
+
+    git(gitURL, commit)
 
     configure { target ->
       outputs.file(workingDir.resolve("Makefile"))
       val args = mutableListOf(
-        "./Configure",
-        target.opensslPlatform,
-        "no-tests",
-        "threads",
-        "--prefix=${buildDir(target)}"
+        "./Configure", target.opensslPlatform, "no-tests", "threads", "--prefix=${buildDir(target)}"
       )
       if (target.family == Family.ANDROID) args += "-D__ANDROID_API__=21"
       else if (target.family == Family.MINGW) args += "--cross-compile-prefix=${target.hostTriplet}-"
@@ -58,8 +64,6 @@ fun Project.enableOpenssl(extnName: String = XTRAS_OPENSSL_EXTN_NAME,config:Libr
   }
 
 
-
-
 val KonanTarget.opensslPlatform: String
   get() = when (this) {
     KonanTarget.LINUX_X64 -> "linux-x86_64"
@@ -81,15 +85,6 @@ val KonanTarget.opensslPlatform: String
     KonanTarget.IOS_SIMULATOR_ARM64 -> "iossimulator-xcrun"
     KonanTarget.IOS_X64 -> "ios64-cross"
 
-    KonanTarget.TVOS_ARM64 -> TODO()
-    KonanTarget.TVOS_SIMULATOR_ARM64 -> TODO()
-    KonanTarget.TVOS_X64 -> TODO()
-    KonanTarget.WASM32 -> TODO()
-    KonanTarget.WATCHOS_ARM32 -> TODO()
-    KonanTarget.WATCHOS_ARM64 -> TODO()
-    KonanTarget.WATCHOS_SIMULATOR_ARM64 -> TODO()
-    KonanTarget.WATCHOS_X64 -> TODO()
-    KonanTarget.WATCHOS_X86 -> TODO()
-    is KonanTarget.ZEPHYR -> TODO()
+    else -> throw Error("$this not supported")
   }
 

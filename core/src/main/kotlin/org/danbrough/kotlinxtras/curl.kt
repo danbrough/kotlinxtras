@@ -11,16 +11,18 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 const val XTRAS_CURL_EXTN_NAME = "curl"
 
-fun Project.enableCurl(name: String = XTRAS_CURL_EXTN_NAME,config:LibraryExtension.()->Unit = {}):LibraryExtension {
-  val openSSL =
-    (extensions.findByName(XTRAS_OPENSSL_EXTN_NAME) ?: enableOpenssl()) as LibraryExtension
+fun Project.enableCurl(
+  extnName: String = XTRAS_CURL_EXTN_NAME,
+  config: LibraryExtension.() -> Unit = {}
+): LibraryExtension {
+  val openSSL = enableOpenssl()
 
-  return registerLibraryExtension(name) {
+  return extensions.findByName(extnName) as? LibraryExtension ?: registerLibraryExtension(extnName) {
     publishingGroup = CORE_PUBLISHING_PACKAGE
 
-    version = "7_86_0"
+    version = "7_87_0a"
 
-    git("https://github.com/curl/curl.git", "cd95ee9f771361acf241629d2fe5507e308082a2")
+    git("https://github.com/curl/curl.git", "c12fb3ddaf48e709a7a4deaa55ec485e4df163ee")
 
     val autoConfTaskName: KonanTarget.() -> String =
       { "xtrasAutoconf${libName.capitalized()}${platformName.capitalized()}" }
@@ -39,13 +41,10 @@ fun Project.enableCurl(name: String = XTRAS_CURL_EXTN_NAME,config:LibraryExtensi
     configure { target ->
       dependsOn(target.autoConfTaskName())
 
-      val provideOpenSSLTaskName = resolveArchiveTaskName(target, "openssl")
-      println("PROVIDE OPENSSL TASK NAME : $provideOpenSSLTaskName")
+      val provideOpenSSLTaskName = extractLibsTaskName(target, "openssl")
 
       val provideOpenSSLTask = project.tasks.getByName(provideOpenSSLTaskName)
       dependsOn(provideOpenSSLTask)
-
-      //println("CurlPlugin: provideOpenSSLTask: $provideOpenSSLTask outputs: ${provideOpenSSLTask.outputs.files.files}")
 
       outputs.file(workingDir.resolve("Makefile"))
 

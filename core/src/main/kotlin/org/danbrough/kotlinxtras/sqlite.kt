@@ -7,20 +7,22 @@ import org.danbrough.kotlinxtras.binaries.*
 import org.gradle.api.Project
 
 const val XTRAS_SQLITE_EXTN_NAME = "sqlite"
+const val XTRAS_SQLITE_VERSION_NAME = "3.40.1"
+const val XTRAS_SQLITE_SOURCE_URL = "https://www.sqlite.org/2022/sqlite-autoconf-3400100.tar.gz"
 
-
-fun Project.enableSqlite(name: String = XTRAS_SQLITE_EXTN_NAME,config:LibraryExtension.()->Unit = {}): LibraryExtension =
-
-  registerLibraryExtension(name) {
+fun Project.enableSqlite(
+  extnName: String = XTRAS_SQLITE_EXTN_NAME, versionName: String = XTRAS_SQLITE_VERSION_NAME,
+  sourceURL: String = XTRAS_SQLITE_SOURCE_URL,
+  config: LibraryExtension .() -> Unit = {}
+): LibraryExtension =
+  extensions.findByName(extnName) as? LibraryExtension ?: registerLibraryExtension(extnName) {
     publishingGroup = CORE_PUBLISHING_PACKAGE
-    version = "3.40.0"
+    version = versionName
 
-    download("https://www.sqlite.org/2022/sqlite-autoconf-3400000.tar.gz") {
+    download(sourceURL) {
       stripTopDir = true
       tarExtractOptions = "xfz"
     }
-
-    // git("https://github.com/sqlite/sqlite.git","2f2c5e2061cfebfad6b9aca4950d960caec073d8")
 
     configure { target ->
       commandLine(

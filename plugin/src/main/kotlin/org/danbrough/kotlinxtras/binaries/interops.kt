@@ -56,7 +56,8 @@ val defaultCInteropsTargetWriter: CInteropsTargetWriter = { konanTarget, output 
 
 fun LibraryExtension.registerGenerateInteropsTask() {
 
-  project.logger.info("registerGenerateInteropsTask() for $this")
+  project.log("registerGenerateInteropsTask() for $this")
+
 
   val config = CInteropsConfig(
     "xtras${libName.capitalized()}",

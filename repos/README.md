@@ -9,19 +9,22 @@ Staging repo: https://s01.oss.sonatype.org/content/groups/staging/
 https://github.com/danbrough/kotlinx.serialization.git  
 upstream: https://github.com/Kotlin/kotlinx.serialization
 
-- 1.4.1 upstream supports linuxArm32 and linuxArm64. Have released a version for android native.
+- 1.4.1 upstream now supports linuxArm32 and linuxArm64. Have released a version for android native.
 
 ### KotlinX Coroutines
 
 https://github.com:danbrough/kotlinx.coroutines.git
 upstream: https://github.com/Kotlin/kotlinx.coroutines.git
 
+- 1.6.4 released
 - kotlinx.coroutines 1.6.3-native-mt in staging.
 
 ### KotlinX AtomicFU 
 
 https://github.com:danbrough/kotlinx.atomicfu.git
 upstream: https://github.com/Kotlin/kotlinx-atomicfu
+
+- 0.19.0a on branch danbrough-0.19.0
 
 ### KotlinX DateTime 
 
@@ -57,7 +60,8 @@ upstream: https://github.com/cashapp/sqldelight.git
 upstream: https://github.com/ktorio/ktor  
 repo: https://github.com/danbrough/ktor.git
 
-- branch danbrough-2.1.2 is published 
+- branch danbrough-2.2.2 tag 2.2.2-danbrough (with support for linuxArm64 and linuxArm32Hfp)
+- branch danbrough-2.1.2 
 
 ### Okio
 
