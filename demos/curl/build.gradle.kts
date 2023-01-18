@@ -12,7 +12,7 @@ repositories {
   mavenCentral()
 }
 
-enableCurl {
+enableCurl() {
   cinterops {
     interopsPackage = "libcurl"
   }
@@ -24,8 +24,9 @@ kotlin {
   linuxArm32Hfp()
   linuxArm64()
 
-  macosX64()
-  macosArm64()
+
+  /*macosX64()
+  macosArm64()*/
   androidNativeX86()
 
   val commonMain by sourceSets.getting {
