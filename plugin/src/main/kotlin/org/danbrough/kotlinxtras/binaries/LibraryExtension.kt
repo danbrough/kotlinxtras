@@ -225,7 +225,6 @@ private fun LibraryExtension.registerXtrasTasks() {
     if (HostManager.hostIsMac) supportedTargets.filter { it.family.isAppleFamily } else supportedTargets
 
 
-
   when (srcConfig) {
     is ArchiveSourceConfig -> {
       registerArchiveDownloadTask()

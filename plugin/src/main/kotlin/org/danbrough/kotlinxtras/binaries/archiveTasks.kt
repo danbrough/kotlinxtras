@@ -27,7 +27,7 @@ private fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): TaskP
 
         workingDir(libsDir(target))
         project.log("extracting: $archiveFile to $workingDir")
-        commandLine("tar", "xvpfz", archiveFile.absolutePath, "./")
+        commandLine("tar", "xvpfz", archiveFile.absolutePath)
       }
     }
   }
