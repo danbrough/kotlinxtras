@@ -1,9 +1,10 @@
 pluginManagement {
 
   repositories {
+    maven("/usr/local/kotlinxtras/build/xtras/maven")
+    maven("https://s01.oss.sonatype.org/content/groups/staging/")
     gradlePluginPortal()
     mavenCentral()
-    google()
   }
 }
 
@@ -14,5 +15,5 @@ plugins {
 
 
 
-rootProject.name = "ktor_demo"
+rootProject.name = "ktor_standalone_demo"
 
