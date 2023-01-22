@@ -24,9 +24,11 @@ kotlin {
   linuxArm32Hfp()
   linuxArm64()
 
+  if (HostManager.hostIsMac){
+    macosX64()
+    macosArm64()
+  }
 
-  /*macosX64()
-  macosArm64()*/
   androidNativeX86()
 
   val commonMain by sourceSets.getting {
