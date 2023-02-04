@@ -9,7 +9,6 @@ private fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget) =
   project.tasks.register(configureSourcesTaskName(target), Exec::class.java) {
     if (!isPackageBuilt(target))
       dependsOn(extractSourcesTaskName(target))
-    environment.clear()
     environment(buildEnvironment(target))
     group = XTRAS_TASK_GROUP
     workingDir(sourcesDir(target))
@@ -30,6 +29,7 @@ fun LibraryExtension.registerBuildTasks(target: KonanTarget) {
   }
 
   project.tasks.register(buildSourcesTaskName(target), Exec::class.java) {
+
 
     group = XTRAS_TASK_GROUP
     environment(buildEnvironment(target))
