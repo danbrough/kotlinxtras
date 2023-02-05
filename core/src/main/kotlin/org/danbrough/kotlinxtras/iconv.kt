@@ -7,7 +7,7 @@ import org.danbrough.kotlinxtras.binaries.*
 import org.gradle.api.Project
 
 const val XTRAS_ICONV_EXTN_NAME = "iconv"
-const val XTRAS_ICONV_VERSION_NAME = "1.17"
+const val XTRAS_ICONV_VERSION_NAME = "1.17a"
 const val XTRAS_ICONV_SOURCE_URL = "https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz"
 
 fun Project.enableIconv(

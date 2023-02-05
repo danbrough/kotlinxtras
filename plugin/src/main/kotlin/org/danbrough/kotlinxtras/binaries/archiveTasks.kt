@@ -46,8 +46,8 @@ private fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): Tas
           "tar",
           "cvpfz",
           archiveFile.absolutePath,
-          "--exclude=share",
-          "--exclude=libs/pkgconfig*",
+          "--exclude=**share",
+          "--exclude=**pkgconfig",
           "./"
         )
       }

@@ -20,7 +20,7 @@ fun Project.enableCurl(
   return extensions.findByName(extnName) as? LibraryExtension ?: registerLibraryExtension(extnName) {
     publishingGroup = CORE_PUBLISHING_PACKAGE
 
-    version = "7_87_0a"
+    version = "7_87_0b"
 
     git("https://github.com/curl/curl.git", "c12fb3ddaf48e709a7a4deaa55ec485e4df163ee")
 

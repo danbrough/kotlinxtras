@@ -14,9 +14,11 @@ dependencies {
 }
 
 enableIconv{
+  enablePrebuiltPackages = false
 }
 
 enableOpenssl{
+  enablePrebuiltPackages = false
 }
 
 enableCurl{
@@ -24,6 +26,7 @@ enableCurl{
 }
 
 enableSqlite{
+  enablePrebuiltPackages = false
 }
 
 gradlePlugin {
