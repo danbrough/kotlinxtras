@@ -2,7 +2,6 @@ package org.danbrough.kotlinxtras.binaries
 
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.platformName
-import org.danbrough.kotlinxtras.xtrasPackagesDir
 import org.gradle.api.Task
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.publish.PublishingExtension
@@ -96,7 +95,7 @@ private fun LibraryExtension.registerResolveArchiveTask(target: KonanTarget): Ta
 
     finalizedBy(extractLibsTaskName(target))
 
-    val archiveFile = if (enablePrebuiltPackages) resolveBinariesFromMaven(target)?.also {
+    val archiveFile = if (enableMaven) resolveBinariesFromMaven(target)?.also {
       project.log("$name: resolved ${it.absolutePath}")
       outputs.file(it)
     } else null

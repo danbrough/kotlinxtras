@@ -28,8 +28,8 @@ fun LibraryExtension.registerBuildTasks(target: KonanTarget) {
     registerConfigureSourcesTask(target)
   }
 
-  project.tasks.register(buildSourcesTaskName(target), Exec::class.java) {
 
+  project.tasks.register(buildSourcesTaskName(target), Exec::class.java) {
 
     group = XTRAS_TASK_GROUP
     environment(buildEnvironment(target))

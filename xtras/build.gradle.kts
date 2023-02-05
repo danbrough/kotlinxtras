@@ -14,19 +14,19 @@ dependencies {
 }
 
 enableIconv{
-  enablePrebuiltPackages = false
+  enableMaven = false
 }
 
 enableOpenssl{
-  enablePrebuiltPackages = false
+  enableMaven = false
 }
 
 enableCurl{
-  enablePrebuiltPackages = false
+  enableMaven = false
 }
 
 enableSqlite{
-  enablePrebuiltPackages = false
+  enableMaven = false
 }
 
 gradlePlugin {

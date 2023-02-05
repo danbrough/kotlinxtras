@@ -46,6 +46,10 @@ fun Project.registerLibraryExtension(
 @XtrasDSLMarker
 abstract class LibraryExtension(val project: Project) {
 
+  enum class ProviderMode {
+    BUILD_ONLY,MAVEN_ONLY,MAVEN_AND_BUILD
+  }
+
   //Unique identifier for a binary package
   @XtrasDSLMarker
   lateinit var libName: String
@@ -60,11 +64,18 @@ abstract class LibraryExtension(val project: Project) {
   var publishingGroup: String = project.group.toString()
 
   /**
-   * Whether to allow prebuilt packages to be used.
+   * Whether to allow prebuilt maven packages to be used.
    * @default true
    */
   @XtrasDSLMarker
-  var enablePrebuiltPackages: Boolean = true
+  var enableMaven: Boolean = true
+
+  /**
+   * Whether to allow packages to be built
+   * @default true
+   */
+  @XtrasDSLMarker
+  var enableBuild: Boolean = true
 
 
   /**
