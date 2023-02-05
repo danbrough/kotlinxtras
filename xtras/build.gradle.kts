@@ -20,6 +20,7 @@ enableOpenssl{
 }
 
 enableCurl{
+  enablePrebuiltPackages = false
 }
 
 enableSqlite{

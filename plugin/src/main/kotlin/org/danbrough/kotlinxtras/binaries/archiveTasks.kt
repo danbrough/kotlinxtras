@@ -96,13 +96,13 @@ private fun LibraryExtension.registerResolveArchiveTask(target: KonanTarget): Ta
 
     finalizedBy(extractLibsTaskName(target))
 
-    resolveBinariesFromMaven(target)?.also {
+    val archiveFile = if (enablePrebuiltPackages) resolveBinariesFromMaven(target)?.also {
       project.log("$name: resolved ${it.absolutePath}")
       outputs.file(it)
+    } else null
 
-    } ?: run {
+    if (archiveFile == null){
       project.log("$name: $target not available.")
-      if (!isBuildingEnabled) throw Error("$libName:${target.platformName} not available from maven and isBuildingEnabled is false.")
 
       val createArchiveTask = project.tasks.getByName(createArchiveTaskName(target))
       //need to build the package

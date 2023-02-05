@@ -59,8 +59,12 @@ abstract class LibraryExtension(val project: Project) {
   @XtrasDSLMarker
   var publishingGroup: String = project.group.toString()
 
+  /**
+   * Whether to allow prebuilt packages to be used.
+   * @default true
+   */
   @XtrasDSLMarker
-  var isBuildingEnabled: Boolean = true
+  var enablePrebuiltPackages: Boolean = true
 
 
   /**
