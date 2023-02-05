@@ -41,3 +41,37 @@ gradlePlugin {
 
 
 
+/*    Possible solutions:
+      1. Declare task ':plugin:signPluginMavenPublication' as an input of ':plugin:publishBinariesPluginPluginMarkerMavenPublicationToSonaTypeRepository'.
+      2. Declare an explicit dependency on ':plugin:signPluginMavenPublication' from ':plugin:publishBinariesPluginPluginMarkerMavenPublicationToSonaTypeRepository' using Task#dependsOn.
+      3. Declare an explicit dependency on ':plugin:signPluginMavenPublication' from ':plugin:publishBinariesPluginPluginMarkerMavenPublicationToSonaTypeRepository' using Task#mustRunAfter.
+
+      1. Declare task ':plugin:signBinariesPluginPluginMarkerMavenPublication' as an input of ':plugin:publishPluginMavenPublicationToSonaTypeRepository'.
+      2. Declare an explicit dependency on ':plugin:signBinariesPluginPluginMarkerMavenPublication' from ':plugin:publishPluginMavenPublicationToSonaTypeRepository' using Task#dependsOn.
+      3. Declare an explicit dependency on ':plugin:signBinariesPluginPluginMarkerMavenPublication' from ':plugin:publishPluginMavenPublicationToSonaTypeRepository' using Task#mustRunAfter.
+
+      1. Declare task ':plugin:signSonatypePluginPluginMarkerMavenPublication' as an input of ':plugin:publishBinariesPluginPluginMarkerMavenPublicationToSonaTypeRepository'.
+      2. Declare an explicit dependency on ':plugin:signSonatypePluginPluginMarkerMavenPublication' from ':plugin:publishBinariesPluginPluginMarkerMavenPublicationToSonaTypeRepository' using Task#dependsOn.
+      3. Declare an explicit dependency on ':plugin:signSonatypePluginPluginMarkerMavenPublication' from ':plugin:publishBinariesPluginPluginMarkerMavenPublicationToSonaTypeRepository' using Task#mustRunAfter.
+
+      1. Declare task ':plugin:signSonatypePluginPluginMarkerMavenPublication' as an input of ':plugin:publishPluginMavenPublicationToSonaTypeRepository'.
+      2. Declare an explicit dependency on ':plugin:signSonatypePluginPluginMarkerMavenPublication' from ':plugin:publishPluginMavenPublicationToSonaTypeRepository' using Task#dependsOn.
+      3. Declare an explicit dependency on ':plugin:signSonatypePluginPluginMarkerMavenPublication' from ':plugin:publishPluginMavenPublicationToSonaTypeRepository' using Task#mustRunAfter.
+
+      1. Declare task ':plugin:signBinariesPluginPluginMarkerMavenPublication' as an input of ':plugin:publishSonatypePluginPluginMarkerMavenPublicationToSonaTypeRepository'.
+      2. Declare an explicit dependency on ':plugin:signBinariesPluginPluginMarkerMavenPublication' from ':plugin:publishSonatypePluginPluginMarkerMavenPublicationToSonaTypeRepository' using Task#dependsOn.
+      3. Declare an explicit dependency on ':plugin:signBinariesPluginPluginMarkerMavenPublication' from ':plugin:publishSonatypePluginPluginMarkerMavenPublicationToSonaTypeRepository' using Task#mustRunAfter.
+
+
+ */
+
+afterEvaluate {
+
+  tasks.getByName("publishBinariesPluginPluginMarkerMavenPublicationToSonaTypeRepository").dependsOn("signPluginMavenPublication")
+  tasks.getByName("publishPluginMavenPublicationToSonaTypeRepository").dependsOn("signBinariesPluginPluginMarkerMavenPublication")
+  tasks.getByName("publishBinariesPluginPluginMarkerMavenPublicationToSonaTypeRepository").dependsOn("signSonatypePluginPluginMarkerMavenPublication")
+  tasks.getByName("publishPluginMavenPublicationToSonaTypeRepository").dependsOn("signSonatypePluginPluginMarkerMavenPublication")
+  tasks.getByName("publishSonatypePluginPluginMarkerMavenPublicationToSonaTypeRepository").dependsOn("signBinariesPluginPluginMarkerMavenPublication")
+
+
+}
