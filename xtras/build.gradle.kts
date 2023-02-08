@@ -23,6 +23,7 @@ enableOpenssl{
 
 enableCurl{
   enableMaven = false
+  enableBuild = false
 }
 
 enableSqlite{

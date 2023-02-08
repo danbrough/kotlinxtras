@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 const val OPENSSL_EXTN_NAME = "openssl"
 
-const val OPENSSL_VERSION = "1_1_1sa"
-const val OPENSSL_GIT_COMMIT = "02e6fd7998830218909cbc484ca054c5916fdc59"
+const val OPENSSL_VERSION = "1_1_1t"
+const val OPENSSL_GIT_COMMIT = "6bdac15c72dca585d29e5d28988e9a7c5ec38edb"
 const val OPENSSL_GIT_URL = "https://github.com/danbrough/openssl.git"
 
 fun Project.enableOpenssl(

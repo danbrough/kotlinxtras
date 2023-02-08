@@ -6,6 +6,10 @@ import org.gradle.api.logging.LogLevel
 
 internal fun Project.log(msg:String,level:LogLevel = LogLevel.INFO){
   logger.log(level, msg)
-  if (hasProperty("xtras.log.stdout"))
+
+  val loggingProperty = "xtras.log.stdout"
+
+  if (hasProperty(loggingProperty) && property(loggingProperty) == "true"){
     println("$level: $msg")
+  }
 }

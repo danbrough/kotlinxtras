@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 
-private fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): TaskProvider<Task> =
+internal fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): TaskProvider<Task> =
   project.tasks.register(extractLibsTaskName(target)) {
     group = XTRAS_TASK_GROUP
     description = "Unpacks $libName:${target.platformName} into the ${libsDir(target)} directory"
@@ -88,7 +88,7 @@ fun LibraryExtension.resolveBinariesFromMaven(target: KonanTarget): File? {
   return null
 }
 
-private fun LibraryExtension.registerResolveArchiveTask(target: KonanTarget): TaskProvider<Task> =
+internal fun LibraryExtension.registerResolveArchiveTask(target: KonanTarget): TaskProvider<Task> =
   project.tasks.register(resolveArchiveTaskName(target)) {
     group = XTRAS_TASK_GROUP
     description = "Resolves binary archive for $libName:${target.platformName}"
@@ -100,7 +100,7 @@ private fun LibraryExtension.registerResolveArchiveTask(target: KonanTarget): Ta
       outputs.file(it)
     } else null
 
-    if (archiveFile == null){
+    if (archiveFile == null) {
       project.log("$name: $target not available.")
 
       val createArchiveTask = project.tasks.getByName(createArchiveTaskName(target))
@@ -110,6 +110,7 @@ private fun LibraryExtension.registerResolveArchiveTask(target: KonanTarget): Ta
     }
   }
 
+/*
 fun LibraryExtension.registerArchiveTasks(target: KonanTarget) {
   project.log("LibraryExtension.registerArchiveTasks: $target group:$publishingGroup version:$version")
 
@@ -125,13 +126,16 @@ fun LibraryExtension.registerArchiveTasks(target: KonanTarget) {
       artifactId = name
       groupId = this@registerArchiveTasks.publishingGroup
       version = this@registerArchiveTasks.version
-      artifact(registerResolveArchiveTask(target))
-      project.tasks.getByName("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository").apply {
+      artifact(project.tasks.getByName(resolveArchiveTaskName(target)))
+      */
+/*project.tasks.getByName("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository").apply {
         mustRunAfter(resolveArchiveTaskName(target),createArchiveTaskName(target))
-      }
+      }*//*
+
     }
   }
 
 }
+*/
 
 
