@@ -95,10 +95,10 @@ internal fun LibraryExtension.registerResolveArchiveTask(target: KonanTarget): T
 
     finalizedBy(extractLibsTaskName(target))
 
-    val archiveFile = if (enableMaven) resolveBinariesFromMaven(target)?.also {
+    val archiveFile =  resolveBinariesFromMaven(target)?.also {
       project.log("$name: resolved ${it.absolutePath}")
       outputs.file(it)
-    } else null
+    }
 
     if (archiveFile == null) {
       project.log("$name: $target not available.")

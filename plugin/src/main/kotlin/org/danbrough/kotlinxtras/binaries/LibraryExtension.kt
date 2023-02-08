@@ -57,7 +57,6 @@ abstract class LibraryExtension(val project: Project) {
   @XtrasDSLMarker
   var enableBuilding: Boolean = true
 
-
   /**
    * This can be manually configured or by default it will be set to all the kotlin multi-platform targets.
    * If not a kotlin mpp project then it will be set to [xtrasSupportedTargets]

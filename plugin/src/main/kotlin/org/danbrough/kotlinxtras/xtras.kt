@@ -11,6 +11,8 @@ const val XTRAS_BINARIES_PUBLISHING_GROUP = "$XTRAS_PACKAGE.xtras"
 
 const val XTRAS_TASK_GROUP = "xtras"
 
+const val XTRAS_REPO_NAME = "xtras"
+
 const val PROPERTY_XTRAS_DIR = "xtras.dir"
 
 /**

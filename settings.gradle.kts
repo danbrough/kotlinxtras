@@ -1,5 +1,5 @@
-pluginManagement {
 
+pluginManagement {
   repositories {
     maven(file("build/xtras/maven"))
     maven("https://s01.oss.sonatype.org/content/groups/staging")
@@ -7,9 +7,6 @@ pluginManagement {
     mavenCentral()
     google()
   }
-
-
-  //includeBuild("./plugin")
 }
 
 

@@ -1,5 +1,6 @@
 package org.danbrough.kotlinxtras.binaries
 
+import org.danbrough.kotlinxtras.XTRAS_REPO_NAME
 import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.xtrasMavenDir
 import org.danbrough.kotlinxtras.xtrasSupportedTargets
@@ -15,10 +16,7 @@ import java.io.File
 
 internal fun LibraryExtension.registerXtrasTasks() {
   val srcConfig = sourceConfig
-
   project.log("LibraryExtension.registerXtrasTasks for $libName")
-
-
 
   if (supportedTargets.isEmpty()) {
     supportedTargets =
@@ -37,18 +35,21 @@ internal fun LibraryExtension.registerXtrasTasks() {
     project.extensions.getByType(PublishingExtension::class.java)
   }
 
-
-  project.repositories.findByName("xtras") ?: project.repositories.maven {
-    name = "xtras"
+  project.repositories.findByName(XTRAS_REPO_NAME) ?: project.repositories.maven {
+    name = XTRAS_REPO_NAME
     url = project.xtrasMavenDir.toURI()
   }
 
-  publishing.repositories.findByName("xtras") ?: publishing.repositories.maven {
-    name = "xtras"
+  publishing.repositories.findByName(XTRAS_REPO_NAME) ?: publishing.repositories.maven {
+    name = XTRAS_REPO_NAME
     url = project.xtrasMavenDir.toURI()
   }
 
-  if (enableBuilding) {
+  registerGenerateInteropsTask()
+
+  val buildEnabled = enableBuilding && buildTask != null
+
+  if (buildEnabled) {
     when (srcConfig) {
       is ArchiveSourceConfig -> {
         registerArchiveDownloadTask()
@@ -63,60 +64,38 @@ internal fun LibraryExtension.registerXtrasTasks() {
 
   supportedTargets.forEach { target ->
 
-
-    registerResolveArchiveTask(target)
     configureTargetTask?.invoke(target)
 
-    if (enableBuilding) {
+    if (!buildEnabled || HostManager.hostIsMac != target.family.isAppleFamily) {
+      project.log("buildSupport disabled for $libName:${target.platformName}")
+      return@forEach
+    }
 
-      if (buildTask != null && HostManager.hostIsMac == target.family.isAppleFamily) {
+    project.log("configuring buildSupport for $libName:${target.platformName}")
 
-        //println("Adding build support for $libName with $target")
+    registerResolveArchiveTask(target)
 
-        when (srcConfig) {
-          is ArchiveSourceConfig -> {
-            registerArchiveExtractTask(srcConfig, target)
-          }
+    when (srcConfig) {
+      is ArchiveSourceConfig -> {
+        registerArchiveExtractTask(srcConfig, target)
+      }
 
-          is GitSourceConfig -> {
-            registerGitExtractTask(srcConfig, target)
-          }
+      is GitSourceConfig -> {
+        registerGitExtractTask(srcConfig, target)
+      }
 
-          is DirectorySourceConfig -> {
-            registerDirectorySourcesTask(srcConfig, target)
-          }
-        }
-
-
-        registerBuildTasks(target)
-        //registerArchiveTasks(target)
-
-
-//      registerPublishingTasks(target)
-      } else {
-        project.log("buildSupport disabled for $libName:${target.platformName}")
+      is DirectorySourceConfig -> {
+        registerDirectorySourcesTask(srcConfig, target)
       }
     }
 
 
+    registerBuildTasks(target)
   }
 
 
-  registerGenerateInteropsTask()
-
-
-  /*    if (HostManager.hostIsMac == target.family.isAppleFamily)
-        provideAllTargetsTask.dependsOn(registerProvideBinariesTask(target))*/
 
   project.extensions.findByType(KotlinMultiplatformExtension::class)?.apply {
-
-    /*  targets.withType(KotlinNativeTarget::class.java) {
-        compilations["main"]
-      }*//*     project.tasks.withType(KotlinNativeCompile::class.java) {
-               val konanTarget = KonanTarget.Companion.predefinedTargets[target.toString()]!!
-               //dependsOn(provideBinariesTaskName(konanTarget))
-             }
-       */
     project.tasks.withType(CInteropProcess::class.java) {
       dependsOn(extractLibsTaskName(konanTarget))
     }
