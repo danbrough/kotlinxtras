@@ -2,15 +2,16 @@ package org.danbrough.kotlinxtras.binaries
 
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.platformName
+import org.gradle.api.GradleException
 import org.gradle.api.Task
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
-import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.dependencies
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import java.util.Date
 
 
 internal fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): TaskProvider<Task> =
@@ -88,27 +89,41 @@ fun LibraryExtension.resolveBinariesFromMaven(target: KonanTarget): File? {
   return null
 }
 
-internal fun LibraryExtension.registerResolveArchiveTask(target: KonanTarget): TaskProvider<Task> =
-  project.tasks.register(resolveArchiveTaskName(target)) {
-    group = XTRAS_TASK_GROUP
-    description = "Resolves binary archive for $libName:${target.platformName}"
 
-    finalizedBy(extractLibsTaskName(target))
-
-    val archiveFile =  resolveBinariesFromMaven(target)?.also {
-      project.log("$name: resolved ${it.absolutePath}")
-      outputs.file(it)
+internal fun LibraryExtension.registerDownloadArchiveTask(target: KonanTarget): TaskProvider<Task> =
+  project.tasks.register(downloadArchiveTaskName(target)) {
+    val archiveFile = archiveFile(target)
+    outputs.file(archiveFile)
+    extraProperties["downloaded"] = false
+    onlyIf {
+      !isPackageBuilt(target)
     }
 
-    if (archiveFile == null) {
-      project.log("$name: $target not available.")
-
-      val createArchiveTask = project.tasks.getByName(createArchiveTaskName(target))
-      //need to build the package
-      dependsOn(createArchiveTask)
-      outputs.file(createArchiveTask.outputs.files.first())
+    actions.add {
+      resolveBinariesFromMaven(target)?.also {
+        project.log("$name: resolved ${it.absolutePath} copying to $archiveFile")
+        it.copyTo(archiveFile, overwrite = true)
+        extraProperties["downloaded"] = true
+      }
     }
   }
+
+internal fun LibraryExtension.registerResolveArchiveTask(target: KonanTarget): TaskProvider<Task> {
+
+  return project.tasks.register(resolveArchiveTaskName(target)) {
+    group = XTRAS_TASK_GROUP
+    description = "Resolves binary archive for $libName:${target.platformName}"
+    dependsOn(downloadArchiveTaskName(target))
+    println("Configuring this: 1")
+
+    doFirst {
+      println("RUNNING THIS BIT")
+      val downloadTask = project.tasks.getByName(downloadArchiveTaskName(target))
+      println("downloaded: ${downloadTask.extraProperties["downloaded"]} output: ${downloadTask.outputs.files.first()}")
+    }
+  }
+}
+
 
 /*
 fun LibraryExtension.registerArchiveTasks(target: KonanTarget) {

@@ -119,6 +119,8 @@ abstract class LibraryExtension(val project: Project) {
 
   fun resolveArchiveTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasResolveArchive${name.capitalized()}${konanTarget.platformName.capitalized()}"
+  fun downloadArchiveTaskName(konanTarget: KonanTarget, name: String = libName): String =
+    "xtrasDownloadArchive${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
   fun extractLibsTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasExtractLibs${name.capitalized()}${konanTarget.platformName.capitalized()}"

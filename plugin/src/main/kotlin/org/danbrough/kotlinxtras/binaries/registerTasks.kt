@@ -47,7 +47,27 @@ internal fun LibraryExtension.registerXtrasTasks() {
 
   registerGenerateInteropsTask()
 
+  project.extensions.findByType(KotlinMultiplatformExtension::class)?.apply {
+    project.tasks.withType(CInteropProcess::class.java) {
+      dependsOn(extractLibsTaskName(konanTarget))
+    }
+  }
+
+
+  project.tasks.withType(KotlinNativeTest::class.java).all {
+    val ldLibKey = if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH"
+    val konanTarget = if (HostManager.hostIsMac) KonanTarget.MACOS_X64 else KonanTarget.LINUX_X64
+    val libPath = environment[ldLibKey]
+    val newLibPath = (libPath?.let { "$it${File.pathSeparator}" }
+      ?: "") + project.binariesExtension.libraryExtensions.map {
+      it.libsDir(konanTarget).resolve("lib")
+    }.joinToString(File.pathSeparator)
+    // println("$ldLibKey = $newLibPath")
+    environment(ldLibKey, newLibPath)
+  }
+
   val buildEnabled = enableBuilding && buildTask != null
+
 
   if (buildEnabled) {
     when (srcConfig) {
@@ -66,6 +86,10 @@ internal fun LibraryExtension.registerXtrasTasks() {
 
     configureTargetTask?.invoke(target)
 
+    registerDownloadArchiveTask(target)
+    registerExtractLibsTask(target)
+    registerResolveArchiveTask(target)
+
     if (!buildEnabled || HostManager.hostIsMac != target.family.isAppleFamily) {
       project.log("buildSupport disabled for $libName:${target.platformName}")
       return@forEach
@@ -73,7 +97,7 @@ internal fun LibraryExtension.registerXtrasTasks() {
 
     project.log("configuring buildSupport for $libName:${target.platformName}")
 
-    registerResolveArchiveTask(target)
+
 
     when (srcConfig) {
       is ArchiveSourceConfig -> {
@@ -95,23 +119,6 @@ internal fun LibraryExtension.registerXtrasTasks() {
 
 
 
-  project.extensions.findByType(KotlinMultiplatformExtension::class)?.apply {
-    project.tasks.withType(CInteropProcess::class.java) {
-      dependsOn(extractLibsTaskName(konanTarget))
-    }
-  }
 
-
-  project.tasks.withType(KotlinNativeTest::class.java).all {
-    val ldLibKey = if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH"
-    val konanTarget = if (HostManager.hostIsMac) KonanTarget.MACOS_X64 else KonanTarget.LINUX_X64
-    val libPath = environment[ldLibKey]
-    val newLibPath = (libPath?.let { "$it${File.pathSeparator}" }
-      ?: "") + project.binariesExtension.libraryExtensions.map {
-      it.libsDir(konanTarget).resolve("lib")
-    }.joinToString(File.pathSeparator)
-    // println("$ldLibKey = $newLibPath")
-    environment(ldLibKey, newLibPath)
-  }
 
 }
