@@ -49,7 +49,7 @@ internal fun LibraryExtension.registerXtrasTasks() {
 
   project.extensions.findByType(KotlinMultiplatformExtension::class)?.apply {
     project.tasks.withType(CInteropProcess::class.java) {
-      dependsOn(extractLibsTaskName(konanTarget))
+      dependsOn(extractArchiveTaskName(konanTarget))
     }
   }
 
@@ -87,8 +87,8 @@ internal fun LibraryExtension.registerXtrasTasks() {
     configureTargetTask?.invoke(target)
 
     registerDownloadArchiveTask(target)
+    registerCreateArchiveTask(target)
     registerExtractLibsTask(target)
-    registerResolveArchiveTask(target)
 
     if (!buildEnabled || HostManager.hostIsMac != target.family.isAppleFamily) {
       project.log("buildSupport disabled for $libName:${target.platformName}")
@@ -96,7 +96,7 @@ internal fun LibraryExtension.registerXtrasTasks() {
     }
 
     project.log("configuring buildSupport for $libName:${target.platformName}")
-
+    registerBuildTasks(target)
 
 
     when (srcConfig) {
@@ -112,13 +112,5 @@ internal fun LibraryExtension.registerXtrasTasks() {
         registerDirectorySourcesTask(srcConfig, target)
       }
     }
-
-
-    registerBuildTasks(target)
   }
-
-
-
-
-
 }

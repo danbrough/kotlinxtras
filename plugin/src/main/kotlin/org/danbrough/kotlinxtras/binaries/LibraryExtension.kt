@@ -37,6 +37,7 @@ fun Project.registerLibraryExtension(
 @XtrasDSLMarker
 abstract class LibraryExtension(val project: Project) {
 
+
   //Unique identifier for a binary package
   @XtrasDSLMarker
   lateinit var libName: String
@@ -56,6 +57,8 @@ abstract class LibraryExtension(val project: Project) {
    */
   @XtrasDSLMarker
   var enableBuilding: Boolean = true
+
+
 
   /**
    * This can be manually configured or by default it will be set to all the kotlin multi-platform targets.
@@ -116,14 +119,11 @@ abstract class LibraryExtension(val project: Project) {
 
   fun buildSourcesTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasBuild${name.capitalized()}${konanTarget.platformName.capitalized()}"
-
-  fun resolveArchiveTaskName(konanTarget: KonanTarget, name: String = libName): String =
-    "xtrasResolveArchive${name.capitalized()}${konanTarget.platformName.capitalized()}"
   fun downloadArchiveTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasDownloadArchive${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
-  fun extractLibsTaskName(konanTarget: KonanTarget, name: String = libName): String =
-    "xtrasExtractLibs${name.capitalized()}${konanTarget.platformName.capitalized()}"
+  fun extractArchiveTaskName(konanTarget: KonanTarget, name: String = libName): String =
+    "xtrasExtractArchive${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
   fun createArchiveTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasCreateArchive${name.capitalized()}${konanTarget.platformName.capitalized()}"

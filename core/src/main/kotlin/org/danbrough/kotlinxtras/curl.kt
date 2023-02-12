@@ -20,7 +20,7 @@ fun Project.enableCurl(
   return extensions.findByName(extnName) as? LibraryExtension ?: registerLibraryExtension(extnName) {
     publishingGroup = CORE_PUBLISHING_PACKAGE
 
-    version = "7_87_0bc"
+    version = "7_87_0b"
 
     git("https://github.com/curl/curl.git", "c12fb3ddaf48e709a7a4deaa55ec485e4df163ee")
 
@@ -41,7 +41,7 @@ fun Project.enableCurl(
     configure { target ->
       dependsOn(target.autoConfTaskName())
 
-      val provideOpenSSLTaskName = extractLibsTaskName(target, "openssl")
+      val provideOpenSSLTaskName = extractArchiveTaskName(target, "openssl")
 
       val provideOpenSSLTask = project.tasks.getByName(provideOpenSSLTaskName)
       dependsOn(provideOpenSSLTask)

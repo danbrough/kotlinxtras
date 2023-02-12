@@ -2,7 +2,6 @@ package org.danbrough.kotlinxtras.binaries
 
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.platformName
-import org.gradle.api.GradleException
 import org.gradle.api.Task
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.tasks.TaskProvider
@@ -11,20 +10,19 @@ import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
-import java.util.Date
 
 
 internal fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): TaskProvider<Task> =
-  project.tasks.register(extractLibsTaskName(target)) {
+  project.tasks.register(extractArchiveTaskName(target)) {
     group = XTRAS_TASK_GROUP
     description = "Unpacks $libName:${target.platformName} into the ${libsDir(target)} directory"
-    dependsOn(resolveArchiveTaskName(target))
+    //mustRunAfter(downloadSourcesTaskName(target),buildSourcesTaskName(target))
+    mustRunAfter(downloadArchiveTaskName(target), createArchiveTaskName(target))
+
     outputs.dir(libsDir(target))
     actions.add {
       project.exec {
-        val archiveFile =
-          project.tasks.getByName(resolveArchiveTaskName(target)).outputs.files.first()
-
+        val archiveFile = archiveFile(target)
         workingDir(libsDir(target))
         project.log("extracting: $archiveFile to $workingDir")
         commandLine("tar", "xvpfz", archiveFile.absolutePath)
@@ -32,7 +30,7 @@ internal fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): Task
     }
   }
 
-private fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): TaskProvider<Task> =
+fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): TaskProvider<Task> =
   project.tasks.register(createArchiveTaskName(target)) {
     group = XTRAS_TASK_GROUP
     description = "Outputs binary archive for $libName:${target.platformName}"
@@ -107,22 +105,6 @@ internal fun LibraryExtension.registerDownloadArchiveTask(target: KonanTarget): 
       }
     }
   }
-
-internal fun LibraryExtension.registerResolveArchiveTask(target: KonanTarget): TaskProvider<Task> {
-
-  return project.tasks.register(resolveArchiveTaskName(target)) {
-    group = XTRAS_TASK_GROUP
-    description = "Resolves binary archive for $libName:${target.platformName}"
-    dependsOn(downloadArchiveTaskName(target))
-    println("Configuring this: 1")
-
-    doFirst {
-      println("RUNNING THIS BIT")
-      val downloadTask = project.tasks.getByName(downloadArchiveTaskName(target))
-      println("downloaded: ${downloadTask.extraProperties["downloaded"]} output: ${downloadTask.outputs.files.first()}")
-    }
-  }
-}
 
 
 /*
