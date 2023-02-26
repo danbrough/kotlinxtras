@@ -26,6 +26,7 @@ fun Project.enableIconv(
       }
 
       configure { target ->
+        dependsOn(target.xtrasKonanDepsTaskName)
         commandLine(
           "./configure",
           "-C",

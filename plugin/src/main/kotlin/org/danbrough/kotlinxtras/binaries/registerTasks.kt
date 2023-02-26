@@ -29,6 +29,7 @@ internal fun LibraryExtension.registerXtrasTasks() {
   if (supportedBuildTargets.isEmpty()) supportedBuildTargets =
     if (HostManager.hostIsMac) supportedTargets.filter { it.family.isAppleFamily } else supportedTargets
 
+
   val publishing = project.extensions.findByType(PublishingExtension::class.java) ?: let {
     project.log("LibraryExtension.registerXtrasTask() applying maven-publish.")
     project.pluginManager.apply("org.gradle.maven-publish")
@@ -90,10 +91,10 @@ internal fun LibraryExtension.registerXtrasTasks() {
     registerCreateArchiveTask(target)
     registerExtractLibsTask(target)
 
-    if (!buildEnabled || HostManager.hostIsMac != target.family.isAppleFamily) {
-      project.log("buildSupport disabled for $libName:${target.platformName}")
-      return@forEach
-    }
+    /*    if (!buildEnabled || HostManager.hostIsMac != target.family.isAppleFamily) {
+          project.log("buildSupport disabled for $libName:${target.platformName}")
+          return@forEach
+        }*/
 
     project.log("configuring buildSupport for $libName:${target.platformName}")
     registerBuildTasks(target)

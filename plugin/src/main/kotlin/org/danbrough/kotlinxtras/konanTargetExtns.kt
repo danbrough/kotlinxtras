@@ -1,13 +1,9 @@
 package org.danbrough.kotlinxtras
 
+import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import java.io.File
-
-
-
 
 
 val KonanTarget.platformName: String
@@ -21,9 +17,8 @@ val KonanTarget.platformName: String
         else -> throw Error("Unhandled android target $this")
       }
     }
-    return name.split("_").joinToString("") { it.capitalize() }.decapitalize()
+    return name.split("_").joinToString("") { it.capitalized() }.decapitalize()
   }
-
 
 val KonanTarget.hostTriplet: String
   get() = when (this) {

@@ -1,7 +1,3 @@
-import org.gradle.api.Project
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.kotlin.dsl.PluginDependenciesSpecScope
-import org.gradle.kotlin.dsl.version
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -13,8 +9,8 @@ object Xtras {
   const val javaLangVersion = 11
 }
 
-fun PluginDependenciesSpec.xtras(plugin:String): PluginDependencySpec =
+fun PluginDependenciesSpec.xtras(plugin: String): PluginDependencySpec =
   id("${Xtras.projectGroup}.$plugin")
 
-fun PluginDependenciesSpec.xtras(plugin:String,version:String): PluginDependencySpec =
+fun PluginDependenciesSpec.xtras(plugin: String, version: String): PluginDependencySpec =
   id("${Xtras.projectGroup}.$plugin").version(version)

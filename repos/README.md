@@ -60,6 +60,7 @@ upstream: https://github.com/cashapp/sqldelight.git
 upstream: https://github.com/ktorio/ktor  
 repo: https://github.com/danbrough/ktor.git
 
+- branch danbrough-2.2.3 
 - branch danbrough-2.2.2 tag 2.2.2-danbrough (with support for linuxArm64 and linuxArm32Hfp)
 - branch danbrough-2.1.2 
 
@@ -69,3 +70,12 @@ upstream: https://github.com/square/okio.git
 repo: https://github.com/danbrough/okio.git
 
 - in progress on branch danbrough-3.2.0
+
+
+### Openssl
+
+repo: https://github.com/danbrough/openssl.git
+upstream: git://git.openssl.org/openssl.git
+
+- latest version tag: OpenSSL_1_1_1t-danbrough
+

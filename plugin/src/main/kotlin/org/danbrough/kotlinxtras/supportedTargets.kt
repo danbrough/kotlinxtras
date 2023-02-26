@@ -7,20 +7,19 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
  * Declares the kotlin native targets that are currently supported
  */
 fun KotlinMultiplatformExtension.declareSupportedTargets() {
-  //comment out platforms you don't need
-  androidNativeX86()
+  /*androidNativeX86()
   androidNativeX64()
   androidNativeArm32()
-  androidNativeArm64()
+  androidNativeArm64()*/
 
   mingwX64()
 
   linuxX64()
   linuxArm64()
-  linuxArm32Hfp()
+  //linuxArm32Hfp()
 
-  macosX64()
-  macosArm64()
+  /*macosX64()
+  macosArm64()*/
 
   /*
   //TODO
@@ -43,14 +42,14 @@ fun KotlinMultiplatformExtension.declareSupportedTargets() {
 }
 
 val xtrasSupportedTargets: List<KonanTarget> = listOf(
-    KonanTarget.LINUX_X64,
-    KonanTarget.LINUX_ARM32_HFP,
-    KonanTarget.LINUX_ARM64,
-    KonanTarget.ANDROID_ARM32,
-    KonanTarget.ANDROID_ARM64,
-    KonanTarget.ANDROID_X64,
-    KonanTarget.ANDROID_X86,
-    KonanTarget.MACOS_X64,
-    KonanTarget.MACOS_ARM64,
-    KonanTarget.MINGW_X64,
-  )
+  KonanTarget.LINUX_X64,
+  KonanTarget.LINUX_ARM32_HFP,
+  KonanTarget.LINUX_ARM64,
+  KonanTarget.ANDROID_ARM32,
+  KonanTarget.ANDROID_ARM64,
+  KonanTarget.ANDROID_X64,
+  KonanTarget.ANDROID_X86,
+  KonanTarget.MACOS_X64,
+  KonanTarget.MACOS_ARM64,
+  KonanTarget.MINGW_X64,
+)

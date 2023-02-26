@@ -7,7 +7,6 @@ import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.dependencies
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -17,7 +16,7 @@ internal fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): Task
     group = XTRAS_TASK_GROUP
     description = "Unpacks $libName:${target.platformName} into the ${libsDir(target)} directory"
     //mustRunAfter(downloadSourcesTaskName(target),buildSourcesTaskName(target))
-    mustRunAfter(downloadArchiveTaskName(target), createArchiveTaskName(target))
+    dependsOn(downloadArchiveTaskName(target), createArchiveTaskName(target))
 
     outputs.dir(libsDir(target))
     actions.add {
@@ -50,7 +49,7 @@ fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): TaskProvide
         )
       }
     }
-    finalizedBy("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository")
+    //finalizedBy("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository")
   }
 
 
@@ -92,7 +91,6 @@ internal fun LibraryExtension.registerDownloadArchiveTask(target: KonanTarget): 
   project.tasks.register(downloadArchiveTaskName(target)) {
     val archiveFile = archiveFile(target)
     outputs.file(archiveFile)
-    extraProperties["downloaded"] = false
     onlyIf {
       !isPackageBuilt(target)
     }
@@ -101,7 +99,6 @@ internal fun LibraryExtension.registerDownloadArchiveTask(target: KonanTarget): 
       resolveBinariesFromMaven(target)?.also {
         project.log("$name: resolved ${it.absolutePath} copying to $archiveFile")
         it.copyTo(archiveFile, overwrite = true)
-        extraProperties["downloaded"] = true
       }
     }
   }

@@ -84,7 +84,7 @@ open class BinaryExtension {
     }
   }
 
-  private fun configureEnv(target: KonanTarget, env: MutableMap<String, Any?>) {
+  protected open fun configureEnv(target: KonanTarget, env: MutableMap<String, Any?>) {
     env["KONAN_BUILD"] = 1
 
     env["ANDROID_NDK_HOME"] = androidNdkDir.absolutePath
@@ -179,7 +179,11 @@ open class BinaryExtension {
         0,
         konanDir.resolve("dependencies/apple-llvm-20200714-macos-x64-essentials/bin").absolutePath
       )
-    basePath.add(0, konanDir.resolve("dependencies/llvm-11.1.0-linux-x64-essentials/bin").absolutePath)
+
+    basePath.add(
+      0,
+      konanDir.resolve("dependencies/llvm-11.1.0-linux-x64-essentials/bin").absolutePath
+    )
 
     env["PATH"] = basePath.joinToString(File.pathSeparator)
     env["GOARCH"] = target.goArch
@@ -207,8 +211,12 @@ const val XTRAS_BINARIES_EXTN_NAME = "xtrasBinaries"
 
 class BinaryPlugin : Plugin<Project> {
   override fun apply(target: Project) {
+    target.log("Initializing BinaryPlugin...")
     target.extensions.create(XTRAS_BINARIES_EXTN_NAME, BinaryExtension::class.java)
       .apply {
+
+        target.registerDepsTask()
+
         val binaryPropertyPrefix = "xtras.bin"
         val binaryProperty: (String, String) -> String = { exe, defValue ->
           target.projectProperty("$binaryPropertyPrefix.$exe", defValue)
