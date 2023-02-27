@@ -29,7 +29,9 @@ fun Project.enableCurl(
         { "xtrasAutoconf${libName.capitalized()}${platformName.capitalized()}" }
 
       configureTarget { target ->
+
         project.tasks.create(target.autoConfTaskName(), Exec::class.java) {
+          dependsOn(target.registerKonanDepsTask(project))
           onlyIf { !isPackageBuilt(target) }
           dependsOn(extractSourcesTaskName(target))
           workingDir(sourcesDir(target))

@@ -1,6 +1,8 @@
 package org.danbrough.kotlinxtras.binaries
 
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
+import org.danbrough.kotlinxtras.capitalize
+import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.platformName
 import org.gradle.api.Task
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
@@ -9,6 +11,28 @@ import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+
+
+private fun LibraryExtension.cleanupTaskName(target: KonanTarget) =
+  "xtrasCleanUp${libName.capitalize()}${target.platformName.capitalize()}"
+
+private fun LibraryExtension.registerCleanBuildTask(target: KonanTarget) =
+  project.tasks.register(cleanupTaskName(target)) {
+    val buildDir = buildDir(target)
+    val sourcesDir = sourcesDir(target)
+    actions.add {
+
+      if (buildDir.exists()) {
+        project.log("${cleanupTaskName(target)} deleting $buildDir")
+        buildDir.deleteRecursively()
+      }
+
+      if (sourcesDir.exists()) {
+        project.log("${cleanupTaskName(target)} deleting $sourcesDir")
+        sourcesDir.deleteRecursively()
+      }
+    }
+  }
 
 
 internal fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): TaskProvider<Task> =
@@ -29,13 +53,18 @@ internal fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): Task
     }
   }
 
-fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): TaskProvider<Task> =
-  project.tasks.register(createArchiveTaskName(target)) {
+fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): TaskProvider<Task> {
+  registerCleanBuildTask(target)
+
+  return project.tasks.register(createArchiveTaskName(target)) {
     group = XTRAS_TASK_GROUP
     description = "Outputs binary archive for $libName:${target.platformName}"
     dependsOn(buildSourcesTaskName(target))
     val archiveFile = archiveFile(target)
     outputs.file(archiveFile)
+    onlyIf {
+      !isPackageBuilt(target)
+    }
     actions.add {
       project.exec {
         workingDir(buildDir(target))
@@ -49,9 +78,11 @@ fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): TaskProvide
         )
       }
     }
+
+    finalizedBy(cleanupTaskName(target))
     //finalizedBy("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository")
   }
-
+}
 
 fun LibraryExtension.resolveBinariesFromMaven(target: KonanTarget): File? {
 
@@ -121,8 +152,7 @@ fun LibraryExtension.registerArchiveTasks(target: KonanTarget) {
       groupId = this@registerArchiveTasks.publishingGroup
       version = this@registerArchiveTasks.version
       artifact(project.tasks.getByName(resolveArchiveTaskName(target)))
-      */
-/*project.tasks.getByName("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository").apply {
+      *//*project.tasks.getByName("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository").apply {
         mustRunAfter(resolveArchiveTaskName(target),createArchiveTaskName(target))
       }*//*
 

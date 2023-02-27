@@ -1,8 +1,7 @@
 package org.danbrough.kotlinxtras.binaries
 
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
-import org.danbrough.kotlinxtras.capitalize
-import org.danbrough.kotlinxtras.platformName
+import org.danbrough.kotlinxtras.log
 import org.gradle.api.tasks.Exec
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -11,7 +10,7 @@ private fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget) =
   project.tasks.register(configureSourcesTaskName(target), Exec::class.java) {
 
     if (!isPackageBuilt(target))
-      dependsOn(dependsOn(target.xtrasKonanDepsTaskName), extractSourcesTaskName(target))
+      dependsOn(extractSourcesTaskName(target))
 
     environment(buildEnvironment(target))
     group = XTRAS_TASK_GROUP
@@ -27,25 +26,11 @@ private fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget) =
   }
 
 
-private fun LibraryExtension.deleteBuildTaskName(target: KonanTarget) =
-  "xtrasDeleteBuild${libName.capitalize()}${target.platformName.capitalize()}"
-
-private fun LibraryExtension.deleteBuildTask(target: KonanTarget) =
-  project.tasks.register(deleteBuildTaskName(target)) {
-    actions.add {
-      val buildDir = buildDir(target)
-      project.log("${deleteBuildTaskName(target)} deleting $buildDir")
-      buildDir.deleteRecursively()
-      onlyIf {
-        buildDir.exists()
-      }
-    }
-  }
-
 fun LibraryExtension.registerBuildTasks(target: KonanTarget) {
   configureTask?.also {
     registerConfigureSourcesTask(target)
   }
+
 
   project.tasks.register(buildSourcesTaskName(target), Exec::class.java) {
 
@@ -64,15 +49,17 @@ fun LibraryExtension.registerBuildTasks(target: KonanTarget) {
       !isPackageBuilt(target)
     }
 
-    dependsOn(target.xtrasKonanDepsTaskName, extractSourcesTaskName(target))
+    dependsOn(extractSourcesTaskName(target))
 
     configureTask?.also {
       dependsOn(configureSourcesTaskName(target))
     }
 
-    finalizedBy(deleteBuildTaskName(target))
+
 
     buildTask!!(target)
+
+    finalizedBy(createArchiveTaskName(target))
 
 
   }

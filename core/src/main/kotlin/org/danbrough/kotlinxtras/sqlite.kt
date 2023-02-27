@@ -25,6 +25,7 @@ fun Project.enableSqlite(
     }
 
     configure { target ->
+      dependsOn(target.registerKonanDepsTask(project))
       commandLine(
         "./configure",
         "--host=${target.hostTriplet}",

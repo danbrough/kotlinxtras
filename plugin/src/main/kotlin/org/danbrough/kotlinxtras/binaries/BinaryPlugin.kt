@@ -11,6 +11,7 @@ import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.goArch
 import org.danbrough.kotlinxtras.goOS
 import org.danbrough.kotlinxtras.hostTriplet
+import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.projectProperty
 import org.danbrough.kotlinxtras.xtrasCInteropsDir
 import org.danbrough.kotlinxtras.xtrasDir
@@ -214,8 +215,6 @@ class BinaryPlugin : Plugin<Project> {
     target.log("Initializing BinaryPlugin...")
     target.extensions.create(XTRAS_BINARIES_EXTN_NAME, BinaryExtension::class.java)
       .apply {
-
-        target.registerDepsTask()
 
         val binaryPropertyPrefix = "xtras.bin"
         val binaryProperty: (String, String) -> String = { exe, defValue ->

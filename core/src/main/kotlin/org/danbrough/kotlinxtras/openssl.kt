@@ -18,7 +18,7 @@ fun Project.enableOpenssl(
   extnName: String = OPENSSL_EXTN_NAME,
   versionName: String = OPENSSL_VERSION,
   commit: String = OPENSSL_GIT_COMMIT,
-  gitURL:String = OPENSSL_GIT_URL,
+  gitURL: String = OPENSSL_GIT_URL,
   config: LibraryExtension.() -> Unit = {}
 ): LibraryExtension =
   extensions.findByName(extnName) as? LibraryExtension ?: registerLibraryExtension(extnName) {
@@ -31,6 +31,7 @@ fun Project.enableOpenssl(
 
     configure { target ->
       outputs.file(workingDir.resolve("Makefile"))
+      dependsOn(target.registerKonanDepsTask(project))
       val args = mutableListOf(
         "./Configure", target.opensslPlatform, "no-tests", "threads", "--prefix=${buildDir(target)}"
       )
