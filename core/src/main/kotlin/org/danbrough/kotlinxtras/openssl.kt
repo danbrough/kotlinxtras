@@ -31,7 +31,7 @@ fun Project.enableOpenssl(
 
     configure { target ->
       outputs.file(workingDir.resolve("Makefile"))
-      dependsOn(target.registerKonanDepsTask(project))
+      enableKonanDeps(target)
       val args = mutableListOf(
         "./Configure", target.opensslPlatform, "no-tests", "threads", "--prefix=${buildDir(target)}"
       )

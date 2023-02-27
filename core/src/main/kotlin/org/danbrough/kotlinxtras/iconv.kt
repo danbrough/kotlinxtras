@@ -26,7 +26,7 @@ fun Project.enableIconv(
       }
 
       configure { target ->
-        dependsOn(target.registerKonanDepsTask(project))
+        enableKonanDeps(target)
         commandLine(
           "./configure",
           "-C",

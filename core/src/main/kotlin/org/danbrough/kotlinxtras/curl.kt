@@ -31,7 +31,7 @@ fun Project.enableCurl(
       configureTarget { target ->
 
         project.tasks.create(target.autoConfTaskName(), Exec::class.java) {
-          dependsOn(target.registerKonanDepsTask(project))
+          enableKonanDeps(target)
           onlyIf { !isPackageBuilt(target) }
           dependsOn(extractSourcesTaskName(target))
           workingDir(sourcesDir(target))
