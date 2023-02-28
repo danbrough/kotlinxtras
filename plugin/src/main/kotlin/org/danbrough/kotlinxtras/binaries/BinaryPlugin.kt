@@ -117,39 +117,7 @@ open class BinaryExtension {
 
 
       KonanTarget.MINGW_X64 -> {
-        //env["CC"] = "x86_64-w64-mingw32-gcc"
-        //env["CXX"] = "x86_64-w64-mingw32-g++"
-        //env["PATH"] = "${System.getProperty("user.home")}.konan/dependencies/msys2-mingw-w64-x86_64-2/bin:${env["PATH"]}"
-        /*  val clangArgs =
-            "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32" + " --sysroot=$konanDir/dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32/x86_64-w64-mingw32"
-          env["CC"] = "clang $clangArgs"
-          env["CXX"] = "clang++ $clangArgs"
-        */
-        /*  export HOST=x86_64-w64-mingw32
-    export GOOS=windows
-    export CFLAGS="$CFLAGS -pthread"
-    #export WINDRES=winres
-    export WINDRES=/usr/bin/x86_64-w64-mingw32-windres
-    export RC=$WINDRES
-    export GOARCH=amd64
-    export OPENSSL_PLATFORM=mingw64
-    export LIBNAME="libkipfs.dll"
-    #export PATH=/usr/x86_64-w64-mingw32/bin:$PATH
-    export TARGET=$HOST
-    #export PATH=$(dir_path bin $TOOLCHAIN):$PATH
-    export CROSS_PREFIX=$TARGET-
-    export CC=$TARGET-gcc
-    export CXX=$TARGET-g++
-          *//*
-                env["WINDRES"] = "x86_64-w64-mingw32-windres"
-                env["RC"] = env["WINDRES"] as String*//*env["CROSS_PREFIX"] = "${platform.host}-"
-        val toolChain = "$konanDir/dependencies/msys2-mingw-w64-x86_64-1"
-        env["PATH"] = "$toolChain/bin:${env["PATH"]}"*/
-
-        //env["CC"] = "x86_64-w64-mingw32-gcc"
-        //env["CXX"] = "x86_64-w64-mingw32-g++"
-
-
+        //You need mingw installed for this target
       }
 
       KonanTarget.ANDROID_X64, KonanTarget.ANDROID_X86, KonanTarget.ANDROID_ARM64, KonanTarget.ANDROID_ARM32 -> {
