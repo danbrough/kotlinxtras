@@ -36,6 +36,13 @@ gradlePlugin {
       description = "Sonatype publishing support"
     }
 
+    create("core") {
+      id = "$group.core"
+      implementationClass = "$group.CorePlugin"
+      displayName = "KotlinXtras core plugins"
+      description = "Provides some core plugins"
+    }
+
   }
 }
 
@@ -43,7 +50,7 @@ gradlePlugin {
 
 afterEvaluate {
 
-  
+
   extensions.findByType(SigningExtension::class.java)?.run {
     listOf("Xtras", "SonaType").forEach {
 
