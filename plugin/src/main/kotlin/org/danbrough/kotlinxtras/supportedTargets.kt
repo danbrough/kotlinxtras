@@ -1,25 +1,29 @@
 package org.danbrough.kotlinxtras
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 /**
  * Declares the kotlin native targets that are currently supported
  */
 fun KotlinMultiplatformExtension.declareSupportedTargets() {
-  androidNativeX86()
-  androidNativeX64()
-  androidNativeArm32()
-  androidNativeArm64()
+  if (HostManager.hostIsMac) {
+    macosX64()
+    macosArm64()
+  } else {
+    androidNativeX86()
+    androidNativeX64()
+    androidNativeArm32()
+    androidNativeArm64()
 
-  mingwX64()
+    mingwX64()
 
-  linuxX64()
-  linuxArm64()
-  linuxArm32Hfp()
+    linuxX64()
+    linuxArm64()
+    linuxArm32Hfp()
+  }
 
-  macosX64()
-  macosArm64()
 
   /*
   //TODO
