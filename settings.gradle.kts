@@ -1,4 +1,3 @@
-
 pluginManagement {
   repositories {
     maven(file("build/xtras/maven"))
@@ -21,11 +20,11 @@ val pluginsOnly: String? by settings
 //-PpluginsOnly=true or not specified
 if (pluginsOnly == null || pluginsOnly.toBoolean()) {
   include(":plugin")
-  include(":core")
 }
 
 //-PpluginsOnly=false or not specified
 if (!pluginsOnly.toBoolean()) {
+  include(":core")
   include(":common")
   include(":xtras")
 }

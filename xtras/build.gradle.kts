@@ -29,3 +29,15 @@ gradlePlugin {
 
 
 
+afterEvaluate {
+  tasks.create("thang") {
+    doFirst {
+      println("RUNNING THANG!!!")
+    }
+    actions.add {
+      tasks.withType(Sign::class.java) {
+        println("TASK: $name type: ${this::class.java}")
+      }
+    }
+  }
+}

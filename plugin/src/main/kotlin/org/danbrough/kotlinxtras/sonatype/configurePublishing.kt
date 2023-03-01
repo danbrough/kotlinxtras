@@ -7,6 +7,7 @@ import org.danbrough.kotlinxtras.xtrasDocsDir
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.findByType
@@ -15,6 +16,7 @@ import org.gradle.kotlin.dsl.getValue
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.registering
+import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -102,6 +104,14 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
         }
       }
     }
+    
+    val signTasks = tasks.withType(Sign::class.java).map { it.name }
+    if (signTasks.isNotEmpty()) {
+      tasks.withType(PublishToMavenRepository::class.java) {
+        dependsOn(signTasks)
+      }
+    }
+
 
     repositories {
       maven {

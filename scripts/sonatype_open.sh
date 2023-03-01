@@ -1,16 +1,11 @@
 #!/bin/bash
 cd "$(dirname "$0")" && cd ..
 
-REPO=${1-Xtras}
-echo publishing to $REPO
+DESCRIPTION=${1-"xtras:plugin"}
 
-./gradlew plugin:publishAllPublicationsToXtrasRepository
+#./gradlew plugin:publishAllPublicationsToXtrasRepository
 
-if [ "$REPO" == "SonaType" ]; then
-   ./gradlew plugin:sonatypeOpen -PsonatypeDescription=xtras:plugin
-	OPTS="-PsignPublications=true -PpublishDocs=true"
-fi
-
+./gradlew -PsonatypeDescription="$DESCRIPTION" plugin:sonatypeOpen
 
 
 #./gradlew -PpluginsOnly=true $OPTS plugin:publishAllPublicationsTo${REPO}Repository || exit 1
