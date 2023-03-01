@@ -7,19 +7,19 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
  * Declares the kotlin native targets that are currently supported
  */
 fun KotlinMultiplatformExtension.declareSupportedTargets() {
-  /*androidNativeX86()
+  androidNativeX86()
   androidNativeX64()
   androidNativeArm32()
-  androidNativeArm64()*/
+  androidNativeArm64()
 
   mingwX64()
 
   linuxX64()
   linuxArm64()
-  //linuxArm32Hfp()
+  linuxArm32Hfp()
 
-  /*macosX64()
-  macosArm64()*/
+  macosX64()
+  macosArm64()
 
   /*
   //TODO
