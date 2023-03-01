@@ -8,7 +8,7 @@ plugins {
 dependencies {
   compileOnly(kotlin("gradle-plugin"))
   compileOnly(kotlin("gradle-plugin-api"))
-  api(project(":plugin"))
+  //api(project(":plugin"))
 }
 
 

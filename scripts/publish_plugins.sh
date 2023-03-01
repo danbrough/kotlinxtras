@@ -21,3 +21,8 @@ fi
 
 
 
+#./gradlew  -PpluginsOnly=true -PsignPublications=true -PpublishDocs=true publishAllPublicationsToSonaTypeRepository
+
+
+
+
