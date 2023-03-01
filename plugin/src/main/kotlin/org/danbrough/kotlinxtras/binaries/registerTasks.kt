@@ -99,9 +99,10 @@ internal fun LibraryExtension.registerXtrasTasks() {
     if (HostManager.hostIsMac == target.family.isAppleFamily) publishing.publications.create(
       "$libName${target.platformName.capitalize()}", MavenPublication::class.java
     ) {
-      artifactId = this@registerXtrasTasks.libName
+      artifactId = "${libName}${target.platformName.capitalize()}"
       version = this@registerXtrasTasks.version
       artifact(archiveTask)
+      groupId = this@registerXtrasTasks.publishingGroup
     }
 
     /*    if (!buildEnabled || HostManager.hostIsMac != target.family.isAppleFamily) {

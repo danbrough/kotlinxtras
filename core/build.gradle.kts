@@ -3,14 +3,15 @@ plugins {
   `maven-publish`
   id("org.jetbrains.dokka")
   xtras("sonatype", Xtras.version)
-
 }
 
 dependencies {
   compileOnly(kotlin("gradle-plugin"))
   compileOnly(kotlin("gradle-plugin-api"))
-  //api(project(":plugin"))
+  api(project(":plugin"))
 }
+
+
 
 gradlePlugin {
   plugins {

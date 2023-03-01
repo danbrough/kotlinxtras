@@ -27,18 +27,7 @@ import java.net.URI
 internal fun Project.configurePublishing(extn: SonatypeExtension) {
 
   extensions.findByType<PublishingExtension>()?.apply {
-    logger.info("configurePublishing - ${project.group}:${project.name}:${project.version}")
-
-    /*
-        const val SONATYPE_TASK_GROUP = "sonatype"
-    const val REPOSITORY_ID = "sonatypeRepoId"
-    const val PROFILE_ID = "sonatypeProfileId"
-    const val DESCRIPTION = "sonatypeDescription"
-    const val USERNAME = "sonatypeUsername"
-    const val PASSWORD = "sonatypePassword"
-    const val PUBLISH_DOCS = "publishDocs"
-    const val SIGN_APPLICATIONS = "signApplications"
-     */
+    logger.info("Project.configurePublishing - ${project.group}:${project.name}:${project.version}")
 
     extn.sonatypeRepoId = project.projectProperty(SonatypeExtension.REPOSITORY_ID, null)
     extn.sonatypeProfileId = project.projectProperty(SonatypeExtension.PROFILE_ID)
@@ -104,7 +93,7 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
         }
       }
     }
-    
+
     val signTasks = tasks.withType(Sign::class.java).map { it.name }
     if (signTasks.isNotEmpty()) {
       tasks.withType(PublishToMavenRepository::class.java) {

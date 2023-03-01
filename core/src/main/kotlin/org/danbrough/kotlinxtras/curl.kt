@@ -21,6 +21,7 @@ fun Project.enableCurl(
     ?: registerLibraryExtension(extnName) {
       publishingGroup = CORE_PUBLISHING_PACKAGE
 
+
       version = "7.88.1"
 
       git("https://github.com/curl/curl.git", "046209e561b7e9b5aab1aef7daebf29ee6e6e8c7")
