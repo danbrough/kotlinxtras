@@ -4,6 +4,7 @@ import org.danbrough.kotlinxtras.XTRAS_REPO_NAME
 import org.danbrough.kotlinxtras.capitalize
 import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.platformName
+import org.danbrough.kotlinxtras.registerKonanDepsTasks
 import org.danbrough.kotlinxtras.xtrasMavenDir
 import org.danbrough.kotlinxtras.xtrasSupportedTargets
 import org.gradle.api.publish.PublishingExtension
@@ -85,6 +86,7 @@ internal fun LibraryExtension.registerXtrasTasks() {
 
 
   supportedTargets.forEach { target ->
+    project.registerKonanDepsTasks(target)
 
     configureTargetTask?.invoke(target)
 
@@ -92,14 +94,15 @@ internal fun LibraryExtension.registerXtrasTasks() {
     val archiveTask = registerCreateArchiveTask(target)
     registerExtractLibsTask(target)
 
-    if (HostManager.hostIsMac == target.family.isAppleFamily) publishing.publications.create(
-      "$libName${target.platformName.capitalize()}", MavenPublication::class.java
-    ) {
-      artifactId = "${libName}${target.platformName.capitalize()}"
-      version = this@registerXtrasTasks.version
-      artifact(archiveTask)
-      groupId = this@registerXtrasTasks.publishingGroup
-    }
+    if (HostManager.hostIsMac == target.family.isAppleFamily)
+      publishing.publications.create(
+        "$libName${target.platformName.capitalize()}", MavenPublication::class.java
+      ) {
+        artifactId = "${libName}${target.platformName.capitalize()}"
+        version = this@registerXtrasTasks.version
+        artifact(archiveTask)
+        groupId = this@registerXtrasTasks.publishingGroup
+      }
 
     /*    if (!buildEnabled || HostManager.hostIsMac != target.family.isAppleFamily) {
           project.log("buildSupport disabled for $libName:${target.platformName}")

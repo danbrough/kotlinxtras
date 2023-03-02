@@ -1,18 +1,19 @@
 package org.danbrough.kotlinxtras
 
-import org.gradle.api.Task
+import org.gradle.api.Project
 import org.gradle.api.tasks.GradleBuild
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 
-fun Task.enableKonanDeps(target: KonanTarget) {
+val KonanTarget.konanDepsTaskName: String
+  get() = "xtrasKonanDeps${platformName.capitalized()}"
 
-  val taskName = "xtrasKonanDeps${target.platformName.capitalized()}"
-  dependsOn(taskName)
 
-  if (project.tasks.findByName(taskName) != null) return
+internal fun Project.registerKonanDepsTasks(target: KonanTarget) {
+
+  if (project.tasks.findByName(target.konanDepsTaskName) != null) return
 
   val depsProjectDir =
     File(System.getProperty("java.io.tmpdir"), "xtraKonanDeps${target.platformName.capitalize()}")
@@ -61,7 +62,7 @@ fun Task.enableKonanDeps(target: KonanTarget) {
   }
 
   project.tasks.register(
-    taskName, GradleBuild::class.java
+    target.konanDepsTaskName, GradleBuild::class.java
   ) {
     dependsOn(projectTaskName)
     dir = depsProjectDir

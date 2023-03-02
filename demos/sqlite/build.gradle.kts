@@ -1,6 +1,5 @@
-
+import org.danbrough.kotlinxtras.core.enableSqlite
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.danbrough.kotlinxtras.enableSqlite
 
 plugins {
   kotlin("multiplatform")
@@ -14,7 +13,7 @@ enableSqlite {
 
 repositories {
   //for local builds
-  maven("/usr/local/kotlinxtras/build/m2")
+  maven("/usr/local/kotlinxtras/build/xtras/maven")
   //for unreleased staging builds
   maven("https://s01.oss.sonatype.org/content/groups/staging/")
   //for release builds
@@ -24,7 +23,7 @@ repositories {
 
 kotlin {
 
-  if (org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac){
+  if (org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac) {
     macosArm64()
     macosX64()
   } else {

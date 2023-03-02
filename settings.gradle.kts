@@ -21,7 +21,7 @@ val pluginsOnly: String? by settings
 //-PpluginsOnly=true or not specified
 if (pluginsOnly == null || pluginsOnly.toBoolean()) {
   include(":plugin")
-  //include(":core")
+  include(":core")
 }
 
 //-PpluginsOnly=false or not specified

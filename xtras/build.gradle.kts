@@ -7,7 +7,7 @@ plugins {
   // `kotlin-dsl`
   //kotlin("multiplatform")
   xtras("sonatype", Xtras.version)
-  // xtras("core", Xtras.version)
+  xtras("core", Xtras.version)
 }
 
 

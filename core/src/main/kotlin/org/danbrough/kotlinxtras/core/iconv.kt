@@ -1,9 +1,10 @@
 @file:Suppress("unused")
 
-package org.danbrough.kotlinxtras
+package org.danbrough.kotlinxtras.core
 
 
 import org.danbrough.kotlinxtras.binaries.*
+import org.danbrough.kotlinxtras.hostTriplet
 import org.gradle.api.Project
 
 const val XTRAS_ICONV_EXTN_NAME = "iconv"
@@ -26,7 +27,7 @@ fun Project.enableIconv(
       }
 
       configure { target ->
-        enableKonanDeps(target)
+        
         commandLine(
           "./configure",
           "-C",

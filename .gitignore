@@ -12,5 +12,5 @@ local.properties
 .ssh
 /tmp
 /bak
-
+/packages
 

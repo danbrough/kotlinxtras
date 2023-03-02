@@ -36,12 +36,6 @@ gradlePlugin {
       description = "Sonatype publishing support"
     }
 
-    create("core") {
-      id = "$group.core"
-      implementationClass = "$group.core.CorePlugin"
-      displayName = "KotlinXtras core plugins"
-      description = "Provides some core plugins"
-    }
 
   }
 }
