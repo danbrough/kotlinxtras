@@ -1,6 +1,6 @@
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.danbrough.kotlinxtras.enableSqlite
+import org.danbrough.kotlinxtras.core.enableSqlite
 
 plugins {
   kotlin("multiplatform")
