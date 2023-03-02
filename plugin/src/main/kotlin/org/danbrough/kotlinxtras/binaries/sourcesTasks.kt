@@ -223,6 +223,7 @@ internal fun LibraryExtension.registerArchiveExtractTask(
   project.tasks.register(extractSourcesTaskName(konanTarget), Exec::class.java) {
     group = XTRAS_TASK_GROUP
     mustRunAfter(downloadArchiveTaskName(konanTarget))
+    onlyIf { !isPackageBuilt(konanTarget) }
     dependsOn(downloadSourcesTaskName)
     val destDir = sourcesDir(konanTarget)
     val archiveFile = project.tasks.getAt(downloadSourcesTaskName).outputs.files.first()

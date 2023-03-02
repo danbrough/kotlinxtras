@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 private fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget) =
   project.tasks.register(configureSourcesTaskName(target), Exec::class.java) {
 
-    if (!isPackageBuilt(target))
-      dependsOn(extractSourcesTaskName(target))
+    if (!isPackageBuilt(target)) dependsOn(extractSourcesTaskName(target))
 
     environment(buildEnvironment(target))
     group = XTRAS_TASK_GROUP
@@ -30,7 +29,6 @@ fun LibraryExtension.registerBuildTasks(target: KonanTarget) {
   configureTask?.also {
     registerConfigureSourcesTask(target)
   }
-
 
   project.tasks.register(buildSourcesTaskName(target), Exec::class.java) {
 
