@@ -86,6 +86,10 @@ fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): TaskProvide
 
 fun LibraryExtension.resolveBinariesFromMaven(target: KonanTarget): File? {
 
+
+  val mavenID = "$publishingGroup:$libName${target.platformName.capitalized()}:$version"
+  project.log("LibraryExtension.resolveBinariesFromMaven():$target $mavenID")
+
   val binariesConfiguration =
     project.configurations.create("configuration${libName.capitalized()}Binaries${target.platformName.capitalized()}") {
       isVisible = false
@@ -93,10 +97,6 @@ fun LibraryExtension.resolveBinariesFromMaven(target: KonanTarget): File? {
       isCanBeConsumed = false
       isCanBeResolved = true
     }
-
-  val mavenID = "$publishingGroup:$libName${target.platformName.capitalized()}:$version"
-  project.log("LibraryExtension.resolveBinariesFromMaven():$target $mavenID")
-
 
   project.repositories.all {
     if (this is MavenArtifactRepository) {
@@ -120,6 +120,8 @@ fun LibraryExtension.resolveBinariesFromMaven(target: KonanTarget): File? {
 
 internal fun LibraryExtension.registerDownloadArchiveTask(target: KonanTarget): TaskProvider<Task> =
   project.tasks.register(downloadArchiveTaskName(target)) {
+    group = XTRAS_TASK_GROUP
+
     val archiveFile = archiveFile(target)
     outputs.file(archiveFile)
     onlyIf {
@@ -127,6 +129,7 @@ internal fun LibraryExtension.registerDownloadArchiveTask(target: KonanTarget): 
     }
 
     actions.add {
+
       resolveBinariesFromMaven(target)?.also {
         project.log("$name: resolved ${it.absolutePath} copying to $archiveFile")
         it.copyTo(archiveFile, overwrite = true)

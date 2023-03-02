@@ -38,7 +38,7 @@ gradlePlugin {
 
     create("core") {
       id = "$group.core"
-      implementationClass = "$group.CorePlugin"
+      implementationClass = "$group.core.CorePlugin"
       displayName = "KotlinXtras core plugins"
       description = "Provides some core plugins"
     }

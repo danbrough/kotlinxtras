@@ -48,9 +48,6 @@ internal fun LibraryExtension.registerXtrasTasks() {
     url = project.xtrasMavenDir.toURI()
   }
 
-
-
-
   registerGenerateInteropsTask()
 
   project.extensions.findByType(KotlinMultiplatformExtension::class)?.apply {
@@ -58,7 +55,6 @@ internal fun LibraryExtension.registerXtrasTasks() {
       dependsOn(extractArchiveTaskName(konanTarget))
     }
   }
-
 
   project.tasks.withType(KotlinNativeTest::class.java).all {
     val ldLibKey = if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH"
