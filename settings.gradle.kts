@@ -1,15 +1,12 @@
 pluginManagement {
-
   repositories {
+
     maven(file("build/xtras/maven"))
     maven("https://s01.oss.sonatype.org/content/groups/staging")
     gradlePluginPortal()
     mavenCentral()
     google()
   }
-
-
-  //includeBuild("./plugin")
 }
 
 
@@ -24,11 +21,12 @@ val pluginsOnly: String? by settings
 //-PpluginsOnly=true or not specified
 if (pluginsOnly == null || pluginsOnly.toBoolean()) {
   include(":plugin")
-  include(":core")
+  //include(":core")
 }
 
 //-PpluginsOnly=false or not specified
 if (!pluginsOnly.toBoolean()) {
+
   include(":common")
   include(":xtras")
 }

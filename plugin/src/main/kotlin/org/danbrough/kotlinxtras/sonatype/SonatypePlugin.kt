@@ -12,7 +12,8 @@ class SonatypePlugin : Plugin<Project> {
     val extn = project.extensions.create("sonatype", SonatypeExtension::class.java, project)
 
     val publishingPluginId = "org.gradle.maven-publish"
-    project.plugins.findPlugin(publishingPluginId) ?: project.pluginManager.apply(publishingPluginId)
+    project.plugins.findPlugin(publishingPluginId)
+      ?: project.pluginManager.apply(publishingPluginId)
 
     project.afterEvaluate {
       project.createOpenRepoTask(extn)
@@ -53,27 +54,22 @@ open class SonatypeExtension(val project: Project) {
   var localRepoName: String = "xtras"
   var localRepoLocation: File = project.xtrasMavenDir
 
-  var sonatypeSnapshot: Boolean  = false
+  var sonatypeSnapshot: Boolean = false
 
   //lateinit var publishingURL:String
-/*
-  val publishingURL: String
-    get() = (if (sonatypeSnapshot)
-      "$sonatypeUrlBase/content/repositories/snapshots/"
-    else if (sonatypeRepoId.isNotBlank())
-      "$sonatypeUrlBase/service/local/staging/deployByRepositoryId/$sonatypeRepoId"
-    else
-      "$sonatypeUrlBase/service/local/staging/deploy/maven2/").also {
-        println("SonatypeExtension::publishingURL $it repoID is: $sonatypeRepoId")
-    }
-*/
+  /*
+    val publishingURL: String
+      get() = (if (sonatypeSnapshot)
+        "$sonatypeUrlBase/content/repositories/snapshots/"
+      else if (sonatypeRepoId.isNotBlank())
+        "$sonatypeUrlBase/service/local/staging/deployByRepositoryId/$sonatypeRepoId"
+      else
+        "$sonatypeUrlBase/service/local/staging/deploy/maven2/").also {
+          println("SonatypeExtension::publishingURL $it repoID is: $sonatypeRepoId")
+      }
+  */
 
   override fun toString() =
     "SonatypeExtension[urlBase=$sonatypeUrlBase,stagingProfileId=$sonatypeProfileId,sonatypeUsername=$sonatypeUsername]"
 }
-
-
-
-
-
 

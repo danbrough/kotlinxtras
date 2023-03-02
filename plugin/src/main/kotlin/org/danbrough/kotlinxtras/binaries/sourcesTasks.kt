@@ -1,6 +1,7 @@
 package org.danbrough.kotlinxtras.binaries
 
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
+import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.xtrasDownloadsDir
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
@@ -72,6 +73,8 @@ internal fun LibraryExtension.registerGitDownloadTask(
 
     */
 
+
+
     doFirst {
       //repoDir.deleteRecursively()
 
@@ -117,6 +120,8 @@ internal fun LibraryExtension.registerGitExtractTask(
   val initTaskName = "${extractSourcesTaskName}_init"
 
   project.tasks.register(initTaskName) {
+    mustRunAfter(downloadArchiveTaskName(konanTarget))
+
     dependsOn(downloadSourcesTaskName)
     val gitRepo = project.tasks.getAt(downloadSourcesTaskName).outputs.files.first()
     val destDir = sourcesDir(konanTarget)
@@ -217,14 +222,16 @@ internal fun LibraryExtension.registerArchiveExtractTask(
 
   project.tasks.register(extractSourcesTaskName(konanTarget), Exec::class.java) {
     group = XTRAS_TASK_GROUP
+    mustRunAfter(downloadArchiveTaskName(konanTarget))
+    onlyIf { !isPackageBuilt(konanTarget) }
     dependsOn(downloadSourcesTaskName)
     val destDir = sourcesDir(konanTarget)
     val archiveFile = project.tasks.getAt(downloadSourcesTaskName).outputs.files.first()
     inputs.file(archiveFile)
     outputs.dir(destDir)
     doFirst {
-      println("extracting $archiveFile to $destDir")
-      println("running: ${commandLine.joinToString(" ")}")
+      project.log("extracting $archiveFile to $destDir")
+      project.log("running: ${commandLine.joinToString(" ")}")
     }
     workingDir(destDir)
     val cmdLine =

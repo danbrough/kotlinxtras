@@ -1,12 +1,11 @@
 package org.danbrough.kotlinxtras.binaries
 
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
+import org.danbrough.kotlinxtras.capitalize
+import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.platformName
-import org.danbrough.kotlinxtras.xtrasPackagesDir
 import org.gradle.api.Task
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
-import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.dependencies
@@ -14,17 +13,39 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 
-private fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): TaskProvider<Task> =
-  project.tasks.register(extractLibsTaskName(target)) {
+private fun LibraryExtension.cleanupTaskName(target: KonanTarget) =
+  "xtrasCleanUp${libName.capitalize()}${target.platformName.capitalize()}"
+
+private fun LibraryExtension.registerCleanBuildTask(target: KonanTarget) =
+  project.tasks.register(cleanupTaskName(target)) {
+    val buildDir = buildDir(target)
+    val sourcesDir = sourcesDir(target)
+    actions.add {
+
+      if (buildDir.exists()) {
+        project.log("${cleanupTaskName(target)} deleting $buildDir")
+        buildDir.deleteRecursively()
+      }
+
+      if (sourcesDir.exists()) {
+        project.log("${cleanupTaskName(target)} deleting $sourcesDir")
+        sourcesDir.deleteRecursively()
+      }
+    }
+  }
+
+
+internal fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): TaskProvider<Task> =
+  project.tasks.register(extractArchiveTaskName(target)) {
     group = XTRAS_TASK_GROUP
     description = "Unpacks $libName:${target.platformName} into the ${libsDir(target)} directory"
-    dependsOn(resolveArchiveTaskName(target))
+    //mustRunAfter(downloadSourcesTaskName(target),buildSourcesTaskName(target))
+    dependsOn(downloadArchiveTaskName(target), createArchiveTaskName(target))
+
     outputs.dir(libsDir(target))
     actions.add {
       project.exec {
-        val archiveFile =
-          project.tasks.getByName(resolveArchiveTaskName(target)).outputs.files.first()
-
+        val archiveFile = archiveFile(target)
         workingDir(libsDir(target))
         project.log("extracting: $archiveFile to $workingDir")
         commandLine("tar", "xvpfz", archiveFile.absolutePath)
@@ -32,13 +53,18 @@ private fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): TaskP
     }
   }
 
-private fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): TaskProvider<Task> =
-  project.tasks.register(createArchiveTaskName(target)) {
+fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): TaskProvider<Task> {
+  registerCleanBuildTask(target)
+
+  return project.tasks.register(createArchiveTaskName(target)) {
     group = XTRAS_TASK_GROUP
     description = "Outputs binary archive for $libName:${target.platformName}"
     dependsOn(buildSourcesTaskName(target))
     val archiveFile = archiveFile(target)
     outputs.file(archiveFile)
+    onlyIf {
+      !isPackageBuilt(target)
+    }
     actions.add {
       project.exec {
         workingDir(buildDir(target))
@@ -46,17 +72,23 @@ private fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): Tas
           "tar",
           "cvpfz",
           archiveFile.absolutePath,
-          "--exclude=share",
-          "--exclude=libs/pkgconfig*",
+          "--exclude=**share",
+          "--exclude=**pkgconfig",
           "./"
         )
       }
     }
-    finalizedBy("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository")
-  }
 
+    finalizedBy(cleanupTaskName(target))
+    //finalizedBy("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository")
+  }
+}
 
 fun LibraryExtension.resolveBinariesFromMaven(target: KonanTarget): File? {
+
+
+  val mavenID = "$publishingGroup:$libName${target.platformName.capitalized()}:$version"
+  project.log("LibraryExtension.resolveBinariesFromMaven():$target $mavenID")
 
   val binariesConfiguration =
     project.configurations.create("configuration${libName.capitalized()}Binaries${target.platformName.capitalized()}") {
@@ -65,10 +97,6 @@ fun LibraryExtension.resolveBinariesFromMaven(target: KonanTarget): File? {
       isCanBeConsumed = false
       isCanBeResolved = true
     }
-
-  val mavenID = "$publishingGroup:$libName${target.platformName.capitalized()}:$version"
-  project.log("LibraryExtension.resolveBinariesFromMaven():$target $mavenID")
-
 
   project.repositories.all {
     if (this is MavenArtifactRepository) {
@@ -89,28 +117,28 @@ fun LibraryExtension.resolveBinariesFromMaven(target: KonanTarget): File? {
   return null
 }
 
-private fun LibraryExtension.registerResolveArchiveTask(target: KonanTarget): TaskProvider<Task> =
-  project.tasks.register(resolveArchiveTaskName(target)) {
+
+internal fun LibraryExtension.registerDownloadArchiveTask(target: KonanTarget): TaskProvider<Task> =
+  project.tasks.register(downloadArchiveTaskName(target)) {
     group = XTRAS_TASK_GROUP
-    description = "Resolves binary archive for $libName:${target.platformName}"
 
-    finalizedBy(extractLibsTaskName(target))
+    val archiveFile = archiveFile(target)
+    outputs.file(archiveFile)
+    onlyIf {
+      !isPackageBuilt(target)
+    }
 
-    resolveBinariesFromMaven(target)?.also {
-      project.log("$name: resolved ${it.absolutePath}")
-      outputs.file(it)
+    actions.add {
 
-    } ?: run {
-      project.log("$name: $target not available.")
-      if (!isBuildingEnabled) throw Error("$libName:${target.platformName} not available from maven and isBuildingEnabled is false.")
-
-      val createArchiveTask = project.tasks.getByName(createArchiveTaskName(target))
-      //need to build the package
-      dependsOn(createArchiveTask)
-      outputs.file(createArchiveTask.outputs.files.first())
+      resolveBinariesFromMaven(target)?.also {
+        project.log("$name: resolved ${it.absolutePath} copying to $archiveFile")
+        it.copyTo(archiveFile, overwrite = true)
+      }
     }
   }
 
+
+/*
 fun LibraryExtension.registerArchiveTasks(target: KonanTarget) {
   project.log("LibraryExtension.registerArchiveTasks: $target group:$publishingGroup version:$version")
 
@@ -126,13 +154,15 @@ fun LibraryExtension.registerArchiveTasks(target: KonanTarget) {
       artifactId = name
       groupId = this@registerArchiveTasks.publishingGroup
       version = this@registerArchiveTasks.version
-      artifact(registerResolveArchiveTask(target))
-      project.tasks.getByName("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository").apply {
+      artifact(project.tasks.getByName(resolveArchiveTaskName(target)))
+      *//*project.tasks.getByName("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository").apply {
         mustRunAfter(resolveArchiveTaskName(target),createArchiveTaskName(target))
-      }
+      }*//*
+
     }
   }
 
 }
+*/
 
 

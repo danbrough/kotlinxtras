@@ -1,16 +1,14 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-
   kotlin("multiplatform") apply false
   `maven-publish`
   id("org.jetbrains.dokka") apply false
   xtras("sonatype") version Xtras.version apply false
-//  xtras("binaries") version Xtras.version apply false
-
 }
 
 println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION}")
+
 
 group = Xtras.projectGroup
 version = Xtras.publishingVersion
@@ -19,7 +17,7 @@ version = Xtras.publishingVersion
 allprojects {
 
   repositories {
-    maven(file("build/xtras/maven"))
+    maven(rootProject.buildDir.resolve("xtras/maven"))
     maven("https://s01.oss.sonatype.org/content/groups/staging/")
     mavenCentral()
   }

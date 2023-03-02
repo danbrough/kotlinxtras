@@ -11,6 +11,7 @@ import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.goArch
 import org.danbrough.kotlinxtras.goOS
 import org.danbrough.kotlinxtras.hostTriplet
+import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.projectProperty
 import org.danbrough.kotlinxtras.xtrasCInteropsDir
 import org.danbrough.kotlinxtras.xtrasDir
@@ -59,8 +60,7 @@ open class BinaryExtension {
 
   @XtrasDSLMarker
   var androidNdkDir = konanDir.resolve(
-    if (HostManager.hostIsMac) "dependencies/target-toolchain-2-osx-android_ndk" else
-      "dependencies/target-toolchain-2-linux-android_ndk"
+    if (HostManager.hostIsMac) "dependencies/target-toolchain-2-osx-android_ndk" else "dependencies/target-toolchain-2-linux-android_ndk"
   )
 
   private val envs: MutableMap<KonanTarget, MutableMap<String, Any?>?> = mutableMapOf()
@@ -68,12 +68,7 @@ open class BinaryExtension {
 
   @XtrasDSLMarker
   var basePath = mutableListOf<String>(
-    "/bin",
-    "/sbin",
-    "/usr/bin",
-    "/usr/sbin",
-    "/usr/local/bin",
-    "/opt/local/bin"
+    "/bin", "/sbin", "/usr/bin", "/usr/sbin", "/usr/local/bin", "/opt/local/bin"
   )
 
 
@@ -84,7 +79,7 @@ open class BinaryExtension {
     }
   }
 
-  private fun configureEnv(target: KonanTarget, env: MutableMap<String, Any?>) {
+  protected open fun configureEnv(target: KonanTarget, env: MutableMap<String, Any?>) {
     env["KONAN_BUILD"] = 1
 
     env["ANDROID_NDK_HOME"] = androidNdkDir.absolutePath
@@ -110,8 +105,7 @@ open class BinaryExtension {
         val clangArgs =
           "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2 --sysroot=$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/x86_64-unknown-linux-gnu/sysroot"
         env["CC"] = "clang $clangArgs"
-        env["CXX"] = "clang++ $clangArgs"
-        /*        env["RANLIB"] =
+        env["CXX"] = "clang++ $clangArgs"/*        env["RANLIB"] =
                   "$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/x86_64-unknown-linux-gnu/bin/ranlib"*/
       }
 
@@ -123,41 +117,7 @@ open class BinaryExtension {
 
 
       KonanTarget.MINGW_X64 -> {
-//        env["CC"] = "x86_64-w64-mingw32-gcc"
-//        env["CXX"] = "x86_64-w64-mingw32-g++"
-
-//        val clangArgs =
-//          "--target=$hostTriplet --gcc-toolchain=$konanDir/dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32" +
-//              " --sysroot=$konanDir/dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32/x86_64-w64-mingw32"
-//        env["CC"] = "clang $clangArgs"
-//        env["CXX"] = "clang++ $clangArgs"
-        /*  export HOST=x86_64-w64-mingw32
-  export GOOS=windows
-  export CFLAGS="$CFLAGS -pthread"
-  #export WINDRES=winres
-  export WINDRES=/usr/bin/x86_64-w64-mingw32-windres
-  export RC=$WINDRES
-  export GOARCH=amd64
-  export OPENSSL_PLATFORM=mingw64
-  export LIBNAME="libkipfs.dll"
-  #export PATH=/usr/x86_64-w64-mingw32/bin:$PATH
-  export TARGET=$HOST
-  #export PATH=$(dir_path bin $TOOLCHAIN):$PATH
-  export CROSS_PREFIX=$TARGET-
-  export CC=$TARGET-gcc
-  export CXX=$TARGET-g++
-        */
-        /*
-                env["WINDRES"] = "x86_64-w64-mingw32-windres"
-                env["RC"] = env["WINDRES"] as String*/
-        /*env["CROSS_PREFIX"] = "${platform.host}-"
-        val toolChain = "$konanDir/dependencies/msys2-mingw-w64-x86_64-1"
-        env["PATH"] = "$toolChain/bin:${env["PATH"]}"*/
-
-        //env["CC"] = "x86_64-w64-mingw32-gcc"
-        //env["CXX"] = "x86_64-w64-mingw32-g++"
-
-
+        //You need mingw installed for this target
       }
 
       KonanTarget.ANDROID_X64, KonanTarget.ANDROID_X86, KonanTarget.ANDROID_ARM64, KonanTarget.ANDROID_ARM32 -> {
@@ -174,12 +134,13 @@ open class BinaryExtension {
       }
     }
 
-    if (HostManager.hostIsMac)
-      basePath.add(
-        0,
-        konanDir.resolve("dependencies/apple-llvm-20200714-macos-x64-essentials/bin").absolutePath
-      )
-    basePath.add(0, konanDir.resolve("dependencies/llvm-11.1.0-linux-x64-essentials/bin").absolutePath)
+    if (HostManager.hostIsMac) basePath.add(
+      0, konanDir.resolve("dependencies/apple-llvm-20200714-macos-x64-essentials/bin").absolutePath
+    )
+
+    basePath.add(
+      0, konanDir.resolve("dependencies/llvm-11.1.0-linux-x64-essentials/bin").absolutePath
+    )
 
     env["PATH"] = basePath.joinToString(File.pathSeparator)
     env["GOARCH"] = target.goArch
@@ -207,29 +168,30 @@ const val XTRAS_BINARIES_EXTN_NAME = "xtrasBinaries"
 
 class BinaryPlugin : Plugin<Project> {
   override fun apply(target: Project) {
-    target.extensions.create(XTRAS_BINARIES_EXTN_NAME, BinaryExtension::class.java)
-      .apply {
-        val binaryPropertyPrefix = "xtras.bin"
-        val binaryProperty: (String, String) -> String = { exe, defValue ->
-          target.projectProperty("$binaryPropertyPrefix.$exe", defValue)
-        }
+    target.log("Initializing BinaryPlugin...")
+    target.extensions.create(XTRAS_BINARIES_EXTN_NAME, BinaryExtension::class.java).apply {
 
-        gitBinary = binaryProperty("git", gitBinary)
-        wgetBinary = binaryProperty("wget", wgetBinary)
-        goBinary = binaryProperty("go", goBinary)
-        tarBinary = binaryProperty("tar", tarBinary)
-        autoreconfBinary = binaryProperty("autoreconf", autoreconfBinary)
-        makeBinary = binaryProperty("make", makeBinary)
-        cmakeBinary = binaryProperty("cmake", cmakeBinary)
+      val binaryPropertyPrefix = "xtras.bin"
+      val binaryProperty: (String, String) -> String = { exe, defValue ->
+        target.projectProperty("$binaryPropertyPrefix.$exe", defValue)
+      }
+
+      gitBinary = binaryProperty("git", gitBinary)
+      wgetBinary = binaryProperty("wget", wgetBinary)
+      goBinary = binaryProperty("go", goBinary)
+      tarBinary = binaryProperty("tar", tarBinary)
+      autoreconfBinary = binaryProperty("autoreconf", autoreconfBinary)
+      makeBinary = binaryProperty("make", makeBinary)
+      cmakeBinary = binaryProperty("cmake", cmakeBinary)
 
 
-        target.tasks.register("xtrasConfig") {
-          group = XTRAS_TASK_GROUP
-          description = "Prints out the xtras configuration details"
+      target.tasks.register("xtrasConfig") {
+        group = XTRAS_TASK_GROUP
+        description = "Prints out the xtras configuration details"
 
-          doFirst {
-            println(
-              """
+        doFirst {
+          println(
+            """
                 
                 Binaries:
                   $binaryPropertyPrefix.git:            $gitBinary
@@ -248,10 +210,10 @@ class BinaryPlugin : Plugin<Project> {
                   $PROPERTY_DOCS_DIR:       ${project.xtrasDocsDir}
                   $PROPERTY_CINTEROPS_DIR:  ${project.xtrasCInteropsDir}
                 """.trimIndent()
-            )
-          }
+          )
         }
       }
+    }
   }
 }
 

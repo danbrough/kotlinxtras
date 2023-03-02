@@ -2,7 +2,7 @@ plugins {
   `kotlin-dsl`
   `maven-publish`
   id("org.jetbrains.dokka")
- xtras("sonatype")
+  xtras("sonatype")
 }
 
 repositories {
@@ -36,8 +36,44 @@ gradlePlugin {
       description = "Sonatype publishing support"
     }
 
+    create("core") {
+      id = "$group.core"
+      implementationClass = "$group.core.CorePlugin"
+      displayName = "KotlinXtras core plugins"
+      description = "Provides some core plugins"
+    }
+
   }
 }
 
 
+
+afterEvaluate {
+
+
+  extensions.findByType(SigningExtension::class.java)?.run {
+    listOf("Xtras", "SonaType").forEach {
+
+
+      tasks.findByPath("publishBinariesPluginPluginMarkerMavenPublicationTo${it}Repository")
+        ?.mustRunAfter("signPluginMavenPublication")
+
+      tasks.findByPath("publishPluginMavenPublicationTo${it}Repository")
+        ?.mustRunAfter("signBinariesPluginPluginMarkerMavenPublication")
+
+      tasks.findByPath("publishBinariesPluginPluginMarkerMavenPublicationTo${it}Repository")
+        ?.mustRunAfter("signSonatypePluginPluginMarkerMavenPublication")
+
+      tasks.findByPath("publishPluginMavenPublicationTo${it}Repository")
+        ?.mustRunAfter("signSonatypePluginPluginMarkerMavenPublication")
+
+      tasks.findByPath("publishSonatypePluginPluginMarkerMavenPublicationTo${it}Repository")
+        ?.mustRunAfter("signPluginMavenPublication")
+
+      tasks.findByPath("publishSonatypePluginPluginMarkerMavenPublicationTo${it}Repository")
+        ?.mustRunAfter("signBinariesPluginPluginMarkerMavenPublication")
+
+    }
+  }
+}
 

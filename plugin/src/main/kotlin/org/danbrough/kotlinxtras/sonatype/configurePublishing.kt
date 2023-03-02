@@ -1,13 +1,22 @@
 package org.danbrough.kotlinxtras.sonatype
 
 
+import org.danbrough.kotlinxtras.capitalize
 import org.danbrough.kotlinxtras.projectProperty
 import org.danbrough.kotlinxtras.xtrasDocsDir
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.apply
+import org.gradle.kotlin.dsl.findByType
+import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.getValue
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.provideDelegate
+import org.gradle.kotlin.dsl.registering
+import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -18,18 +27,7 @@ import java.net.URI
 internal fun Project.configurePublishing(extn: SonatypeExtension) {
 
   extensions.findByType<PublishingExtension>()?.apply {
-    logger.info("configurePublishing - ${project.group}:${project.name}:${project.version}")
-
-    /*
-        const val SONATYPE_TASK_GROUP = "sonatype"
-    const val REPOSITORY_ID = "sonatypeRepoId"
-    const val PROFILE_ID = "sonatypeProfileId"
-    const val DESCRIPTION = "sonatypeDescription"
-    const val USERNAME = "sonatypeUsername"
-    const val PASSWORD = "sonatypePassword"
-    const val PUBLISH_DOCS = "publishDocs"
-    const val SIGN_APPLICATIONS = "signApplications"
-     */
+    logger.info("Project.configurePublishing - ${project.group}:${project.name}:${project.version}")
 
     extn.sonatypeRepoId = project.projectProperty(SonatypeExtension.REPOSITORY_ID, null)
     extn.sonatypeProfileId = project.projectProperty(SonatypeExtension.PROFILE_ID)
@@ -95,6 +93,14 @@ internal fun Project.configurePublishing(extn: SonatypeExtension) {
         }
       }
     }
+
+    val signTasks = tasks.withType(Sign::class.java).map { it.name }
+    if (signTasks.isNotEmpty()) {
+      tasks.withType(PublishToMavenRepository::class.java) {
+        dependsOn(signTasks)
+      }
+    }
+
 
     repositories {
       maven {

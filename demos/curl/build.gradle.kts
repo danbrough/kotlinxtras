@@ -1,4 +1,4 @@
-import org.danbrough.kotlinxtras.enableCurl
+import org.danbrough.kotlinxtras.core.enableCurl
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 
@@ -8,6 +8,7 @@ plugins {
 }
 
 repositories {
+  maven("/usr/local/kotlinxtras/build/xtras/maven")
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
 }
@@ -24,7 +25,7 @@ kotlin {
   linuxArm32Hfp()
   linuxArm64()
 
-  if (HostManager.hostIsMac){
+  if (HostManager.hostIsMac) {
     macosX64()
     macosArm64()
   }
@@ -38,7 +39,7 @@ kotlin {
     }
   }
 
-  val posixMain by sourceSets.creating{
+  val posixMain by sourceSets.creating {
     dependsOn(commonMain)
   }
 
@@ -52,7 +53,7 @@ kotlin {
     binaries {
       executable("curlDemo") {
         entryPoint = "demo1.main"
-        runTask?.environment("CA_CERT_FILE",file("cacert.pem"))
+        runTask?.environment("CA_CERT_FILE", file("cacert.pem"))
         findProperty("args")?.also {
           runTask?.args(it.toString())
         }
@@ -63,6 +64,6 @@ kotlin {
 
 
 
-tasks.create("run"){
+tasks.create("run") {
   dependsOn("runCurlDemoDebugExecutable${if (HostManager.hostIsMac) "MacosX64" else "LinuxX64"}")
 }

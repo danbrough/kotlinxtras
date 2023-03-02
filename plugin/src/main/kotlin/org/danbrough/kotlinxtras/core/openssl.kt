@@ -1,9 +1,11 @@
 @file:Suppress("unused")
 
-package org.danbrough.kotlinxtras
+package org.danbrough.kotlinxtras.core
 
 
 import org.danbrough.kotlinxtras.binaries.*
+import org.danbrough.kotlinxtras.enableKonanDeps
+import org.danbrough.kotlinxtras.hostTriplet
 import org.gradle.api.Project
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget

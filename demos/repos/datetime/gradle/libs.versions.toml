@@ -12,7 +12,10 @@ xtras = "0.0.2-beta01"
 [libraries]
 
 klog = "org.danbrough:klog:0.0.2-beta01"
+##                     ⬆ :0.0.2-beta02"
 
 kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }
 
 kotlinx-datetime = "org.danbrough.kotlinx:kotlinx-datetime:0.4.0c"
+##                                                     ⬆ :0.4.0d"
+##                                                     ⬆ :0.4.0"

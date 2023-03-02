@@ -2,6 +2,7 @@ package org.danbrough.kotlinxtras
 
 import org.gradle.api.Project
 import java.io.File
+import java.util.Locale
 
 const val XTRAS_PACKAGE = "org.danbrough.kotlinxtras"
 
@@ -10,6 +11,8 @@ const val XTRAS_BINARY_PLUGIN_ID = "$XTRAS_PACKAGE.binaries"
 const val XTRAS_BINARIES_PUBLISHING_GROUP = "$XTRAS_PACKAGE.xtras"
 
 const val XTRAS_TASK_GROUP = "xtras"
+
+const val XTRAS_REPO_NAME = "xtras"
 
 const val PROPERTY_XTRAS_DIR = "xtras.dir"
 
@@ -112,7 +115,6 @@ val Project.xtrasDocsDir: File
   get() = xtrasPath(PROPERTY_DOCS_DIR, "docs")
 
 
-
 /**
  * Path to the xtras libs directory.
  * This is the install prefix for binary packages
@@ -122,3 +124,7 @@ val Project.xtrasDocsDir: File
 val Project.xtrasLibsDir: File
   get() = xtrasPath(PROPERTY_LIBS_DIR, "libs")
 
+fun String.capitalize() =
+  replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+
+fun String.decapitalize() = replaceFirstChar { it.lowercase(Locale.getDefault()) }

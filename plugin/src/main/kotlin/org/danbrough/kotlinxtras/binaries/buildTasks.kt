@@ -1,15 +1,16 @@
 package org.danbrough.kotlinxtras.binaries
 
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
+import org.danbrough.kotlinxtras.log
 import org.gradle.api.tasks.Exec
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 
 private fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget) =
   project.tasks.register(configureSourcesTaskName(target), Exec::class.java) {
-    if (!isPackageBuilt(target))
-      dependsOn(extractSourcesTaskName(target))
-    environment.clear()
+
+    if (!isPackageBuilt(target)) dependsOn(extractSourcesTaskName(target))
+
     environment(buildEnvironment(target))
     group = XTRAS_TASK_GROUP
     workingDir(sourcesDir(target))
@@ -34,6 +35,11 @@ fun LibraryExtension.registerBuildTasks(target: KonanTarget) {
     group = XTRAS_TASK_GROUP
     environment(buildEnvironment(target))
 
+
+    doFirst {
+      project.log("running $name environment: $environment")
+    }
+
     workingDir(sourcesDir(target))
     outputs.dir(buildDir(target))
 
@@ -41,13 +47,17 @@ fun LibraryExtension.registerBuildTasks(target: KonanTarget) {
       !isPackageBuilt(target)
     }
 
-    dependsOn(extractSourcesTaskName(target))
-
-    configureTask?.also {
-      dependsOn(configureSourcesTaskName(target))
+    if (!isPackageBuilt(target)) {
+      dependsOn(extractSourcesTaskName(target))
+      configureTask?.also {
+        dependsOn(configureSourcesTaskName(target))
+      }
     }
 
     buildTask!!(target)
+
+    finalizedBy(createArchiveTaskName(target))
+
 
   }
 }
