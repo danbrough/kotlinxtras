@@ -4,13 +4,12 @@ package org.danbrough.kotlinxtras.core
 
 
 import org.danbrough.kotlinxtras.binaries.*
-import org.danbrough.kotlinxtras.enableKonanDeps
 import org.danbrough.kotlinxtras.hostTriplet
 import org.gradle.api.Project
 
 const val XTRAS_SQLITE_EXTN_NAME = "sqlite"
-const val XTRAS_SQLITE_VERSION_NAME = "3.40.1a"
-const val XTRAS_SQLITE_SOURCE_URL = "https://www.sqlite.org/2022/sqlite-autoconf-3400100.tar.gz"
+const val XTRAS_SQLITE_VERSION_NAME = "3.41.0"
+const val XTRAS_SQLITE_SOURCE_URL = "https://www.sqlite.org/2023/sqlite-autoconf-3410000.tar.gz"
 
 fun Project.enableSqlite(
   extnName: String = XTRAS_SQLITE_EXTN_NAME, versionName: String = XTRAS_SQLITE_VERSION_NAME,
@@ -27,7 +26,7 @@ fun Project.enableSqlite(
     }
 
     configure { target ->
-      enableKonanDeps(target)
+
       commandLine(
         "./configure",
         "--host=${target.hostTriplet}",

@@ -1,9 +1,7 @@
 #!/bin/bash
 cd "$(dirname "$0")" && cd ..
 
-DESCRIPTION=${1-"xtras:plugin"}
 
-#./gradlew plugin:publishAllPublicationsToXtrasRepository
 
 ./gradlew -PsonatypeDescription="$DESCRIPTION" plugin:sonatypeOpen
 	
