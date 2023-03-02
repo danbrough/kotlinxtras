@@ -3,7 +3,7 @@ cd "$(dirname "$0")" && cd ..
 
 
 
-./gradlew -PsonatypeDescription="$DESCRIPTION" plugin:sonatypeOpen
+./gradlew plugin:sonatypeClose
 	
 
 #./gradlew -PpluginsOnly=true $OPTS plugin:publishAllPublicationsTo${REPO}Repository || exit 1

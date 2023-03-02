@@ -4,6 +4,7 @@ import org.danbrough.kotlinxtras.XTRAS_REPO_NAME
 import org.danbrough.kotlinxtras.capitalize
 import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.platformName
+import org.danbrough.kotlinxtras.registerKonanDepsTasks
 import org.danbrough.kotlinxtras.xtrasMavenDir
 import org.danbrough.kotlinxtras.xtrasSupportedTargets
 import org.gradle.api.publish.PublishingExtension
@@ -85,6 +86,7 @@ internal fun LibraryExtension.registerXtrasTasks() {
 
 
   supportedTargets.forEach { target ->
+    project.registerKonanDepsTasks(target)
 
     configureTargetTask?.invoke(target)
 

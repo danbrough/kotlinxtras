@@ -4,7 +4,6 @@ package org.danbrough.kotlinxtras.core
 
 
 import org.danbrough.kotlinxtras.binaries.*
-import org.danbrough.kotlinxtras.enableKonanDeps
 import org.danbrough.kotlinxtras.hostTriplet
 import org.danbrough.kotlinxtras.platformName
 import org.gradle.api.Project
@@ -35,7 +34,6 @@ fun Project.enableCurl(
       configureTarget { target ->
 
         project.tasks.create(target.autoConfTaskName(), Exec::class.java) {
-          enableKonanDeps(target)
           onlyIf { !isPackageBuilt(target) }
           dependsOn(extractSourcesTaskName(target))
           workingDir(sourcesDir(target))

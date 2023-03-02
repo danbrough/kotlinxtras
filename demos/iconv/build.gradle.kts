@@ -1,10 +1,6 @@
-import org.danbrough.kotlinxtras.binaries.LibraryExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.Executable
+import org.danbrough.kotlinxtras.core.enableIconv
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.danbrough.kotlinxtras.enableIconv
 
 plugins {
   kotlin("multiplatform")
@@ -13,10 +9,13 @@ plugins {
 }
 
 
-enableIconv()
+enableIconv {
+  cinterops {
 
-
+  }
+}
 repositories {
+  maven("/usr/local/kotlinxtras/build/xtras/maven")
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
 }
@@ -38,6 +37,7 @@ kotlin {
     }
   }
 
+
   val posixMain by sourceSets.creating
 
   targets.withType<KotlinNativeTarget> {
@@ -55,7 +55,7 @@ kotlin {
   }
 }
 
-tasks.create("run"){
+tasks.create("run") {
   dependsOn("runIconvDemoDebugExecutable${if (HostManager.hostIsMac) "MacosX64" else "LinuxX64"}")
 }
 
