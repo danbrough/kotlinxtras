@@ -16,9 +16,9 @@ class SonatypePlugin : Plugin<Project> {
       ?: project.pluginManager.apply(publishingPluginId)
 
     project.afterEvaluate {
-      project.createOpenRepoTask(extn)
-      project.createCloseRepoTask(extn)
-      project.configurePublishing(extn)
+      createOpenRepoTask(extn)
+      createCloseRepoTask(extn)
+      configurePublishing(extn)
     }
   }
 }

@@ -41,33 +41,3 @@ gradlePlugin {
 }
 
 
-
-afterEvaluate {
-
-
-  extensions.findByType(SigningExtension::class.java)?.run {
-    listOf("Xtras", "SonaType").forEach {
-
-
-      tasks.findByPath("publishBinariesPluginPluginMarkerMavenPublicationTo${it}Repository")
-        ?.mustRunAfter("signPluginMavenPublication")
-
-      tasks.findByPath("publishPluginMavenPublicationTo${it}Repository")
-        ?.mustRunAfter("signBinariesPluginPluginMarkerMavenPublication")
-
-      tasks.findByPath("publishBinariesPluginPluginMarkerMavenPublicationTo${it}Repository")
-        ?.mustRunAfter("signSonatypePluginPluginMarkerMavenPublication")
-
-      tasks.findByPath("publishPluginMavenPublicationTo${it}Repository")
-        ?.mustRunAfter("signSonatypePluginPluginMarkerMavenPublication")
-
-      tasks.findByPath("publishSonatypePluginPluginMarkerMavenPublicationTo${it}Repository")
-        ?.mustRunAfter("signPluginMavenPublication")
-
-      tasks.findByPath("publishSonatypePluginPluginMarkerMavenPublicationTo${it}Repository")
-        ?.mustRunAfter("signBinariesPluginPluginMarkerMavenPublication")
-
-    }
-  }
-}
-
