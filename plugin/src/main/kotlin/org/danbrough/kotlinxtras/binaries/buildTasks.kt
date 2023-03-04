@@ -49,7 +49,10 @@ fun LibraryExtension.registerBuildTasks(target: KonanTarget) {
     }
 
     if (!isPackageBuilt(target)) {
-      dependsOn(extractSourcesTaskName(target))
+      project.tasks.findByName(extractSourcesTaskName(target))?.also {
+        dependsOn(it)
+      }
+
       configureTask?.also {
         dependsOn(configureSourcesTaskName(target))
       }

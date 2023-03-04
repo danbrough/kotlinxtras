@@ -1,6 +1,7 @@
 import org.danbrough.kotlinxtras.core.enableCurl
 import org.danbrough.kotlinxtras.core.enableIconv
 import org.danbrough.kotlinxtras.core.enableOpenssl
+import org.danbrough.kotlinxtras.core.enableOpenssl3
 import org.danbrough.kotlinxtras.core.enableSqlite
 
 plugins {
@@ -15,6 +16,10 @@ enableIconv {
 }
 
 enableOpenssl {
+}
+
+enableOpenssl3 {
+  
 }
 
 enableCurl {
