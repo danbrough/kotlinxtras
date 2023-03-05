@@ -4,6 +4,7 @@ import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.capitalize
 import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.platformName
+import org.danbrough.kotlinxtras.xtrasPackagesDir
 import org.gradle.api.Task
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.tasks.TaskProvider
@@ -32,6 +33,20 @@ private fun LibraryExtension.registerCleanBuildTask(target: KonanTarget) =
         sourcesDir.deleteRecursively()
       }
     }
+  }
+
+
+internal fun LibraryExtension.registerProvideArchiveTask(target: KonanTarget): TaskProvider<Task> =
+  project.tasks.register(provideArchiveTaskName(target)) {
+    group = XTRAS_TASK_GROUP
+    description =
+      "Ensures that the binary archive for $libName:${target.platformName} exists in the ${project.xtrasPackagesDir} folder"
+
+    if (deferToPrebuiltPackages)
+      dependsOn(downloadArchiveTaskName(target))
+    else dependsOn(createArchiveTaskName(target))
+
+    outputs.file(archiveFile(target))
   }
 
 

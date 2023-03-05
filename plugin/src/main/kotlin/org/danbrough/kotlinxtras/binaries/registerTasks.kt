@@ -91,8 +91,9 @@ internal fun LibraryExtension.registerXtrasTasks() {
     configureTargetTask?.invoke(target)
 
     registerDownloadArchiveTask(target)
-    val archiveTask = registerCreateArchiveTask(target)
+    registerCreateArchiveTask(target)
     registerExtractLibsTask(target)
+    val archiveTask = registerProvideArchiveTask(target)
 
     if (HostManager.hostIsMac == target.family.isAppleFamily)
       publishing.publications.create(
