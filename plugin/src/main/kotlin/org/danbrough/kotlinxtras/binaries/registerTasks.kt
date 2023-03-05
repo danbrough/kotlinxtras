@@ -69,7 +69,7 @@ internal fun LibraryExtension.registerXtrasTasks() {
     environment(ldLibKey, newLibPath)
   }
 
-  val buildEnabled = enableBuilding && buildTask != null
+  val buildEnabled = buildTask != null
 
 
   if (buildEnabled) {

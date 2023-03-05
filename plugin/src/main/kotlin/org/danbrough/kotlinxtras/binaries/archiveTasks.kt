@@ -40,7 +40,9 @@ internal fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): Task
     group = XTRAS_TASK_GROUP
     description = "Unpacks $libName:${target.platformName} into the ${libsDir(target)} directory"
     //mustRunAfter(downloadSourcesTaskName(target),buildSourcesTaskName(target))
-    dependsOn(downloadArchiveTaskName(target), createArchiveTaskName(target))
+    if (deferToPrebuiltPackages)
+      dependsOn(downloadArchiveTaskName(target))
+    else dependsOn(createArchiveTaskName(target))
 
     outputs.dir(libsDir(target))
     actions.add {
@@ -62,9 +64,7 @@ fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): TaskProvide
     dependsOn(buildSourcesTaskName(target))
     val archiveFile = archiveFile(target)
     outputs.file(archiveFile)
-    onlyIf {
-      !isPackageBuilt(target)
-    }
+
     actions.add {
       project.exec {
         workingDir(buildDir(target))
@@ -79,8 +79,12 @@ fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): TaskProvide
       }
     }
 
-    finalizedBy(cleanupTaskName(target))
-    //finalizedBy("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository")
+    this.destroyables
+
+    finalizedBy(
+      "publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository",
+      cleanupTaskName(target)
+    )
   }
 }
 
@@ -124,9 +128,7 @@ internal fun LibraryExtension.registerDownloadArchiveTask(target: KonanTarget): 
 
     val archiveFile = archiveFile(target)
     outputs.file(archiveFile)
-    onlyIf {
-      !isPackageBuilt(target)
-    }
+
 
     actions.add {
 
@@ -137,32 +139,5 @@ internal fun LibraryExtension.registerDownloadArchiveTask(target: KonanTarget): 
     }
   }
 
-
-/*
-fun LibraryExtension.registerArchiveTasks(target: KonanTarget) {
-  project.log("LibraryExtension.registerArchiveTasks: $target group:$publishingGroup version:$version")
-
-  registerCreateArchiveTask(target)
-  registerExtractLibsTask(target)
-
-
-  project.extensions.findByType(PublishingExtension::class.java)?.apply {
-    publications.register(
-      "$libName${target.platformName.capitalized()}",
-      MavenPublication::class.java
-    ) {
-      artifactId = name
-      groupId = this@registerArchiveTasks.publishingGroup
-      version = this@registerArchiveTasks.version
-      artifact(project.tasks.getByName(resolveArchiveTaskName(target)))
-      *//*project.tasks.getByName("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository").apply {
-        mustRunAfter(resolveArchiveTaskName(target),createArchiveTaskName(target))
-      }*//*
-
-    }
-  }
-
-}
-*/
 
 

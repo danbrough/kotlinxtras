@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 private fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget) =
   project.tasks.register(configureSourcesTaskName(target), Exec::class.java) {
     dependsOn(target.konanDepsTaskName)
-    if (!isPackageBuilt(target)) dependsOn(extractSourcesTaskName(target))
+    dependsOn(extractSourcesTaskName(target))
 
     environment(buildEnvironment(target))
     group = XTRAS_TASK_GROUP
@@ -20,9 +20,7 @@ private fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget) =
       project.log("running $name with: ${commandLine.joinToString(" ")}")
     }
     // enabled = !isPackageBuilt(target)
-    onlyIf {
-      !isPackageBuilt(target)
-    }
+
   }
 
 
@@ -44,19 +42,16 @@ fun LibraryExtension.registerBuildTasks(target: KonanTarget) {
     workingDir(sourcesDir(target))
     outputs.dir(buildDir(target))
 
-    onlyIf {
-      !isPackageBuilt(target)
+
+
+    project.tasks.findByName(extractSourcesTaskName(target))?.also {
+      dependsOn(it)
     }
 
-    if (!isPackageBuilt(target)) {
-      project.tasks.findByName(extractSourcesTaskName(target))?.also {
-        dependsOn(it)
-      }
-
-      configureTask?.also {
-        dependsOn(configureSourcesTaskName(target))
-      }
+    configureTask?.also {
+      dependsOn(configureSourcesTaskName(target))
     }
+
 
     buildTask!!(target)
 
