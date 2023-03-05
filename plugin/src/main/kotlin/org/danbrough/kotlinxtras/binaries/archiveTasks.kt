@@ -54,10 +54,7 @@ internal fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): Task
   project.tasks.register(extractArchiveTaskName(target)) {
     group = XTRAS_TASK_GROUP
     description = "Unpacks $libName:${target.platformName} into the ${libsDir(target)} directory"
-    //mustRunAfter(downloadSourcesTaskName(target),buildSourcesTaskName(target))
-    if (deferToPrebuiltPackages)
-      dependsOn(downloadArchiveTaskName(target))
-    else dependsOn(createArchiveTaskName(target))
+    dependsOn(provideArchiveTaskName(target))
 
     outputs.dir(libsDir(target))
     actions.add {
