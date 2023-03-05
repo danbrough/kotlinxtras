@@ -132,7 +132,7 @@ internal fun LibraryExtension.registerGitExtractTask(
     }
 
     onlyIf {
-      !destDir.resolve(".git").exists() && !isPackageBuilt(konanTarget)
+      !destDir.resolve(".git").exists()
     }
 
     actions.add {
@@ -160,7 +160,7 @@ internal fun LibraryExtension.registerGitExtractTask(
 
     inputs.property("commit", srcConfig.commit)
     outputs.dir(destDir)
-    onlyIf { !isPackageBuilt(konanTarget) }
+    //onlyIf { !isPackageBuilt(konanTarget) }
 
 
     actions.add {
@@ -223,7 +223,7 @@ internal fun LibraryExtension.registerArchiveExtractTask(
   project.tasks.register(extractSourcesTaskName(konanTarget), Exec::class.java) {
     group = XTRAS_TASK_GROUP
     mustRunAfter(downloadArchiveTaskName(konanTarget))
-    onlyIf { !isPackageBuilt(konanTarget) }
+    //onlyIf { !isPackageBuilt(konanTarget) }
     dependsOn(downloadSourcesTaskName)
     val destDir = sourcesDir(konanTarget)
     val archiveFile = project.tasks.getAt(downloadSourcesTaskName).outputs.files.first()

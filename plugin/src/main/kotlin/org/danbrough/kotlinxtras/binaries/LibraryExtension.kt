@@ -51,13 +51,9 @@ abstract class LibraryExtension(val project: Project) {
   @XtrasDSLMarker
   var publishingGroup: String = project.group.toString()
 
-  /**
-   * Whether to allow packages to be built
-   * @default true
-   */
-  @XtrasDSLMarker
-  var enableBuilding: Boolean = true
 
+  @XtrasDSLMarker
+  var deferToPrebuiltPackages: Boolean = true
 
 
   /**
@@ -119,23 +115,21 @@ abstract class LibraryExtension(val project: Project) {
 
   fun buildSourcesTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasBuild${name.capitalized()}${konanTarget.platformName.capitalized()}"
+
   fun downloadArchiveTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasDownloadArchive${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
   fun extractArchiveTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasExtractArchive${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
+  fun provideArchiveTaskName(konanTarget: KonanTarget, name: String = libName): String =
+    "xtrasProvideArchive${name.capitalized()}${konanTarget.platformName.capitalized()}"
+
   fun createArchiveTaskName(konanTarget: KonanTarget, name: String = libName): String =
     "xtrasCreateArchive${name.capitalized()}${konanTarget.platformName.capitalized()}"
 
   fun archiveFile(target: KonanTarget, name: String = libName): File =
-    project.xtrasPackagesDir.resolve(packageFileName(target, name))/*
-      fun provideBinariesTaskName(konanTarget: KonanTarget, name: String = libName): String =
-        "xtrasProvide${name.capitalized()}${konanTarget.platformName.capitalized()}"
-    */
-
-  /*  fun packageTaskName(konanTarget: KonanTarget, name: String = libName): String =
-      "xtrasPackage${name.capitalized()}${konanTarget.platformName.capitalized()}"*/
+    project.xtrasPackagesDir.resolve(packageFileName(target, name))
 
   fun generateCInteropsTaskName(name: String = libName): String =
     "xtrasGenerateCInterops${name.capitalized()}"
@@ -177,18 +171,6 @@ abstract class LibraryExtension(val project: Project) {
 
   var libsDir: (konanTarget: KonanTarget, packageName: String, packageVersion: String) -> File =
     { konanTarget, packageName, packageVersion -> project.xtrasLibsDir.resolve("$packageName/$packageVersion/${konanTarget.platformName}") }
-
-  fun isPackageBuilt(
-    konanTarget: KonanTarget,
-    name: String = libName,
-    packageVersion: String = version
-  ): Boolean = isPackageBuilt.invoke(konanTarget, name, packageVersion)
-
-  var isPackageBuilt: (konanTarget: KonanTarget, name: String, packageVersion: String) -> Boolean =
-    { konanTarget, name, packageVersion ->
-      project.xtrasPackagesDir.resolve(packageFileName(konanTarget, name, packageVersion)).exists()
-    }
-
 
   open fun buildEnvironment(konanTarget: KonanTarget): Map<String, Any?> =
     project.binariesExtension.environment(konanTarget)

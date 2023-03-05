@@ -34,7 +34,6 @@ fun Project.enableCurl(
       configureTarget { target ->
 
         project.tasks.create(target.autoConfTaskName(), Exec::class.java) {
-          onlyIf { !isPackageBuilt(target) }
           dependsOn(extractSourcesTaskName(target))
           workingDir(sourcesDir(target))
           outputs.file(workingDir.resolve("configure"))

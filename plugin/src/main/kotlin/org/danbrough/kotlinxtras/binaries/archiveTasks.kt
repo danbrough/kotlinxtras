@@ -4,6 +4,7 @@ import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.capitalize
 import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.platformName
+import org.danbrough.kotlinxtras.xtrasPackagesDir
 import org.gradle.api.Task
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.tasks.TaskProvider
@@ -35,12 +36,25 @@ private fun LibraryExtension.registerCleanBuildTask(target: KonanTarget) =
   }
 
 
+internal fun LibraryExtension.registerProvideArchiveTask(target: KonanTarget): TaskProvider<Task> =
+  project.tasks.register(provideArchiveTaskName(target)) {
+    group = XTRAS_TASK_GROUP
+    description =
+      "Ensures that the binary archive for $libName:${target.platformName} exists in the ${project.xtrasPackagesDir} folder"
+
+    if (deferToPrebuiltPackages)
+      dependsOn(downloadArchiveTaskName(target))
+    else dependsOn(createArchiveTaskName(target))
+
+    outputs.file(archiveFile(target))
+  }
+
+
 internal fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): TaskProvider<Task> =
   project.tasks.register(extractArchiveTaskName(target)) {
     group = XTRAS_TASK_GROUP
     description = "Unpacks $libName:${target.platformName} into the ${libsDir(target)} directory"
-    //mustRunAfter(downloadSourcesTaskName(target),buildSourcesTaskName(target))
-    dependsOn(downloadArchiveTaskName(target), createArchiveTaskName(target))
+    dependsOn(provideArchiveTaskName(target))
 
     outputs.dir(libsDir(target))
     actions.add {
@@ -62,9 +76,7 @@ fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): TaskProvide
     dependsOn(buildSourcesTaskName(target))
     val archiveFile = archiveFile(target)
     outputs.file(archiveFile)
-    onlyIf {
-      !isPackageBuilt(target)
-    }
+
     actions.add {
       project.exec {
         workingDir(buildDir(target))
@@ -79,8 +91,12 @@ fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): TaskProvide
       }
     }
 
-    finalizedBy(cleanupTaskName(target))
-    //finalizedBy("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository")
+    this.destroyables
+
+    finalizedBy(
+      "publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository",
+      cleanupTaskName(target)
+    )
   }
 }
 
@@ -124,9 +140,7 @@ internal fun LibraryExtension.registerDownloadArchiveTask(target: KonanTarget): 
 
     val archiveFile = archiveFile(target)
     outputs.file(archiveFile)
-    onlyIf {
-      !isPackageBuilt(target)
-    }
+
 
     actions.add {
 
@@ -137,32 +151,5 @@ internal fun LibraryExtension.registerDownloadArchiveTask(target: KonanTarget): 
     }
   }
 
-
-/*
-fun LibraryExtension.registerArchiveTasks(target: KonanTarget) {
-  project.log("LibraryExtension.registerArchiveTasks: $target group:$publishingGroup version:$version")
-
-  registerCreateArchiveTask(target)
-  registerExtractLibsTask(target)
-
-
-  project.extensions.findByType(PublishingExtension::class.java)?.apply {
-    publications.register(
-      "$libName${target.platformName.capitalized()}",
-      MavenPublication::class.java
-    ) {
-      artifactId = name
-      groupId = this@registerArchiveTasks.publishingGroup
-      version = this@registerArchiveTasks.version
-      artifact(project.tasks.getByName(resolveArchiveTaskName(target)))
-      *//*project.tasks.getByName("publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository").apply {
-        mustRunAfter(resolveArchiveTaskName(target),createArchiveTaskName(target))
-      }*//*
-
-    }
-  }
-
-}
-*/
 
 

@@ -83,6 +83,7 @@ open class BinaryExtension {
     env["KONAN_BUILD"] = 1
 
     env["ANDROID_NDK_HOME"] = androidNdkDir.absolutePath
+    env["ANDROID_NDK_ROOT"] = androidNdkDir.absolutePath
 
 
     when (target) {

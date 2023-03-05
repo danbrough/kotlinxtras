@@ -69,3 +69,11 @@ subprojects {
   }
 }
 
+
+
+
+afterEvaluate {
+  tasks.findByPath(":plugin:javadocJar")?.also {
+    tasks.findByPath(":core:dokkaHtml")?.mustRunAfter(it)
+  }
+}
