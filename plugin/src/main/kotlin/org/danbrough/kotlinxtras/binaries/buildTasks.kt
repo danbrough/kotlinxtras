@@ -11,16 +11,13 @@ private fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget) =
   project.tasks.register(configureSourcesTaskName(target), Exec::class.java) {
     dependsOn(target.konanDepsTaskName)
     dependsOn(extractSourcesTaskName(target))
-
     environment(buildEnvironment(target))
     group = XTRAS_TASK_GROUP
     workingDir(sourcesDir(target))
-    configureTask!!(target)
     doFirst {
       project.log("running $name with: ${commandLine.joinToString(" ")}")
     }
-    // enabled = !isPackageBuilt(target)
-
+    configureTask!!(target)
   }
 
 
@@ -39,7 +36,9 @@ fun LibraryExtension.registerBuildTasks(target: KonanTarget) {
       project.log("running $name environment: $environment")
     }
 
-    workingDir(sourcesDir(target))
+    val srcDir = sourcesDir(target)
+    workingDir(srcDir)
+    
     outputs.dir(buildDir(target))
 
 
@@ -54,9 +53,6 @@ fun LibraryExtension.registerBuildTasks(target: KonanTarget) {
 
 
     buildTask!!(target)
-
-    finalizedBy(createArchiveTaskName(target))
-
 
   }
 }

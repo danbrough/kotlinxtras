@@ -40,8 +40,14 @@ fun Project.enableOpenssl3(
     }
 
 
-    build {
+    build { target ->
       commandLine(binaries.makeBinary, "install_sw")
+      doLast {
+        val buildDir = buildDir(target)
+        if (buildDir.resolve("lib64").exists()) {
+          buildDir.resolve("lib64").renameTo(buildDir.resolve("lib"))
+        }
+      }
     }
 
     cinterops {
