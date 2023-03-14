@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 internal fun LibraryExtension.registerXtrasTasks() {
@@ -60,7 +59,7 @@ internal fun LibraryExtension.registerXtrasTasks() {
 
   project.tasks.withType(KotlinNativeTest::class.java).all {
 
-    val konanTarget = if (HostManager.hostIsMac) KonanTarget.MACOS_X64 else KonanTarget.LINUX_X64
+    val konanTarget = HostManager.host
     val libPath = environment[SHARED_LIBRARY_PATH_NAME]
     val newLibPath = (libPath?.let { "$it${File.pathSeparator}" }
       ?: "") + project.binariesExtension.libraryExtensions.map {

@@ -6,6 +6,7 @@ import org.danbrough.kotlinxtras.PROPERTY_DOWNLOADS_DIR
 import org.danbrough.kotlinxtras.PROPERTY_LIBS_DIR
 import org.danbrough.kotlinxtras.PROPERTY_PACKAGES_DIR
 import org.danbrough.kotlinxtras.PROPERTY_XTRAS_DIR
+import org.danbrough.kotlinxtras.SHARED_LIBRARY_PATH_NAME
 import org.danbrough.kotlinxtras.XTRAS_BINARY_PLUGIN_ID
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.goArch
@@ -13,6 +14,7 @@ import org.danbrough.kotlinxtras.goOS
 import org.danbrough.kotlinxtras.hostTriplet
 import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.projectProperty
+import org.danbrough.kotlinxtras.sharedLibraryPath
 import org.danbrough.kotlinxtras.xtrasCInteropsDir
 import org.danbrough.kotlinxtras.xtrasDir
 import org.danbrough.kotlinxtras.xtrasDocsDir
@@ -21,6 +23,7 @@ import org.danbrough.kotlinxtras.xtrasLibsDir
 import org.danbrough.kotlinxtras.xtrasPackagesDir
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -214,7 +217,16 @@ class BinaryPlugin : Plugin<Project> {
           )
         }
       }
+
+
+      target.afterEvaluate {
+        tasks.withType(KotlinJvmTest::class.java) {
+          dependsOn(libraryExtensions.map { it.extractArchiveTaskName(HostManager.host) })
+          environment(SHARED_LIBRARY_PATH_NAME, sharedLibraryPath())
+        }
+      }
     }
+
   }
 }
 
