@@ -53,7 +53,8 @@ abstract class LibraryExtension(val project: Project) {
 
 
   @XtrasDSLMarker
-  var deferToPrebuiltPackages: Boolean = true
+  var deferToPrebuiltPackages: Boolean =
+    project.findProperty("deferToPrebuiltPackages")?.toString()?.toBoolean() ?: true
 
 
   /**
