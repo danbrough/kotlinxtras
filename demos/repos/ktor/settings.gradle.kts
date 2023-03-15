@@ -15,5 +15,5 @@ plugins {
 
 
 
-rootProject.name = "ktor_standalone_demo"
+rootProject.name = "ktor_demo"
 
