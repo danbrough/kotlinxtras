@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.konan.target.Family
 
 const val OPENSSL3_EXTN_NAME = "openssl3"
 
-const val OPENSSL3_VERSION = "3.1.0-danbrough"
-const val OPENSSL3_GIT_COMMIT = "90078132a7e0b3536127cff05f6b3de71a2f7898"
+//const val OPENSSL3_VERSION = "3.1.0-danbrough"
+//const val OPENSSL3_GIT_COMMIT = "90078132a7e0b3536127cff05f6b3de71a2f7898"
+const val OPENSSL3_VERSION = "3.0.8"
+const val OPENSSL3_GIT_COMMIT = "e4e4c3b72620cf8ef35c275271415bfc675ffaa3"
 
 fun Project.enableOpenssl3(
   extnName: String = OPENSSL3_EXTN_NAME,
