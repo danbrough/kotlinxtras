@@ -53,7 +53,8 @@ abstract class LibraryExtension(val project: Project) {
 
 
   @XtrasDSLMarker
-  var deferToPrebuiltPackages: Boolean = true
+  var deferToPrebuiltPackages: Boolean =
+    project.findProperty("deferToPrebuiltPackages")?.toString()?.toBoolean() ?: true
 
 
   /**
@@ -182,6 +183,7 @@ abstract class LibraryExtension(val project: Project) {
     env["CFLAGS"] = "${env["CFLAGS"] ?: ""} -I${libsDir(target)}/include"
     env["LDFLAGS"] = "${env["LDFLAGS"] ?: ""} -L${libsDir(target)}/lib"
   }
+
 
 }
 

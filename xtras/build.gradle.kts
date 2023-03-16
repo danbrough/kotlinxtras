@@ -19,7 +19,6 @@ enableOpenssl {
 }
 
 enableOpenssl3 {
-  
 }
 
 enableCurl {

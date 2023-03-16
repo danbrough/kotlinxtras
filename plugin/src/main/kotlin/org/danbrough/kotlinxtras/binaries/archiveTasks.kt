@@ -28,7 +28,7 @@ private fun LibraryExtension.registerCleanBuildTask(target: KonanTarget) =
         buildDir.deleteRecursively()
       }
 
-      if (sourcesDir.exists()) {
+      if (sourceConfig?.deleteSourcesOnClean == true && sourcesDir.exists()) {
         project.log("${cleanupTaskName(target)} deleting $sourcesDir")
         sourcesDir.deleteRecursively()
       }
@@ -55,11 +55,12 @@ internal fun LibraryExtension.registerExtractLibsTask(target: KonanTarget): Task
     group = XTRAS_TASK_GROUP
     description = "Unpacks $libName:${target.platformName} into the ${libsDir(target)} directory"
     dependsOn(provideArchiveTaskName(target))
+    val archiveFile = archiveFile(target)
+    inputs.file(archiveFile)
 
     outputs.dir(libsDir(target))
     actions.add {
       project.exec {
-        val archiveFile = archiveFile(target)
         workingDir(libsDir(target))
         project.log("extracting: $archiveFile to $workingDir")
         commandLine("tar", "xvpfz", archiveFile.absolutePath)
@@ -74,6 +75,7 @@ fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): TaskProvide
     group = XTRAS_TASK_GROUP
     description = "Outputs binary archive for $libName:${target.platformName}"
     dependsOn(buildSourcesTaskName(target))
+    inputs.dir(buildDir(target))
     val archiveFile = archiveFile(target)
     outputs.file(archiveFile)
 
@@ -91,11 +93,9 @@ fun LibraryExtension.registerCreateArchiveTask(target: KonanTarget): TaskProvide
       }
     }
 
-    this.destroyables
-
     finalizedBy(
       "publish${libName.capitalized()}${target.platformName.capitalized()}PublicationToXtrasRepository",
-      cleanupTaskName(target)
+      //  cleanupTaskName(target)
     )
   }
 }
@@ -129,6 +129,9 @@ fun LibraryExtension.resolveBinariesFromMaven(target: KonanTarget): File? {
     }
   }.exceptionOrNull()?.let {
     project.log("LibraryExtension.resolveBinariesFromMaven():$target Failed for $mavenID: ${it.message}")
+    if (deferToPrebuiltPackages) {
+      project.log("Do you need to set deferToPrebuiltPackages = false on the LibraryExtension?")
+    }
   }
   return null
 }

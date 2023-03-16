@@ -1,5 +1,6 @@
 package org.danbrough.kotlinxtras.binaries
 
+import org.danbrough.kotlinxtras.SHARED_LIBRARY_PATH_NAME
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.xtrasCInteropsDir
@@ -8,7 +9,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.Executable
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.io.PrintWriter
@@ -73,7 +73,7 @@ fun LibraryExtension.registerGenerateInteropsTask() {
     config.defFile = project.xtrasCInteropsDir.resolve("xtras_${libName}.def")
 
   project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
-    val libPathKey = if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH"
+
 
     targets.withType(KotlinNativeTarget::class.java).all {
       compilations.getByName("main").apply {
@@ -84,12 +84,14 @@ fun LibraryExtension.registerGenerateInteropsTask() {
 
       binaries.withType(Executable::class.java).filter { it.runTask != null }.forEach {
         val env = it.runTask!!.environment
-        if (env.containsKey(libPathKey))
-          env[libPathKey] =
-            env[libPathKey]!!.toString() + File.pathSeparatorChar + libsDir(konanTarget).resolve("lib")
+        if (env.containsKey(SHARED_LIBRARY_PATH_NAME))
+          env[SHARED_LIBRARY_PATH_NAME] =
+            env[SHARED_LIBRARY_PATH_NAME]!!.toString() + File.pathSeparatorChar + libsDir(
+              konanTarget
+            ).resolve("lib")
         else
-          env[libPathKey] = libsDir(konanTarget).resolve("lib")
-        project.logger.info("Setting $libPathKey for $konanTarget to ${env[libPathKey]}")
+          env[SHARED_LIBRARY_PATH_NAME] = libsDir(konanTarget).resolve("lib")
+        project.logger.info("Setting $SHARED_LIBRARY_PATH_NAME for $konanTarget to ${env[SHARED_LIBRARY_PATH_NAME]}")
       }
     }
   }

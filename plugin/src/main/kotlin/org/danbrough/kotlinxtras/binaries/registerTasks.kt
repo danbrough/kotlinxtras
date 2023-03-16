@@ -1,5 +1,6 @@
 package org.danbrough.kotlinxtras.binaries
 
+import org.danbrough.kotlinxtras.SHARED_LIBRARY_PATH_NAME
 import org.danbrough.kotlinxtras.XTRAS_REPO_NAME
 import org.danbrough.kotlinxtras.capitalize
 import org.danbrough.kotlinxtras.log
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 internal fun LibraryExtension.registerXtrasTasks() {
@@ -58,15 +58,15 @@ internal fun LibraryExtension.registerXtrasTasks() {
   }
 
   project.tasks.withType(KotlinNativeTest::class.java).all {
-    val ldLibKey = if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH"
-    val konanTarget = if (HostManager.hostIsMac) KonanTarget.MACOS_X64 else KonanTarget.LINUX_X64
-    val libPath = environment[ldLibKey]
+
+    val konanTarget = HostManager.host
+    val libPath = environment[SHARED_LIBRARY_PATH_NAME]
     val newLibPath = (libPath?.let { "$it${File.pathSeparator}" }
       ?: "") + project.binariesExtension.libraryExtensions.map {
       it.libsDir(konanTarget).resolve("lib")
     }.joinToString(File.pathSeparator)
     // println("$ldLibKey = $newLibPath")
-    environment(ldLibKey, newLibPath)
+    environment(SHARED_LIBRARY_PATH_NAME, newLibPath)
   }
 
   val buildEnabled = buildTask != null
@@ -95,15 +95,14 @@ internal fun LibraryExtension.registerXtrasTasks() {
     registerExtractLibsTask(target)
     val archiveTask = registerProvideArchiveTask(target)
 
-    if (HostManager.hostIsMac == target.family.isAppleFamily)
-      publishing.publications.create(
-        "$libName${target.platformName.capitalize()}", MavenPublication::class.java
-      ) {
-        artifactId = "${libName}${target.platformName.capitalize()}"
-        version = this@registerXtrasTasks.version
-        artifact(archiveTask)
-        groupId = this@registerXtrasTasks.publishingGroup
-      }
+    if (HostManager.hostIsMac == target.family.isAppleFamily) publishing.publications.create(
+      "$libName${target.platformName.capitalize()}", MavenPublication::class.java
+    ) {
+      artifactId = "${libName}${target.platformName.capitalize()}"
+      version = this@registerXtrasTasks.version
+      artifact(archiveTask)
+      groupId = this@registerXtrasTasks.publishingGroup
+    }
 
     /*    if (!buildEnabled || HostManager.hostIsMac != target.family.isAppleFamily) {
           project.log("buildSupport disabled for $libName:${target.platformName}")

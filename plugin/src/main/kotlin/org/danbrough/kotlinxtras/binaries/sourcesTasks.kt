@@ -9,14 +9,17 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 
-interface SourceConfig
+interface SourceConfig {
+  var deleteSourcesOnClean: Boolean
+}
 
 data class ArchiveSourceConfig(
   var stripTopDir: Boolean = false,
-  var tarExtractOptions: String = "xf"
+  var tarExtractOptions: String = "xf", override var deleteSourcesOnClean: Boolean = true,
 ) : SourceConfig
 
-data class GitSourceConfig(val commit: String) : SourceConfig
+data class GitSourceConfig(val commit: String, override var deleteSourcesOnClean: Boolean = true) :
+  SourceConfig
 
 
 @XtrasDSLMarker
@@ -32,7 +35,10 @@ fun LibraryExtension.download(url: String, configure: ArchiveSourceConfig.() -> 
   }
 }
 
-data class DirectorySourceConfig(var file: File) : SourceConfig
+data class DirectorySourceConfig(
+  var file: File,
+  override var deleteSourcesOnClean: Boolean = false,
+) : SourceConfig
 
 @XtrasDSLMarker
 fun LibraryExtension.sourceDir(file: File) {

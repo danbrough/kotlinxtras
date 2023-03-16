@@ -1,12 +1,16 @@
-import org.danbrough.kotlinxtras.binaries.CurrentVersions.enableSqlite
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
+import org.danbrough.kotlinxtras.core.enableSqlite
 
 plugins {
   kotlin("multiplatform")
-  id("org.danbrough.kotlinxtras.consumer")
+  id("org.danbrough.kotlinxtras.core")
   id("org.danbrough.sqldelight")
 }
+
+
+enableSqlite {}
+
+
 
 repositories {
   maven("/usr/local/kotlinxtras/build/m2")
@@ -17,11 +21,6 @@ repositories {
   google()
   mavenCentral()
 }
-
-binaries {
-  enableSqlite()
-}
-
 
 sqldelight {
   database("Database") {
@@ -38,9 +37,9 @@ kotlin {
 
   val commonMain by sourceSets.getting {
     dependencies {
-      implementation(libs.sqlite)
-      implementation(libs.primitive.adapters)
-      implementation(libs.org.danbrough.sqldelight.runtime)
+      implementation("org.danbrough.kotlinxtras:sqlite:_")
+      implementation("org.danbrough.sqldelight:primitive-adapters:_")
+      implementation("org.danbrough.sqldelight:runtime:_")
     }
   }
 
@@ -48,7 +47,7 @@ kotlin {
   val nativeMain by sourceSets.creating {
     dependencies {
       dependsOn(commonMain)
-      implementation(libs.native.driver)
+      implementation("org.danbrough.sqldelight:native-driver:_")
     }
   }
 
@@ -66,6 +65,4 @@ kotlin {
   }
 
 }
-
-
 

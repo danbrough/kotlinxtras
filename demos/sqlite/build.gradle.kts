@@ -52,7 +52,6 @@ kotlin {
 
     binaries {
       executable("sqliteDemo") {
-        println("LINK TASK: $linkTask type; ${linkTask::class.java}")
         entryPoint = "demo.main"
         runTask?.apply {
           properties["message"]?.also {

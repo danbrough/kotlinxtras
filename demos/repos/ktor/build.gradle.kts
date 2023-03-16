@@ -1,4 +1,4 @@
-import org.danbrough.kotlinxtras.enableCurl
+import org.danbrough.kotlinxtras.core.enableCurl
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 
@@ -9,6 +9,7 @@ plugins {
 
 
 enableCurl {
+
 }
 
 repositories {
@@ -23,9 +24,7 @@ kotlin {
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
-  // uncomment if you want them
-  //macosX64()
-  //macosArm64()
+
 
   /** //uncomment if you want android support
   androidNativeX86()

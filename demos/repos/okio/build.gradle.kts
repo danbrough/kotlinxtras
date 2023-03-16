@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   kotlin("multiplatform")
- // id("org.danbrough.kotlinxtras.consumer")
+  // id("org.danbrough.kotlinxtras.consumer")
 }
 
 
@@ -25,7 +25,7 @@ kotlin {
   linuxArm32Hfp()
   androidNativeX86()
 
-  if (org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac){
+  if (org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac) {
     macosX64()
     macosArm64()
   }
@@ -43,9 +43,9 @@ kotlin {
 
   val commonMain by sourceSets.getting {
     dependencies {
-      implementation(libs.klog)
-      implementation(libs.okio)
-      implementation(libs.okio.fakefilesystem)
+      implementation("org.danbrough:klog:_")
+      implementation("org.danbrough.okio:okio:_")
+      implementation("org.danbrough.okio:okio-fakefilesystem:_")
 
     }
   }

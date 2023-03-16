@@ -3,6 +3,7 @@ package org.danbrough.kotlinxtras
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 
@@ -69,6 +70,8 @@ val KonanTarget.sharedLibExtn: String
     family == Family.MINGW -> "dll"
     else -> "so"
   }
+
+val SHARED_LIBRARY_PATH_NAME = if (HostManager.hostIsMac) "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH"
 
 
 val KonanTarget.goOS: String?

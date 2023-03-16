@@ -8,8 +8,8 @@ import org.danbrough.kotlinxtras.hostTriplet
 import org.gradle.api.Project
 
 const val XTRAS_SQLITE_EXTN_NAME = "sqlite"
-const val XTRAS_SQLITE_VERSION_NAME = "3.41.0"
-const val XTRAS_SQLITE_SOURCE_URL = "https://www.sqlite.org/2023/sqlite-autoconf-3410000.tar.gz"
+const val XTRAS_SQLITE_VERSION_NAME = "3.41.1"
+const val XTRAS_SQLITE_SOURCE_URL = "https://www.sqlite.org/2023/sqlite-autoconf-3410100.tar.gz"
 
 fun Project.enableSqlite(
   extnName: String = XTRAS_SQLITE_EXTN_NAME, versionName: String = XTRAS_SQLITE_VERSION_NAME,

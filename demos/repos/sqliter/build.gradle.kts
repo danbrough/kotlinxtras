@@ -1,19 +1,17 @@
-import org.danbrough.kotlinxtras.binaries.CurrentVersions.enableSqlite
+import org.danbrough.kotlinxtras.core.enableSqlite
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
   kotlin("multiplatform")
-  id("org.danbrough.kotlinxtras.consumer")
-}
-
-binaries {
-  enableSqlite()
+  id("org.danbrough.kotlinxtras.core")
 }
 
 repositories {
   maven("https://s01.oss.sonatype.org/content/groups/staging/")
   mavenCentral()
 }
+
+enableSqlite()
 
 
 kotlin {
@@ -30,10 +28,9 @@ kotlin {
 
   val commonMain by sourceSets.getting {
     dependencies {
-      implementation(libs.klog)
-      implementation(libs.kotlinx.coroutines.core)
-      implementation(libs.sqliter.driver)
-      implementation(libs.sqlite)
+      implementation("org.danbrough:klog:_")
+      implementation("org.danbrough.kotlinx:kotlinx-coroutines-core:_")
+      implementation("org.danbrough.sqldelight:native-driver:_")
     }
   }
 
