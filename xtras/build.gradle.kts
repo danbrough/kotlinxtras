@@ -2,7 +2,7 @@ import org.danbrough.kotlinxtras.core.enableCurl
 import org.danbrough.kotlinxtras.core.enableIconv
 import org.danbrough.kotlinxtras.core.enableOpenssl
 import org.danbrough.kotlinxtras.core.enableOpenssl3
-import org.danbrough.kotlinxtras.core.enableSqlite
+import org.danbrough.kotlinxtras.core.enableSqliteOld
 
 plugins {
   // `kotlin-dsl`
@@ -19,12 +19,13 @@ enableOpenssl {
 }
 
 enableOpenssl3 {
+  deferToPrebuiltPackages = false
 }
 
 enableCurl {
 }
 
-enableSqlite {
+enableSqliteOld {
 }
 /*
 gradlePlugin {

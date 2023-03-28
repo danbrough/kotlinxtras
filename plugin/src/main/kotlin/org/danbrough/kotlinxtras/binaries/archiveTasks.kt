@@ -143,7 +143,9 @@ internal fun LibraryExtension.registerDownloadArchiveTask(target: KonanTarget): 
 
     val archiveFile = archiveFile(target)
     outputs.file(archiveFile)
-
+    onlyIf {
+      !archiveFile.exists()
+    }
 
     actions.add {
 

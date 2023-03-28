@@ -4,7 +4,6 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.GradleBuild
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import java.io.File
 
 
 val KonanTarget.konanDepsTaskName: String
@@ -16,7 +15,7 @@ internal fun Project.registerKonanDepsTasks(target: KonanTarget) {
   if (project.tasks.findByName(target.konanDepsTaskName) != null) return
 
   val depsProjectDir =
-    File(System.getProperty("java.io.tmpdir"), "xtraKonanDeps${target.platformName.capitalize()}")
+    rootProject.buildDir.resolve(".konandeps/xtraKonanDeps${target.platformName.capitalize()}")
   val projectTaskName = "xtrasKonanDepsProject${target.platformName.capitalized()}"
 
   project.tasks.register(projectTaskName) {
@@ -27,8 +26,16 @@ internal fun Project.registerKonanDepsTasks(target: KonanTarget) {
       depsProjectDir.resolve("gradle.properties").writeText(
         """
         kotlin.native.ignoreDisabledTargets=true
+        org.gradle.parallel=false
+        org.gradle.unsafe.configuration-cache=false
+        
       """.trimIndent()
       )
+
+
+      depsProjectDir.resolve("settings.gradle.kts").also {
+        if (!it.exists()) it.createNewFile()
+      }
 
       depsProjectDir.resolve("build.gradle.kts").writeText(
         """
@@ -73,7 +80,4 @@ internal fun Project.registerKonanDepsTasks(target: KonanTarget) {
   }
 
 }
-
-
-
 

@@ -1,12 +1,9 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-
 plugins {
   `kotlin-dsl`
 }
 
 dependencies {
-  implementation(kotlin("gradle-plugin"))
-
+  compileOnly(kotlin("gradle-plugin"))
 }
 
 repositories {
