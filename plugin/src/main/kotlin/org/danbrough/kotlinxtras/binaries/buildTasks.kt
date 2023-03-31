@@ -26,6 +26,8 @@ fun LibraryExtension.registerBuildTasks(target: KonanTarget) {
     registerConfigureSourcesTask(target)
   }
 
+
+
   project.tasks.register(buildSourcesTaskName(target), Exec::class.java) {
 
     group = XTRAS_TASK_GROUP
@@ -36,9 +38,10 @@ fun LibraryExtension.registerBuildTasks(target: KonanTarget) {
       project.log("running $name environment: $environment")
     }
 
+
     val srcDir = sourcesDir(target)
     workingDir(srcDir)
-    
+
     outputs.dir(buildDir(target))
 
 
