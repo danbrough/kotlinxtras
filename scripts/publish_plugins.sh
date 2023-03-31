@@ -11,6 +11,6 @@ if [ "$REPO" == "SonaType" ]; then
 	OPTS="-PsignPublications=true -PpublishDocs=true"
 fi
 
-./gradlew $OPTS plugin:publishAllPublicationsToXtrasRepository || exit 1
-./gradlew $OPTS core:publishAllPublicationsToXtrasRepository || exit 1
+./gradlew $OPTS plugin:publishAllPublicationsTo${REPO}Repository || exit 1
+./gradlew $OPTS core:publishAllPublicationsTo${REPO}Repository || exit 1
 
