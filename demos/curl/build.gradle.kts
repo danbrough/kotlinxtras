@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
   kotlin("multiplatform")
-  //id("org.danbrough.kotlinxtras.binaries")
   id("org.danbrough.kotlinxtras.core")
 }
 
