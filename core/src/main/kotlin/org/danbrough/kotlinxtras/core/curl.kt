@@ -17,11 +17,7 @@ fun Project.enableCurl(
   extnName: String = XTRAS_CURL_EXTN_NAME,
   config: LibraryExtension.() -> Unit = {}
 ): LibraryExtension {
-  val openSSL = enableOpenssl3 {
-    deferToPrebuiltPackages = false
-  }
-
-
+  val openSSL = enableOpenssl3()
 
   return extensions.findByName(extnName) as? LibraryExtension
     ?: registerLibraryExtension(extnName) {
