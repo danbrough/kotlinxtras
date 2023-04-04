@@ -23,6 +23,8 @@ registerLibraryExtension("uuid") {
   version = "2.38.1"
 
 
+  deferToPrebuiltPackages=false 
+
   publishingGroup = "demo.uuid"
 
   git(
@@ -46,8 +48,6 @@ registerLibraryExtension("uuid") {
   configureTarget { target ->
     project.tasks.create(target.autoGenTaskName(), Exec::class.java) {
       dependsOn(extractSourcesTaskName(target))
-      workingDir(sourcesDir(target))
-      onlyIf { !isPackageBuilt(target) }
       outputs.file(workingDir.resolve("configure"))
       commandLine("./autogen.sh")
     }
