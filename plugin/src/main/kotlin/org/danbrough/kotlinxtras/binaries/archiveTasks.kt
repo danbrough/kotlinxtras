@@ -43,19 +43,18 @@ internal fun LibraryExtension.registerProvideArchiveTask(target: KonanTarget): T
       "Ensures that the binary archive for $libName:${target.platformName} exists in the ${project.xtrasPackagesDir} folder"
 
     val archiveFile = archiveFile(target)
-    println("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD deferToPrebuiltPackages: $deferToPrebuiltPackages")
     val provideArchiveTaskName =
       if (deferToPrebuiltPackages) downloadArchiveTaskName(target) else createArchiveTaskName(target)
 
     dependsOn(provideArchiveTaskName)
 
     doFirst {
-      project.log("$name: deferToPrebuiltPackages:$deferToPrebuiltPackages archiveTask: $provideArchiveTaskName")
+      project.log("$name: deferToPrebuiltPackages:$deferToPrebuiltPackages")
     }
-
-    onlyIf {
-      !archiveFile.exists()
-    }
+    /*
+        onlyIf {
+          !archiveFile.exists()
+        }*/
 
     outputs.file(archiveFile)
   }
