@@ -1,7 +1,9 @@
 import org.danbrough.kotlinxtras.binaries.git
 import org.danbrough.kotlinxtras.binaries.registerLibraryExtension
+import org.danbrough.kotlinxtras.declareHostTarget
 import org.danbrough.kotlinxtras.hostTriplet
 import org.danbrough.kotlinxtras.platformName
+import org.danbrough.kotlinxtras.xtrasMavenDir
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -14,18 +16,18 @@ plugins {
 
 repositories {
   maven("https://s01.oss.sonatype.org/content/groups/staging")
+  maven(xtrasMavenDir)
   mavenCentral()
 }
 
-group="demo.uuid"
+group = "demo.uuid"
 
 registerLibraryExtension("uuid") {
   version = "2.38.1"
 
-
-  deferToPrebuiltPackages=false 
-
   publishingGroup = "demo.uuid"
+
+  deferToPrebuiltPackages = false
 
   git(
     "https://git.kernel.org/pub/scm/utils/util-linux/util-linux.git",
@@ -46,8 +48,11 @@ registerLibraryExtension("uuid") {
     { "xtrasAutogen${libName.capitalized()}${platformName.capitalized()}" }
 
   configureTarget { target ->
+
     project.tasks.create(target.autoGenTaskName(), Exec::class.java) {
       dependsOn(extractSourcesTaskName(target))
+      workingDir(sourcesDir(target))
+
       outputs.file(workingDir.resolve("configure"))
       commandLine("./autogen.sh")
     }
@@ -55,6 +60,7 @@ registerLibraryExtension("uuid") {
 
   configure { target ->
     dependsOn(target.autoGenTaskName())
+    outputs.file(workingDir.resolve("Makefile"))
 
     commandLine(
       "./configure",
@@ -73,18 +79,11 @@ registerLibraryExtension("uuid") {
 }
 
 
+
 kotlin {
 
-  if (HostManager.hostIsMac) {
-    macosX64()
-    macosArm64()
-  } else {
-    linuxX64()
-    //linuxArm32Hfp()
 
-    linuxArm64()
-    //androidNativeX86()
-  }
+  declareHostTarget()
 
 
   val commonMain by sourceSets.getting {
@@ -111,7 +110,8 @@ kotlin {
   }
 }
 
-tasks.create("run"){
-  dependsOn("runUuidDemoDebugExecutable${if (HostManager.hostIsMac) "MacosX64" else "LinuxX64"}")
+
+tasks.create("run") {
+  dependsOn("runUuidDemoDebugExecutable${HostManager.host.platformName.capitalized()}")
 }
 

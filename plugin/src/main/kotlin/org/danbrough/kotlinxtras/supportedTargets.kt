@@ -1,6 +1,7 @@
 package org.danbrough.kotlinxtras
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -57,3 +58,18 @@ val xtrasSupportedTargets: List<KonanTarget> = listOf(
   KonanTarget.MACOS_ARM64,
   KonanTarget.MINGW_X64,
 )
+
+
+/**
+ * Declare target support for the host platform
+ */
+fun KotlinMultiplatformExtension.declareHostTarget(configure: KotlinNativeTarget.() -> Unit = { }) {
+  when (HostManager.host) {
+    KonanTarget.MACOS_X64 -> macosX64(configure = configure)
+    KonanTarget.MACOS_ARM64 -> macosArm64(configure = configure)
+    KonanTarget.LINUX_ARM64 -> linuxArm64(configure = configure)
+    KonanTarget.LINUX_X64 -> linuxX64(configure = configure)
+    KonanTarget.MINGW_X64 -> mingwX64(configure = configure)
+    else -> throw Error("Unhandled host platform: ${HostManager.host}")
+  }
+}
