@@ -24,6 +24,7 @@ kotlin {
   linuxX64()
   linuxArm64()
   linuxArm32Hfp()
+  macosX64()
 
 
   /** //uncomment if you want android support
