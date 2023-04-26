@@ -11,7 +11,7 @@ repositories {
 }
 
 
-val javaLangVersion = 11
+val javaLangVersion = 17
 
 java {
   toolchain.languageVersion.set(JavaLanguageVersion.of(javaLangVersion))

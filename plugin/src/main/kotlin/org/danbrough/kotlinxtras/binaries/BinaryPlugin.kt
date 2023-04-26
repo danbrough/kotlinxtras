@@ -170,23 +170,27 @@ open class BinaryExtension {
 
 const val XTRAS_BINARIES_EXTN_NAME = "xtrasBinaries"
 
+
+val binaryProperty: Project.(String, String) -> String = { exe, defValue ->
+  projectProperty("$binaryPropertyPrefix.$exe", defValue)
+}
+
+const val binaryPropertyPrefix = "xtras.bin"
+
+
 class BinaryPlugin : Plugin<Project> {
   override fun apply(target: Project) {
     target.log("Initializing BinaryPlugin...")
     target.extensions.create(XTRAS_BINARIES_EXTN_NAME, BinaryExtension::class.java).apply {
 
-      val binaryPropertyPrefix = "xtras.bin"
-      val binaryProperty: (String, String) -> String = { exe, defValue ->
-        target.projectProperty("$binaryPropertyPrefix.$exe", defValue)
-      }
 
-      gitBinary = binaryProperty("git", gitBinary)
-      wgetBinary = binaryProperty("wget", wgetBinary)
-      goBinary = binaryProperty("go", goBinary)
-      tarBinary = binaryProperty("tar", tarBinary)
-      autoreconfBinary = binaryProperty("autoreconf", autoreconfBinary)
-      makeBinary = binaryProperty("make", makeBinary)
-      cmakeBinary = binaryProperty("cmake", cmakeBinary)
+      gitBinary = target.binaryProperty("git", gitBinary)
+      wgetBinary = target.binaryProperty("wget", wgetBinary)
+      goBinary = target.binaryProperty("go", goBinary)
+      tarBinary = target.binaryProperty("tar", tarBinary)
+      autoreconfBinary = target.binaryProperty("autoreconf", autoreconfBinary)
+      makeBinary = target.binaryProperty("make", makeBinary)
+      cmakeBinary = target.binaryProperty("cmake", cmakeBinary)
 
 
       target.tasks.register("xtrasConfig") {
