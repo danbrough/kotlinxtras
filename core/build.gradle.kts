@@ -11,6 +11,11 @@ dependencies {
   implementation("org.danbrough.kotlinxtras:plugin:${Xtras.version}")
 }
 
+repositories {
+  maven("https://repo.maven.apache.org/maven2/")
+
+  mavenCentral()
+}
 
 gradlePlugin {
   plugins {

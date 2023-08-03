@@ -24,10 +24,11 @@ fun Project.enableCurl(
       publishingGroup = CORE_PUBLISHING_PACKAGE
 
 
-      version = "8.0.1"
+      version = "8.2.1"
 
       //git("https://github.com/curl/curl.git", "046209e561b7e9b5aab1aef7daebf29ee6e6e8c7")
-      git("https://github.com/curl/curl.git", "b16d1fa8ee567b52c09a0f89940b07d8491b881d")
+      //git("https://github.com/curl/curl.git", "b16d1fa8ee567b52c09a0f89940b07d8491b881d")
+      git("https://github.com/curl/curl.git", "a9f8fe28481fef7c28d85b4a12a3a35521408eaf")
 
       val autoConfTaskName: KonanTarget.() -> String =
         { "xtrasAutoconf${libName.capitalized()}${platformName.capitalized()}" }

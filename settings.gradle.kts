@@ -2,9 +2,13 @@ pluginManagement {
   repositories {
 
     maven(file("build/xtras/maven"))
+    //mavenCentral()
+    maven("https://repo1.maven.org/maven2")
+    mavenCentral()
+    maven("https://repo.maven.apache.org/maven2/")
     maven("https://s01.oss.sonatype.org/content/groups/staging")
     gradlePluginPortal()
-    mavenCentral()
+
     google()
   }
 }
