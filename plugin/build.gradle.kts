@@ -6,14 +6,6 @@ plugins {
 }
 
 
-
-repositories {
-  maven("https://repo.maven.apache.org/maven2/")
-
-  mavenCentral()
-}
-
-
 dependencies {
   compileOnly(kotlin("gradle-plugin"))
   compileOnly(kotlin("gradle-plugin-api"))
