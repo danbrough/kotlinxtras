@@ -7,11 +7,15 @@ import org.danbrough.kotlinxtras.binaries.*
 import org.danbrough.kotlinxtras.hostTriplet
 import org.gradle.api.Project
 import org.jetbrains.kotlin.konan.target.Family
+import java.io.File
 
 const val OPENSSL3_EXTN_NAME = "openssl3"
 
-const val OPENSSL3_VERSION = "3.1.2-danbrough"
-const val OPENSSL3_GIT_COMMIT = "5accd111b0d4689a978f2bbccd976583f493efab"
+//const val OPENSSL3_VERSION = "3.1.2-danbrough"
+//const val OPENSSL3_GIT_COMMIT = "5accd111b0d4689a978f2bbccd976583f493efab"
+const val OPENSSL3_VERSION = "3.1.2"
+const val OPENSSL3_GIT_COMMIT = "17a2c5111864d8e016c5f2d29c40a3746b559e9d"
+//
 //const val OPENSSL3_VERSION = "3.0.8"
 //const val OPENSSL3_GIT_COMMIT = "e4e4c3b72620cf8ef35c275271415bfc675ffaa3"
 
@@ -24,6 +28,7 @@ fun Project.enableOpenssl3(
 ): LibraryExtension =
   extensions.findByName(extnName) as? LibraryExtension ?: registerLibraryExtension(extnName) {
 
+
     publishingGroup = CORE_PUBLISHING_PACKAGE
 
     version = versionName
@@ -31,18 +36,31 @@ fun Project.enableOpenssl3(
     git(gitURL, commit)
 
     configure { target ->
+      binaries.androidNdkDir = File("/mnt/files/sdk/android/ndk/25.0.8775105/")
+
       outputs.file(workingDir.resolve("Makefile"))
       val args = mutableListOf(
         "./Configure", target.opensslPlatform, "no-tests", "threads", "--prefix=${buildDir(target)}"
       )
       if (target.family == Family.ANDROID) args += "-D__ANDROID_API__=21"
       else if (target.family == Family.MINGW) args += "--cross-compile-prefix=${target.hostTriplet}-"
+      environment("CFLAGS", "  -Wno-macro-redefined ")
 
+      environment(
+        "PATH",
+        "${binaries.androidNdkDir}/prebuilt/linux-x86_64/bin:${binaries.androidNdkDir}/toolchains/llvm/prebuilt/linux-x86_64/bin:${environment["PATH"]}"
+      )
       commandLine(args)
     }
 
 
+
     build { target ->
+      environment(
+        "PATH",
+        "${binaries.androidNdkDir}/prebuilt/linux-x86_64/bin:${binaries.androidNdkDir}/toolchains/llvm/prebuilt/linux-x86_64/bin:${environment["PATH"]}"
+      )
+
       commandLine(binaries.makeBinary, "install_sw")
       doLast {
         val buildDir = buildDir(target)

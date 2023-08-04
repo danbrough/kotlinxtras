@@ -17,7 +17,8 @@ version = Xtras.publishingVersion
 allprojects {
 
   repositories {
-    maven(rootProject.buildDir.resolve("xtras/maven"))
+
+    maven(rootProject.layout.buildDirectory.dir("xtras/maven"))
     maven("https://s01.oss.sonatype.org/content/groups/staging/")
     mavenCentral()
   }

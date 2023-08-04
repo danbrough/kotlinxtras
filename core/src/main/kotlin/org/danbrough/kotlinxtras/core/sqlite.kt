@@ -8,10 +8,14 @@ import org.danbrough.kotlinxtras.hostTriplet
 import org.gradle.api.Project
 
 const val XTRAS_SQLITE_EXTN_NAME = "sqlite"
-const val XTRAS_SQLITE_VERSION_NAME = "3.41.2"
-const val XTRAS_SQLITE_SOURCE_URL = "https://www.sqlite.org/2023/sqlite-autoconf-3410200.tar.gz"
-const val XTRAS_SQLITE_COMMIT = "e671c4fbc057f8b1505655126eaf90640149ced6"
 
+//const val XTRAS_SQLITE_VERSION_NAME = "3.41.2"
+//const val XTRAS_SQLITE_SOURCE_URL = "https://www.sqlite.org/2023/sqlite-autoconf-3410200.tar.gz"
+const val XTRAS_SQLITE_VERSION_NAME = "3.42.0"
+const val XTRAS_SQLITE_SOURCE_URL = "https://www.sqlite.org/2023/sqlite-autoconf-3420000.tar.gz"
+//const val XTRAS_SQLITE_COMMIT = "e671c4fbc057f8b1505655126eaf90640149ced6"
+
+/*
 fun Project.enableSqlite(
   extnName: String = XTRAS_SQLITE_EXTN_NAME, versionName: String = XTRAS_SQLITE_VERSION_NAME,
 
@@ -54,9 +58,10 @@ fun Project.enableSqlite(
 
     config()
   }
+*/
 
 
-fun Project.enableSqliteOld(
+fun Project.enableSqlite(
   extnName: String = XTRAS_SQLITE_EXTN_NAME, versionName: String = XTRAS_SQLITE_VERSION_NAME,
   sourceURL: String = XTRAS_SQLITE_SOURCE_URL,
   config: LibraryExtension .() -> Unit = {}

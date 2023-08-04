@@ -17,16 +17,16 @@ private fun LibraryExtension.registerConfigureSourcesTask(target: KonanTarget) =
     doFirst {
       project.log("running $name with: ${commandLine.joinToString(" ")}")
     }
-    configureTask!!(target)
+    configureTasks.forEach {
+      it(target)
+    }
   }
 
 
 fun LibraryExtension.registerBuildTasks(target: KonanTarget) {
-  configureTask?.also {
+  if (configureTasks.isNotEmpty()) {
     registerConfigureSourcesTask(target)
   }
-
-
 
   project.tasks.register(buildSourcesTaskName(target), Exec::class.java) {
 
@@ -50,13 +50,14 @@ fun LibraryExtension.registerBuildTasks(target: KonanTarget) {
       dependsOn(it)
     }
 
-    configureTask?.also {
+    if (configureTasks.isNotEmpty()) {
       dependsOn(configureSourcesTaskName(target))
     }
 
 
-    buildTask!!(target)
-
+    buildTasks.forEach {
+      it(target)
+    }
   }
 }
 

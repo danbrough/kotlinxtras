@@ -15,15 +15,16 @@ internal fun Project.registerKonanDepsTasks(target: KonanTarget) {
   if (project.tasks.findByName(target.konanDepsTaskName) != null) return
 
   val depsProjectDir =
-    rootProject.buildDir.resolve(".konandeps/xtraKonanDeps${target.platformName.capitalize()}")
+    rootProject.layout.buildDirectory.dir(".konandeps/xtraKonanDeps${target.platformName.capitalize()}")
+      .get()
   val projectTaskName = "xtrasKonanDepsProject${target.platformName.capitalized()}"
 
   project.tasks.register(projectTaskName) {
 
     outputs.dir(depsProjectDir)
     doFirst {
-      depsProjectDir.mkdirs()
-      depsProjectDir.resolve("gradle.properties").writeText(
+      depsProjectDir.asFile.mkdirs()
+      depsProjectDir.dir("gradle.properties").asFile.writeText(
         """
         kotlin.native.ignoreDisabledTargets=true
         org.gradle.parallel=false
@@ -33,11 +34,11 @@ internal fun Project.registerKonanDepsTasks(target: KonanTarget) {
       )
 
 
-      depsProjectDir.resolve("settings.gradle.kts").also {
+      depsProjectDir.file("settings.gradle.kts").asFile.also {
         if (!it.exists()) it.createNewFile()
       }
 
-      depsProjectDir.resolve("build.gradle.kts").writeText(
+      depsProjectDir.file("build.gradle.kts").asFile.writeText(
         """
           plugins {
             kotlin("multiplatform") version "${KotlinVersion.CURRENT}"
@@ -55,7 +56,7 @@ internal fun Project.registerKonanDepsTasks(target: KonanTarget) {
       )
 
 
-      depsProjectDir.resolve("src/commonMain/kotlin").apply {
+      depsProjectDir.dir("src/commonMain/kotlin").asFile.apply {
         mkdirs()
         resolve("test.kt").writeText(
           """
@@ -72,7 +73,7 @@ internal fun Project.registerKonanDepsTasks(target: KonanTarget) {
     target.konanDepsTaskName, GradleBuild::class.java
   ) {
     dependsOn(projectTaskName)
-    dir = depsProjectDir
+    dir = depsProjectDir.asFile
     tasks = listOf("compileKotlin${target.platformName.capitalized()}")
     doFirst {
       project.log("$name: running compileKotlin${target.platformName.capitalized()}")

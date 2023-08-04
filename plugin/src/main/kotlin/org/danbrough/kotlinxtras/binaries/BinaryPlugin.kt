@@ -70,7 +70,7 @@ open class BinaryExtension {
 
 
   @XtrasDSLMarker
-  var basePath = mutableListOf<String>(
+  var basePath = mutableListOf(
     "/bin", "/sbin", "/usr/bin", "/usr/sbin", "/usr/local/bin", "/opt/local/bin"
   )
 

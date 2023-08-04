@@ -1,6 +1,5 @@
 import org.danbrough.kotlinxtras.core.enableCurl
 import org.danbrough.kotlinxtras.core.enableIconv
-import org.danbrough.kotlinxtras.core.enableOpenssl
 import org.danbrough.kotlinxtras.core.enableOpenssl3
 import org.danbrough.kotlinxtras.core.enableSqlite
 
@@ -13,19 +12,24 @@ plugins {
 
 
 enableIconv {
+
 }
 
-enableOpenssl {
-}
+/*enableOpenssl {
+
+}*/
 
 enableOpenssl3 {
-  deferToPrebuiltPackages = false
+
 }
 
 enableCurl {
+  deferToPrebuiltPackages = false
 }
 
 enableSqlite {
+  deferToPrebuiltPackages = false
+
 }
 /*
 gradlePlugin {

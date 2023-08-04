@@ -69,7 +69,7 @@ internal fun LibraryExtension.registerXtrasTasks() {
     environment(SHARED_LIBRARY_PATH_NAME, newLibPath)
   }
 
-  val buildEnabled = buildTask != null
+  val buildEnabled = buildTasks.isNotEmpty()
 
 
   if (buildEnabled) {

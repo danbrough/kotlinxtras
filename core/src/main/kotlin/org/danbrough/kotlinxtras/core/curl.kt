@@ -22,6 +22,7 @@ fun Project.enableCurl(
   return extensions.findByName(extnName) as? LibraryExtension
     ?: registerLibraryExtension(extnName) {
       publishingGroup = CORE_PUBLISHING_PACKAGE
+      // binaries.androidNdkDir = File("/mnt/files/sdk/android/ndk/25.0.8775105/")
 
 
       version = "8.2.1"
@@ -40,6 +41,11 @@ fun Project.enableCurl(
           workingDir(sourcesDir(target))
           outputs.file(workingDir.resolve("configure"))
           commandLine(binaries.autoreconfBinary, "-fi")
+
+          environment(
+            "PATH",
+            "${binaries.androidNdkDir}/prebuilt/linux-x86_64/bin:${binaries.androidNdkDir}/toolchains/llvm/prebuilt/linux-x86_64/bin:${environment["PATH"]}"
+          )
         }
       }
 

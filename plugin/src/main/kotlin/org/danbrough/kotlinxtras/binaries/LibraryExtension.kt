@@ -76,17 +76,21 @@ abstract class LibraryExtension(val project: Project) {
   open fun gitRepoDir(): File = project.xtrasDownloadsDir.resolve("repos/$libName")
 
   @XtrasDSLMarker
-  fun configure(task: SourcesTask) {
-    configureTask = task
+  fun configure(override: Boolean = false, task: SourcesTask) {
+    if (override) configureTasks.clear()
+    configureTasks.add(task)
   }
 
   @XtrasDSLMarker
-  fun build(task: SourcesTask) {
-    buildTask = task
+  fun build(override: Boolean = false, task: SourcesTask) {
+    if (override)
+      buildTasks.clear()
+    buildTasks.add(task)
   }
 
   @XtrasDSLMarker
   fun configureTarget(configure: (KonanTarget) -> Unit) {
+    if (configureTargetTask != null) error("configureTargetTask already set")
     configureTargetTask = configure
   }
 
@@ -99,9 +103,9 @@ abstract class LibraryExtension(val project: Project) {
 
   internal var sourceConfig: SourceConfig? = null
 
-  internal var configureTask: SourcesTask? = null
+  internal var configureTasks: MutableList<SourcesTask> = mutableListOf()
 
-  internal var buildTask: SourcesTask? = null
+  internal var buildTasks: MutableList<SourcesTask> = mutableListOf()
 
   internal var configureTargetTask: ((KonanTarget) -> Unit)? = null
 
