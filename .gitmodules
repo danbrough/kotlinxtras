@@ -44,6 +44,3 @@
 [submodule "repos/kotlinx-datetime"]
 	path = repos/kotlinx-datetime
 	url = https://github.com/danbrough/kotlinx-datetime.git
-[submodule "repos/libssh2"]
-	path = repos/libssh2
-	url = https://github.com/libssh2/libssh2.git

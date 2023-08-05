@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 const val XTRAS_CURL_EXTN_NAME = "curl"
 
 fun Project.enableCurl(
+  openSSL: LibraryExtension,
   extnName: String = XTRAS_CURL_EXTN_NAME,
   config: LibraryExtension.() -> Unit = {}
 ): LibraryExtension {
-  val openSSL = enableOpenssl3()
 
   return extensions.findByName(extnName) as? LibraryExtension
     ?: registerLibraryExtension(extnName) {
