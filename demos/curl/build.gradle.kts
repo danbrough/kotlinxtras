@@ -1,4 +1,6 @@
 import org.danbrough.kotlinxtras.core.enableCurl
+import org.danbrough.kotlinxtras.core.enableOpenssl3
+
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 
@@ -13,7 +15,9 @@ repositories {
   mavenCentral()
 }
 
-enableCurl {
+val openSSL = enableOpenssl3()
+
+enableCurl(openSSL) {
   cinterops {
     interopsPackage = "libcurl"
   }
@@ -22,6 +26,7 @@ enableCurl {
 kotlin {
 
   linuxX64()
+  @Suppress("DEPRECATION")
   linuxArm32Hfp()
   linuxArm64()
 

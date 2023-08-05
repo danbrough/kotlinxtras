@@ -4,6 +4,7 @@ import klog.KLogWriters
 import klog.KMessageFormatters
 import klog.Level
 import klog.colored
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.toKString
 import libcurl.*
@@ -15,6 +16,7 @@ val log = klog.klog("demo1") {
 }
 
 
+@OptIn(ExperimentalForeignApi::class)
 fun main(args: Array<String>) {
   log.info("running main ..")
 
