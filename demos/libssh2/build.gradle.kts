@@ -10,7 +10,8 @@ plugins {
   alias(libs.plugins.kotlinXtras)
 }
 
-repositories {
+
+repositories{
   maven("/usr/local/kotlinxtras/build/xtras/maven")
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
@@ -35,8 +36,6 @@ enableLibSSH2(openSSL) {
 kotlin {
 
   linuxX64()
-  @Suppress("DEPRECATION")
-  linuxArm32Hfp()
   linuxArm64()
 
   if (HostManager.hostIsMac) {
@@ -44,12 +43,13 @@ kotlin {
     macosArm64()
   }
 
-  androidNativeX86()
+  //androidNativeX86()
 
   val commonMain by sourceSets.getting {
     dependencies {
       implementation(libs.klog)
       implementation(libs.org.danbrough.kotlinxtras.common)
+      implementation(libs.io.ktor.ktorutils)
     }
   }
 
@@ -64,20 +64,20 @@ kotlin {
     }
 
     binaries {
-      executable("curlDemo") {
-        entryPoint = "demo1.main"
-        runTask?.environment("CA_CERT_FILE", file("cacert.pem"))
+      executable("ssh2Demo") {
+        entryPoint = "demo.ssh2.main"
+        findProperty("args")?.also {
+          runTask?.args(it.toString().split(','))
+        }
+      }
+
+      executable("hexDemo") {
+        entryPoint = "demo.hex.main"
         findProperty("args")?.also {
           runTask?.args(it.toString())
         }
       }
 
-      executable("sshDemo") {
-        entryPoint = "demo2.main"
-        findProperty("args")?.also {
-          runTask?.args(it.toString())
-        }
-      }
     }
   }
 }
