@@ -11,7 +11,7 @@ plugins {
 }
 
 
-repositories{
+repositories {
   maven("/usr/local/kotlinxtras/build/xtras/maven")
   maven("https://s01.oss.sonatype.org/content/groups/staging")
   mavenCentral()
@@ -19,15 +19,28 @@ repositories{
 
 val openSSL = enableOpenssl3()
 
-enableCurl(openSSL) {
-  cinterops {
-    interopsPackage = "libcurl"
-  }
-}
-
 enableLibSSH2(openSSL) {
+
   cinterops {
     interopsPackage = "libssh2"
+
+    headersSource = """
+      void print_test(char** msg){
+        printf("print_test(): <%s>\n",*msg);
+      }
+      void ptr_test(char** msg){
+              *msg = "Message from C!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+              
+              /**msg = malloc(256);
+              memset(*msg,0,256);
+              strncpy(*msg,"Hello World and stuff",44);*/
+      }
+      
+      void ptr_free(char** msg){
+        printf("doing a free\n");
+        free(*msg);
+      }
+    """.trimIndent()
   }
 }
 
@@ -49,7 +62,9 @@ kotlin {
     dependencies {
       implementation(libs.klog)
       implementation(libs.org.danbrough.kotlinxtras.common)
-      implementation(libs.io.ktor.ktorutils)
+      implementation(libs.org.danbrough.kotlinxtras.utils)
+
+      //implementation(libs.io.ktor.ktorutils)
     }
   }
 

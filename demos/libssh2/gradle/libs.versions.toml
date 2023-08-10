@@ -9,13 +9,14 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 
 kotlin = "1.9.0"
 kotlinXtras = "0.0.3-beta17"
-ktor ="2.3.3"
+ktor = "2.3.3"
 
 [libraries]
 
 klog = "org.danbrough:klog:0.0.2-beta03"
 
 org-danbrough-kotlinxtras-common = "org.danbrough.kotlinxtras:common:0.0.1-beta01"
-io-ktor-ktorutils = {group = "io.ktor",name = "ktor-utils",version.ref = "ktor"}
+org-danbrough-kotlinxtras-utils = "org.danbrough.kotlinxtras:utils:0.0.1-beta01"
+io-ktor-ktorutils = { group = "io.ktor", name = "ktor-utils", version.ref = "ktor" }
 
 kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }

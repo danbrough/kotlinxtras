@@ -25,9 +25,10 @@ if (pluginsOnly == null || pluginsOnly.toBoolean()) {
 
 //-PpluginsOnly=false or not specified
 if (!pluginsOnly.toBoolean()) {
-
+  include(":libssh2")
+  include(":utils")
   include(":common")
-  include(":xtras")
+  include(":binaries")
 }
 
 

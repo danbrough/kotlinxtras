@@ -13,27 +13,23 @@ plugins {
 
 
 enableIconv {
-  deferToPrebuiltPackages = true
+  publishBinaries = true
 }
 
-/*enableOpenssl {
-
-}*/
-
 val openSSL = enableOpenssl3 {
-  deferToPrebuiltPackages = true
+  publishBinaries = true
 }
 
 enableCurl(openSSL) {
-  deferToPrebuiltPackages = false
+  publishBinaries = true
 }
 
 enableSqlite {
-  deferToPrebuiltPackages = false
+  publishBinaries = true
 }
 
 enableLibSSH2(openSSL) {
-
+  publishBinaries = true
 }
 
 /*

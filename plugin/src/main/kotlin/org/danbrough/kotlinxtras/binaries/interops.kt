@@ -35,6 +35,11 @@ data class CInteropsConfig(
    */
   var headers: String? = null,
 
+  /**
+   * Extra header source code for the headersFile [headerFile]
+   */
+  var headersSource: String? = null,
+
   //writes output to the defs file for a konanTarget
   var writeTarget: CInteropsTargetWriter = defaultCInteropsTargetWriter,
 
@@ -130,8 +135,15 @@ fun LibraryExtension.registerGenerateInteropsTask() {
           supportedTargets.forEach { konanTarget ->
             config.writeTarget(this@registerGenerateInteropsTask, konanTarget, output)
           }
+
+          if (config.headersSource != null) {
+            output.println("---")
+            output.println(config.headersSource)
+          }
         }
       }
+
+
 
       doLast {
         println("generated ${config.defFile}")

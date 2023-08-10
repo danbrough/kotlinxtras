@@ -95,7 +95,7 @@ internal fun LibraryExtension.registerXtrasTasks() {
     registerExtractLibsTask(target)
     val archiveTask = registerProvideArchiveTask(target)
 
-    if (HostManager.hostIsMac == target.family.isAppleFamily) publishing.publications.create(
+    if (publishBinaries && (HostManager.hostIsMac == target.family.isAppleFamily)) publishing.publications.create(
       "$libName${target.platformName.capitalize()}", MavenPublication::class.java
     ) {
       artifactId = "${libName}${target.platformName.capitalize()}"
