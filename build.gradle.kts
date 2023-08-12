@@ -1,10 +1,10 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-  kotlin("multiplatform") apply false
+  alias(libs.plugins.kotlinMultiplatform) apply false
   `maven-publish`
-  id("org.jetbrains.dokka") apply false
-  xtras("sonatype") version Xtras.version apply false
+  alias(libs.plugins.org.jetbrains.dokka) apply false
+  alias(libs.plugins.kotlinxtras.sonatype) apply false
 }
 
 println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION}")

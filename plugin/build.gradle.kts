@@ -9,7 +9,7 @@ plugins {
 dependencies {
   compileOnly(kotlin("gradle-plugin"))
   compileOnly(kotlin("gradle-plugin-api"))
-  compileOnly("org.jetbrains.dokka:dokka-gradle-plugin:_")
+  compileOnly(libs.dokka.gradle.plugin)
 }
 
 

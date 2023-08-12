@@ -5,14 +5,12 @@ import org.danbrough.kotlinxtras.declareSupportedTargets
 plugins {
   // `kotlin-dsl`
   //kotlin("multiplatform")
-  kotlin("multiplatform")
-
-  xtras("sonatype", Xtras.version)
-  xtras("core", Xtras.version)
+  alias(libs.plugins.kotlinMultiplatform)
+  alias(libs.plugins.kotlinxtras.sonatype)
+  alias(libs.plugins.kotlinxtras.core)
 }
+
 version = "0.0.1-beta01"
-
-
 
 enableLibSSH2(enableOpenssl3()) {
   deferToPrebuiltPackages = true
@@ -24,10 +22,17 @@ enableLibSSH2(enableOpenssl3()) {
 
 kotlin {
 
-  declareSupportedTargets()
+  //declareSupportedTargets()
+  jvm()
+  linuxX64()
 
 
   sourceSets {
+    val commonMain by getting {
+      dependencies {
+        implementation(libs.klog)
+      }
+    }
     val commonTest by getting {
       dependencies {
         implementation(kotlin("test"))

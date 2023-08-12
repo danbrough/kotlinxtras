@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 
 plugins {
-  kotlin("multiplatform")
-  xtras("sonatype")
+  alias(libs.plugins.kotlinMultiplatform)
+  alias(libs.plugins.kotlinxtras.sonatype)
 }
 
 

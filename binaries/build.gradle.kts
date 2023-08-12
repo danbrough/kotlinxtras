@@ -5,10 +5,8 @@ import org.danbrough.kotlinxtras.core.enableOpenssl3
 import org.danbrough.kotlinxtras.core.enableSqlite
 
 plugins {
-  // `kotlin-dsl`
-  //kotlin("multiplatform")
-  xtras("sonatype", Xtras.version)
-  xtras("core", Xtras.version)
+  alias(libs.plugins.kotlinxtras.sonatype)
+  alias(libs.plugins.kotlinxtras.core)
 }
 
 

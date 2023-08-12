@@ -43,7 +43,7 @@ kotlin {
 
   val commonMain by sourceSets.getting {
     dependencies {
-      implementation("org.danbrough:klog:_")
+      implementation(libs.klog)
       implementation("org.danbrough.okio:okio:_")
       implementation("org.danbrough.okio:okio-fakefilesystem:_")
 

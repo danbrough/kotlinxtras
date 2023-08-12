@@ -2,8 +2,8 @@ import org.danbrough.kotlinxtras.declareSupportedTargets
 
 
 plugins {
-  kotlin("multiplatform")
-  xtras("sonatype")
+  alias(libs.plugins.kotlinMultiplatform)
+  alias(libs.plugins.kotlinxtras.sonatype)
 }
 
 
