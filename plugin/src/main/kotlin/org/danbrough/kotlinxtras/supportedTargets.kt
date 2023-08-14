@@ -67,6 +67,10 @@ val xtrasSupportedTargets: List<KonanTarget> = listOf(
   KonanTarget.ANDROID_ARM64,
   KonanTarget.ANDROID_X64,
   KonanTarget.ANDROID_X86,
+  KonanTarget.IOS_X64,
+  KonanTarget.IOS_ARM64,
+  KonanTarget.WATCHOS_X64,
+  KonanTarget.WATCHOS_ARM64,
   KonanTarget.MACOS_X64,
   KonanTarget.MACOS_ARM64,
   KonanTarget.MINGW_X64,
@@ -83,9 +87,6 @@ fun KotlinMultiplatformExtension.declareHostTarget(configure: KotlinNativeTarget
     KonanTarget.LINUX_ARM64 -> linuxArm64(configure = configure)
     KonanTarget.LINUX_X64 -> linuxX64(configure = configure)
     KonanTarget.MINGW_X64 -> mingwX64(configure = configure)
-    KonanTarget.IOS_X64 -> iosArm64(configure = configure)
-    KonanTarget.IOS_ARM64 -> iosX64(configure = configure)
-    KonanTarget.WATCHOS_X64 -> watchosX64(configure = configure)
     else -> error("Unhandled host platform: ${HostManager.host}")
   }
 }
