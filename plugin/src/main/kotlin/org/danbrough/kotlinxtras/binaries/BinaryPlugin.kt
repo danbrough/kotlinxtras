@@ -113,7 +113,7 @@ open class BinaryExtension {
                   "$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/x86_64-unknown-linux-gnu/bin/ranlib"*/
       }
 
-      KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64,KonanTarget.WATCHOS_X64,KonanTarget.WATCHOS_ARM64,KonanTarget.IOS_X64,KonanTarget.IOS_ARM64 -> {
+      KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64, KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_ARM64, KonanTarget.IOS_X64, KonanTarget.IOS_ARM64 -> {
         env["CC"] = "gcc"
         env["CXX"] = "g++"
         env["LD"] = "lld"

@@ -44,7 +44,7 @@ private fun Project.xtrasPath(name: String, defValue: String? = null): File =
   properties[name]?.toString()?.trim()?.let {
     project.file(it)
   } ?: defValue?.let { rootProject.xtrasDir.resolve(it) }
-  ?: rootProject.buildDir.resolve("xtras")
+  ?: rootProject.layout.buildDirectory.dir("xtras").get().asFile
 
 /**
  * Path to the top level xtras directory.
