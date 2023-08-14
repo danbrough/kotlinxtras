@@ -109,11 +109,19 @@ open class BinaryExtension {
         val clangArgs =
           "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2 --sysroot=$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/x86_64-unknown-linux-gnu/sysroot"
         env["CC"] = "clang $clangArgs"
-        env["CXX"] = "clang++ $clangArgs"/*        env["RANLIB"] =
-                  "$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/x86_64-unknown-linux-gnu/bin/ranlib"*/
+        env["CXX"] = "clang++ $clangArgs"
+        /*        env["RANLIB"] =
+                    "$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/x86_64-unknown-linux-gnu/bin/ranlib"*/
       }
 
-      KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64, KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_ARM64, KonanTarget.IOS_X64, KonanTarget.IOS_ARM64 -> {
+      KonanTarget.IOS_X64 -> {
+        val clangArgs =
+          "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2 --sysroot=$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/x86_64-unknown-linux-gnu/sysroot"
+        env["CC"] = "clang $clangArgs"
+        env["CXX"] = "clang++ $clangArgs"
+      }
+
+      KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64, KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_ARM64, KonanTarget.IOS_ARM64 -> {
         env["CC"] = "gcc"
         env["CXX"] = "g++"
         env["LD"] = "lld"
@@ -140,11 +148,11 @@ open class BinaryExtension {
 
     if (HostManager.hostIsMac) basePath.add(
       0, konanDir.resolve("dependencies/apple-llvm-20200714-macos-x64-essentials/bin").absolutePath
-    )
-
-    basePath.add(
-      0, konanDir.resolve("dependencies/llvm-11.1.0-linux-x64-essentials/bin").absolutePath
-    )
+    ) else if (HostManager.hostIsLinux) {
+      basePath.add(
+        0, konanDir.resolve("dependencies/llvm-11.1.0-linux-x64-essentials/bin").absolutePath
+      )
+    }
 
     env["PATH"] = basePath.joinToString(File.pathSeparator)
     env["GOARCH"] = target.goArch

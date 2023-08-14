@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.gradle.utils.`is`
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 internal fun LibraryExtension.registerXtrasTasks() {
@@ -30,7 +32,7 @@ internal fun LibraryExtension.registerXtrasTasks() {
   }
 
   if (supportedBuildTargets.isEmpty()) supportedBuildTargets =
-    if (HostManager.hostIsMac) supportedTargets.filter { it.family.isAppleFamily } else supportedTargets
+    if (HostManager.hostIsMac) supportedTargets.filter { it.family.isAppleFamily } else supportedTargets.filter { !it.family.isAppleFamily }
 
 
   val publishing = project.extensions.findByType(PublishingExtension::class.java) ?: let {
@@ -85,8 +87,11 @@ internal fun LibraryExtension.registerXtrasTasks() {
   }
 
 
-  supportedTargets.forEach { target ->
-    project.registerKonanDepsTasks(target)
+  KonanTarget.predefinedTargets.values.forEach {
+    project.registerKonanDepsTasks(it)
+  }
+
+  supportedBuildTargets.forEach { target ->
 
     configureTargetTask?.invoke(target)
 

@@ -30,6 +30,11 @@ enableLibSSH2(openSSL) {
   publishBinaries = true
 }
 
+afterEvaluate {
+  println("SUPPORTED TARGETS: ${openSSL.supportedTargets} BUILD: ${openSSL.supportedBuildTargets}")
+
+}
+
 /*
 gradlePlugin {
   isAutomatedPublishing = false

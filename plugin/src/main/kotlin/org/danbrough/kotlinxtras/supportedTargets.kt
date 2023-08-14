@@ -24,7 +24,7 @@ fun KotlinMultiplatformExtension.declareSupportedTargets() {
     macosArm64()
     iosArm64()
     iosX64()
-    watchosX64()
+    // watchosX64()
   } else {
     androidNativeX86()
     androidNativeX64()
