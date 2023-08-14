@@ -56,19 +56,6 @@ open class SonatypeExtension(val project: Project) {
 
   var sonatypeSnapshot: Boolean = false
 
-  //lateinit var publishingURL:String
-  /*
-    val publishingURL: String
-      get() = (if (sonatypeSnapshot)
-        "$sonatypeUrlBase/content/repositories/snapshots/"
-      else if (sonatypeRepoId.isNotBlank())
-        "$sonatypeUrlBase/service/local/staging/deployByRepositoryId/$sonatypeRepoId"
-      else
-        "$sonatypeUrlBase/service/local/staging/deploy/maven2/").also {
-          println("SonatypeExtension::publishingURL $it repoID is: $sonatypeRepoId")
-      }
-  */
-
   override fun toString() =
     "SonatypeExtension[urlBase=$sonatypeUrlBase,stagingProfileId=$sonatypeProfileId,sonatypeUsername=$sonatypeUsername]"
 }

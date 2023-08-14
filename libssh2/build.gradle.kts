@@ -1,10 +1,9 @@
 import org.danbrough.kotlinxtras.core.enableLibSSH2
 import org.danbrough.kotlinxtras.core.enableOpenssl3
 import org.danbrough.kotlinxtras.declareSupportedTargets
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
-  // `kotlin-dsl`
-  //kotlin("multiplatform")
   alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.kotlinxtras.sonatype)
   alias(libs.plugins.kotlinxtras.core)
@@ -26,7 +25,6 @@ kotlin {
   jvm()
   linuxX64()
 
-
   sourceSets {
     val commonMain by getting {
       dependencies {
@@ -37,6 +35,16 @@ kotlin {
       dependencies {
         implementation(kotlin("test"))
       }
+    }
+  }
+
+  val posixMain by sourceSets.creating {
+
+  }
+
+  targets.withType<KotlinNativeTarget> {
+    compilations["main"].apply {
+      defaultSourceSet.dependsOn(posixMain)
     }
   }
 

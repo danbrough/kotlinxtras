@@ -1,8 +1,8 @@
 plugins {
   `kotlin-dsl`
   `maven-publish`
-  id("org.jetbrains.dokka")
-  xtras("sonatype")
+  alias(libs.plugins.org.jetbrains.dokka)
+  alias(libs.plugins.kotlinxtras.sonatype)
 }
 
 
@@ -12,12 +12,8 @@ dependencies {
   compileOnly(libs.dokka.gradle.plugin)
 }
 
-
-
 gradlePlugin {
-
   plugins {
-
     create("binariesPlugin") {
       id = "${group}.binaries"
       implementationClass = "$group.binaries.BinaryPlugin"
@@ -31,8 +27,6 @@ gradlePlugin {
       displayName = "Sonatype plugin"
       description = "Sonatype publishing support"
     }
-
-
   }
 }
 

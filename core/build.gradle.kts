@@ -1,16 +1,17 @@
 plugins {
   `kotlin-dsl`
   `maven-publish`
-  
+
   alias(libs.plugins.org.jetbrains.dokka)
   alias(libs.plugins.kotlinxtras.sonatype)
-
 }
 
 dependencies {
   compileOnly(kotlin("gradle-plugin"))
   compileOnly(kotlin("gradle-plugin-api"))
-  implementation(libs.plugin)
+  //implementation(libs.plugin)
+  compileOnly(libs.kotlinxtras.plugin)
+
 }
 
 gradlePlugin {

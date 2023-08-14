@@ -9,12 +9,15 @@ plugins {
 
 println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION}")
 
+val publishingVersion: String = libs.versions.kotlinXtrasPublishing.get()
 
-group = Xtras.projectGroup
-version = Xtras.publishingVersion
 
+version = publishingVersion
 
 allprojects {
+
+  group = Xtras.projectGroup
+  version = publishingVersion
 
   repositories {
 
@@ -42,7 +45,6 @@ allprojects {
 
 subprojects {
   group = Xtras.projectGroup
-  version = Xtras.publishingVersion
 
   afterEvaluate {
 
