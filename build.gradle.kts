@@ -48,6 +48,7 @@ subprojects {
 
   afterEvaluate {
 
+/*
     extensions.findByType(JavaPluginExtension::class.java)?.apply {
       toolchain.languageVersion.set(JavaLanguageVersion.of(Xtras.javaLangVersion))
     }
@@ -60,6 +61,7 @@ subprojects {
         }
       }
 
+*/
 
     extensions.findByType(PublishingExtension::class)?.also {
       publishing {
