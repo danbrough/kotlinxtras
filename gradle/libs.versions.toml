@@ -31,5 +31,4 @@ kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", vers
 
 kotlinxtras-plugin = { group = "org.danbrough.kotlinxtras", name = "plugin", version.ref = "kotlinXtras" }
 
-
 dokka-gradle-plugin = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokka" }
