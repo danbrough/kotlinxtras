@@ -53,22 +53,50 @@ fun Project.enableWolfSSL(
     }
 
     configure { target ->
+      binaries.androidNdkDir = File("/mnt/files/sdk/android/ndk/25.0.8775105/")
+
       outputs.file(workingDir.resolve("Makefile"))
       dependsOn(target.autogenTaskName())
 
       val configureOptions = mutableListOf(
         "./configure",
         "--enable-jni", "--enable-openssh", "--enable-libssh2", "--enable-ssh",
-        "--target=${target.hostTriplet}",
         "--prefix=${buildDir(target)}"
       )
 
+      if (target == KonanTarget.MINGW_X64)
+        configureOptions.add("--target=${target.hostTriplet}")
+      else
+        configureOptions.add("--host=${target.hostTriplet}")
+
       project.log("configuring with $configureOptions CC is ${environment["CC"]} CFLAGS: ${environment["CFLAGS"]}")
+
+      when (target) {
+        KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64, KonanTarget.ANDROID_X64, KonanTarget.ANDROID_X86 -> {
+          environment(
+            "PATH",
+            "${binaries.androidNdkDir}/prebuilt/linux-x86_64/bin:${binaries.androidNdkDir}/toolchains/llvm/prebuilt/linux-x86_64/bin:${environment["PATH"]}"
+          )
+        }
+
+        else -> {}
+      }
 
       commandLine(configureOptions)
     }
 
-    build {
+    build { target ->
+      when (target) {
+        KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64, KonanTarget.ANDROID_X64, KonanTarget.ANDROID_X86 -> {
+          environment(
+            "PATH",
+            "${binaries.androidNdkDir}/prebuilt/linux-x86_64/bin:${binaries.androidNdkDir}/toolchains/llvm/prebuilt/linux-x86_64/bin:${environment["PATH"]}"
+          )
+        }
+
+        else -> {}
+      }
+
       commandLine(binaries.makeBinary, "install")
     }
     cinterops {
