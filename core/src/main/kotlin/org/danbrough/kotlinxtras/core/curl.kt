@@ -11,6 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.File
 
 const val XTRAS_CURL_EXTN_NAME = "curl"
 
@@ -31,6 +32,9 @@ fun Project.enableCurl(
       //git("https://github.com/curl/curl.git", "046209e561b7e9b5aab1aef7daebf29ee6e6e8c7")
       //git("https://github.com/curl/curl.git", "b16d1fa8ee567b52c09a0f89940b07d8491b881d")
       git("https://github.com/curl/curl.git", "50490c0679fcd0e50bb3a8fbf2d9244845652cf0")
+
+      binaries.androidNdkDir = File("/mnt/files/sdk/android/ndk/25.0.8775105/")
+
 
       val autoConfTaskName: KonanTarget.() -> String =
         { "xtrasAutoconf${libName.capitalized()}${platformName.capitalized()}" }
@@ -67,11 +71,19 @@ fun Project.enableCurl(
           "--with-ca-path=/etc/ssl/certs:/etc/security/cacerts:/etc/ca-certificates",
           "--prefix=${buildDir(target)}"
         )
+        environment(
+          "PATH",
+          "${binaries.androidNdkDir}/prebuilt/linux-x86_64/bin:${binaries.androidNdkDir}/toolchains/llvm/prebuilt/linux-x86_64/bin:${environment["PATH"]}"
+        )
 
         commandLine(configureOptions)
       }
 
       build {
+        environment(
+          "PATH",
+          "${binaries.androidNdkDir}/prebuilt/linux-x86_64/bin:${binaries.androidNdkDir}/toolchains/llvm/prebuilt/linux-x86_64/bin:${environment["PATH"]}"
+        )
         commandLine(binaries.makeBinary, "install")
       }
 
