@@ -25,16 +25,23 @@ internal fun LibraryExtension.registerXtrasTasks() {
   project.log("LibraryExtension.registerXtrasTasks for $libName")
 
   if (supportedTargets.isEmpty()) {
-    supportedTargets.addAll(
+    supportedTargets =
       project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.targets?.withType(
         KotlinNativeTarget::class.java
       )?.map { it.konanTarget } ?: xtrasSupportedTargets
-    )
+
   }
 
-  if (supportedBuildTargets.isEmpty()) supportedBuildTargets.addAll(
+  if (supportedBuildTargets.isEmpty()) supportedBuildTargets =
     if (HostManager.hostIsMac) supportedTargets.filter { it.family.isAppleFamily } else supportedTargets.filter { !it.family.isAppleFamily }
-  )
+
+
+
+  supportedBuildTargets.forEach { target ->
+    configureTargetTasks.forEach {
+      it.invoke(target)
+    }
+  }
 
 
   val publishing = project.extensions.findByType(PublishingExtension::class.java) ?: let {
@@ -94,8 +101,6 @@ internal fun LibraryExtension.registerXtrasTasks() {
   }
 
   supportedBuildTargets.forEach { target ->
-
-    configureTargetTask?.invoke(target)
 
     registerDownloadArchiveTask(target)
     registerCreateArchiveTask(target)

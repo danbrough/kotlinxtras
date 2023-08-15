@@ -12,12 +12,14 @@ import org.gradle.api.tasks.Exec
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import kotlin.reflect.jvm.internal.impl.descriptors.annotations.KotlinTarget
 
 @DslMarker
 annotation class XtrasDSLMarker
 
 
 typealias SourcesTask = Exec.(KonanTarget) -> Unit
+typealias TargetTask = (KonanTarget) -> Unit
 
 @XtrasDSLMarker
 fun Project.registerLibraryExtension(
@@ -26,11 +28,11 @@ fun Project.registerLibraryExtension(
 ): LibraryExtension =
   extensions.create(name, LibraryExtension::class.java, this).apply {
     libName = name
-    configureExtn()
     project.binariesExtension.libraryExtensions.add(this)
+    configureExtn()
+
     project.afterEvaluate {
       registerXtrasTasks()
-      afterEvaluateScript?.invoke()
     }
   }
 
@@ -66,7 +68,7 @@ abstract class LibraryExtension(val project: Project) {
    * If not a kotlin mpp project then it will be set to [xtrasSupportedTargets]
    */
   @XtrasDSLMarker
-  open val supportedTargets: MutableList<KonanTarget> = mutableListOf()
+  open var supportedTargets: List<KonanTarget> = xtrasSupportedTargets
 
   /**
    * This can be manually configured or it will default to the [supportedTargets] filtered by whether they can
@@ -75,15 +77,26 @@ abstract class LibraryExtension(val project: Project) {
    */
 
   @XtrasDSLMarker
-  val supportedBuildTargets: MutableList<KonanTarget> = mutableListOf()
+  var supportedBuildTargets: List<KonanTarget> = emptyList()
 
   open fun gitRepoDir(): File = project.xtrasDownloadsDir.resolve("repos/$libName")
+  internal var configureTasks: MutableList<SourcesTask> = mutableListOf()
 
   @XtrasDSLMarker
   fun configure(override: Boolean = false, task: SourcesTask) {
     if (override) configureTasks.clear()
     configureTasks.add(task)
   }
+
+
+  internal var configureTargetTasks: MutableList<TargetTask> = mutableListOf()
+
+  @XtrasDSLMarker
+  fun configureTarget(override: Boolean = false, task: TargetTask) {
+    if (override) configureTargetTasks.clear()
+    configureTargetTasks.add(task)
+  }
+
 
   @XtrasDSLMarker
   fun build(override: Boolean = false, task: SourcesTask) {
@@ -92,11 +105,6 @@ abstract class LibraryExtension(val project: Project) {
     buildTasks.add(task)
   }
 
-  @XtrasDSLMarker
-  fun configureTarget(configure: (KonanTarget) -> Unit) {
-    if (configureTargetTask != null) error("configureTargetTask already set")
-    configureTargetTask = configure
-  }
 
   internal var cinteropsConfigTasks = mutableListOf<CInteropsConfig.() -> Unit>()
 
@@ -107,11 +115,9 @@ abstract class LibraryExtension(val project: Project) {
 
   internal var sourceConfig: SourceConfig? = null
 
-  internal var configureTasks: MutableList<SourcesTask> = mutableListOf()
 
   internal var buildTasks: MutableList<SourcesTask> = mutableListOf()
 
-  internal var configureTargetTask: ((KonanTarget) -> Unit)? = null
 
   val downloadSourcesTaskName: String
     get() = "xtrasDownloadSources${libName.capitalized()}"
@@ -190,14 +196,6 @@ abstract class LibraryExtension(val project: Project) {
   fun addBuildFlags(target: KonanTarget, env: MutableMap<String, Any>) {
     env["CFLAGS"] = "${env["CFLAGS"] ?: ""} -I${libsDir(target)}/include"
     env["LDFLAGS"] = "${env["LDFLAGS"] ?: ""} -L${libsDir(target)}/lib"
-  }
-
-
-  internal var afterEvaluateScript: (() -> Unit)? = null
-
-  @XtrasDSLMarker
-  fun afterEvaluate(config: () -> Unit) {
-    afterEvaluateScript = config
   }
 
 

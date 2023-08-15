@@ -42,8 +42,8 @@ fun Project.enableLibSSH2(
       { "xtrasAutoconf${libName.capitalized()}${platformName.capitalized()}" }
 
 
-    configureTarget { target ->
 
+    configureTarget { target ->
       project.tasks.create(target.autoConfTaskName(), Exec::class.java) {
         dependsOn(extractSourcesTaskName(target))
         workingDir(sourcesDir(target))
@@ -53,6 +53,8 @@ fun Project.enableLibSSH2(
     }
 
     configure(override = true) { target ->
+
+
       dependsOn(project.tasks.getByName(openSSL.extractArchiveTaskName(target)))
 
       dependsOn(target.autoConfTaskName())

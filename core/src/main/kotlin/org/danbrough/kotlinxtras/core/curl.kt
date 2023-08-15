@@ -5,6 +5,7 @@ package org.danbrough.kotlinxtras.core
 
 import org.danbrough.kotlinxtras.binaries.*
 import org.danbrough.kotlinxtras.hostTriplet
+import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.platformName
 import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
@@ -59,13 +60,15 @@ fun Project.enableCurl(
 
         outputs.file(workingDir.resolve("Makefile"))
 
-        commandLine(
+        val configureOptions = mutableListOf(
           "./configure",
           "--host=${target.hostTriplet}",
           "--with-ssl=${openSSL.libsDir(target)}",
           "--with-ca-path=/etc/ssl/certs:/etc/security/cacerts:/etc/ca-certificates",
           "--prefix=${buildDir(target)}"
         )
+
+        commandLine(configureOptions)
       }
 
       build {

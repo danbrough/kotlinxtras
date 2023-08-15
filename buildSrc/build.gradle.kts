@@ -11,7 +11,6 @@ repositories {
   mavenCentral()
 }
 
-/*
 
 val javaLangVersion = 8
 
@@ -24,4 +23,4 @@ kotlin {
     languageVersion.set(JavaLanguageVersion.of(javaLangVersion))
   }
 }
-*/
+

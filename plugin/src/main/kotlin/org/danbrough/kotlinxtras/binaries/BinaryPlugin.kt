@@ -142,7 +142,7 @@ open class BinaryExtension {
       }
 
       else -> {
-        throw Error("Unsupported target: $target")
+        error("Unsupported target: $target")
       }
     }
 
