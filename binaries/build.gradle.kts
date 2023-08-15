@@ -3,6 +3,7 @@ import org.danbrough.kotlinxtras.core.enableIconv
 import org.danbrough.kotlinxtras.core.enableLibSSH2
 import org.danbrough.kotlinxtras.core.enableOpenssl3
 import org.danbrough.kotlinxtras.core.enableSqlite
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
   alias(libs.plugins.kotlinxtras.sonatype)
@@ -18,6 +19,8 @@ val openSSL = enableOpenssl3 {
   publishBinaries = true
   afterEvaluate {
 
+    supportedBuildTargets.remove(KonanTarget.WATCHOS_X64)
+    supportedBuildTargets.remove(KonanTarget.WATCHOS_ARM64)
     println("OPENSSL BUILD TARGETS: $supportedBuildTargets")
   }
 
