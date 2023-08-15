@@ -22,14 +22,15 @@ typealias SourcesTask = Exec.(KonanTarget) -> Unit
 @XtrasDSLMarker
 fun Project.registerLibraryExtension(
   name: String,
-  configure: LibraryExtension.() -> Unit
+  configureExtn: LibraryExtension.() -> Unit
 ): LibraryExtension =
   extensions.create(name, LibraryExtension::class.java, this).apply {
     libName = name
+    configureExtn()
     project.binariesExtension.libraryExtensions.add(this)
-    configure()
     project.afterEvaluate {
       registerXtrasTasks()
+      afterEvaluateScript?.invoke()
     }
   }
 
@@ -65,7 +66,7 @@ abstract class LibraryExtension(val project: Project) {
    * If not a kotlin mpp project then it will be set to [xtrasSupportedTargets]
    */
   @XtrasDSLMarker
-  open var supportedTargets: List<KonanTarget> = emptyList()
+  open val supportedTargets: MutableList<KonanTarget> = mutableListOf()
 
   /**
    * This can be manually configured or it will default to the [supportedTargets] filtered by whether they can
@@ -74,7 +75,7 @@ abstract class LibraryExtension(val project: Project) {
    */
 
   @XtrasDSLMarker
-  var supportedBuildTargets: List<KonanTarget> = emptyList()
+  val supportedBuildTargets: MutableList<KonanTarget> = mutableListOf()
 
   open fun gitRepoDir(): File = project.xtrasDownloadsDir.resolve("repos/$libName")
 
@@ -189,6 +190,14 @@ abstract class LibraryExtension(val project: Project) {
   fun addBuildFlags(target: KonanTarget, env: MutableMap<String, Any>) {
     env["CFLAGS"] = "${env["CFLAGS"] ?: ""} -I${libsDir(target)}/include"
     env["LDFLAGS"] = "${env["LDFLAGS"] ?: ""} -L${libsDir(target)}/lib"
+  }
+
+
+  internal var afterEvaluateScript: (() -> Unit)? = null
+
+  @XtrasDSLMarker
+  fun afterEvaluate(config: () -> Unit) {
+    afterEvaluateScript = config
   }
 
 

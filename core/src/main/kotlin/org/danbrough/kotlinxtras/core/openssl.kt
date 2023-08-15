@@ -79,6 +79,7 @@ val KonanTarget.opensslPlatform: String
     KonanTarget.MINGW_X64 -> "mingw64"
     KonanTarget.MINGW_X86 -> "mingw"
 
+
     KonanTarget.MACOS_X64 -> "darwin64-x86_64-cc"
     KonanTarget.MACOS_ARM64 -> "darwin64-arm64-cc"
     KonanTarget.IOS_ARM32 -> "ios-cross"
@@ -86,6 +87,6 @@ val KonanTarget.opensslPlatform: String
     KonanTarget.IOS_SIMULATOR_ARM64 -> "iossimulator-xcrun"
     KonanTarget.IOS_X64 -> "ios64-cross"
 
-    else -> throw Error("$this not supported")
+    else -> throw Error("$this not supported for openssl")
   }
 

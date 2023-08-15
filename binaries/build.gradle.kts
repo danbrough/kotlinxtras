@@ -16,6 +16,11 @@ enableIconv {
 
 val openSSL = enableOpenssl3 {
   publishBinaries = true
+  afterEvaluate {
+
+    println("OPENSSL BUILD TARGETS: $supportedBuildTargets")
+  }
+
 }
 
 enableCurl(openSSL) {
@@ -30,10 +35,6 @@ enableLibSSH2(openSSL) {
   publishBinaries = true
 }
 
-afterEvaluate {
-  println("SUPPORTED TARGETS: ${openSSL.supportedTargets} BUILD: ${openSSL.supportedBuildTargets}")
-
-}
 
 /*
 gradlePlugin {
