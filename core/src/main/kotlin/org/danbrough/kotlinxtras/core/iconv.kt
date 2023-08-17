@@ -27,10 +27,11 @@ fun Project.enableIconv(
       }
 
       configure { target ->
-        
+        println("ICONV ANDROID NDK: ${binaries.androidNdkDir} CC:${environment["CC"]}")
+        println("PATH: ${environment["PATH"]}")
+
         commandLine(
           "./configure",
-          "-C",
           "--enable-static",
           "--host=${target.hostTriplet}",
           "--prefix=${buildDir(target)}"
@@ -39,6 +40,8 @@ fun Project.enableIconv(
       }
 
       build {
+        println("BUILD ICONV ANDROID NDK: ${binaries.androidNdkDir} CC:${environment["CC"]}")
+        println("PATH: ${environment["PATH"]}")
         commandLine(binaries.makeBinary, "install")
       }
 

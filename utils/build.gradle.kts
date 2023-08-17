@@ -13,6 +13,8 @@ kotlin {
 
   declareSupportedTargets()
 
+  jvm()
+
 
   sourceSets {
     val commonTest by getting {

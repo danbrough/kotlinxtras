@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.io.PrintWriter
 
-typealias CInteropsTargetWriter = LibraryExtension.(KonanTarget, PrintWriter) -> Unit
+typealias CInteropsTargetWriter = List<LibraryExtension>.(KonanTarget, PrintWriter) -> Unit
 
 data class CInteropsConfig(
   //name of the interops task
@@ -44,18 +44,24 @@ data class CInteropsConfig(
   var writeTarget: CInteropsTargetWriter = defaultCInteropsTargetWriter,
 
   //customize the default config
-  var configure: (CInteropsConfig.() -> Unit)? = null
+  var configure: (CInteropsConfig.() -> Unit)? = null,
+
+  //other libraries to be merged into this file
+  var dependencies: List<LibraryExtension> = emptyList(),
 )
 
 val defaultCInteropsTargetWriter: CInteropsTargetWriter = { konanTarget, output ->
-  val libsDir = libsDir(konanTarget).absolutePath
+
+
+  val libsDirs = this.map { it.libsDir(konanTarget).absolutePath }
   output.println(
     """
-         |compilerOpts.${konanTarget.name} = -I$libsDir/include 
-         |linkerOpts.${konanTarget.name} = -L$libsDir/lib 
-         |libraryPaths.${konanTarget.name} = $libsDir/lib     
+         |compilerOpts.${konanTarget.name} = ${libsDirs.joinToString(separator = " ") { "-I$it/include" }} 
+         |linkerOpts.${konanTarget.name} = ${libsDirs.joinToString(separator = " ") { "-L$it/lib" }}
+         |libraryPaths.${konanTarget.name} = ${libsDirs.joinToString(separator = " ") { "$it/lib" }}
          |""".trimMargin()
   )
+
 }
 
 fun LibraryExtension.registerGenerateInteropsTask() {
@@ -132,8 +138,11 @@ fun LibraryExtension.registerGenerateInteropsTask() {
             output.println(it)
           }
 
+          val extensions = mutableListOf(this@registerGenerateInteropsTask).also {
+            it.addAll(config.dependencies)
+          }
           supportedTargets.forEach { konanTarget ->
-            config.writeTarget(this@registerGenerateInteropsTask, konanTarget, output)
+            config.writeTarget(extensions, konanTarget, output)
           }
 
           if (config.headersSource != null) {

@@ -52,7 +52,7 @@ fun Project.enableLibSSH2(
       }
     }
 
-    configure(override = true) { target ->
+    configure { target ->
 
       dependsOn(openSSL.extractArchiveTaskName(target))
 
@@ -64,7 +64,7 @@ fun Project.enableLibSSH2(
 
       commandLine(
         "./configure",
-        "--with-crypto=openssl", "--with-libssl-prefix=${openSSL.libsDir(target)}",
+        "--with-crypto=wolfssl", "--with-libwolfssl-prefix=${openSSL.libsDir(target)}",
         "--with-libz",
         //--with-libz-prefix[=DIR]  search for libz in DIR/include and DIR/lib
         "--without-libz-prefix",
@@ -79,7 +79,7 @@ fun Project.enableLibSSH2(
 
     cinterops {
       headers = """
-          headers =libssh2.h 
+          headers = libssh2.h 
           linkerOpts =  -lz -lssl -lcrypto -lssh2
           #staticLibraries.linux = libcurl.a
           #staticLibraries.android = libcurl.a

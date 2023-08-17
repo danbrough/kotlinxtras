@@ -1,5 +1,5 @@
 import org.danbrough.kotlinxtras.core.enableLibSSH2
-import org.danbrough.kotlinxtras.core.enableOpenssl3
+import org.danbrough.kotlinxtras.core.enableWolfSSL
 import org.danbrough.kotlinxtras.declareSupportedTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
@@ -10,12 +10,21 @@ plugins {
 }
 
 version = "0.0.1-beta01"
+val ssl = enableWolfSSL {
 
-enableLibSSH2(enableOpenssl3()) {
+}
+
+enableLibSSH2(ssl) {
   deferToPrebuiltPackages = true
 
   cinterops {
-    interopsPackage = "$group.${project.name}"
+    headers = """
+          headers = wolfssl/ssl.h
+          linkerOpts =  -lz -lssl -lcrypto -lcurl
+          #staticLibraries.linux = libcurl.a
+          #staticLibraries.android = libcurl.a
+          
+          """.trimIndent()
   }
 }
 

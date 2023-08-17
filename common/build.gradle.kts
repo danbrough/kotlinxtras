@@ -13,6 +13,7 @@ version = "0.0.1-beta01"
 kotlin {
 
   declareSupportedTargets()
+  jvm()
 
   val posixMain by sourceSets.creating
 

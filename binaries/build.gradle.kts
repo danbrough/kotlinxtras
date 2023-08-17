@@ -12,32 +12,34 @@ plugins {
 }
 
 
-enableIconv {
+/*enableIconv {
   publishBinaries = true
-}
+}*/
 
-val openSSL = enableOpenssl3 {
+/*val openSSL = enableOpenssl3 {
   publishBinaries = true
   println("OPENSSL BUILD TARGETS: $supportedTargets")
 
 }
 
-enableCurl(openSSL) {
-  publishBinaries = true
-}
+
 
 enableSqlite {
   publishBinaries = true
 }
+*/
 
-enableLibSSH2(openSSL) {
+val ssl = enableWolfSSL {
   publishBinaries = true
 }
-
-enableWolfSSL {
+enableCurl(ssl) {
   publishBinaries = true
 }
-
+/*
+enableLibSSH2(ssl) {
+  publishBinaries = true
+}
+*/
 
 /*
 gradlePlugin {

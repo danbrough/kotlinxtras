@@ -16,7 +16,7 @@ import java.io.File
 const val XTRAS_CURL_EXTN_NAME = "curl"
 
 fun Project.enableCurl(
-  openSSL: LibraryExtension,
+  ssl: LibraryExtension,
   extnName: String = XTRAS_CURL_EXTN_NAME,
   config: LibraryExtension.() -> Unit = {}
 ): LibraryExtension {
@@ -33,7 +33,7 @@ fun Project.enableCurl(
       //git("https://github.com/curl/curl.git", "b16d1fa8ee567b52c09a0f89940b07d8491b881d")
       git("https://github.com/curl/curl.git", "50490c0679fcd0e50bb3a8fbf2d9244845652cf0")
 
-      binaries.androidNdkDir = File("/mnt/files/sdk/android/ndk/25.0.8775105/")
+      //binaries.androidNdkDir = File("/mnt/files/sdk/android/ndk/25.0.8775105/")
 
 
       val autoConfTaskName: KonanTarget.() -> String =
@@ -56,7 +56,7 @@ fun Project.enableCurl(
 
 
       configure { target ->
-        dependsOn(project.tasks.getByName(openSSL.extractArchiveTaskName(target)))
+        dependsOn(project.tasks.getByName(ssl.extractArchiveTaskName(target)))
 
         dependsOn(target.autoConfTaskName())
 
@@ -67,8 +67,8 @@ fun Project.enableCurl(
         val configureOptions = mutableListOf(
           "./configure",
           "--host=${target.hostTriplet}",
-          "--with-ssl=${openSSL.libsDir(target)}",
-          "--with-ca-path=/etc/ssl/certs:/etc/security/cacerts:/etc/ca-certificates",
+          "--with-wolfssl=${ssl.libsDir(target)}",
+          //"--with-ca-path=/etc/ssl/certs:/etc/security/cacerts:/etc/ca-certificates",
           "--prefix=${buildDir(target)}"
         )
         environment(

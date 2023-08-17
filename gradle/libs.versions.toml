@@ -13,13 +13,13 @@ org-jetbrains-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 [versions]
 
 kotlin = "1.9.0"
-kotlinXtras = "0.0.3-beta18"
-kotlinXtrasPublishing = "0.0.3-beta18"
+kotlinXtras = "0.0.3-beta19"
+kotlinXtrasPublishing = "0.0.3-beta19"
 dokka = "1.8.20"
 
 [libraries]
 
-klog = "org.danbrough:klog:0.0.2-beta07"
+klog = "org.danbrough:klog:0.0.2-beta03"
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
 

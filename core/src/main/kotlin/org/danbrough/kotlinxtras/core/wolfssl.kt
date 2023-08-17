@@ -27,7 +27,7 @@ fun Project.enableWolfSSL(
   config: LibraryExtension.() -> Unit = {}
 ): LibraryExtension =
   extensions.findByName(extnName) as? LibraryExtension ?: registerLibraryExtension(extnName) {
-    binaries.androidNdkDir = File("/mnt/files/sdk/android/ndk/25.0.8775105/")
+//    binaries.androidNdkDir = File("/mnt/files/sdk/android/ndk/25.0.8775105/")
 
     val autogenTaskName: KonanTarget.() -> String =
       { "xtrasAutogen${libName.capitalized()}${platformName.capitalized()}" }
@@ -53,22 +53,64 @@ fun Project.enableWolfSSL(
     }
 
     configure { target ->
-      binaries.androidNdkDir = File("/mnt/files/sdk/android/ndk/25.0.8775105/")
+      //binaries.androidNdkDir = File("/mnt/files/sdk/android/ndk/25.0.8775105/")
 
       outputs.file(workingDir.resolve("Makefile"))
       dependsOn(target.autogenTaskName())
 
+      /*  val configureOptions = mutableListOf(
+          "./configure",
+          "--host=${target.hostTriplet}",
+          "--enable-openssh",
+          "--enable-libssh2",
+          "--enable-ssh",
+          "--disable-examples",
+          "--prefix=${buildDir(target)}"
+        )
+  */
+
+
       val configureOptions = mutableListOf(
         "./configure",
-        "--enable-jni", "--enable-openssh", "--enable-libssh2", "--enable-ssh",
-        "--prefix=${buildDir(target)}"
-      )
+        "--host=${target.hostTriplet}",
+        "--prefix=${buildDir(target)}",
+//      "--disable-fasthugemath",
+//      "--disable-bump",
+//      "--enable-opensslextra",
+//      "--enable-fortress",
+//      "--disable-debug",
+//      "--disable-ntru",
+//      "--disable-examples",
+//      "--enable-distro",
+//      "--enable-reproducible-build",
+        "--enable-curve25519",
+        "--enable-ed25519",
+        "--enable-curve448",
+        "--enable-ed448",
+        "--enable-sha512",
+        "--with-max-rsa-bits=8192",
 
-      if (target == KonanTarget.MINGW_X64)
-        configureOptions.add("--target=${target.hostTriplet}")
-      else
-        configureOptions.add("--host=${target.hostTriplet}")
 
+//  --enable-certreq        Enable cert request generation (default: disabled)
+        "--enable-certext",//        Enable cert request extensions (default: disabled)
+//  --enable-certgencache   Enable decoded cert caching (default: disabled)
+        //--enable-altcertchains  Enable using alternative certificate chains, only
+        //   require leaf certificate to validate to trust root
+        //--enable-testcert       Enable Test Cert (default: disabled)
+        "--enable-certservice",
+        "--enable-altcertchains",
+//      "--enable-writedup",
+
+        "--enable-opensslextra",
+        "--enable-openssh",
+        "--enable-libssh2",
+        "--enable-keygen", "--enable-certgen",
+        "--enable-ssh", "--enable-wolfssh",
+        "--disable-examples", "--enable-postauth",
+
+        )
+      if (target != KonanTarget.MINGW_X64)
+        configureOptions.add("--enable-jni")
       project.log("configuring with $configureOptions CC is ${environment["CC"]} CFLAGS: ${environment["CFLAGS"]}")
 
       when (target) {
@@ -102,7 +144,7 @@ fun Project.enableWolfSSL(
     cinterops {
       headers = """
           #staticLibraries =  libcrypto.a libssl.a
-          headers =  ssl.h openssl/ssl.h openssl/err.h openssl/bio.h openssl/evp.h
+          headers =  wolfssl/ssl.h wolfssl/openssl/ssl.h wolfssl/openssl/err.h wolfssl/openssl/bio.h wolfssl/openssl/evp.h
           linkerOpts.linux = -ldl -lc -lm -lwolfssl 
           linkerOpts.android = -ldl -lc -lm -lwolfssl
           linkerOpts.macos = -ldl -lc -lm -lwolfssl 

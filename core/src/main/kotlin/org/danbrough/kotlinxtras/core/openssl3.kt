@@ -36,7 +36,7 @@ fun Project.enableOpenssl3(
     git(gitURL, commit)
 
     configure { target ->
-      binaries.androidNdkDir = File("/mnt/files/sdk/android/ndk/25.0.8775105/")
+      //binaries.androidNdkDir = File("/mnt/files/sdk/android/ndk/25.0.8775105/")
 
       outputs.file(workingDir.resolve("Makefile"))
       val args = mutableListOf(
