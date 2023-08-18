@@ -2,9 +2,7 @@
 
 [plugins]
 
-kotlinXtrasCore = { id = "org.danbrough.kotlinxtras.core", version.ref = "kotlinXtras" }
-kotlinXtrasBinaries = { id = "org.danbrough.kotlinxtras.binaries", version.ref = "kotlinXtras" }
-
+kotlinXtras = { id = "org.danbrough.kotlinxtras.xtras", version.ref = "kotlinXtras" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 
 [versions]
@@ -15,11 +13,10 @@ ktor = "2.3.3"
 
 [libraries]
 
-klog = "org.danbrough:klog:0.0.2-beta03"
+org-danbrough-klog = "org.danbrough:klog:0.0.2-beta03"
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin" }
 
-org-danbrough-kotlinxtras-common = "org.danbrough.kotlinxtras:common:0.0.1-beta01"
-org-danbrough-kotlinxtras-utils = "org.danbrough.kotlinxtras:utils:0.0.1-beta01"
+
 io-ktor-ktorutils = { group = "io.ktor", name = "ktor-utils", version.ref = "ktor" }
 
 kotlin-scripting-compiler-embeddable = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-compiler-embeddable", version.ref = "kotlin" }

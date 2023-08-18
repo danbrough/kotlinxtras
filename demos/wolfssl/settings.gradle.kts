@@ -25,7 +25,7 @@ plugins {
 
 rootProject.name = "wolfssl_demo"
 
-includeBuild("plugins")
+includeBuild("plugin")
 
 
 

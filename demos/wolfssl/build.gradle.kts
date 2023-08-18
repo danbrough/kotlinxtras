@@ -1,22 +1,16 @@
-import org.danbrough.kotlinxtras.binaries.download
-import org.danbrough.kotlinxtras.binaries.git
-import org.danbrough.kotlinxtras.binaries.registerLibraryExtension
-import org.danbrough.kotlinxtras.core.enableCurl
-import org.danbrough.kotlinxtras.core.enableLibSSH2
-import org.danbrough.kotlinxtras.core.enableWolfSSL
-import org.danbrough.kotlinxtras.hostTriplet
-import org.danbrough.kotlinxtras.log
-import org.danbrough.kotlinxtras.platformName
-import org.gradle.configurationcache.extensions.capitalized
+@file:Suppress("OPT_IN_USAGE", "UnstableApiUsage")
+
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
-  alias(libs.plugins.kotlinXtrasCore)
-  alias(libs.plugins.kotlinXtrasBinaries)
+  alias(libs.plugins.kotlinXtras)
 }
+
+
+
 
 
 repositories {
@@ -32,7 +26,13 @@ kotlin {
   linuxX64()
   androidNativeArm64()
   linuxArm64()
-  //jvm()
+
+
+  jvm{
+    mainRun {
+      mainClass = "demo1.MainKt"
+    }
+  }
 
   if (HostManager.hostIsMac) {
     macosX64()
@@ -43,9 +43,8 @@ kotlin {
 
   val commonMain by sourceSets.getting {
     dependencies {
-      implementation(libs.klog)
-      implementation(libs.org.danbrough.kotlinxtras.common)
-      implementation(libs.org.danbrough.kotlinxtras.utils)
+      implementation(libs.org.danbrough.klog)
+
 
       //implementation(libs.io.ktor.ktorutils)
     }
