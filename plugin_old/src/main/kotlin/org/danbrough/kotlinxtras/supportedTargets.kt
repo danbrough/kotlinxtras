@@ -85,7 +85,7 @@ fun KotlinMultiplatformExtension.declareHostTarget(configure: KotlinNativeTarget
     KonanTarget.MACOS_X64 -> macosX64(configure = configure)
     KonanTarget.MACOS_ARM64 -> macosArm64(configure = configure)
     KonanTarget.LINUX_ARM64 -> linuxArm64(configure = configure)
-    KonanTarget.LINUX_X64 -> linuxX64(configure)
+    KonanTarget.LINUX_X64 -> linuxX64(configure = configure)
     KonanTarget.MINGW_X64 -> mingwX64(configure)
     else -> error("Unhandled host platform: ${HostManager.host}")
   }

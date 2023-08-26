@@ -7,19 +7,21 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 kotlinxtras-sonatype = { id = "org.danbrough.kotlinxtras.sonatype", version.ref = "kotlinXtras" }
 
 kotlinxtras-core = { id = "org.danbrough.kotlinxtras.core", version.ref = "kotlinXtras" }
+kotlinXtras = { id = "org.danbrough.kotlinxtras.xtras", version.ref = "kotlinXtras" }
 
 org-jetbrains-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 
 [versions]
 
-kotlin = "1.9.0"
+kotlin = "1.9.10"
 kotlinXtras = "0.0.3-beta19"
 kotlinXtrasPublishing = "0.0.3-beta19"
+
 dokka = "1.8.20"
 
 [libraries]
 
-klog = "org.danbrough:klog:0.0.2-beta03"
+org-danbrough-klog = "org.danbrough:klog:0.0.2-beta03"
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
 

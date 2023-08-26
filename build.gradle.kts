@@ -1,13 +1,17 @@
+import org.danbrough.kotlinxtras.XTRAS_PACKAGE
 import org.gradle.api.tasks.testing.logging.TestLogEvent
+import org.danbrough.kotlinxtras.xtrasPom
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform) apply false
   `maven-publish`
   alias(libs.plugins.org.jetbrains.dokka) apply false
-  alias(libs.plugins.kotlinxtras.sonatype) apply false
+  id("org.danbrough.kotlinxtras.xtras")
+  //alias(libs.plugins.kotlinxtras.sonatype) apply false
 }
 
-println("Using Kotlin compiler version: ${org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION}")
+println("Using Kotlin compiler version: ${KotlinCompilerVersion.VERSION}")
 
 val publishingVersion: String = libs.versions.kotlinXtrasPublishing.get()
 
@@ -16,7 +20,7 @@ version = publishingVersion
 
 allprojects {
 
-  group = Xtras.projectGroup
+  group = XTRAS_PACKAGE
   version = publishingVersion
 
   repositories {
@@ -44,7 +48,7 @@ allprojects {
 
 
 subprojects {
-  group = Xtras.projectGroup
+  group = XTRAS_PACKAGE
 
   afterEvaluate {
 
@@ -75,10 +79,10 @@ subprojects {
 }
 
 
-
-
+/*
 afterEvaluate {
   tasks.findByPath(":plugin:javadocJar")?.also {
     tasks.findByPath(":core:dokkaHtml")?.mustRunAfter(it)
   }
 }
+*/

@@ -11,12 +11,14 @@ pluginManagement {
 
 
 plugins {
-  id("de.fayard.refreshVersions") version "0.51.0"
-////                          # available:"0.52.0-SNAPSHOT"
+  id("de.fayard.refreshVersions") version "0.60.1"
 }
 
 rootProject.name = "kotlinxtras"
 
+includeBuild("plugin")
+include("wolfssl")
+/*
 val pluginsOnly: String? by settings
 
 //-PpluginsOnly=true or not specified
@@ -35,4 +37,5 @@ if (!pluginsOnly.toBoolean()) {
 
 
 
+*/
 

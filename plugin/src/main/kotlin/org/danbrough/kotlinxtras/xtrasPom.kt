@@ -1,3 +1,5 @@
+package org.danbrough.kotlinxtras
+
 import org.gradle.api.publish.maven.MavenPublication
 
 fun MavenPublication.xtrasPom() {
