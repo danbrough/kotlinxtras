@@ -8,7 +8,6 @@ plugins {
   `maven-publish`
   alias(libs.plugins.org.jetbrains.dokka) apply false
   id("org.danbrough.kotlinxtras.xtras")
-  //alias(libs.plugins.kotlinxtras.sonatype) apply false
 }
 
 println("Using Kotlin compiler version: ${KotlinCompilerVersion.VERSION}")

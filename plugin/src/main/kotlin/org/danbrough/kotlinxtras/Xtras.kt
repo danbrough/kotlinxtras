@@ -2,9 +2,6 @@ package org.danbrough.kotlinxtras
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.version
-import org.gradle.plugin.use.PluginDependenciesSpec
-import org.gradle.plugin.use.PluginDependencySpec
 import java.io.File
 import java.util.Locale
 
@@ -52,6 +49,9 @@ const val PROPERTY_DOCS_DIR = "$PROPERTY_XTRAS_DIR.docs"
 
 const val PROPERTY_BUILD_DIR = "$PROPERTY_XTRAS_DIR.build"
 
+const val PROPERTY_SOURCE_DIR = "$PROPERTY_XTRAS_DIR.src"
+
+
 const val PROPERTY_LIBS_DIR = "$PROPERTY_XTRAS_DIR.libs"
 
 const val PROPERTY_CINTEROPS_DIR = "$PROPERTY_XTRAS_DIR.cinterops"
@@ -90,6 +90,16 @@ val Project.xtrasDownloadsDir: File
  */
 val Project.xtrasBuildDir: File
   get() = xtrasPath(PROPERTY_BUILD_DIR, "build")
+
+
+/**
+ * Path to the xtras source directory.
+ * This is where source code is located
+ *
+ * Defaults to `project.xtrasDir.resolve("src")`
+ */
+val Project.xtrasSourceDir: File
+  get() = xtrasPath(PROPERTY_SOURCE_DIR, "src")
 
 /**
  * Path to the xtras packages directory.
@@ -133,14 +143,14 @@ val Project.xtrasDocsDir: File
 
 /**
  * Path to the xtras libs directory.
- * This is the install prefix for binary packages
+ * This where binary packages are extracted to.
  *
  * Defaults to `project.xtrasDir.resolve("libs")`
  */
 val Project.xtrasLibsDir: File
   get() = xtrasPath(PROPERTY_LIBS_DIR, "libs")
 
-fun String.capitalize() =
+fun String.capitalized() =
   replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
-fun String.decapitalize() = replaceFirstChar { it.lowercase(Locale.getDefault()) }
+fun String.decapitalized() = replaceFirstChar { it.lowercase(Locale.getDefault()) }
