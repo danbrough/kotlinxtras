@@ -21,7 +21,7 @@ java {
 }
 
 group = "org.danbrough.kotlinxtras"
-version = libs.versions.kotlinXtras.get()
+version = libs.versions.kotlinXtrasPublishing.get()
 
 kotlin {
   jvmToolchain {

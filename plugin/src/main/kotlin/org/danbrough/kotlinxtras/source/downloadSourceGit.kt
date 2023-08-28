@@ -27,6 +27,7 @@ private fun XtrasLibrary.gitExec(vararg args: String, workingDir: File? = null):
   project.exec {
     if (workingDir != null)
       workingDir(workingDir)
+    environment(buildEnv.getEnvironment())
     val cmdArgs = args.toMutableList().also { it.add(0, buildEnv.binaries.git) }
     project.log("running ${cmdArgs.joinToString(" ")}")
     commandLine(cmdArgs)
@@ -39,22 +40,27 @@ internal fun XtrasLibrary.registerDownloadSourceGit() {
 
   val downloadSourcesTask = project.tasks.register(downloadSourcesTaskName()) {
     group = XTRAS_TASK_GROUP
+
+
     outputs.dir(gitBareRepoDir)
     inputs.property("config", config.hashCode())
 
 
-    actions.add {
-      project.log("deleting $gitBareRepoDir")
-      project.delete(gitBareRepoDir)
-    }
+    /*    actions.add {
+          project.log("deleting $gitBareRepoDir")
+          project.delete(gitBareRepoDir)
+        }*/
 
-    actions.add {
-      library.gitExec("init", "--bare", gitBareRepoDir.absolutePath).assertNormalExitValue()
-    }
 
-    actions.add {
-      library.gitExec("remote", "add", "origin", config.url, workingDir = gitBareRepoDir)
-    }
+    if (!gitBareRepoDir.exists())
+      actions.add {
+        library.gitExec("init", "--bare", gitBareRepoDir.absolutePath).assertNormalExitValue()
+      }
+
+    if (!gitBareRepoDir.resolve("config").readText().contains(config.url))
+      actions.add {
+        library.gitExec("remote", "add", "origin", config.url, workingDir = gitBareRepoDir)
+      }
 
     actions.add {
       library.gitExec("fetch", "--depth", "1", "origin", config.commit, workingDir = gitBareRepoDir)
@@ -72,6 +78,10 @@ internal fun XtrasLibrary.registerDownloadSourceGit() {
 
     project.tasks.register<Exec>(extractSourcesTaskName(target)) {
       group = XTRAS_TASK_GROUP
+      doFirst {
+        project.delete(sourceDir)
+      }
+      environment(buildEnv.getEnvironment(target))
       dependsOn(downloadSourcesTask)
       outputs.dir(sourcesDir(target))
       commandLine(buildEnv.binaries.git, "clone", gitBareRepoDir, sourceDir)

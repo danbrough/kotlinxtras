@@ -8,8 +8,9 @@ import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.source.GitSourceConfig
 import org.danbrough.kotlinxtras.source.registerDownloadSourceGit
-import org.danbrough.kotlinxtras.tasks.registerArchiveTask
+import org.danbrough.kotlinxtras.tasks.registerArchiveTasks
 import org.danbrough.kotlinxtras.xtrasBuildDir
+import org.danbrough.kotlinxtras.xtrasLibsDir
 import org.danbrough.kotlinxtras.xtrasPackagesDir
 import org.danbrough.kotlinxtras.xtrasSourceDir
 import org.gradle.api.Project
@@ -22,7 +23,7 @@ import java.io.File
 @XtrasDSLMarker
 open class XtrasLibrary(val project: Project, val libName: String, val version: String) {
   init {
-    project.log("Created XtrasLibrary for ${project.projectDir.absolutePath} name: $libName version:$version")
+    project.log("created $this for ${project.projectDir.absolutePath}")
   }
 
   interface SourceConfig
@@ -46,10 +47,11 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
   fun extractSourcesTaskName(target: KonanTarget) = xtrasTaskName("ExtractSources", target)
   fun configureTaskName(target: KonanTarget) = xtrasTaskName("configure", target)
   fun buildTaskName(target: KonanTarget) = xtrasTaskName("build", target)
-
   fun archiveTaskName(target: KonanTarget) = xtrasTaskName("archive", target)
+  fun extractArchiveTaskName(target: KonanTarget) = xtrasTaskName("extractArchive", target)
+  fun provideArchiveTaskName(target: KonanTarget) = xtrasTaskName("provideArchive", target)
 
-  fun packageFileName(
+  fun archiveFileName(
     konanTarget: KonanTarget,
     name: String = libName,
     packageVersion: String = version
@@ -67,8 +69,12 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
     { project.xtrasBuildDir.resolve("$libName/$version/${it.platformName}") }
 
   @XtrasDSLMarker
+  var libsDir: (KonanTarget) -> File =
+    { project.xtrasLibsDir.resolve("$libName/$version/${it.platformName}") }
+
+  @XtrasDSLMarker
   var archiveFile: (target: KonanTarget) -> File = { target ->
-    project.xtrasPackagesDir.resolve(packageFileName(target))
+    project.xtrasPackagesDir.resolve(archiveFileName(target))
   }
 
   override fun toString() = "XtrasLibrary[$libName:$version]"
@@ -82,6 +88,7 @@ fun XtrasLibrary.xtrasRegisterSourceTask(
   project.tasks.register<Exec>(name) {
     workingDir(sourcesDir(target))
     dependsOn(extractSourcesTaskName(target))
+    environment(buildEnv.getEnvironment(target))
     group = XTRAS_TASK_GROUP
     configure()
   }
@@ -99,7 +106,7 @@ fun Project.xtrasCreateLibrary(
 }
 
 
-internal fun XtrasLibrary.registerTasks() {
+private fun XtrasLibrary.registerTasks() {
   when (sourceConfig) {
     is GitSourceConfig -> {
       registerDownloadSourceGit()
@@ -107,7 +114,7 @@ internal fun XtrasLibrary.registerTasks() {
   }
 
   supportedTargets.forEach {
-    registerArchiveTask(it)
+    registerArchiveTasks(it)
   }
 }
 

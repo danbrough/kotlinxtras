@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.kotlinXtras)
+
 }
 
 repositories {
@@ -104,8 +105,10 @@ fun Project.xtrasWolfSSL(
 
 xtrasWolfSSL {
   supportedTargets = listOf(KonanTarget.LINUX_X64, KonanTarget.LINUX_ARM64)
-
-
 }
+
+
+
+
 
 

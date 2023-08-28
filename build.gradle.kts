@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform) apply false
-  `maven-publish`
   alias(libs.plugins.org.jetbrains.dokka) apply false
   id("org.danbrough.kotlinxtras.xtras")
 }
@@ -21,6 +20,8 @@ allprojects {
 
   group = XTRAS_PACKAGE
   version = publishingVersion
+
+  apply<MavenPublishPlugin>()
 
   repositories {
 
@@ -66,12 +67,10 @@ subprojects {
 
 */
 
-    extensions.findByType(PublishingExtension::class)?.also {
-      publishing {
-        publications.all {
-          if (this !is MavenPublication) return@all
+    extensions.findByType(PublishingExtension::class)?.apply {
+      publications.all {
+        if (this is MavenPublication)
           xtrasPom()
-        }
       }
     }
   }

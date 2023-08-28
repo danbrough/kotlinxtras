@@ -1,13 +1,12 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package org.danbrough.kotlinxtras
 
 import org.danbrough.kotlinxtras.library.XtrasLibrary
-import org.gradle.api.Project
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 
 class BuildEnvironment(library: XtrasLibrary) {
-
-  val defaultEnv = mapOf("PATH" to "")
 
   inner class Binaries {
     var git = "git"
@@ -21,11 +20,23 @@ class BuildEnvironment(library: XtrasLibrary) {
   val binaries = Binaries()
 
   @XtrasDSLMarker
+  var environment: MutableMap<String, String>.() -> Unit = {
+    put("PATH", "/bin:/usr/bin:/usr/local/bin")
+  }
+
+  @XtrasDSLMarker
+  var environmentForTarget: MutableMap<String, String>.(KonanTarget) -> Unit = {}
+
+  fun getEnvironment(target: KonanTarget? = null) = buildMap {
+    environment()
+    if (target != null)
+      environmentForTarget(target)
+  }
+
+  @XtrasDSLMarker
   fun binaries(config: Binaries.() -> Unit) {
     binaries.config()
   }
-
-
 }
 
 
