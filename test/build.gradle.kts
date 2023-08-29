@@ -28,7 +28,7 @@ kotlin {
   targets.withType<KotlinNativeTarget> {
     binaries {
       executable("demo") {
-        entryPoint = "demo.MainKt"
+        entryPoint = "demo.main"
       }
     }
   }
