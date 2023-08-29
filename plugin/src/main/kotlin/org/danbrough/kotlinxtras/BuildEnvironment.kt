@@ -104,9 +104,10 @@ class BuildEnvironment(library: XtrasLibrary) {
 
       KonanTarget.ANDROID_X64, KonanTarget.ANDROID_X86, KonanTarget.ANDROID_ARM64, KonanTarget.ANDROID_ARM32 -> {
         library.project.log("ADDING NDK TO PATH")
+        val archFolder = if (HostManager.hostIsLinux) "linux-x86_64" else "darwin-x86_64"
         put(
           "PATH",
-          "${androidNdkDir().resolve("toolchains/llvm/prebuilt/linux-x86_64/bin").absolutePath}:${
+          "${androidNdkDir().resolve("toolchains/llvm/prebuilt/$archFolder/bin").absolutePath}:${
             get("PATH")
           }"
         )
