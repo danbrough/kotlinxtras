@@ -42,7 +42,7 @@ class BuildEnvironment(library: XtrasLibrary) {
 
     put("KONAN_BUILD", "1")
 
-    val llvmPrefix = if (HostManager.hostIsLinux) "llvm-" else "apple-"
+    val llvmPrefix = if (HostManager.hostIsLinux) "llvm-" else "apple-llvm"
     konanDir.resolve("dependencies").listFiles()
       ?.firstOrNull { it.isDirectory && it.name.startsWith(llvmPrefix) }?.also {
         put("PATH", "${it.resolve("bin").absolutePath}:${get("PATH")}")

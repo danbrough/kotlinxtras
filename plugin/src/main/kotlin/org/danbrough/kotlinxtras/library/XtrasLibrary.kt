@@ -55,7 +55,15 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
     }
 
     if (HostManager.hostIsMac) {
-      addAll(listOf(KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64))
+      addAll(
+        listOf(
+          KonanTarget.MACOS_X64,
+          KonanTarget.MACOS_ARM64,
+          KonanTarget.LINUX_X64,
+          KonanTarget.LINUX_ARM64,
+          KonanTarget.IOS_ARM64
+        )
+      )
     } else {
       addAll(
         listOf(
