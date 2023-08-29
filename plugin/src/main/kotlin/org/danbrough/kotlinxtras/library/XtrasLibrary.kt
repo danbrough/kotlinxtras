@@ -18,6 +18,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -44,7 +45,38 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
   }
 
   @XtrasDSLMarker
-  var supportedTargets: List<KonanTarget> = emptyList()
+  var supportedTargets: List<KonanTarget> = buildList {
+
+    if (buildEnv.runningInIDEA) {
+      add(HostManager.host)
+      return@buildList
+    }
+
+    if (HostManager.hostIsMac) {
+      addAll(listOf(KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64))
+    } else {
+      addAll(
+        listOf(
+          KonanTarget.LINUX_X64,
+          KonanTarget.LINUX_ARM64,
+          KonanTarget.LINUX_ARM32_HFP,
+          //    KonanTarget.MINGW_X64,
+        )
+      )
+    }
+
+    addAll(
+      listOf(
+        //KonanTarget.MINGW_X64,
+        KonanTarget.ANDROID_ARM32,
+        KonanTarget.ANDROID_ARM64,
+        KonanTarget.ANDROID_X64,
+        KonanTarget.ANDROID_X86
+      )
+    )
+
+
+  }
 
   fun xtrasTaskName(name: String, target: KonanTarget? = null) =
     "xtras${name.capitalized()}${libName.capitalized()}${target?.platformName?.capitalized() ?: ""}"

@@ -14,7 +14,7 @@ repositories {
   google()
 }
 
-val javaLangVersion = 11
+val javaLangVersion = 8
 
 java {
   toolchain.languageVersion.set(JavaLanguageVersion.of(javaLangVersion))

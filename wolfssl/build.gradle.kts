@@ -110,39 +110,6 @@ fun Project.xtrasWolfSSL(
 
 
 xtrasWolfSSL {
-
-
-  supportedTargets = buildList {
-
-    if (buildEnv.runningInIDEA) {
-      add(HostManager.host)
-      return@buildList
-    }
-
-    if (HostManager.hostIsMac) {
-      addAll(listOf(KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64))
-    } else {
-      addAll(
-        listOf(
-          KonanTarget.LINUX_X64,
-          KonanTarget.LINUX_ARM64,
-          KonanTarget.LINUX_ARM32_HFP,
-        )
-      )
-    }
-
-    addAll(
-      listOf(
-        //KonanTarget.MINGW_X64,
-        KonanTarget.ANDROID_ARM32,
-        KonanTarget.ANDROID_ARM64,
-        KonanTarget.ANDROID_X64,
-        KonanTarget.ANDROID_X86
-      )
-    )
-
-
-  }
 }
 
 

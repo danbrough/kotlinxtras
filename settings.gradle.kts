@@ -11,8 +11,18 @@ pluginManagement {
 
 
 plugins {
-  id("de.fayard.refreshVersions") version "0.60.1"
+  id("de.fayard.refreshVersions") version "0.60.2"
+  //id("org.gradle.toolchains.foojay-resolver-convention") version ("0.4.0")
 }
+/*toolchainManagement {
+  jvm {
+    javaRepositories {
+      repository("foojay") {
+        resolverClass.set(org.gradle.toolchains.foojay.FoojayToolchainResolver::class.java)
+      }
+    }
+  }
+}*/
 
 rootProject.name = "kotlinxtras"
 

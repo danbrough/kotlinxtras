@@ -45,7 +45,9 @@ class BuildEnvironment(library: XtrasLibrary) {
   }
 
   @XtrasDSLMarker
-  val runningInIDEA = System.getProperty("idea.active") != null
+  val runningInIDEA = (System.getProperty("idea.active") != null).also {
+    library.project.log("RUNNING IN IDE: $it")
+  }
 
   @XtrasDSLMarker
   var androidNdkDir: File? = null
@@ -58,7 +60,7 @@ class BuildEnvironment(library: XtrasLibrary) {
     if (ndkRoot != null) return File(ndkRoot).also {
       androidNdkDir = it
     }
-    error("ANDROID_NDK_ROOT and ANDROID_NDK_HOME are not set!!")
+    error("ANDROID_NDK_ROOT and ANDROID_NDK_HOME are not set!")
   }
 
   @XtrasDSLMarker

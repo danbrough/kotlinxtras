@@ -89,7 +89,10 @@ private fun XtrasLibrary.registerPublishArchiveTask(target: KonanTarget) {
       artifactId = "$libName${target.platformName.capitalized()}"
       version = this@registerPublishArchiveTask.version
       groupId = publishingGroup
-      artifact(project.tasks.getByName(archiveTaskName(target)).outputs.files.first())
+      val archiveTask = project.tasks.getByName(archiveTaskName(target))
+      artifact(archiveTask.outputs.files.first()).builtBy(archiveTask)
+
+      //artifact(project.tasks.getByName(archiveTaskName(target)).outputs.files.first())
     }
   }
 
