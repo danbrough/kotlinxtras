@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.danbrough.kotlinxtras
 
 import org.gradle.api.Plugin

@@ -9,7 +9,9 @@ import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.source.GitSourceConfig
 import org.danbrough.kotlinxtras.source.registerDownloadSourceGit
+import org.danbrough.kotlinxtras.tasks.konanDepsTaskName
 import org.danbrough.kotlinxtras.tasks.registerArchiveTasks
+import org.danbrough.kotlinxtras.tasks.registerKonanDepsTasks
 import org.danbrough.kotlinxtras.xtrasBuildDir
 import org.danbrough.kotlinxtras.xtrasLibsDir
 import org.danbrough.kotlinxtras.xtrasPackagesDir
@@ -125,7 +127,7 @@ fun XtrasLibrary.xtrasRegisterSourceTask(
 ) =
   project.tasks.register<Exec>(name) {
     workingDir(sourcesDir(target))
-    dependsOn(extractSourcesTaskName(target))
+    dependsOn(target.konanDepsTaskName, extractSourcesTaskName(target))
     environment(buildEnv.getEnvironment(target))
     doFirst {
       project.log("ENV: $environment")
@@ -156,6 +158,7 @@ private fun XtrasLibrary.registerTasks() {
 
   supportedTargets.forEach {
     registerArchiveTasks(it)
+    project.registerKonanDepsTasks(it)
   }
 }
 
