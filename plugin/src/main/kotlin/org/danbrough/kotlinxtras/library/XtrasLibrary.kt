@@ -1,6 +1,7 @@
 package org.danbrough.kotlinxtras.library
 
 import org.danbrough.kotlinxtras.BuildEnvironment
+import org.danbrough.kotlinxtras.XTRAS_PACKAGE
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.XtrasDSLMarker
 import org.danbrough.kotlinxtras.capitalized
@@ -15,6 +16,7 @@ import org.danbrough.kotlinxtras.xtrasPackagesDir
 import org.danbrough.kotlinxtras.xtrasSourceDir
 import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
+import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -27,6 +29,10 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
   }
 
   interface SourceConfig
+
+
+  @XtrasDSLMarker
+  var publishingGroup: String = XTRAS_PACKAGE
 
   var sourceConfig: SourceConfig? = null
 
@@ -89,6 +95,9 @@ fun XtrasLibrary.xtrasRegisterSourceTask(
     workingDir(sourcesDir(target))
     dependsOn(extractSourcesTaskName(target))
     environment(buildEnv.getEnvironment(target))
+    doFirst {
+      project.log("ENV: $environment")
+    }
     group = XTRAS_TASK_GROUP
     configure()
   }
@@ -98,7 +107,7 @@ fun Project.xtrasCreateLibrary(
   libName: String,
   version: String,
   configure: XtrasLibrary.() -> Unit = {}
-) = extensions.create(libName, XtrasLibrary::class.java, this, libName, version).apply {
+) = extensions.create<XtrasLibrary>(libName, this, libName, version).apply {
   configure()
   afterEvaluate {
     this@apply.registerTasks()

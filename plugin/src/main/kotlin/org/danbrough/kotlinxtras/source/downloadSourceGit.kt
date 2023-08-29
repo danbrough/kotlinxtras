@@ -5,7 +5,9 @@ import org.danbrough.kotlinxtras.XtrasDSLMarker
 import org.danbrough.kotlinxtras.library.XtrasLibrary
 import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.xtrasDownloadsDir
+import org.gradle.api.Task
 import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 import org.gradle.process.ExecResult
 import java.io.File
@@ -22,69 +24,102 @@ fun XtrasLibrary.gitSource(url: String, commit: String, configure: Exec.() -> Un
   sourceConfig = GitSourceConfig(url, commit, configure)
 }
 
-
-private fun XtrasLibrary.gitExec(vararg args: String, workingDir: File? = null): ExecResult =
-  project.exec {
-    if (workingDir != null)
-      workingDir(workingDir)
+private fun XtrasLibrary.gitTask(
+  name: String,
+  args: List<String> = emptyList(),
+  config: Exec.() -> Unit = {}
+) =
+  project.tasks.register<Exec>(name) {
     environment(buildEnv.getEnvironment())
-    val cmdArgs = args.toMutableList().also { it.add(0, buildEnv.binaries.git) }
-    project.log("running ${cmdArgs.joinToString(" ")}")
-    commandLine(cmdArgs)
+    commandLine(args.toMutableList().apply {
+      add(0, buildEnv.binaries.git)
+    })
+    doFirst {
+      project.log("running: ${commandLine.joinToString(" ")}")
+    }
+    config()
   }
+
 
 internal fun XtrasLibrary.registerDownloadSourceGit() {
   val config = sourceConfig as GitSourceConfig
-  val gitBareRepoDir = project.xtrasDownloadsDir.resolve(libName)
-  val library = this
+  val repoDir = project.xtrasDownloadsDir.resolve(libName)
 
-  val downloadSourcesTask = project.tasks.register(downloadSourcesTaskName()) {
+  val downloadSourcesTaskName = downloadSourcesTaskName()
+  val initTaskName = "${downloadSourcesTaskName}_init"
+  val remoteAddTaskName = "${downloadSourcesTaskName}_remote_add"
+  val fetchTaskName = "${downloadSourcesTaskName}_fetch"
+  val resetTaskName = "${downloadSourcesTaskName}_reset"
+
+  project.tasks.register(downloadSourcesTaskName) {
     group = XTRAS_TASK_GROUP
+    outputs.dir(repoDir)
+    dependsOn(resetTaskName)
+  }
 
-
-    outputs.dir(gitBareRepoDir)
-    inputs.property("config", config.hashCode())
-
-
-    /*    actions.add {
-          project.log("deleting $gitBareRepoDir")
-          project.delete(gitBareRepoDir)
-        }*/
-
-
-    if (!gitBareRepoDir.exists())
-      actions.add {
-        library.gitExec("init", "--bare", gitBareRepoDir.absolutePath).assertNormalExitValue()
-      }
-
-    if (!gitBareRepoDir.resolve("config").readText().contains(config.url))
-      actions.add {
-        library.gitExec("remote", "add", "origin", config.url, workingDir = gitBareRepoDir)
-      }
-
-    actions.add {
-      library.gitExec("fetch", "--depth", "1", "origin", config.commit, workingDir = gitBareRepoDir)
-    }
-
-    actions.add {
-      library.gitExec("reset", "--soft", "FETCH_HEAD", workingDir = gitBareRepoDir)
+  gitTask(
+    initTaskName,
+    listOf("init", "--bare", repoDir.absolutePath)
+  ) {
+    onlyIf {
+      !repoDir.exists()
     }
   }
 
+  gitTask(remoteAddTaskName, listOf("remote", "add", "origin", config.url)) {
+    dependsOn(initTaskName)
+    workingDir(repoDir)
+    onlyIf {
+      repoDir.resolve("config").let { configFile ->
+        configFile.exists() && !configFile.readText().contains(config.url)
+      }
+    }
+  }
 
+  gitTask(fetchTaskName, listOf("fetch", "--depth", "1", "origin", config.commit)) {
+    dependsOn(remoteAddTaskName)
+    workingDir(repoDir)
+    //inputs.property("config", config.hashCode())
+    val commitFile = repoDir.resolve("fetch_${config.commit}")
+    outputs.file(commitFile)
+    onlyIf {
+      !commitFile.exists()
+    }
+    doLast {
+      commitFile.writeText(
+        repoDir.resolve("FETCH_HEAD").bufferedReader().use {
+          val commit = it.readLine().split("\\s+".toRegex(), limit = 2).first()
+          project.log("writing $commit to ${commitFile.absolutePath}")
+          commit
+        }
+      )
+    }
+  }
+
+  gitTask(resetTaskName) {
+    inputs.property("config", config.hashCode())
+    dependsOn(fetchTaskName)
+    doFirst {
+      val commit = repoDir.resolve("fetch_${config.commit}").readText()
+      commandLine(buildEnv.binaries.git, "reset", "--soft", commit)
+    }
+    workingDir(repoDir)
+    outputs.dir(repoDir)
+  }
 
   supportedTargets.forEach { target ->
     val sourceDir = sourcesDir(target)
 
-    project.tasks.register<Exec>(extractSourcesTaskName(target)) {
+    gitTask(
+      extractSourcesTaskName(target),
+      listOf("clone", repoDir.absolutePath, sourceDir.absolutePath)
+    ) {
       group = XTRAS_TASK_GROUP
       doFirst {
         project.delete(sourceDir)
       }
-      environment(buildEnv.getEnvironment(target))
-      dependsOn(downloadSourcesTask)
-      outputs.dir(sourcesDir(target))
-      commandLine(buildEnv.binaries.git, "clone", gitBareRepoDir, sourceDir)
+      dependsOn(downloadSourcesTaskName)
+      outputs.dir(sourceDir)
       config.configure.invoke(this)
     }
   }

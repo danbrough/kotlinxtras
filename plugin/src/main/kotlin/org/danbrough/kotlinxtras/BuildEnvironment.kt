@@ -3,7 +3,10 @@
 package org.danbrough.kotlinxtras
 
 import org.danbrough.kotlinxtras.library.XtrasLibrary
+import org.gradle.kotlin.dsl.provideDelegate
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.File
 
 
 class BuildEnvironment(library: XtrasLibrary) {
@@ -19,16 +22,101 @@ class BuildEnvironment(library: XtrasLibrary) {
 
   val binaries = Binaries()
 
+  var konanDir: File = System.getenv("KONAN_DATA_DIR")?.let { File(it) } ?: File(
+    System.getProperty("user.home"),
+    ".konan"
+  )
+
   @XtrasDSLMarker
-  var environment: MutableMap<String, String>.() -> Unit = {
-    put("PATH", "/bin:/usr/bin:/usr/local/bin")
+  var basePath: List<String> =
+    listOf("/bin", "/sbin", "/usr/bin", "/usr/sbin", "/usr/local/bin", "/opt/local/bin")
+
+  @XtrasDSLMarker
+  var androidNdkApiVersion = 21
+
+  @XtrasDSLMarker
+  var defaultEnvironment: Map<String, String> = buildMap {
+
+    put("PATH", basePath.joinToString(File.pathSeparator))
+
+    put("KONAN_BUILD", "1")
+
   }
 
   @XtrasDSLMarker
-  var environmentForTarget: MutableMap<String, String>.(KonanTarget) -> Unit = {}
+  val runningInIDEA = System.getProperty("idea.active") != null
+
+  @XtrasDSLMarker
+  var androidNdkDir: File? = null
+
+  private fun androidNdkDir(): File {
+    androidNdkDir?.also {
+      return it
+    }
+    val ndkRoot = System.getenv("ANDROID_NDK_ROOT") ?: System.getenv("ANDROID_NDK_HOME")
+    if (ndkRoot != null) return File(ndkRoot).also {
+      androidNdkDir = it
+    }
+    error("ANDROID_NDK_ROOT and ANDROID_NDK_HOME are not set!!")
+  }
+
+  @XtrasDSLMarker
+  var environmentForTarget: MutableMap<String, String>.(KonanTarget) -> Unit = { target ->
+
+    var clangArgs: String? = null
+
+    when (target) {
+      KonanTarget.LINUX_ARM64 -> {
+        clangArgs =
+          "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/aarch64-unknown-linux-gnu-gcc-8.3.0-glibc-2.25-kernel-4.9-2 --sysroot=$konanDir/dependencies/aarch64-unknown-linux-gnu-gcc-8.3.0-glibc-2.25-kernel-4.9-2/aarch64-unknown-linux-gnu/sysroot"
+      }
+
+      KonanTarget.LINUX_X64 -> {
+        clangArgs =
+          "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2 --sysroot=$konanDir/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2/x86_64-unknown-linux-gnu/sysroot"
+      }
+
+      KonanTarget.LINUX_ARM32_HFP -> {
+        clangArgs =
+          "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/arm-unknown-linux-gnueabihf-gcc-8.3.0-glibc-2.19-kernel-4.9-2 --sysroot=$konanDir/dependencies/arm-unknown-linux-gnueabihf-gcc-8.3.0-glibc-2.19-kernel-4.9-2/arm-unknown-linux-gnueabihf/sysroot "
+      }
+
+      KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64, KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_ARM64, KonanTarget.IOS_X64, KonanTarget.IOS_ARM64 -> {
+        put("CC", "gcc")
+        put("CXX", "g++")
+        put("LD", "lld")
+      }
+
+      KonanTarget.ANDROID_X64, KonanTarget.ANDROID_X86, KonanTarget.ANDROID_ARM64, KonanTarget.ANDROID_ARM32 -> {
+        library.project.log("ADDING NDK TO PATH")
+        put(
+          "PATH",
+          "${androidNdkDir().resolve("toolchains/llvm/prebuilt/linux-x86_64/bin").absolutePath}:${
+            get("PATH")
+          }"
+        )
+
+
+        //basePath.add(0, androidNdkDir.resolve("bin").absolutePath)
+        put("CC", "${target.hostTriplet}${androidNdkApiVersion}-clang")
+        put("CXX", "${target.hostTriplet}${androidNdkApiVersion}-clang++")
+        put("AR", "llvm-ar")
+
+        put("RANLIB", "ranlib")
+
+      }
+
+      else -> error("Unhandled target: $target")
+    }
+
+    if (clangArgs != null) {
+      put("CC", "clang $clangArgs")
+      put("CXX", "clang++ $clangArgs")
+    }
+  }
 
   fun getEnvironment(target: KonanTarget? = null) = buildMap {
-    environment()
+    putAll(defaultEnvironment)
     if (target != null)
       environmentForTarget(target)
   }

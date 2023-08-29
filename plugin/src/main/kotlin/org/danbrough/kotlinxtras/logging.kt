@@ -11,6 +11,6 @@ fun Project.log(msg: String, level: LogLevel = LogLevel.INFO) {
 
 
   if (hasProperty(loggingProperty) && property(loggingProperty) == "true") {
-    println("$level: $msg")
+    println("X$level: $msg")
   }
 }

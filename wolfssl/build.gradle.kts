@@ -4,10 +4,11 @@ import org.danbrough.kotlinxtras.library.XtrasLibrary
 import org.danbrough.kotlinxtras.library.xtrasCreateLibrary
 import org.danbrough.kotlinxtras.library.xtrasRegisterSourceTask
 import org.danbrough.kotlinxtras.source.gitSource
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
-  alias(libs.plugins.kotlinMultiplatform)
+  //alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.kotlinXtras)
 
 }
@@ -19,24 +20,29 @@ repositories {
   google()
 }
 
+publishing {
+  repositories {
+    maven("/usr/local/kotlinxtras/build/xtras/maven") {
+      name = "xtras"
+    }
+  }
 
-kotlin {
-  linuxX64()
 }
+
+val WOLFSSL_VERSION = properties.getOrDefault("version", "5.6.3").toString()
+val WOLFSSL_COMMIT = properties.getOrDefault("commit", "v5.6.3-stable").toString()
 
 object WolfSSL {
   const val extensionName = "wolfSSL"
   const val sourceURL = "https://github.com/wolfSSL/wolfssl.git"
-  const val version = "5.6.2"
-  const val tag = "v5.6.2-stable"
 }
 
 @XtrasDSLMarker
 fun Project.xtrasWolfSSL(
   name: String = WolfSSL.extensionName,
   configure: XtrasLibrary.() -> Unit = {}
-) = xtrasCreateLibrary(name, WolfSSL.version) {
-  gitSource(WolfSSL.sourceURL, WolfSSL.tag)
+) = xtrasCreateLibrary(name, WOLFSSL_VERSION) {
+  gitSource(WolfSSL.sourceURL, WOLFSSL_COMMIT)
   configure()
 
   supportedTargets.forEach { target ->
@@ -104,11 +110,47 @@ fun Project.xtrasWolfSSL(
 
 
 xtrasWolfSSL {
-  supportedTargets = listOf(KonanTarget.LINUX_X64, KonanTarget.LINUX_ARM64)
+
+
+  supportedTargets = buildList {
+
+    if (buildEnv.runningInIDEA) {
+      if (HostManager.hostIsLinux) {
+        KonanTarget.LINUX_X64
+      } else {
+        println("HOST ARCH: ${HostManager.hostArch()}")
+        if (HostManager.hostArch() == "aarch64") {
+          KonanTarget.MACOS_ARM64
+        } else {
+          KonanTarget.MACOS_X64
+        }
+      }
+      return@buildList
+    }
+
+    if (HostManager.hostIsMac) {
+      addAll(listOf(KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64))
+    } else {
+      addAll(
+        listOf(
+          KonanTarget.LINUX_ARM64,
+          KonanTarget.LINUX_ARM32_HFP,
+        )
+      )
+    }
+
+    addAll(
+      listOf(
+        //KonanTarget.MINGW_X64,
+        KonanTarget.ANDROID_ARM32,
+        KonanTarget.ANDROID_ARM64,
+        KonanTarget.ANDROID_X64,
+        KonanTarget.ANDROID_X86
+      )
+    )
+
+
+  }
 }
-
-
-
-
 
 
