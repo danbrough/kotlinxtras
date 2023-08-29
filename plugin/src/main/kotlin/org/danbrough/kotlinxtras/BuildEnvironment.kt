@@ -42,6 +42,13 @@ class BuildEnvironment(library: XtrasLibrary) {
 
     put("KONAN_BUILD", "1")
 
+    val llvmPrefix = if (HostManager.hostIsLinux) "llvm-" else "apple-"
+    konanDir.resolve("dependencies").listFiles()
+      ?.first { it.isDirectory && it.name.startsWith(llvmPrefix) }?.also {
+        put("PATH", "${it.resolve("bin").absolutePath}:${get("PATH")}")
+      }
+
+
   }
 
   @XtrasDSLMarker
@@ -60,7 +67,7 @@ class BuildEnvironment(library: XtrasLibrary) {
     if (ndkRoot != null) return File(ndkRoot).also {
       androidNdkDir = it
     }
-    error("ANDROID_NDK_ROOT and ANDROID_NDK_HOME are not set!")
+    error("Neither ANDROID_NDK_ROOT or ANDROID_NDK_HOME are set!")
   }
 
   @XtrasDSLMarker
@@ -82,11 +89,15 @@ class BuildEnvironment(library: XtrasLibrary) {
 
       KonanTarget.LINUX_ARM32_HFP -> {
         clangArgs =
-          "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/arm-unknown-linux-gnueabihf-gcc-8.3.0-glibc-2.19-kernel-4.9-2 --sysroot=$konanDir/dependencies/arm-unknown-linux-gnueabihf-gcc-8.3.0-glibc-2.19-kernel-4.9-2/arm-unknown-linux-gnueabihf/sysroot "
+          "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/arm-unknown-linux-gnueabihf-gcc-8.3.0-glibc-2.19-kernel-4.9-2 --sysroot=$konanDir/dependencies/arm-unknown-linux-gnueabihf-gcc-8.3.0-glibc-2.19-kernel-4.9-2/arm-unknown-linux-gnueabihf/sysroot"
       }
 
+//dan /usr/local/kotlinxtras $ ls ~/.konan/dependencies/arm-unknown-linux-gnueabihf-gcc-8.3.0-glibc-2.19-kernel-4.9-2/arm-unknown-linux-gnueabihf/
+//bin/        debug-root/ include/    lib/        sysroot/
+//dan@dan /usr/local/kotlinxtras $ ls ~/.konan/dependencies/arm-unknown-linux-gnueabihf-gcc-8.3.0-glibc-2.19-kernel-4.9-2/arm-unknown-linux-gnueabihf/sysroot/
+
       KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64, KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_ARM64, KonanTarget.IOS_X64, KonanTarget.IOS_ARM64 -> {
-        put("CC", "gcc")
+        put("CC", "clang")
         put("CXX", "g++")
         put("LD", "lld")
       }
