@@ -4,6 +4,7 @@ package org.danbrough.kotlinxtras
 
 import org.danbrough.kotlinxtras.library.XtrasLibrary
 import org.gradle.kotlin.dsl.provideDelegate
+import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -63,6 +64,8 @@ class BuildEnvironment(library: XtrasLibrary) {
   @XtrasDSLMarker
   var environmentForTarget: MutableMap<String, String>.(KonanTarget) -> Unit = { target ->
 
+
+    library.project.log("target: $target architecture${target.architecture} family:${target.family}")
     var clangArgs: String? = null
 
     when (target) {
@@ -101,7 +104,6 @@ class BuildEnvironment(library: XtrasLibrary) {
         put("CC", "${target.hostTriplet}${androidNdkApiVersion}-clang")
         put("CXX", "${target.hostTriplet}${androidNdkApiVersion}-clang++")
         put("AR", "llvm-ar")
-
         put("RANLIB", "ranlib")
 
       }
