@@ -17,7 +17,9 @@ repositories {
 val javaLangVersion = 8
 
 java {
-  toolchain.languageVersion.set(JavaLanguageVersion.of(javaLangVersion))
+  //toolchain.languageVersion.set(JavaLanguageVersion.of(javaLangVersion))
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 group = "org.danbrough.kotlinxtras"
