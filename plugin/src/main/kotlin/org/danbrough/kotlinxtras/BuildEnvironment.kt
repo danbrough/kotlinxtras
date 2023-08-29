@@ -5,6 +5,7 @@ package org.danbrough.kotlinxtras
 import org.danbrough.kotlinxtras.library.XtrasLibrary
 import org.gradle.kotlin.dsl.provideDelegate
 import org.jetbrains.kotlin.konan.target.Architecture
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -41,15 +42,6 @@ class BuildEnvironment(library: XtrasLibrary) {
     put("PATH", basePath.joinToString(File.pathSeparator))
 
     put("KONAN_BUILD", "1")
-
-
-    val llvmPrefix = if (HostManager.hostIsLinux) "llvm-" else "apple-llvm"
-    konanDir.resolve("dependencies").listFiles()
-      ?.firstOrNull { it.isDirectory && it.name.startsWith(llvmPrefix) }?.also {
-        put("PATH", "${it.resolve("bin").absolutePath}:${get("PATH")}")
-      }
-
-
   }
 
   @XtrasDSLMarker
@@ -74,6 +66,13 @@ class BuildEnvironment(library: XtrasLibrary) {
   @XtrasDSLMarker
   var environmentForTarget: MutableMap<String, String>.(KonanTarget) -> Unit = { target ->
 
+    if (!HostManager.hostIsMac || !target.family.isAppleFamily) {
+      val llvmPrefix = if (HostManager.hostIsLinux) "llvm-" else "apple-llvm"
+      konanDir.resolve("dependencies").listFiles()
+        ?.firstOrNull { it.isDirectory && it.name.startsWith(llvmPrefix) }?.also {
+          put("PATH", "${it.resolve("bin").absolutePath}:${get("PATH")}")
+        }
+    }
 
     var clangArgs: String? = null
 
