@@ -44,7 +44,7 @@ class BuildEnvironment(library: XtrasLibrary) {
 
     val llvmPrefix = if (HostManager.hostIsLinux) "llvm-" else "apple-"
     konanDir.resolve("dependencies").listFiles()
-      ?.first { it.isDirectory && it.name.startsWith(llvmPrefix) }?.also {
+      ?.firstOrNull { it.isDirectory && it.name.startsWith(llvmPrefix) }?.also {
         put("PATH", "${it.resolve("bin").absolutePath}:${get("PATH")}")
       }
 
