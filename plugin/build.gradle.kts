@@ -14,12 +14,12 @@ repositories {
   google()
 }
 
-val javaLangVersion = 8
+val javaLangVersion = 11
 
 java {
-  //toolchain.languageVersion.set(JavaLanguageVersion.of(javaLangVersion))
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
+  toolchain.languageVersion.set(JavaLanguageVersion.of(javaLangVersion))
+  /*sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8*/
 }
 
 group = "org.danbrough.kotlinxtras"
