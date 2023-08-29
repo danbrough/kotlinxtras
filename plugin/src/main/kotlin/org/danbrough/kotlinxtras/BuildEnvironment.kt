@@ -65,7 +65,6 @@ class BuildEnvironment(library: XtrasLibrary) {
   var environmentForTarget: MutableMap<String, String>.(KonanTarget) -> Unit = { target ->
 
 
-    library.project.log("target: $target architecture${target.architecture} family:${target.family}")
     var clangArgs: String? = null
 
     when (target) {

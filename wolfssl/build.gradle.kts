@@ -29,8 +29,8 @@ publishing {
 
 }
 
-val WOLFSSL_VERSION = properties.getOrDefault("version", "5.6.3").toString()
-val WOLFSSL_COMMIT = properties.getOrDefault("commit", "v5.6.3-stable").toString()
+val WOLFSSL_VERSION = properties.getOrDefault("wolfSSLVersion", "5.6.3").toString()
+val WOLFSSL_COMMIT = properties.getOrDefault("wolfSSLCommit", "v5.6.3-stable").toString()
 
 object WolfSSL {
   const val extensionName = "wolfSSL"
@@ -115,16 +115,7 @@ xtrasWolfSSL {
   supportedTargets = buildList {
 
     if (buildEnv.runningInIDEA) {
-      if (HostManager.hostIsLinux) {
-        KonanTarget.LINUX_X64
-      } else {
-        println("HOST ARCH: ${HostManager.hostArch()}")
-        if (HostManager.hostArch() == "aarch64") {
-          KonanTarget.MACOS_ARM64
-        } else {
-          KonanTarget.MACOS_X64
-        }
-      }
+      add(HostManager.host)
       return@buildList
     }
 
@@ -133,6 +124,7 @@ xtrasWolfSSL {
     } else {
       addAll(
         listOf(
+          KonanTarget.LINUX_X64,
           KonanTarget.LINUX_ARM64,
           KonanTarget.LINUX_ARM32_HFP,
         )
