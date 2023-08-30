@@ -18,7 +18,7 @@ val KonanTarget.platformName: String
         else -> throw Error("Unhandled android target $this")
       }
     }
-    return name.split("_").joinToString("") { it.capitalized() }.decapitalize()
+    return name.split("_").joinToString("") { it.capitalized() }.decapitalized()
   }
 
 val KonanTarget.hostTriplet: String

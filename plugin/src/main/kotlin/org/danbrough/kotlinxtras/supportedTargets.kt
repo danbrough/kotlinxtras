@@ -29,17 +29,18 @@ fun KotlinMultiplatformExtension.declareSupportedTargets() {
     watchosArm64()
     watchosX64()
     // watchosX64()
+  } else {
+    androidNativeX86()
+    androidNativeX64()
+    androidNativeArm32()
+    androidNativeArm64()
+
+    mingwX64()
+
+    linuxX64()
+    linuxArm64()
+    linuxArm32Hfp()
   }
-  androidNativeX86()
-  androidNativeX64()
-  androidNativeArm32()
-  androidNativeArm64()
-
-  mingwX64()
-
-  linuxX64()
-  linuxArm64()
-  linuxArm32Hfp()
 }
 
 
