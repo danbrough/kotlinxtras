@@ -41,6 +41,12 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
 
   val buildEnv: BuildEnvironment = BuildEnvironment(this)
 
+  /**
+   * Whether to attempt to download binary archives from maven.
+   */
+  @XtrasDSLMarker
+  var resolveBinariesFromMaven = true
+
   @XtrasDSLMarker
   fun buildEnv(conf: BuildEnvironment.() -> Unit) {
     buildEnv.conf()
@@ -98,6 +104,8 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
   fun archiveTaskName(target: KonanTarget) = xtrasTaskName("archive", target)
   fun extractArchiveTaskName(target: KonanTarget) = xtrasTaskName("extractArchive", target)
   fun provideArchiveTaskName(target: KonanTarget) = xtrasTaskName("provideArchive", target)
+  fun provideMavenArchiveTaskName(target: KonanTarget) =
+    xtrasTaskName("provideMavenArchive", target)
 
   fun archiveFileName(
     konanTarget: KonanTarget,

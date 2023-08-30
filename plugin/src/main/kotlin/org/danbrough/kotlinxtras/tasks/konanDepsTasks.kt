@@ -6,6 +6,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.GradleBuild
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.File
 import java.util.Locale
 
 
@@ -17,21 +18,24 @@ internal fun Project.registerKonanDepsTasks(target: KonanTarget) {
 
   if (project.tasks.findByName(target.konanDepsTaskName) != null) return
 
-  val depsProjectDir =
-    rootProject.layout.buildDirectory.dir(".konandeps/xtraKonanDeps${target.platformName.replaceFirstChar {
-      if (it.isLowerCase()) it.titlecase(
-        Locale.getDefault()
-      ) else it.toString()
-    }}")
-      .get()
+  val depsProjectDir = File(System.getProperty("java.io.tmpdir")).resolve(
+    ".konandeps/xtraKonanDeps${
+      target.platformName.replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(
+          Locale.getDefault()
+        ) else it.toString()
+      }
+    }"
+  )
+
   val projectTaskName = "xtrasKonanDepsProject${target.platformName.capitalized()}"
 
   project.tasks.register(projectTaskName) {
 
     outputs.dir(depsProjectDir)
     doFirst {
-      depsProjectDir.asFile.mkdirs()
-      depsProjectDir.dir("gradle.properties").asFile.writeText(
+      depsProjectDir.mkdirs()
+      depsProjectDir.resolve("gradle.properties").writeText(
         """
         kotlin.native.ignoreDisabledTargets=true
         org.gradle.parallel=false
@@ -41,11 +45,11 @@ internal fun Project.registerKonanDepsTasks(target: KonanTarget) {
       )
 
 
-      depsProjectDir.file("settings.gradle.kts").asFile.also {
+      depsProjectDir.resolve("settings.gradle.kts").also {
         if (!it.exists()) it.createNewFile()
       }
 
-      depsProjectDir.file("build.gradle.kts").asFile.writeText(
+      depsProjectDir.resolve("build.gradle.kts").writeText(
         """
           plugins {
             kotlin("multiplatform") version "${KotlinVersion.CURRENT}"
@@ -63,7 +67,7 @@ internal fun Project.registerKonanDepsTasks(target: KonanTarget) {
       )
 
 
-      depsProjectDir.dir("src/commonMain/kotlin").asFile.apply {
+      depsProjectDir.resolve("src/commonMain/kotlin").apply {
         mkdirs()
         resolve("test.kt").writeText(
           """
@@ -80,7 +84,7 @@ internal fun Project.registerKonanDepsTasks(target: KonanTarget) {
     target.konanDepsTaskName, GradleBuild::class.java
   ) {
     dependsOn(projectTaskName)
-    dir = depsProjectDir.asFile
+    dir = depsProjectDir
     tasks = listOf("compileKotlin${target.platformName.capitalized()}")
     doFirst {
       project.log("$name: running compileKotlin${target.platformName.capitalized()}")
