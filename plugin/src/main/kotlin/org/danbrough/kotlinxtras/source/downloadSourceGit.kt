@@ -6,20 +6,11 @@ import org.danbrough.kotlinxtras.capitalized
 import org.danbrough.kotlinxtras.library.XtrasLibrary
 import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.xtrasDownloadsDir
-import org.gradle.api.Task
 import org.gradle.api.tasks.Exec
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
-import org.gradle.process.ExecResult
-import java.io.BufferedInputStream
-import java.io.BufferedReader
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.InputStreamReader
-import java.io.OutputStream
-import java.io.PipedInputStream
-import java.io.PipedOutputStream
 
 data class GitSourceConfig(
   val url: String,
@@ -54,7 +45,7 @@ internal fun XtrasLibrary.registerDownloadSourceGit() {
   val config = sourceConfig as GitSourceConfig
   val repoDir = project.xtrasDownloadsDir.resolve(libName)
 
-  val downloadSourcesTaskName = downloadSourcesTaskName()
+  val downloadSourcesTaskName = downloadSourceTaskName()
   val initTaskName = "${downloadSourcesTaskName}_init"
   val remoteAddTaskName = "${downloadSourcesTaskName}_remote_add"
   val fetchTaskName = "${downloadSourcesTaskName}_fetch"
@@ -142,7 +133,7 @@ internal fun XtrasLibrary.registerDownloadSourceGit() {
   supportedTargets.forEach { target ->
     val sourceDir = sourcesDir(target)
     gitTask(
-      extractSourcesTaskName(target),
+      extractSourceTaskName(target),
       listOf("clone", repoDir.absolutePath, sourceDir.absolutePath)
     ) {
       group = XTRAS_TASK_GROUP

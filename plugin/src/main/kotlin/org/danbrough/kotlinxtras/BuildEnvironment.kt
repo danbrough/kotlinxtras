@@ -16,6 +16,7 @@ class BuildEnvironment(library: XtrasLibrary) {
   inner class Binaries {
     var git = "git"
     var tar = "tar"
+    var autoreconf = "autoreconf"
   }
 
   init {

@@ -97,8 +97,10 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
   fun xtrasTaskName(name: String, target: KonanTarget? = null) =
     "xtras${name.capitalized()}${libName.capitalized()}${target?.platformName?.capitalized() ?: ""}"
 
-  fun downloadSourcesTaskName() = xtrasTaskName("DownloadSources")
-  fun extractSourcesTaskName(target: KonanTarget) = xtrasTaskName("ExtractSources", target)
+  fun downloadSourceTaskName() = xtrasTaskName("DownloadSource")
+  fun extractSourceTaskName(target: KonanTarget) = xtrasTaskName("ExtractSource", target)
+  fun prepareSourceTaskName(target: KonanTarget) = xtrasTaskName("PrepareSource", target)
+
   fun configureTaskName(target: KonanTarget) = xtrasTaskName("configure", target)
   fun buildTaskName(target: KonanTarget) = xtrasTaskName("build", target)
   fun archiveTaskName(target: KonanTarget) = xtrasTaskName("archive", target)
@@ -143,7 +145,7 @@ fun XtrasLibrary.xtrasRegisterSourceTask(
 ) =
   project.tasks.register<Exec>(name) {
     workingDir(sourcesDir(target))
-    dependsOn(target.konanDepsTaskName, extractSourcesTaskName(target))
+    dependsOn(target.konanDepsTaskName, extractSourceTaskName(target))
     environment(buildEnv.getEnvironment(target))
     doFirst {
       project.log("ENV: $environment")

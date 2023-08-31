@@ -7,6 +7,7 @@ plugins {
   alias(libs.plugins.kotlinMultiplatform) apply false
   alias(libs.plugins.org.jetbrains.dokka) apply false
   id("org.danbrough.kotlinxtras.xtras")
+  `maven-publish`
 }
 
 println("Using Kotlin compiler version: ${KotlinCompilerVersion.VERSION}")
@@ -28,6 +29,14 @@ allprojects {
     maven(rootProject.layout.buildDirectory.dir("xtras/maven"))
     maven("https://s01.oss.sonatype.org/content/groups/staging/")
     mavenCentral()
+  }
+
+  publishing {
+    repositories {
+      maven("/usr/local/kotlinxtras/build/xtras/maven") {
+        name = "xtras"
+      }
+    }
   }
 
   tasks.withType<AbstractTestTask> {

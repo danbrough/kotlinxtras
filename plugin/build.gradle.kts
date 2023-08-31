@@ -14,6 +14,14 @@ repositories {
   google()
 }
 
+publishing {
+  repositories {
+    maven("/usr/local/kotlinxtras/build/xtras/maven") {
+      name = "xtras"
+    }
+  }
+}
+
 val javaLangVersion = 8
 
 java {

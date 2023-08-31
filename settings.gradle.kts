@@ -27,8 +27,10 @@ plugins {
 rootProject.name = "kotlinxtras"
 
 includeBuild("plugin")
-include("wolfssl")
-include(":test")
+include(":core:wolfssl")
+include(":core:curl")
+
+//include(":test")
 /*
 val pluginsOnly: String? by settings
 

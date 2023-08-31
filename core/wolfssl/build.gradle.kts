@@ -4,33 +4,12 @@ import org.danbrough.kotlinxtras.library.XtrasLibrary
 import org.danbrough.kotlinxtras.library.xtrasCreateLibrary
 import org.danbrough.kotlinxtras.library.xtrasRegisterSourceTask
 import org.danbrough.kotlinxtras.source.gitSource
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
   //alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.kotlinXtras)
-
+  `java-gradle-plugin`
 }
-
-repositories {
-  maven("/usr/local/kotlinxtras/build/xtras/maven")
-  maven("https://s01.oss.sonatype.org/content/groups/staging")
-  mavenCentral()
-  google()
-}
-
-publishing {
-  repositories {
-    maven("/usr/local/kotlinxtras/build/xtras/maven") {
-      name = "xtras"
-    }
-  }
-
-}
-
-val WOLFSSL_VERSION = properties.getOrDefault("wolfSSLVersion", "5.6.3").toString()
-val WOLFSSL_COMMIT = properties.getOrDefault("wolfSSLCommit", "v5.6.3-stable").toString()
 
 object WolfSSL {
   const val extensionName = "wolfSSL"
@@ -40,13 +19,15 @@ object WolfSSL {
 @XtrasDSLMarker
 fun Project.xtrasWolfSSL(
   name: String = WolfSSL.extensionName,
-  configure: XtrasLibrary.() -> Unit = {}
-) = xtrasCreateLibrary(name, WOLFSSL_VERSION) {
-  gitSource(WolfSSL.sourceURL, WOLFSSL_COMMIT)
+  configure: XtrasLibrary.() -> Unit = {},
+  version: String = properties.getOrDefault("wolfssl.version", "5.6.3").toString(),
+  commit: String = properties.getOrDefault("wolfssl.commit", "v5.6.3-stable").toString(),
+) = xtrasCreateLibrary(name, version) {
+  gitSource(WolfSSL.sourceURL, commit)
   configure()
 
   supportedTargets.forEach { target ->
-    val autogenTaskName = xtrasTaskName("autogen", target)
+    val autogenTaskName = prepareSourceTaskName(target)
     xtrasRegisterSourceTask(autogenTaskName, target) {
       commandLine("./autogen.sh")
       outputs.file(workingDir.resolve("configure"))
@@ -107,9 +88,3 @@ fun Project.xtrasWolfSSL(
     }
   }
 }
-
-
-xtrasWolfSSL {
-}
-
-
