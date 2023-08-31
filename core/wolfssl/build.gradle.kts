@@ -16,6 +16,10 @@ object WolfSSL {
   const val sourceURL = "https://github.com/wolfSSL/wolfssl.git"
 }
 
+dependencies {
+  implementation(libs.org.danbrough.klog)
+}
+
 @XtrasDSLMarker
 fun Project.xtrasWolfSSL(
   name: String = WolfSSL.extensionName,

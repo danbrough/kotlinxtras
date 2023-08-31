@@ -21,7 +21,7 @@ dokka = "1.8.20"
 
 [libraries]
 
-org-danbrough-klog = "org.danbrough:klog:0.0.2-beta03"
+org-danbrough-klog = "org.danbrough:klog:0.0.2-beta07"
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
 

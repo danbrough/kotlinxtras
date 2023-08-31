@@ -1,6 +1,6 @@
 plugins {
   `kotlin-dsl`
-  `java-gradle-plugin`
+  //`java-gradle-plugin`
   `maven-publish`
 }
 
@@ -29,15 +29,15 @@ java {
   /*sourceCompatibility = JavaVersion.VERSION_1_8
   targetCompatibility = JavaVersion.VERSION_1_8*/
 }
-
-group = "org.danbrough.kotlinxtras"
-version = libs.versions.kotlinXtrasPublishing.get()
-
 kotlin {
   jvmToolchain {
     languageVersion.set(JavaLanguageVersion.of(javaLangVersion))
   }
 }
+
+group = "org.danbrough.kotlinxtras"
+version = libs.versions.kotlinXtrasPublishing.get()
+
 
 
 dependencies {
