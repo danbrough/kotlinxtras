@@ -58,9 +58,7 @@ internal fun XtrasLibrary.registerDownloadSourceGit() {
   }
 
   project.tasks.register<Exec>("xtrasTags${libName.capitalized()}") {
-    dependsOn(downloadSourcesTaskName)
-    workingDir(repoDir)
-    commandLine(buildEnv.binaries.git, "ls-remote", "-q", "--refs", "-t")
+    commandLine(buildEnv.binaries.git, "ls-remote", "-q", "--refs", "-t", config.url)
     group = XTRAS_TASK_GROUP
     description = "Prints out the tags from the remote repository"
     val stdout = ByteArrayOutputStream()

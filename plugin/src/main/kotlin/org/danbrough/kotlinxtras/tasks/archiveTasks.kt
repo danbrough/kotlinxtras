@@ -70,7 +70,7 @@ private fun XtrasLibrary.registerExtractArchiveTask(target: KonanTarget) =
     val libDir = libsDir(target)
 
     if (!archive.exists())
-      dependsOn(archiveTaskName(target))
+      dependsOn(provideArchiveTaskName(target))
 
     onlyIf {
       archive.exists()
@@ -155,15 +155,13 @@ private fun XtrasLibrary.registerProvideArchiveTask(target: KonanTarget) {
     description = "Builds or downloads binary archive for $this to $archive"
 
     onlyIf {
-      val downloaded =
-        project.tasks.getByName(provideMavenArchiveTaskName(target)).extraProperties["downloaded"]
-      project.log("ONLY IF: downloaded = $downloaded")
       !archive.exists()
     }
 
-    val archiveFile = archiveFile(target)
-    outputs.file(archiveFile)
-    dependsOn(archiveTaskName(target), provideMavenArchiveTaskName(target))
+    outputs.file(archive)
+    dependsOn(archiveTaskName(target))
+    if (resolveBinariesFromMaven)
+      dependsOn(provideMavenArchiveTaskName(target))
   }
 }
 

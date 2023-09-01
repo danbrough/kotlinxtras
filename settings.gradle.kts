@@ -12,7 +12,7 @@ pluginManagement {
 
 plugins {
   id("de.fayard.refreshVersions") version "0.60.2"
-  //id("org.gradle.toolchains.foojay-resolver-convention") version ("0.4.0")
+  id("org.gradle.toolchains.foojay-resolver-convention") version ("0.4.0")
 }
 /*toolchainManagement {
   jvm {
@@ -23,13 +23,22 @@ plugins {
     }
   }
 }*/
+val bootstrap: String? by settings
 
 rootProject.name = "kotlinxtras"
 
-includeBuild("plugin")
-include(":core:wolfssl")
-include(":core:curl")
+//includeBuild("plugin")
 
+include(":plugin")
+//project(":plugin").projectDir = rootDir.resolve("plugin2")
+//include(":core:wolfssl")
+if (bootstrap == null) {
+  listOf("curl", "wolfssl").forEach {
+    include(":$it")
+    project(":$it").projectDir = rootDir.resolve("core/$it")
+  }
+  include(":binaries")
+}
 //include(":test")
 /*
 val pluginsOnly: String? by settings

@@ -5,6 +5,7 @@ import org.danbrough.kotlinxtras.XTRAS_PACKAGE
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.XtrasDSLMarker
 import org.danbrough.kotlinxtras.capitalized
+import org.danbrough.kotlinxtras.defaultSupportedTargets
 import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.source.GitSourceConfig
@@ -19,7 +20,10 @@ import org.danbrough.kotlinxtras.xtrasSourceDir
 import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
 import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.register
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -53,46 +57,7 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
   }
 
   @XtrasDSLMarker
-  var supportedTargets: List<KonanTarget> = buildList {
-
-    if (buildEnv.runningInIDEA) {
-      add(HostManager.host)
-      return@buildList
-    }
-
-    if (HostManager.hostIsMac) {
-      addAll(
-        listOf(
-          KonanTarget.MACOS_X64,
-          KonanTarget.MACOS_ARM64,
-          KonanTarget.LINUX_X64,
-          KonanTarget.LINUX_ARM64,
-          KonanTarget.IOS_ARM64
-        )
-      )
-    } else {
-      addAll(
-        listOf(
-          KonanTarget.LINUX_X64,
-          KonanTarget.LINUX_ARM64,
-          KonanTarget.LINUX_ARM32_HFP,
-          //    KonanTarget.MINGW_X64,
-        )
-      )
-    }
-
-    addAll(
-      listOf(
-        //KonanTarget.MINGW_X64,
-        KonanTarget.ANDROID_ARM32,
-        KonanTarget.ANDROID_ARM64,
-        KonanTarget.ANDROID_X64,
-        KonanTarget.ANDROID_X86
-      )
-    )
-
-
-  }
+  var supportedTargets: List<KonanTarget> = emptyList()
 
   fun xtrasTaskName(name: String, target: KonanTarget? = null) =
     "xtras${name.capitalized()}${libName.capitalized()}${target?.platformName?.capitalized() ?: ""}"
@@ -160,14 +125,18 @@ fun Project.xtrasCreateLibrary(
   version: String,
   configure: XtrasLibrary.() -> Unit = {}
 ) = extensions.create<XtrasLibrary>(libName, this, libName, version).apply {
-  configure()
   afterEvaluate {
+    if (supportedTargets.isEmpty())
+      supportedTargets = defaultSupportedTargets()
+    configure()
     this@apply.registerTasks()
   }
 }
 
 
 private fun XtrasLibrary.registerTasks() {
+
+
   when (sourceConfig) {
     is GitSourceConfig -> {
       registerDownloadSourceGit()

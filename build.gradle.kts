@@ -1,16 +1,15 @@
-import org.danbrough.kotlinxtras.XTRAS_PACKAGE
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.danbrough.kotlinxtras.xtrasPom
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform) apply false
   alias(libs.plugins.org.jetbrains.dokka) apply false
-  id("org.danbrough.kotlinxtras.xtras")
+  //id("org.danbrough.kotlinxtras.xtras")
   `maven-publish`
 }
 
-println("Using Kotlin compiler version: ${KotlinCompilerVersion.VERSION}")
+
+//println("Using Kotlin compiler version: ${KotlinCompilerVersion.VERSION}")
 
 val publishingVersion: String = libs.versions.kotlinXtrasPublishing.get()
 
@@ -19,7 +18,7 @@ version = publishingVersion
 
 allprojects {
 
-  group = XTRAS_PACKAGE
+  group = "org.danbrough.kotlinxtras"
   version = publishingVersion
 
   apply<MavenPublishPlugin>()
@@ -57,7 +56,6 @@ allprojects {
 
 
 subprojects {
-  group = XTRAS_PACKAGE
 
   afterEvaluate {
 
@@ -93,3 +91,38 @@ afterEvaluate {
   }
 }
 */
+fun MavenPublication.xtrasPom() {
+  pom {
+
+    name.set("KotlinXtras")
+    description.set("Common kotlin packages with linux arm and android native support")
+    url.set("https://github.com/danbrough/kotlinxtras/")
+
+    licenses {
+      license {
+        name.set("Apache-2.0")
+        url.set("https://opensource.org/licenses/Apache-2.0")
+      }
+    }
+
+    scm {
+      connection.set("scm:git:git@github.com:danbrough/kotlinxtras.git")
+      developerConnection.set("scm:git:git@github.com:danbrough/kotlinxtras.git")
+      url.set("https://github.com/danbrough/kotlinxtras/")
+    }
+
+    issueManagement {
+      system.set("GitHub")
+      url.set("https://github.com/danbrough/kotlinxtras/issues")
+    }
+
+    developers {
+      developer {
+        id.set("danbrough")
+        name.set("Dan Brough")
+        email.set("dan@danbrough.org")
+        organizationUrl.set("https://github.com/danbrough")
+      }
+    }
+  }
+}

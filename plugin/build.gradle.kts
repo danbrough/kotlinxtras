@@ -4,7 +4,7 @@ plugins {
   `maven-publish`
 }
 
-repositories {
+/*repositories {
   maven("/usr/local/kotlinxtras/build/xtras/maven") {
     name = "Xtras"
   }
@@ -20,7 +20,7 @@ publishing {
       name = "xtras"
     }
   }
-}
+}*/
 
 val javaLangVersion = 8
 
@@ -35,15 +35,14 @@ kotlin {
   }
 }
 
-group = "org.danbrough.kotlinxtras"
+
 version = libs.versions.kotlinXtrasPublishing.get()
 
-
-
 dependencies {
-  add("compileOnly", kotlin("gradle-plugin"))
-  add("compileOnly", kotlin("gradle-plugin-api"))
+  //add("compileOnly", kotlin("gradle-plugin"))
+  //add("compileOnly", kotlin("gradle-plugin-api"))
   implementation(libs.org.danbrough.klog)
+  api(libs.kotlin.gradle.plugin)
 }
 
 gradlePlugin {
@@ -55,6 +54,3 @@ gradlePlugin {
   }
 }
 
-dependencies {
-  implementation(libs.kotlin.gradle.plugin)
-}
