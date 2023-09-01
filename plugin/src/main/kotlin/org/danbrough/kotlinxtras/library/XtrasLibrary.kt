@@ -4,6 +4,7 @@ import org.danbrough.kotlinxtras.BuildEnvironment
 import org.danbrough.kotlinxtras.XTRAS_PACKAGE
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.XtrasDSLMarker
+import org.danbrough.kotlinxtras.XtrasPlugin
 import org.danbrough.kotlinxtras.capitalized
 import org.danbrough.kotlinxtras.defaultSupportedTargets
 import org.danbrough.kotlinxtras.log
@@ -19,6 +20,7 @@ import org.danbrough.kotlinxtras.xtrasPackagesDir
 import org.danbrough.kotlinxtras.xtrasSourceDir
 import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
+import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.register
@@ -125,6 +127,7 @@ fun Project.xtrasCreateLibrary(
   version: String,
   configure: XtrasLibrary.() -> Unit = {}
 ) = extensions.create<XtrasLibrary>(libName, this, libName, version).apply {
+  apply<XtrasPlugin>()
   afterEvaluate {
     if (supportedTargets.isEmpty())
       supportedTargets = defaultSupportedTargets()

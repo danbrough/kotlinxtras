@@ -1,26 +1,7 @@
 plugins {
   `kotlin-dsl`
-  //`java-gradle-plugin`
-  `maven-publish`
 }
 
-/*repositories {
-  maven("/usr/local/kotlinxtras/build/xtras/maven") {
-    name = "Xtras"
-  }
-  maven("https://s01.oss.sonatype.org/content/groups/staging")
-  mavenCentral()
-  gradlePluginPortal()
-  google()
-}
-
-publishing {
-  repositories {
-    maven("/usr/local/kotlinxtras/build/xtras/maven") {
-      name = "xtras"
-    }
-  }
-}*/
 
 val javaLangVersion = 8
 

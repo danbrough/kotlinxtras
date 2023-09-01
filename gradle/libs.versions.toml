@@ -4,11 +4,11 @@
 
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 
-kotlinxtras-sonatype = { id = "org.danbrough.kotlinxtras.sonatype", version.ref = "kotlinXtras" }
+#kotlinxtras-sonatype = { id = "org.danbrough.kotlinxtras.sonatype", version.ref = "kotlinXtras" }
 
-kotlinxtras-core = { id = "org.danbrough.kotlinxtras.core", version.ref = "kotlinXtras" }
+#kotlinxtras-core = { id = "org.danbrough.kotlinxtras.core", version.ref = "kotlinXtras" }
 kotlinXtras = { id = "org.danbrough.kotlinxtras.xtras", version.ref = "kotlinXtras" }
-kotlinXtras-wolfssl = { id = "org.danbrough.kotlinxtras.wolfssl", version = "0.0.4-beta01" }
+kotlinXtras-wolfssl = { id = "org.danbrough.kotlinxtras.wolfssl", version.ref = "wolfssl" }
 
 org-jetbrains-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 
@@ -17,6 +17,7 @@ org-jetbrains-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 kotlin = "1.9.10"
 kotlinXtras = "0.0.3-beta19"
 kotlinXtrasPublishing = "0.0.3-beta19"
+wolfssl = "0.0.1-beta01"
 
 dokka = "1.9.0"
 

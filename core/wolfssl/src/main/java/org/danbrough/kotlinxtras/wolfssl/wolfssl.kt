@@ -18,17 +18,19 @@ object WolfSSL {
 
 class WolfSSLPlugin : Plugin<Project> {
   override fun apply(target: Project) {
-    target.log("APPLY WOLFSSL")
+    target.log("WolfSSLPlugin.apply()")
   }
-
 }
+
+const val WOLFSSL_VERSION = "5.6.3"
+const val WOLFSSL_COMMIT = "v5.6.3-stable"
 
 @XtrasDSLMarker
 fun Project.xtrasWolfSSL(
   name: String = WolfSSL.extensionName,
+  version: String = properties.getOrDefault("wolfssl.version",WOLFSSL_VERSION).toString(),
+  commit: String = properties.getOrDefault("wolfssl.commit",  WOLFSSL_COMMIT).toString(),
   configure: XtrasLibrary.() -> Unit = {},
-  version: String = properties.getOrDefault("wolfssl.version", "5.6.3").toString(),
-  commit: String = properties.getOrDefault("wolfssl.commit", "v5.6.3-stable").toString(),
 ) = xtrasCreateLibrary(name, version) {
   gitSource(WolfSSL.sourceURL, commit)
   configure()
@@ -75,9 +77,9 @@ fun Project.xtrasWolfSSL(
         "--enable-altcertchains",
 //      "--enable-writedup",
 
-        "--enable-opensslextra",
-        "--enable-openssh",
-        "--enable-libssh2",
+        //"--enable-opensslextra",
+        //"--enable-openssh",
+        //"--enable-libssh2",
         "--enable-keygen", "--enable-certgen",
         "--enable-ssh", "--enable-wolfssh",
         "--disable-examples", "--enable-postauth",
