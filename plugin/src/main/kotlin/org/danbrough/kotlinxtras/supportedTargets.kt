@@ -114,9 +114,8 @@ fun XtrasLibrary.defaultSupportedTargets() = buildList {
       listOf(
         KonanTarget.MACOS_X64,
         KonanTarget.MACOS_ARM64,
-        KonanTarget.LINUX_X64,
-        KonanTarget.LINUX_ARM64,
-        KonanTarget.IOS_ARM64
+        KonanTarget.IOS_ARM64,
+        KonanTarget.IOS_X64,
       )
     )
   } else {
@@ -125,20 +124,15 @@ fun XtrasLibrary.defaultSupportedTargets() = buildList {
         KonanTarget.LINUX_X64,
         KonanTarget.LINUX_ARM64,
         KonanTarget.LINUX_ARM32_HFP,
-        //    KonanTarget.MINGW_X64,
+        KonanTarget.MINGW_X64,
+
+        KonanTarget.ANDROID_ARM32,
+        KonanTarget.ANDROID_ARM64,
+        KonanTarget.ANDROID_X64,
+        KonanTarget.ANDROID_X86
       )
     )
   }
-
-  addAll(
-    listOf(
-      //KonanTarget.MINGW_X64,
-      KonanTarget.ANDROID_ARM32,
-      KonanTarget.ANDROID_ARM64,
-      KonanTarget.ANDROID_X64,
-      KonanTarget.ANDROID_X86
-    )
-  )
 
 
 }

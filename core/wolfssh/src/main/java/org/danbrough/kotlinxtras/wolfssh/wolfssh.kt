@@ -52,9 +52,8 @@ fun Project.xtrasWolfSSH(
         "./configure",
         "--host=${target.hostTriplet}",
         "--prefix=${buildDir(target)}",
-        "--with-wolfssl=${ssl.libsDir(target)}"
-
-
+        "--with-wolfssl=${ssl.libsDir(target)}",
+        "--enable-static",
         )
 
       commandLine(configureOptions)

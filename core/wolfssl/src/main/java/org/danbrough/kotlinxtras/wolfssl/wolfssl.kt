@@ -10,6 +10,8 @@ import org.danbrough.kotlinxtras.source.gitSource
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
+const val WOLFSSL_VERSION = "5.6.3"
+const val WOLFSSL_COMMIT = "v5.6.3-stable"
 
 object WolfSSL {
   const val extensionName = "wolfSSL"
@@ -22,8 +24,6 @@ class WolfSSLPlugin : Plugin<Project> {
   }
 }
 
-const val WOLFSSL_VERSION = "5.6.3"
-const val WOLFSSL_COMMIT = "v5.6.3-stable"
 
 @XtrasDSLMarker
 fun Project.xtrasWolfSSL(
