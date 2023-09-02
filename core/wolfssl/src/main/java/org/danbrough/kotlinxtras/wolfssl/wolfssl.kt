@@ -9,6 +9,7 @@ import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.source.gitSource
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 const val WOLFSSL_VERSION = "5.6.3"
 const val WOLFSSL_COMMIT = "v5.6.3-stable"
@@ -87,6 +88,9 @@ fun Project.xtrasWolfSSL(
         "--enable-postauth",
 
         )
+
+      if (target == KonanTarget.MINGW_X64)
+        configureOptions.add("--enable-singlethreaded")
 
       commandLine(configureOptions)
 

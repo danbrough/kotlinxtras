@@ -125,7 +125,6 @@ fun XtrasLibrary.defaultSupportedTargets() = buildList {
         KonanTarget.LINUX_ARM64,
         KonanTarget.LINUX_ARM32_HFP,
         KonanTarget.MINGW_X64,
-
         KonanTarget.ANDROID_ARM32,
         KonanTarget.ANDROID_ARM64,
         KonanTarget.ANDROID_X64,
