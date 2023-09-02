@@ -66,8 +66,7 @@ fun Project.xtrasWolfSSL(
         "--enable-sha512",
         "--with-max-rsa-bits=8192",
 
-
-//  --enable-certreq        Enable cert request generation (default: disabled)
+        "--enable-certreq",//        Enable cert request generation (default: disabled)
         "--enable-certext",//        Enable cert request extensions (default: disabled)
 //  --enable-certgencache   Enable decoded cert caching (default: disabled)
         //--enable-altcertchains  Enable using alternative certificate chains, only
@@ -77,16 +76,20 @@ fun Project.xtrasWolfSSL(
         "--enable-altcertchains",
 //      "--enable-writedup",
 
-        //"--enable-opensslextra",
+        "--enable-opensslextra",
         //"--enable-openssh",
         //"--enable-libssh2",
-        "--enable-keygen", "--enable-certgen",
-        "--enable-ssh", "--enable-wolfssh",
-        "--disable-examples", "--enable-postauth",
+        "--enable-keygen",
+        "--enable-certgen",
+        "--enable-ssh",
+        "--enable-wolfssh",
+        //"--disable-examples",
+        "--enable-postauth",
 
         )
 
       commandLine(configureOptions)
+
     }
 
     val buildTaskName = buildTaskName(target)

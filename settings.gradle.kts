@@ -27,7 +27,7 @@ include(":plugin")
 //include(":core:wolfssl")
 if (publish == null || publish == "core") {
   listOf(
-    //"curl",
+    "curl",
    "wolfssl",
   ).forEach {
     include(":$it")

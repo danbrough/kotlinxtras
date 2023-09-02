@@ -83,7 +83,7 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
   ): String = packageFileName.invoke(konanTarget, name, packageVersion)
 
   var packageFileName: (konanTarget: KonanTarget, name: String, packageVersion: String) -> String =
-    { konanTarget, name, packageVersion -> "xtras_${name}_${konanTarget.platformName}_${packageVersion}.tar.gz" }
+    { konanTarget, name, packageVersion -> "${publishingGroup.replace('.',File.separatorChar)}${File.separatorChar}xtras_${name}_${konanTarget.platformName}_${packageVersion}.tar.gz" }
 
   @XtrasDSLMarker
   var sourcesDir: (KonanTarget) -> File =
@@ -115,7 +115,10 @@ fun XtrasLibrary.xtrasRegisterSourceTask(
     dependsOn(target.konanDepsTaskName, extractSourceTaskName(target))
     environment(buildEnv.getEnvironment(target))
     doFirst {
-      project.log("ENV: $environment")
+
+        project.log("Running ${commandLine.joinToString(" ")} for $libName in $workingDir")
+      
+      //project.log("ENV: $environment")
     }
     group = XTRAS_TASK_GROUP
     configure()

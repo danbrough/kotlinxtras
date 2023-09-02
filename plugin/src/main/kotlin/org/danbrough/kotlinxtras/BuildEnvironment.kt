@@ -42,6 +42,8 @@ class BuildEnvironment(library: XtrasLibrary) {
 
     put("PATH", basePath.joinToString(File.pathSeparator))
 
+    put("MAKE","make -j${Runtime.getRuntime().availableProcessors()+1}")
+
     put("KONAN_BUILD", "1")
   }
 
@@ -106,7 +108,7 @@ class BuildEnvironment(library: XtrasLibrary) {
       }
 
       KonanTarget.ANDROID_X64, KonanTarget.ANDROID_X86, KonanTarget.ANDROID_ARM64, KonanTarget.ANDROID_ARM32 -> {
-        library.project.log("ADDING NDK TO PATH")
+        //library.project.log("ADDING NDK TO PATH")
         val archFolder = if (HostManager.hostIsLinux) "linux-x86_64" else "darwin-x86_64"
         put(
           "PATH",
