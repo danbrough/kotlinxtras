@@ -29,6 +29,7 @@ if (publish == null || publish == "core") {
   listOf(
     "curl",
    "wolfssl",
+    "wolfssh",
   ).forEach {
     include(":$it")
     project(":$it").projectDir = rootDir.resolve("core/$it")

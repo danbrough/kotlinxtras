@@ -10,6 +10,7 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 kotlinXtras = { id = "org.danbrough.kotlinxtras.xtras", version.ref = "kotlinXtras" }
 kotlinXtras-wolfssl = { id = "org.danbrough.kotlinxtras.wolfssl", version.ref = "wolfssl" }
 kotlinXtras-curl = { id = "org.danbrough.kotlinxtras.curl", version.ref = "curl" }
+kotlinXtras-wolfssh = { id = "org.danbrough.kotlinxtras.wolfssh", version.ref = "wolfssh" }
 
 org-jetbrains-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 
@@ -19,6 +20,7 @@ kotlin = "1.9.10"
 kotlinXtras = "0.0.3-beta19"
 kotlinXtrasPublishing = "0.0.3-beta19"
 wolfssl = "0.0.1-beta01"
+wolfssh = "0.0.1-beta01"
 curl = "0.0.1-beta01"
 
 dokka = "1.9.0"
