@@ -1,7 +1,6 @@
 package org.danbrough.kotlinxtras.curl
 
 import org.danbrough.kotlinxtras.XtrasDSLMarker
-import org.danbrough.kotlinxtras.XtrasPlugin
 import org.danbrough.kotlinxtras.hostTriplet
 import org.danbrough.kotlinxtras.library.XtrasLibrary
 import org.danbrough.kotlinxtras.library.xtrasCreateLibrary
@@ -10,7 +9,6 @@ import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.source.gitSource
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.apply
 
 object Curl {
   const val extensionName = "curl"
@@ -60,8 +58,6 @@ fun Project.xtrasCurl(
         "--prefix=${buildDir(target)}"
       )
       commandLine(configureOptions)
-
-
     }
 
     val buildTaskName = buildTaskName(target)
@@ -72,8 +68,17 @@ fun Project.xtrasCurl(
     }
   }
 
-
-
+  cinterops {
+    interopsPackage = "libcurl"
+    headers = """
+          headers = curl/curl.h
+          linkerOpts = -lwolfssl -lz 
+          #linkerOpts =  -lz -lssl -lcrypto -lcurl
+          #staticLibraries.linux = libcurl.a
+          #staticLibraries.android = libcurl.a
+          
+          """.trimIndent()
+  }
 }
 
 /*

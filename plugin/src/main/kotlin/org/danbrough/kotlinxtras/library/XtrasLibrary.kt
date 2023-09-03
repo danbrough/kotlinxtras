@@ -11,8 +11,10 @@ import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.source.GitSourceConfig
 import org.danbrough.kotlinxtras.source.registerDownloadSourceGit
+import org.danbrough.kotlinxtras.tasks.CInteropsConfig
 import org.danbrough.kotlinxtras.tasks.konanDepsTaskName
 import org.danbrough.kotlinxtras.tasks.registerArchiveTasks
+import org.danbrough.kotlinxtras.tasks.registerGenerateInteropsTask
 import org.danbrough.kotlinxtras.tasks.registerKonanDepsTasks
 import org.danbrough.kotlinxtras.xtrasBuildDir
 import org.danbrough.kotlinxtras.xtrasLibsDir
@@ -76,6 +78,8 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
   fun provideMavenArchiveTaskName(target: KonanTarget) =
     xtrasTaskName("provideMavenArchive", target)
 
+  fun generateInteropsTaskName() = xtrasTaskName("interops")
+
   fun archiveFileName(
     konanTarget: KonanTarget,
     name: String = libName,
@@ -101,6 +105,14 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
   var archiveFile: (target: KonanTarget) -> File = { target ->
     project.xtrasPackagesDir.resolve(archiveFileName(target))
   }
+
+  internal var cinteropsConfigTasks = mutableListOf<CInteropsConfig.() -> Unit>()
+
+  @XtrasDSLMarker
+  fun cinterops(configure: CInteropsConfig.() -> Unit) {
+    cinteropsConfigTasks.add(configure)
+  }
+
 
   override fun toString() = "XtrasLibrary[$libName:$version]"
 }
@@ -142,7 +154,6 @@ fun Project.xtrasCreateLibrary(
 
 private fun XtrasLibrary.registerTasks() {
 
-
   when (sourceConfig) {
     is GitSourceConfig -> {
       registerDownloadSourceGit()
@@ -150,8 +161,10 @@ private fun XtrasLibrary.registerTasks() {
   }
 
   supportedTargets.forEach {
-    registerArchiveTasks(it)
     project.registerKonanDepsTasks(it)
+    registerArchiveTasks(it)
   }
+
+  registerGenerateInteropsTask()
 }
 

@@ -54,6 +54,7 @@ fun Project.xtrasWolfSSH(
         "--prefix=${buildDir(target)}",
         "--with-wolfssl=${ssl.libsDir(target)}",
         "--enable-static",
+        "--disable-examples",
         )
 
       commandLine(configureOptions)

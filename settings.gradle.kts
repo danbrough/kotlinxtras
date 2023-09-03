@@ -38,3 +38,10 @@ if (publish == null || publish == "core") {
 
 if (publish == null || publish == "binaries")
   include(":binaries")
+
+if (publish == null || publish == "demos"){
+  listOf("curl").forEach {
+    include(":demos:${it}_demo")
+    project(":demos:${it}_demo").projectDir = rootDir.resolve("demos/$it")
+  }
+}

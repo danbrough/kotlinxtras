@@ -1,10 +1,14 @@
-package org.danbrough.kotlinxtras.binaries
+package org.danbrough.kotlinxtras.tasks
 
 import org.danbrough.kotlinxtras.SHARED_LIBRARY_PATH_NAME
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
+import org.danbrough.kotlinxtras.capitalized
+import org.danbrough.kotlinxtras.decapitalized
+import org.danbrough.kotlinxtras.library.XtrasLibrary
 import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.xtrasCInteropsDir
-import org.gradle.configurationcache.extensions.capitalized
+import org.gradle.kotlin.dsl.findByType
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.Executable
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -13,14 +17,13 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.io.PrintWriter
 
-typealias CInteropsTargetWriter = List<LibraryExtension>.(KonanTarget, PrintWriter) -> Unit
-
+typealias CInteropsTargetWriter = List<XtrasLibrary>.(KonanTarget, PrintWriter) -> Unit
 data class CInteropsConfig(
   //name of the interops task
   var name: String,
 
   //package for the interops
-  var interopsPackage: String? = null,
+  var interopsPackage: String,
 
   //path to the generated (or preexisting) def file
   //if pre-existing then [interopsPackage], [headers] and [headersFile] should not be set
@@ -47,7 +50,7 @@ data class CInteropsConfig(
   var configure: (CInteropsConfig.() -> Unit)? = null,
 
   //other libraries to be merged into this file
-  var dependencies: List<LibraryExtension> = emptyList(),
+  var dependencies: List<XtrasLibrary> = emptyList(),
 )
 
 val defaultCInteropsTargetWriter: CInteropsTargetWriter = { konanTarget, output ->
@@ -64,14 +67,17 @@ val defaultCInteropsTargetWriter: CInteropsTargetWriter = { konanTarget, output 
 
 }
 
-fun LibraryExtension.registerGenerateInteropsTask() {
+
+
+fun XtrasLibrary.registerGenerateInteropsTask() {
+
+  val kotlinMultiplatform = project.extensions.findByType<KotlinMultiplatformExtension>() ?: return
 
   project.log("registerGenerateInteropsTask() for $this")
 
-
   val config = CInteropsConfig(
     "xtras${libName.capitalized()}",
-    "$publishingGroup.$libName",
+    "${project.group}.${libName.decapitalized()}",
     null
   )
 
@@ -83,9 +89,10 @@ fun LibraryExtension.registerGenerateInteropsTask() {
   if (generateConfig)
     config.defFile = project.xtrasCInteropsDir.resolve("xtras_${libName}.def")
 
-  project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
 
-    targets.withType(KotlinNativeTarget::class.java).all {
+  kotlinMultiplatform.apply {
+
+    targets.withType<KotlinNativeTarget>{
       compilations.getByName("main").apply {
         cinterops.create(config.name) {
           defFile(config.defFile!!)
@@ -106,12 +113,13 @@ fun LibraryExtension.registerGenerateInteropsTask() {
     }
   }
 
-  project.tasks.withType(CInteropProcess::class.java).all {
-    dependsOn(generateCInteropsTaskName())
+
+  project.tasks.withType(CInteropProcess::class.java) {
+    dependsOn(generateInteropsTaskName())
   }
 
   if (generateConfig)
-    project.tasks.register(generateCInteropsTaskName()) {
+    project.tasks.register(generateInteropsTaskName()) {
       group = XTRAS_TASK_GROUP
 
       if (config.headerFile != null && config.headers != null)
@@ -121,7 +129,7 @@ fun LibraryExtension.registerGenerateInteropsTask() {
         inputs.property("headers", headers)
       } ?: config.headerFile?.also { inputs.file(it) }
 
-      inputs.property("targets", supportedBuildTargets)
+      inputs.property("targets", supportedTargets)
 
       outputs.file(config.defFile!!)
 
@@ -131,7 +139,9 @@ fun LibraryExtension.registerGenerateInteropsTask() {
 
         config.defFile!!.printWriter().use { output ->
           //write the package
-          output.println("package = ${config.interopsPackage}")
+          output.println("package = ${config.interopsPackage ?: "not_set"}")
+          output.println()
+
           //write the headers
           (config.headers ?: config.headerFile?.readText())?.also {
             output.println(it)

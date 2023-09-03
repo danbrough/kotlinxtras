@@ -1,12 +1,10 @@
 package org.danbrough.kotlinxtras.tasks
 
-import org.danbrough.kotlinxtras.XTRAS_BINARIES_PUBLISHING_GROUP
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.capitalized
 import org.danbrough.kotlinxtras.library.XtrasLibrary
 import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.platformName
-import org.danbrough.kotlinxtras.xtrasLibsDir
 import org.gradle.api.Task
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.publish.PublishingExtension
@@ -61,13 +59,28 @@ private fun XtrasLibrary.registerArchiveTask(target: KonanTarget) =
   }
 
 
-private fun XtrasLibrary.registerExtractArchiveTask(target: KonanTarget) =
-  project.tasks.register<Exec>(extractArchiveTaskName(target)) {
+
+const val extractAllTaskName = "xtrasExtractAll"
+
+private fun XtrasLibrary.extractAllTask() = project.tasks.findByName(extractAllTaskName) ?:
+project.tasks.create(extractAllTaskName){
+  group = XTRAS_TASK_GROUP
+  description = "Extracts all binary archives"
+}
+
+private fun XtrasLibrary.registerExtractArchiveTask(target: KonanTarget) {
+  val extractAllTask = extractAllTask()
+  val taskName = extractArchiveTaskName(target)
+  extractAllTask.dependsOn(taskName)
+
+  project.tasks.register<Exec>(taskName) {
     group = XTRAS_TASK_GROUP
     description =
       "Extracts binary archive for $libName:${target.platformName} to ${libsDir(target)}"
     val archive = archiveFile(target)
     val libDir = libsDir(target)
+
+
 
     if (!archive.exists())
       dependsOn(provideArchiveTaskName(target))
@@ -88,6 +101,7 @@ private fun XtrasLibrary.registerExtractArchiveTask(target: KonanTarget) =
     environment(buildEnv.getEnvironment(target))
     commandLine(buildEnv.binaries.tar, "xvpfz", archive.absolutePath)
   }
+}
 
 fun XtrasLibrary.resolveBinariesFromMaven(target: KonanTarget): File? {
   val mavenID = "$publishingGroup:$libName${target.platformName.capitalized()}:$version"
