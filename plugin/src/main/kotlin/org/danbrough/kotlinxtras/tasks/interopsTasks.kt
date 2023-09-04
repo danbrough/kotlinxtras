@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.Executable
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.io.PrintWriter
@@ -81,9 +82,7 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
     null
   )
 
-  cinteropsConfigTasks.forEach {
-    it.invoke(config)
-  }
+  cinteropsConfig?.invoke(config)
 
   val generateConfig = config.defFile == null
   if (generateConfig)
@@ -115,6 +114,11 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
 
 
   project.tasks.withType(CInteropProcess::class.java) {
+    libraryDeps.map{it.extractArchiveTaskName(konanTarget)}.forEach {
+      dependsOn(it)
+    }
+    dependsOn(extractArchiveTaskName(konanTarget))
+
     dependsOn(generateInteropsTaskName())
   }
 

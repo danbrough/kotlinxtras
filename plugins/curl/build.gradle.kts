@@ -13,7 +13,7 @@ dependencies {
 gradlePlugin {
   plugins {
     create("curl") {
-      id = "$group.curl"
+      id = "org.danbrough.kotlinxtras.curl"
       implementationClass = "$group.curl.CurlPlugin"
     }
   }

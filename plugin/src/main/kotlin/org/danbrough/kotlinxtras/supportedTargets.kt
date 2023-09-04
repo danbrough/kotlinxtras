@@ -99,7 +99,7 @@ fun KotlinMultiplatformExtension.declareHostTarget(configure: KotlinNativeTarget
 
 fun XtrasLibrary.defaultSupportedTargets() = buildList {
 
-  if (buildEnv.runningInIDEA) {
+  if (project.runningInIDE) {
     add(HostManager.host)
     return@buildList
   }
@@ -124,7 +124,7 @@ fun XtrasLibrary.defaultSupportedTargets() = buildList {
         KonanTarget.LINUX_X64,
         KonanTarget.LINUX_ARM64,
         KonanTarget.LINUX_ARM32_HFP,
-        //KonanTarget.MINGW_X64,
+        KonanTarget.MINGW_X64,
 
         KonanTarget.ANDROID_ARM32,
         KonanTarget.ANDROID_ARM64,

@@ -47,9 +47,9 @@ private fun XtrasLibrary.registerArchiveTask(target: KonanTarget) =
       project.log("creating archive ${archive.absolutePath} from $workingDir")
     }
     outputs.file(archive)
-    environment(buildEnv.getEnvironment(target))
+    environment(buildEnvironment.getEnvironment(target))
     commandLine(
-      buildEnv.binaries.tar,
+      buildEnvironment.binaries.tar,
       "cvpfz",
       archive.absolutePath,
       "--exclude=**share",
@@ -98,8 +98,8 @@ private fun XtrasLibrary.registerExtractArchiveTask(target: KonanTarget) {
     }
     inputs.file(archive)
     outputs.dir(libDir)
-    environment(buildEnv.getEnvironment(target))
-    commandLine(buildEnv.binaries.tar, "xvpfz", archive.absolutePath)
+    environment(buildEnvironment.getEnvironment(target))
+    commandLine(buildEnvironment.binaries.tar, "xvpfz", archive.absolutePath)
   }
 }
 

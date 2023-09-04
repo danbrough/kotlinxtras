@@ -13,6 +13,8 @@ annotation class XtrasDSLMarker
 class XtrasPlugin : Plugin<Project> {
   override fun apply(project: Project) {
     project.log("applying XtrasPlugin to ${project.projectDir.absolutePath}")
+
+
   }
 }
 

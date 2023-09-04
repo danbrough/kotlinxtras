@@ -2,5 +2,6 @@
 
 cd `dirname $0` && cd ..
 
-./gradlew publishAllPublicationsToXtras -Ppublish=plugin
-./gradlew publishAllPublicationsToXtras -Ppublish=core
+./gradlew publishAllPublicationsToXtras -Pinclude=plugin
+./gradlew publishAllPublicationsToXtras -Pinclude=plugins
+

@@ -45,7 +45,6 @@ fun Project.xtrasWolfSSL(
           compilerOpts.android = -D__ANDROID_API__=21
           #compilerOpts =  -Wno-macro-redefined -Wno-deprecated-declarations  -Wno-incompatible-pointer-types-discards-qualifiers
           #compilerOpts = -static
-          
           """.trimIndent()
   }
 
@@ -68,7 +67,6 @@ fun Project.xtrasWolfSSL(
         "--prefix=${buildDir(target)}",
 //      "--disable-fasthugemath",
 //      "--disable-bump",
-//      "--enable-opensslextra",
 //      "--enable-fortress",
 //      "--disable-debug",
 //      "--disable-ntru",
@@ -82,10 +80,10 @@ fun Project.xtrasWolfSSL(
         "--enable-ed448",
         "--enable-sha512",
         "--with-max-rsa-bits=8192",
-
+        "--enable-altcertchains",
         "--enable-certreq",//        Enable cert request generation (default: disabled)
         "--enable-certext",//        Enable cert request extensions (default: disabled)
-//  --enable-certgencache   Enable decoded cert caching (default: disabled)
+    //  --enable-certgencache   Enable decoded cert caching (default: disabled)
         //--enable-altcertchains  Enable using alternative certificate chains, only
         //   require leaf certificate to validate to trust root
         //--enable-testcert       Enable Test Cert (default: disabled)

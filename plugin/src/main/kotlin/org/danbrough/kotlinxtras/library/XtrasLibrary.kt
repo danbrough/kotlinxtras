@@ -1,12 +1,13 @@
 package org.danbrough.kotlinxtras.library
 
-import org.danbrough.kotlinxtras.BuildEnvironment
+import org.danbrough.kotlinxtras.env.BuildEnvironment
 import org.danbrough.kotlinxtras.XTRAS_PACKAGE
 import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
 import org.danbrough.kotlinxtras.XtrasDSLMarker
 import org.danbrough.kotlinxtras.XtrasPlugin
 import org.danbrough.kotlinxtras.capitalized
 import org.danbrough.kotlinxtras.defaultSupportedTargets
+import org.danbrough.kotlinxtras.env.xtrasBuildEnvironment
 import org.danbrough.kotlinxtras.log
 import org.danbrough.kotlinxtras.platformName
 import org.danbrough.kotlinxtras.source.GitSourceConfig
@@ -24,11 +25,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.register
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -47,7 +44,11 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
 
   var sourceConfig: SourceConfig? = null
 
-  val buildEnv: BuildEnvironment = BuildEnvironment(this)
+  @XtrasDSLMarker
+  val buildEnvironment: BuildEnvironment = project.xtrasBuildEnvironment()
+
+
+  var libraryDeps: List<XtrasLibrary> = emptyList()
 
   /**
    * Whether to attempt to download binary archives from maven.
@@ -56,8 +57,8 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
   var resolveBinariesFromMaven = true
 
   @XtrasDSLMarker
-  fun buildEnv(conf: BuildEnvironment.() -> Unit) {
-    buildEnv.conf()
+  fun buildEnvironment(conf: BuildEnvironment.() -> Unit) {
+    buildEnvironment.conf()
   }
 
   @XtrasDSLMarker
@@ -87,7 +88,14 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
   ): String = packageFileName.invoke(konanTarget, name, packageVersion)
 
   var packageFileName: (konanTarget: KonanTarget, name: String, packageVersion: String) -> String =
-    { konanTarget, name, packageVersion -> "${publishingGroup.replace('.',File.separatorChar)}${File.separatorChar}xtras_${name}_${konanTarget.platformName}_${packageVersion}.tar.gz" }
+    { konanTarget, name, packageVersion ->
+      "${
+        publishingGroup.replace(
+          '.',
+          File.separatorChar
+        )
+      }${File.separatorChar}xtras_${name}_${konanTarget.platformName}_${packageVersion}.tar.gz"
+    }
 
   @XtrasDSLMarker
   var sourcesDir: (KonanTarget) -> File =
@@ -106,11 +114,11 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
     project.xtrasPackagesDir.resolve(archiveFileName(target))
   }
 
-  internal var cinteropsConfigTasks = mutableListOf<CInteropsConfig.() -> Unit>()
+  internal var cinteropsConfig: (CInteropsConfig.() -> Unit)? = null
 
   @XtrasDSLMarker
   fun cinterops(configure: CInteropsConfig.() -> Unit) {
-    cinteropsConfigTasks.add(configure)
+    cinteropsConfig = configure
   }
 
 
@@ -124,12 +132,14 @@ fun XtrasLibrary.xtrasRegisterSourceTask(
 ) =
   project.tasks.register<Exec>(name) {
     workingDir(sourcesDir(target))
-    dependsOn(target.konanDepsTaskName, extractSourceTaskName(target))
-    environment(buildEnv.getEnvironment(target))
+
+    dependsOn(":${target.konanDepsTaskName}")
+    dependsOn(extractSourceTaskName(target))
+    environment(buildEnvironment.getEnvironment(target))
     doFirst {
 
-        project.log("Running ${commandLine.joinToString(" ")} for $libName in $workingDir")
-      
+      project.log("Running ${commandLine.joinToString(" ")} for $libName in $workingDir")
+
       //project.log("ENV: $environment")
     }
     group = XTRAS_TASK_GROUP
@@ -140,9 +150,12 @@ fun XtrasLibrary.xtrasRegisterSourceTask(
 fun Project.xtrasCreateLibrary(
   libName: String,
   version: String,
+  vararg deps:XtrasLibrary,
   configure: XtrasLibrary.() -> Unit = {}
 ) = extensions.create<XtrasLibrary>(libName, this, libName, version).apply {
+  libraryDeps = deps.toList()
   apply<XtrasPlugin>()
+
   afterEvaluate {
     if (supportedTargets.isEmpty())
       supportedTargets = defaultSupportedTargets()

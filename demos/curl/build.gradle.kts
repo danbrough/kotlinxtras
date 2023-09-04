@@ -1,37 +1,31 @@
 import org.danbrough.kotlinxtras.curl.xtrasCurl
 import org.danbrough.kotlinxtras.declareHostTarget
 import org.danbrough.kotlinxtras.platformName
-import org.danbrough.kotlinxtras.wolfssl.xtrasWolfSSL
+import org.danbrough.kotlinxtras.runningInIDE
+import org.danbrough.kotlinxtras.tasks.konanDepsTaskName
+import org.danbrough.kotlinxtras.openssl.xtrasOpenSSL
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
-  alias(libs.plugins.kotlinXtras.wolfssl)
+  alias(libs.plugins.kotlinXtras.openssl)
   alias(libs.plugins.kotlinXtras.curl)
 }
 
 
-val ssl = xtrasWolfSSL()
+val ssl = xtrasOpenSSL()
 
 xtrasCurl(ssl) {
   println("xtrasCurl.supportedTargets = $supportedTargets version:$sourceConfig")
-  cinterops {
-    headers = """
-          headers = curl/curl.h
-          linkerOpts =  -lz -lssl -lcrypto -lcurl
-          #staticLibraries.linux = libcurl.a
-          #staticLibraries.android = libcurl.a
-          
-          """.trimIndent()
-  }
 }
 
 kotlin {
   jvm()
   declareHostTarget()
 
-  if (HostManager.hostIsLinux) {
+  if (HostManager.hostIsLinux && !project.runningInIDE) {
     linuxArm64()
   }
 
@@ -57,6 +51,10 @@ kotlin {
     binaries {
       executable("demo1") {
         entryPoint = "demo.demo1.main"
+        runTask?.environment("CA_CERT_FILE", file("cacert.pem"))
+        findProperty("args")?.also {
+          runTask?.args(it.toString())
+        }
       }
     }
   }
@@ -68,3 +66,9 @@ tasks.create("runDemo1") {
 }
 
 
+tasks.create("test"){
+  dependsOn(KonanTarget.LINUX_ARM64.konanDepsTaskName)
+  doLast {
+    println("FINISHED TEST")
+  }
+}

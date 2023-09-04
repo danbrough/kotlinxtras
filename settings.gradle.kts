@@ -13,33 +13,28 @@ plugins {
   id("org.gradle.toolchains.foojay-resolver-convention") version ("0.7.0")
 }
 
-val publish: String? by settings
-
+val include: String? by settings
 
 rootProject.name = "kotlinxtras"
 
-//includeBuild("plugin")
-
-
 include(":plugin")
 
-//project(":plugin").projectDir = rootDir.resolve("plugin2")
-//include(":core:wolfssl")
-if (publish == null || publish == "core") {
+if (include == null || include == "plugins") {
   listOf(
     "curl",
    "wolfssl",
     "wolfssh",
+    "openssl",
   ).forEach {
-    include(":$it")
-    project(":$it").projectDir = rootDir.resolve("core/$it")
+    include(":plugins:$it")
+    project(":plugins:$it").projectDir = rootDir.resolve("plugins/$it")
   }
 }
 
-if (publish == null || publish == "binaries")
+if (include == null || include == "binaries")
   include(":binaries")
 
-if (publish == null || publish == "demos"){
+if (include == null || include == "demos"){
   listOf("curl").forEach {
     include(":demos:${it}_demo")
     project(":demos:${it}_demo").projectDir = rootDir.resolve("demos/$it")

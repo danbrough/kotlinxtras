@@ -30,9 +30,9 @@ private fun XtrasLibrary.gitTask(
   config: Exec.() -> Unit = {}
 ) =
   project.tasks.register<Exec>(name) {
-    environment(buildEnv.getEnvironment())
+    environment(buildEnvironment.getEnvironment())
     commandLine(args.toMutableList().apply {
-      add(0, buildEnv.binaries.git)
+      add(0, buildEnvironment.binaries.git)
     })
     doFirst {
       project.log("running: ${commandLine.joinToString(" ")}")
@@ -58,7 +58,7 @@ internal fun XtrasLibrary.registerDownloadSourceGit() {
   }
 
   project.tasks.register<Exec>("xtrasTags${libName.capitalized()}") {
-    commandLine(buildEnv.binaries.git, "ls-remote", "-q", "--refs", "-t", config.url)
+    commandLine(buildEnvironment.binaries.git, "ls-remote", "-q", "--refs", "-t", config.url)
     group = XTRAS_TASK_GROUP
     description = "Prints out the tags from the remote repository"
     val stdout = ByteArrayOutputStream()
@@ -122,7 +122,7 @@ internal fun XtrasLibrary.registerDownloadSourceGit() {
     dependsOn(fetchTaskName)
     doFirst {
       val commit = repoDir.resolve("fetch_${config.commit}").readText()
-      commandLine(buildEnv.binaries.git, "reset", "--soft", commit)
+      commandLine(buildEnvironment.binaries.git, "reset", "--soft", commit)
     }
     workingDir(repoDir)
     outputs.dir(repoDir)
