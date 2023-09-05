@@ -1,12 +1,12 @@
-package org.danbrough.kotlinxtras.tasks
+package org.danbrough.xtras.tasks
 
-import org.danbrough.kotlinxtras.SHARED_LIBRARY_PATH_NAME
-import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
-import org.danbrough.kotlinxtras.capitalized
-import org.danbrough.kotlinxtras.decapitalized
-import org.danbrough.kotlinxtras.library.XtrasLibrary
-import org.danbrough.kotlinxtras.log
-import org.danbrough.kotlinxtras.xtrasCInteropsDir
+import org.danbrough.xtras.SHARED_LIBRARY_PATH_NAME
+import org.danbrough.xtras.XTRAS_TASK_GROUP
+import org.danbrough.xtras.capitalized
+import org.danbrough.xtras.decapitalized
+import org.danbrough.xtras.library.XtrasLibrary
+import org.danbrough.xtras.log
+import org.danbrough.xtras.xtrasCInteropsDir
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -100,14 +100,14 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
 
       binaries.withType(Executable::class.java).filter { it.runTask != null }.forEach {
         val env = it.runTask!!.environment
-        if (env.containsKey(SHARED_LIBRARY_PATH_NAME))
-          env[SHARED_LIBRARY_PATH_NAME] =
-            env[SHARED_LIBRARY_PATH_NAME]!!.toString() + File.pathSeparatorChar + libsDir(
+        if (env.containsKey(org.danbrough.xtras.SHARED_LIBRARY_PATH_NAME))
+          env[org.danbrough.xtras.SHARED_LIBRARY_PATH_NAME] =
+            env[org.danbrough.xtras.SHARED_LIBRARY_PATH_NAME]!!.toString() + File.pathSeparatorChar + libsDir(
               konanTarget
             ).resolve("lib")
         else
-          env[SHARED_LIBRARY_PATH_NAME] = libsDir(konanTarget).resolve("lib")
-        project.logger.info("Setting $SHARED_LIBRARY_PATH_NAME for $konanTarget to ${env[SHARED_LIBRARY_PATH_NAME]}")
+          env[org.danbrough.xtras.SHARED_LIBRARY_PATH_NAME] = libsDir(konanTarget).resolve("lib")
+        project.logger.info("Setting ${org.danbrough.xtras.SHARED_LIBRARY_PATH_NAME} for $konanTarget to ${env[org.danbrough.xtras.SHARED_LIBRARY_PATH_NAME]}")
       }
     }
   }
@@ -124,7 +124,7 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
 
   if (generateConfig)
     project.tasks.register(generateInteropsTaskName()) {
-      group = XTRAS_TASK_GROUP
+      group = org.danbrough.xtras.XTRAS_TASK_GROUP
 
       if (config.headerFile != null && config.headers != null)
         throw Error("Only one of headersFile or headers should be specified for the cinterops config")

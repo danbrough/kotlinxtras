@@ -1,14 +1,12 @@
 plugins {
   //alias(libs.plugins.kotlinMultiplatform)
-  alias(libs.plugins.kotlinXtras)
+  alias(libs.plugins.xtras)
   `kotlin-dsl`
 }
 
 version = libs.versions.curl.get()
 
-dependencies {
-  implementation(project(":plugin"))
-}
+
 
 gradlePlugin {
   plugins {

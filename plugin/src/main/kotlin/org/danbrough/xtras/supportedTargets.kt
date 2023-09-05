@@ -1,6 +1,6 @@
-package org.danbrough.kotlinxtras
+package org.danbrough.xtras
 
-import org.danbrough.kotlinxtras.library.XtrasLibrary
+import org.danbrough.xtras.library.XtrasLibrary
 import org.gradle.kotlin.dsl.findByType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget

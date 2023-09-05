@@ -1,10 +1,10 @@
-package org.danbrough.kotlinxtras.tasks
+package org.danbrough.xtras.tasks
 
-import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
-import org.danbrough.kotlinxtras.capitalized
-import org.danbrough.kotlinxtras.library.XtrasLibrary
-import org.danbrough.kotlinxtras.log
-import org.danbrough.kotlinxtras.platformName
+import org.danbrough.xtras.XTRAS_TASK_GROUP
+import org.danbrough.xtras.capitalized
+import org.danbrough.xtras.library.XtrasLibrary
+import org.danbrough.xtras.log
+import org.danbrough.xtras.platformName
 import org.gradle.api.Task
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.publish.PublishingExtension
@@ -30,7 +30,7 @@ fun XtrasLibrary.registerArchiveTasks(target: KonanTarget) {
 
 private fun XtrasLibrary.registerArchiveTask(target: KonanTarget) =
   project.tasks.register<Exec>(archiveTaskName(target)) {
-    group = XTRAS_TASK_GROUP
+    group = org.danbrough.xtras.XTRAS_TASK_GROUP
     description = "Outputs binary archive for $libName:${target.platformName}"
     val archive = archiveFile(target)
     if (!archive.exists())
@@ -64,7 +64,7 @@ const val extractAllTaskName = "xtrasExtractAll"
 
 private fun XtrasLibrary.extractAllTask() = project.tasks.findByName(extractAllTaskName) ?:
 project.tasks.create(extractAllTaskName){
-  group = XTRAS_TASK_GROUP
+  group = org.danbrough.xtras.XTRAS_TASK_GROUP
   description = "Extracts all binary archives"
 }
 
@@ -74,7 +74,7 @@ private fun XtrasLibrary.registerExtractArchiveTask(target: KonanTarget) {
   extractAllTask.dependsOn(taskName)
 
   project.tasks.register<Exec>(taskName) {
-    group = XTRAS_TASK_GROUP
+    group = org.danbrough.xtras.XTRAS_TASK_GROUP
     description =
       "Extracts binary archive for $libName:${target.platformName} to ${libsDir(target)}"
     val archive = archiveFile(target)
@@ -138,7 +138,7 @@ fun XtrasLibrary.resolveBinariesFromMaven(target: KonanTarget): File? {
 private fun XtrasLibrary.registerMavenArchiveTask(target: KonanTarget) =
   project.tasks.register<Task>(provideMavenArchiveTaskName(target)) {
     val archive = archiveFile(target)
-    group = XTRAS_TASK_GROUP
+    group = org.danbrough.xtras.XTRAS_TASK_GROUP
     description = "Downloads binary archive for $this to $archive"
     val archiveFile = archiveFile(target)
     outputs.file(archiveFile)
@@ -165,7 +165,7 @@ private fun XtrasLibrary.registerMavenArchiveTask(target: KonanTarget) =
 private fun XtrasLibrary.registerProvideArchiveTask(target: KonanTarget) {
   project.tasks.register<Task>(provideArchiveTaskName(target)) {
     val archive = archiveFile(target)
-    group = XTRAS_TASK_GROUP
+    group = org.danbrough.xtras.XTRAS_TASK_GROUP
     description = "Builds or downloads binary archive for $this to $archive"
 
     onlyIf {

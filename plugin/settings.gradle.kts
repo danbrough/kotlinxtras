@@ -1,6 +1,6 @@
 pluginManagement {
   repositories {
-    maven(file("build/xtras/maven"))
+    maven("/usr/local/kotlinxtras/build/xtras/maven")
     maven("https://s01.oss.sonatype.org/content/groups/staging")
     mavenCentral()
     gradlePluginPortal()
@@ -8,17 +8,11 @@ pluginManagement {
   }
 }
 
-plugins {
-  id("de.fayard.refreshVersions") version "0.60.2"
-  id("org.gradle.toolchains.foojay-resolver-convention") version ("0.7.0")
-}
 
 val include: String? by settings
 
-rootProject.name = "kotlinxtras"
 
-includeBuild("plugin")
-include(":test")
+
 
 /*
 if (include == null || include == "plugins") {
@@ -42,3 +36,10 @@ if (include == null || include == "demos"){
     project(":demos:${it}_demo").projectDir = rootDir.resolve("demos/$it")
   }
 }*/
+dependencyResolutionManagement {
+  versionCatalogs {
+    create("libs") {
+      from(files("../gradle/libs.versions.toml"))
+    }
+  }
+}

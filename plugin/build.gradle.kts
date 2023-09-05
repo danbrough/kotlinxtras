@@ -1,5 +1,6 @@
 plugins {
   `kotlin-dsl`
+  `maven-publish`
 }
 
 
@@ -10,6 +11,7 @@ java {
   /*sourceCompatibility = JavaVersion.VERSION_1_8
   targetCompatibility = JavaVersion.VERSION_1_8*/
 }
+
 kotlin {
   jvmToolchain {
     languageVersion.set(JavaLanguageVersion.of(javaLangVersion))
@@ -17,7 +19,14 @@ kotlin {
 }
 
 
-version = libs.versions.kotlinXtrasPublishing.get()
+group = libs.versions.xtrasPackage.get()
+version = libs.versions.xtrasPublishing.get()
+
+repositories {
+  maven(rootProject.layout.buildDirectory.dir("xtras/maven"))
+  maven("https://s01.oss.sonatype.org/content/groups/staging/")
+  mavenCentral()
+}
 
 dependencies {
   //add("compileOnly", kotlin("gradle-plugin"))
@@ -29,7 +38,7 @@ dependencies {
 gradlePlugin {
   plugins {
     create("xtras") {
-      id = "$group.xtras"
+      id = group.toString()
       implementationClass = "$group.XtrasPlugin"
     }
   }

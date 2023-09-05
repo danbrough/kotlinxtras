@@ -1,4 +1,4 @@
-package org.danbrough.kotlinxtras.tasks
+package org.danbrough.xtras.tasks
 
 /*
     if (publishBinaries && (HostManager.hostIsMac == target.family.isAppleFamily)) {

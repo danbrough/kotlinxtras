@@ -1,9 +1,9 @@
 import org.danbrough.kotlinxtras.binaries.git
 import org.danbrough.kotlinxtras.binaries.registerLibraryExtension
-import org.danbrough.kotlinxtras.declareHostTarget
-import org.danbrough.kotlinxtras.hostTriplet
-import org.danbrough.kotlinxtras.platformName
-import org.danbrough.kotlinxtras.xtrasMavenDir
+import org.danbrough.xtras.declareHostTarget
+import org.danbrough.xtras.hostTriplet
+import org.danbrough.xtras.platformName
+import org.danbrough.xtras.xtrasMavenDir
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager

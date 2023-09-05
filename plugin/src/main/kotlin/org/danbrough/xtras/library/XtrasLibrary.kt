@@ -1,26 +1,26 @@
-package org.danbrough.kotlinxtras.library
+package org.danbrough.xtras.library
 
-import org.danbrough.kotlinxtras.env.BuildEnvironment
-import org.danbrough.kotlinxtras.XTRAS_PACKAGE
-import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
-import org.danbrough.kotlinxtras.XtrasDSLMarker
-import org.danbrough.kotlinxtras.XtrasPlugin
-import org.danbrough.kotlinxtras.capitalized
-import org.danbrough.kotlinxtras.defaultSupportedTargets
-import org.danbrough.kotlinxtras.env.xtrasBuildEnvironment
-import org.danbrough.kotlinxtras.log
-import org.danbrough.kotlinxtras.platformName
-import org.danbrough.kotlinxtras.source.GitSourceConfig
-import org.danbrough.kotlinxtras.source.registerDownloadSourceGit
-import org.danbrough.kotlinxtras.tasks.CInteropsConfig
-import org.danbrough.kotlinxtras.tasks.konanDepsTaskName
-import org.danbrough.kotlinxtras.tasks.registerArchiveTasks
-import org.danbrough.kotlinxtras.tasks.registerGenerateInteropsTask
-import org.danbrough.kotlinxtras.tasks.registerKonanDepsTasks
-import org.danbrough.kotlinxtras.xtrasBuildDir
-import org.danbrough.kotlinxtras.xtrasLibsDir
-import org.danbrough.kotlinxtras.xtrasPackagesDir
-import org.danbrough.kotlinxtras.xtrasSourceDir
+import org.danbrough.xtras.env.BuildEnvironment
+import org.danbrough.xtras.XTRAS_PACKAGE
+import org.danbrough.xtras.XTRAS_TASK_GROUP
+import org.danbrough.xtras.XtrasDSLMarker
+import org.danbrough.xtras.XtrasPlugin
+import org.danbrough.xtras.capitalized
+import org.danbrough.xtras.defaultSupportedTargets
+import org.danbrough.xtras.env.xtrasBuildEnvironment
+import org.danbrough.xtras.log
+import org.danbrough.xtras.platformName
+import org.danbrough.xtras.source.GitSourceConfig
+import org.danbrough.xtras.source.registerDownloadSourceGit
+import org.danbrough.xtras.tasks.CInteropsConfig
+import org.danbrough.xtras.tasks.konanDepsTaskName
+import org.danbrough.xtras.tasks.registerArchiveTasks
+import org.danbrough.xtras.tasks.registerGenerateInteropsTask
+import org.danbrough.xtras.tasks.registerKonanDepsTasks
+import org.danbrough.xtras.xtrasBuildDir
+import org.danbrough.xtras.xtrasLibsDir
+import org.danbrough.xtras.xtrasPackagesDir
+import org.danbrough.xtras.xtrasSourceDir
 import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
 import org.gradle.kotlin.dsl.apply
@@ -150,7 +150,7 @@ fun XtrasLibrary.xtrasRegisterSourceTask(
 fun Project.xtrasCreateLibrary(
   libName: String,
   version: String,
-  vararg deps:XtrasLibrary,
+  vararg deps: XtrasLibrary,
   configure: XtrasLibrary.() -> Unit = {}
 ) = extensions.create<XtrasLibrary>(libName, this, libName, version).apply {
   libraryDeps = deps.toList()

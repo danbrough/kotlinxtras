@@ -1,8 +1,8 @@
 import org.danbrough.kotlinxtras.curl.xtrasCurl
-import org.danbrough.kotlinxtras.declareHostTarget
-import org.danbrough.kotlinxtras.platformName
-import org.danbrough.kotlinxtras.runningInIDE
-import org.danbrough.kotlinxtras.tasks.konanDepsTaskName
+import org.danbrough.xtras.declareHostTarget
+import org.danbrough.xtras.platformName
+import org.danbrough.xtras.runningInIDE
+import org.danbrough.xtras.tasks.konanDepsTaskName
 import org.danbrough.kotlinxtras.openssl.xtrasOpenSSL
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager

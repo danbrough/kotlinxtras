@@ -4,27 +4,21 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 plugins {
   alias(libs.plugins.kotlinMultiplatform) apply false
   alias(libs.plugins.org.jetbrains.dokka) apply false
-  //id("org.danbrough.kotlinxtras.xtras")
   `maven-publish`
 }
 
 
-//println("Using Kotlin compiler version: ${KotlinCompilerVersion.VERSION}")
-
-val publishingVersion: String = libs.versions.kotlinXtrasPublishing.get()
-
-
-version = publishingVersion
+val publishingVersion: String = libs.versions.xtrasPublishing.get()
+val publishingGroup: String = libs.versions.xtrasPackage.get()
 
 allprojects {
 
-  group = "org.danbrough.kotlinxtras"
+  group = publishingGroup
   version = publishingVersion
 
   apply<MavenPublishPlugin>()
 
   repositories {
-
     maven(rootProject.layout.buildDirectory.dir("xtras/maven"))
     maven("https://s01.oss.sonatype.org/content/groups/staging/")
     mavenCentral()
@@ -53,27 +47,8 @@ allprojects {
   }
 }
 
-
-
 subprojects {
-
   afterEvaluate {
-
-/*
-    extensions.findByType(JavaPluginExtension::class.java)?.apply {
-      toolchain.languageVersion.set(JavaLanguageVersion.of(Xtras.javaLangVersion))
-    }
-
-
-    extensions.findByType(org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension::class.java)
-      ?.apply {
-        jvmToolchain {
-          languageVersion.set(JavaLanguageVersion.of(Xtras.javaLangVersion))
-        }
-      }
-
-*/
-
     extensions.findByType(PublishingExtension::class)?.apply {
       publications.all {
         if (this is MavenPublication)

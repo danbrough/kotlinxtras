@@ -1,7 +1,7 @@
-package org.danbrough.kotlinxtras.tasks
+package org.danbrough.xtras.tasks
 
-import org.danbrough.kotlinxtras.log
-import org.danbrough.kotlinxtras.platformName
+import org.danbrough.xtras.log
+import org.danbrough.xtras.platformName
 import org.gradle.api.Project
 import org.gradle.api.tasks.GradleBuild
 import org.gradle.configurationcache.extensions.capitalized

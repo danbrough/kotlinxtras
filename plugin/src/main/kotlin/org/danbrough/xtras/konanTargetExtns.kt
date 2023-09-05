@@ -1,4 +1,4 @@
-package org.danbrough.kotlinxtras
+package org.danbrough.xtras
 
 import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.konan.target.Architecture

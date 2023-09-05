@@ -1,11 +1,11 @@
-package org.danbrough.kotlinxtras.source
+package org.danbrough.xtras.source
 
-import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
-import org.danbrough.kotlinxtras.XtrasDSLMarker
-import org.danbrough.kotlinxtras.capitalized
-import org.danbrough.kotlinxtras.library.XtrasLibrary
-import org.danbrough.kotlinxtras.log
-import org.danbrough.kotlinxtras.xtrasDownloadsDir
+import org.danbrough.xtras.XTRAS_TASK_GROUP
+import org.danbrough.xtras.XtrasDSLMarker
+import org.danbrough.xtras.capitalized
+import org.danbrough.xtras.library.XtrasLibrary
+import org.danbrough.xtras.log
+import org.danbrough.xtras.xtrasDownloadsDir
 import org.gradle.api.tasks.Exec
 import org.gradle.kotlin.dsl.register
 import java.io.ByteArrayInputStream
@@ -52,14 +52,14 @@ internal fun XtrasLibrary.registerDownloadSourceGit() {
   val resetTaskName = "${downloadSourcesTaskName}_reset"
 
   project.tasks.register(downloadSourcesTaskName) {
-    group = XTRAS_TASK_GROUP
+    group = org.danbrough.xtras.XTRAS_TASK_GROUP
     outputs.dir(repoDir)
     dependsOn(resetTaskName)
   }
 
   project.tasks.register<Exec>("xtrasTags${libName.capitalized()}") {
     commandLine(buildEnvironment.binaries.git, "ls-remote", "-q", "--refs", "-t", config.url)
-    group = XTRAS_TASK_GROUP
+    group = org.danbrough.xtras.XTRAS_TASK_GROUP
     description = "Prints out the tags from the remote repository"
     val stdout = ByteArrayOutputStream()
     standardOutput = stdout
@@ -134,7 +134,7 @@ internal fun XtrasLibrary.registerDownloadSourceGit() {
       extractSourceTaskName(target),
       listOf("clone", repoDir.absolutePath, sourceDir.absolutePath)
     ) {
-      group = XTRAS_TASK_GROUP
+      group = org.danbrough.xtras.XTRAS_TASK_GROUP
       doFirst {
         project.delete(sourceDir)
       }

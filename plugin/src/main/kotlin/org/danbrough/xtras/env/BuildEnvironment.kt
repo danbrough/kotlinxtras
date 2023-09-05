@@ -1,24 +1,24 @@
 @file:Suppress("MemberVisibilityCanBePrivate")
 
-package org.danbrough.kotlinxtras.env
+package org.danbrough.xtras.env
 
-import org.danbrough.kotlinxtras.PROPERTY_CINTEROPS_DIR
-import org.danbrough.kotlinxtras.PROPERTY_DOCS_DIR
-import org.danbrough.kotlinxtras.PROPERTY_DOWNLOADS_DIR
-import org.danbrough.kotlinxtras.PROPERTY_LIBS_DIR
-import org.danbrough.kotlinxtras.PROPERTY_PACKAGES_DIR
-import org.danbrough.kotlinxtras.PROPERTY_XTRAS_DIR
-import org.danbrough.kotlinxtras.XTRAS_TASK_GROUP
-import org.danbrough.kotlinxtras.XtrasDSLMarker
-import org.danbrough.kotlinxtras.hostTriplet
-import org.danbrough.kotlinxtras.log
-import org.danbrough.kotlinxtras.projectProperty
-import org.danbrough.kotlinxtras.xtrasCInteropsDir
-import org.danbrough.kotlinxtras.xtrasDir
-import org.danbrough.kotlinxtras.xtrasDocsDir
-import org.danbrough.kotlinxtras.xtrasDownloadsDir
-import org.danbrough.kotlinxtras.xtrasLibsDir
-import org.danbrough.kotlinxtras.xtrasPackagesDir
+import org.danbrough.xtras.PROPERTY_CINTEROPS_DIR
+import org.danbrough.xtras.PROPERTY_DOCS_DIR
+import org.danbrough.xtras.PROPERTY_DOWNLOADS_DIR
+import org.danbrough.xtras.PROPERTY_LIBS_DIR
+import org.danbrough.xtras.PROPERTY_PACKAGES_DIR
+import org.danbrough.xtras.PROPERTY_XTRAS_DIR
+import org.danbrough.xtras.XTRAS_TASK_GROUP
+import org.danbrough.xtras.XtrasDSLMarker
+import org.danbrough.xtras.hostTriplet
+import org.danbrough.xtras.log
+import org.danbrough.xtras.projectProperty
+import org.danbrough.xtras.xtrasCInteropsDir
+import org.danbrough.xtras.xtrasDir
+import org.danbrough.xtras.xtrasDocsDir
+import org.danbrough.xtras.xtrasDownloadsDir
+import org.danbrough.xtras.xtrasLibsDir
+import org.danbrough.xtras.xtrasPackagesDir
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
 import org.gradle.kotlin.dsl.create
@@ -236,7 +236,7 @@ open class BuildEnvironment: Cloneable{
 
 const val XTRAS_EXTN_BUILD_ENVIRONMENT = "xtrasBuildEnvironment"
 
-fun Project.xtrasBuildEnvironment(configure: BuildEnvironment.()->Unit= {}): BuildEnvironment=
+fun Project.xtrasBuildEnvironment(configure: BuildEnvironment.()->Unit= {}): BuildEnvironment =
 
   extensions.findByType<BuildEnvironment>()?.also {
     return (it.clone() as BuildEnvironment).also(configure)

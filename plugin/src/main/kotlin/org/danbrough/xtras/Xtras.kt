@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package org.danbrough.kotlinxtras
+package org.danbrough.xtras
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project

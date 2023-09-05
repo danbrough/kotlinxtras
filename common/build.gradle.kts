@@ -1,4 +1,4 @@
-import org.danbrough.kotlinxtras.declareSupportedTargets
+import org.danbrough.xtras.declareSupportedTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 

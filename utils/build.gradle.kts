@@ -1,4 +1,4 @@
-import org.danbrough.kotlinxtras.declareSupportedTargets
+import org.danbrough.xtras.declareSupportedTargets
 
 
 plugins {

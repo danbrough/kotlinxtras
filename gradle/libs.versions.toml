@@ -3,25 +3,26 @@
 [plugins]
 
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-kotlinXtras = { id = "org.danbrough.kotlinxtras.xtras", version.ref = "kotlinXtras" }
-kotlinXtras-wolfssl = { id = "org.danbrough.kotlinxtras.wolfssl", version.ref = "wolfssl" }
-kotlinXtras-curl = { id = "org.danbrough.kotlinxtras.curl", version.ref = "curl" }
-kotlinXtras-wolfssh = { id = "org.danbrough.kotlinxtras.wolfssh", version.ref = "wolfssh" }
-kotlinXtras-openssl = { id = "org.danbrough.kotlinxtras.openssl", version.ref = "openssl" }
+xtras = { id = "org.danbrough.xtras", version.ref = "xtras" }
+xtras-wolfssl = { id = "org.danbrough.xtras.wolfssl", version.ref = "wolfssl" }
+xtras-curl = { id = "org.danbrough.xtras.curl", version.ref = "curl" }
+xtras-wolfssh = { id = "org.danbrough.xtras.wolfssh", version.ref = "wolfssh" }
+xtras-openssl = { id = "org.danbrough.xtras.openssl", version.ref = "openssl" }
 
 org-jetbrains-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 
 [versions]
 
 kotlin = "1.9.10"
-kotlinXtras = "0.0.3-beta19"
-kotlinXtrasPublishing = "0.0.3-beta19"
+xtras = "0.0.3-beta19"
+xtrasPublishing = "0.0.3-beta19"
+xtrasPackage = "org.danbrough.xtras"
 wolfssl = "0.0.1-beta01"
 wolfssh = "0.0.1-beta01"
 curl = "0.0.3-beta02"
 openssl = "0.0.3-beta02"
-
 dokka = "1.9.0"
+
 
 [libraries]
 
@@ -30,5 +31,5 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin" }
 kotlin-stdlib-jdk8 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlin" }
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
-kotlinxtras-plugin = { group = "org.danbrough.kotlinxtras", name = "plugin", version.ref = "kotlinXtras" }
+xtras-plugin = { group = "org.danbrough.xtras", name = "plugin", version.ref = "xtras" }
 dokka-gradle-plugin = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokka" }

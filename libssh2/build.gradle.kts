@@ -1,6 +1,6 @@
 import org.danbrough.kotlinxtras.core.enableLibSSH2
 import org.danbrough.kotlinxtras.core.enableWolfSSL
-import org.danbrough.kotlinxtras.declareSupportedTargets
+import org.danbrough.xtras.declareSupportedTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {

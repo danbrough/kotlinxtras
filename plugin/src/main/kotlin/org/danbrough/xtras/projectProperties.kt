@@ -1,4 +1,4 @@
-package org.danbrough.kotlinxtras
+package org.danbrough.xtras
 
 import org.gradle.api.Project
 import java.io.File
