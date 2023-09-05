@@ -62,7 +62,10 @@ const val PROPERTY_CINTEROPS_DIR = "$PROPERTY_XTRAS_DIR.cinterops"
 
 private fun Project.xtrasPath(name: String, defValue: String? = null): File =
   properties[name]?.toString()?.trim()?.let {
-    project.file(it)
+    if (it.startsWith("./")){
+      project.rootDir.resolve(it.substringAfter("./"))
+    }
+    else project.file(it)
   } ?: defValue?.let { rootProject.xtrasDir.resolve(it) }
   ?: rootProject.layout.buildDirectory.dir("xtras").get().asFile
 
