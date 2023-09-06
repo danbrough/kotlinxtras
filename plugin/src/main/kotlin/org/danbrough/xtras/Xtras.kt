@@ -2,6 +2,7 @@
 
 package org.danbrough.xtras
 
+import org.danbrough.xtras.env.BuildEnvironment
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File
@@ -10,13 +11,6 @@ import java.util.Locale
 annotation class XtrasDSLMarker
 
 
-class XtrasPlugin : Plugin<Project> {
-  override fun apply(project: Project) {
-    project.log("applying XtrasPlugin to ${project.projectDir.absolutePath}")
-
-
-  }
-}
 
 
 const val XTRAS_PACKAGE = "org.danbrough.kotlinxtras"
@@ -32,6 +26,8 @@ const val XTRAS_TASK_GROUP = "xtras"
 const val XTRAS_REPO_NAME = "xtras"
 
 const val PROPERTY_XTRAS_DIR = "xtras.dir"
+
+const val PROPERTY_NDK_DIR = "xtras.ndk"
 
 /**
  * Location of the xtras packages directory
@@ -60,14 +56,15 @@ const val PROPERTY_LIBS_DIR = "$PROPERTY_XTRAS_DIR.libs"
 
 const val PROPERTY_CINTEROPS_DIR = "$PROPERTY_XTRAS_DIR.cinterops"
 
-private fun Project.xtrasPath(name: String, defValue: String? = null): File =
+private fun Project.xtrasPath(name: String, defValue: String? = null,default:(String)->File = {error("property $it not found")}): File =
   properties[name]?.toString()?.trim()?.let {
     if (it.startsWith("./")){
       project.rootDir.resolve(it.substringAfter("./"))
     }
     else project.file(it)
   } ?: defValue?.let { rootProject.xtrasDir.resolve(it) }
-  ?: rootProject.layout.buildDirectory.dir("xtras").get().asFile
+  ?: default(name)
+ // ?: rootProject.layout.buildDirectory.dir("xtras").get().asFile
 
 /**
  * Path to the top level xtras directory.
@@ -77,7 +74,9 @@ private fun Project.xtrasPath(name: String, defValue: String? = null): File =
  */
 
 val Project.xtrasDir: File
-  get() = xtrasPath(PROPERTY_XTRAS_DIR)
+  get() = xtrasPath(PROPERTY_XTRAS_DIR){
+    layout.buildDirectory.asFile.get().resolve("xtras")
+  }
 
 /**
  * Path to the xtras downloads directory.
@@ -156,6 +155,15 @@ val Project.xtrasDocsDir: File
  */
 val Project.xtrasLibsDir: File
   get() = xtrasPath(PROPERTY_LIBS_DIR, "libs")
+
+
+/**
+ * Path to the ndk directory.
+ * Defaults to the environment variable ANDROID_NDK_ROOT then ANDROID_NDK_HOME
+ */
+val Project.xtrasNdkDir: File
+  get() = xtrasPath(PROPERTY_NDK_DIR)
+
 
 fun String.capitalized() =
   replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }

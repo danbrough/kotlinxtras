@@ -6,6 +6,7 @@ import org.danbrough.xtras.PROPERTY_CINTEROPS_DIR
 import org.danbrough.xtras.PROPERTY_DOCS_DIR
 import org.danbrough.xtras.PROPERTY_DOWNLOADS_DIR
 import org.danbrough.xtras.PROPERTY_LIBS_DIR
+import org.danbrough.xtras.PROPERTY_NDK_DIR
 import org.danbrough.xtras.PROPERTY_PACKAGES_DIR
 import org.danbrough.xtras.PROPERTY_XTRAS_DIR
 import org.danbrough.xtras.XTRAS_TASK_GROUP
@@ -18,6 +19,7 @@ import org.danbrough.xtras.xtrasDir
 import org.danbrough.xtras.xtrasDocsDir
 import org.danbrough.xtras.xtrasDownloadsDir
 import org.danbrough.xtras.xtrasLibsDir
+import org.danbrough.xtras.xtrasNdkDir
 import org.danbrough.xtras.xtrasPackagesDir
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
@@ -52,7 +54,6 @@ data class Binaries(
   @XtrasDSLMarker
   var go: String = "go",
 
-  //var libraryExtensions = mutableListOf<XtrasLibrary>()
 )
 
 val binaryProperty: Project.(String, String) -> String = { exe, defValue ->
@@ -61,7 +62,10 @@ val binaryProperty: Project.(String, String) -> String = { exe, defValue ->
 
 const val binaryPropertyPrefix = "xtras.bin"
 
-open class BuildEnvironment: Cloneable{
+open class BuildEnvironment : Cloneable {
+  companion object {
+    val ANDROID_NDK_NOT_SET = File(System.getProperty("java.io.tmpdir"), "android_ndk_not_set")
+  }
 
   var binaries = Binaries()
 
@@ -84,20 +88,31 @@ open class BuildEnvironment: Cloneable{
   @XtrasDSLMarker
   var androidNdkApiVersion = 21
 
+
+  /**
+   * The java language version to apply to jvm and kotlin-jvm builds.
+   * Not applied if null.
+   * default: 8
+   */
+  @XtrasDSLMarker
+  var javaLanguageVersion: Int? = 8
+
   @XtrasDSLMarker
   var defaultEnvironment: Map<String, String> = buildMap {
 
     put("PATH", basePath.joinToString(File.pathSeparator))
 
-    put("MAKE","make -j${Runtime.getRuntime().availableProcessors()+1}")
+    put("MAKE", "make -j${Runtime.getRuntime().availableProcessors() + 1}")
 
     put("CFLAGS", "-O3 -pthread -Wno-macro-redefined -Wno-deprecated-declarations")
 
     put("KONAN_BUILD", "1")
   }
 
+
   @XtrasDSLMarker
-  lateinit var androidNdkDir: File
+  var androidNdkDir: File = ANDROID_NDK_NOT_SET
+
 
   @XtrasDSLMarker
   var environmentForTarget: MutableMap<String, String>.(KonanTarget) -> Unit = { target ->
@@ -141,7 +156,7 @@ open class BuildEnvironment: Cloneable{
         //put("LD", "lld")
       }
 
-      KonanTarget.MINGW_X64-> {
+      KonanTarget.MINGW_X64 -> {
 
       }
 
@@ -184,23 +199,31 @@ open class BuildEnvironment: Cloneable{
     binaries.config()
   }
 
-  internal fun initialize(project: Project){
+  internal fun initialize(project: Project) {
 
-    konanDir =  System.getenv("KONAN_DATA_DIR")?.let {File(it)} ?: File(System.getProperty("user.home"),".konan")
+    konanDir = System.getenv("KONAN_DATA_DIR")?.let { File(it) } ?: File(
+      System.getProperty("user.home"),
+      ".konan"
+    )
 
-    val ndkRoot = System.getenv("ANDROID_NDK_ROOT") ?: System.getenv("ANDROID_NDK_HOME")
-    if (ndkRoot != null) androidNdkDir = File(ndkRoot)
-    else
-    project.log("Neither ANDROID_NDK_ROOT or ANDROID_NDK_HOME are set!",LogLevel.WARN)
+    if (androidNdkDir == ANDROID_NDK_NOT_SET) {
+      val ndkRoot = System.getenv("ANDROID_NDK_ROOT") ?: System.getenv("ANDROID_NDK_HOME")
+      if (ndkRoot != null) androidNdkDir = File(ndkRoot)
+      else {
+        androidNdkDir = project.xtrasNdkDir
+
+        project.log("Neither ANDROID_NDK_ROOT or ANDROID_NDK_HOME are set!", LogLevel.WARN)
+      }
+    }
 
     binaries.apply {
-      git = project.binaryProperty("git",git)
-      wget = project.binaryProperty("wget",wget)
-      go = project.binaryProperty("go",go)
-      tar = project.binaryProperty("tar",tar)
-      make = project.binaryProperty("make",make)
-      cmake = project.binaryProperty("cmake",cmake)
-      autoreconf = project.binaryProperty("autoreconf",autoreconf)
+      git = project.binaryProperty("git", git)
+      wget = project.binaryProperty("wget", wget)
+      go = project.binaryProperty("go", go)
+      tar = project.binaryProperty("tar", tar)
+      make = project.binaryProperty("make", make)
+      cmake = project.binaryProperty("cmake", cmake)
+      autoreconf = project.binaryProperty("autoreconf", autoreconf)
     }
 
     project.tasks.register("xtrasConfig") {
@@ -227,6 +250,12 @@ open class BuildEnvironment: Cloneable{
                   $PROPERTY_PACKAGES_DIR:   ${project.xtrasPackagesDir}
                   $PROPERTY_DOCS_DIR:       ${project.xtrasDocsDir}
                   $PROPERTY_CINTEROPS_DIR:  ${project.xtrasCInteropsDir}
+                  
+                  
+                BuildEnvironment:
+                  androidNdkApiVersion:     $androidNdkApiVersion
+                  androidNdkDir:            $androidNdkDir ($PROPERTY_NDK_DIR)
+                  
                 """.trimIndent()
         )
       }
@@ -236,7 +265,7 @@ open class BuildEnvironment: Cloneable{
 
 const val XTRAS_EXTN_BUILD_ENVIRONMENT = "xtrasBuildEnvironment"
 
-fun Project.xtrasBuildEnvironment(configure: BuildEnvironment.()->Unit= {}): BuildEnvironment =
+fun Project.xtrasBuildEnvironment(configure: BuildEnvironment.() -> Unit = {}): BuildEnvironment =
 
   extensions.findByType<BuildEnvironment>()?.also {
     return (it.clone() as BuildEnvironment).also(configure)
@@ -245,7 +274,6 @@ fun Project.xtrasBuildEnvironment(configure: BuildEnvironment.()->Unit= {}): Bui
 
     configure()
   }
-
 
 
 /*

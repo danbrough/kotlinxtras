@@ -40,7 +40,7 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
 
 
   @XtrasDSLMarker
-  var publishingGroup: String = XTRAS_PACKAGE
+  var publishingGroup: String = project.group?.toString() ?: XTRAS_PACKAGE
 
   var sourceConfig: SourceConfig? = null
 
@@ -160,6 +160,7 @@ fun Project.xtrasCreateLibrary(
     if (supportedTargets.isEmpty())
       supportedTargets = defaultSupportedTargets()
     configure()
+
     this@apply.registerTasks()
   }
 }

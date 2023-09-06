@@ -1,3 +1,4 @@
+import org.danbrough.xtras.env.xtrasBuildEnvironment
 import org.danbrough.xtras.xtrasBuildDir
 import org.danbrough.xtras.xtrasMavenDir
 
@@ -7,20 +8,10 @@ plugins {
   `kotlin-dsl`
 }
 
-val javaLangVersion = 8
 
-java {
-  toolchain.languageVersion.set(JavaLanguageVersion.of(javaLangVersion))
-  /*sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8*/
+xtrasBuildEnvironment {
+javaLanguageVersion = 8
 }
-
-kotlin {
-  jvmToolchain {
-    languageVersion.set(JavaLanguageVersion.of(javaLangVersion))
-  }
-}
-
 
 group = libs.versions.xtrasPackage.get()
 version = libs.versions.wolfssl.get()

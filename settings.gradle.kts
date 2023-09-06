@@ -32,8 +32,7 @@ if (include == null || include == "plugins") {
   }
 }
 
-//if (include == null || include == "binaries")
-if (include == "binaries")
+if (include == null || include == "binaries")
   include(":binaries")
 
 
