@@ -1,10 +1,10 @@
 
-import org.danbrough.kotlinxtras.wolfssl.xtrasWolfSSL
+import org.danbrough.xtras.wolfssl.xtrasWolfSSL
 
 
 plugins {
   `kotlin-dsl`
-  alias(libs.plugins.kotlinXtras.wolfssl) apply false
+  alias(libs.plugins.xtras.wolfssl)
 }
 
 val deferToMaven = false

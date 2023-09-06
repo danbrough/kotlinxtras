@@ -18,24 +18,26 @@ val include: String? by settings
 rootProject.name = "kotlinxtras"
 
 includeBuild("plugin")
-include(":test")
 
-/*
+
 if (include == null || include == "plugins") {
   listOf(
-    "curl",
+    //"curl",
    "wolfssl",
-    "wolfssh",
-    "openssl",
+   // "wolfssh",
+  //  "openssl",
   ).forEach {
     include(":plugins:$it")
     project(":plugins:$it").projectDir = rootDir.resolve("plugins/$it")
   }
 }
 
-if (include == null || include == "binaries")
+//if (include == null || include == "binaries")
+if (include == "binaries")
   include(":binaries")
 
+
+/*
 if (include == null || include == "demos"){
   listOf("curl").forEach {
     include(":demos:${it}_demo")

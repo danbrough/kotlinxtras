@@ -4,12 +4,17 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 plugins {
   alias(libs.plugins.kotlinMultiplatform) apply false
   alias(libs.plugins.org.jetbrains.dokka) apply false
+
+
   `maven-publish`
 }
 
 
+
+
 val publishingVersion: String = libs.versions.xtrasPublishing.get()
 val publishingGroup: String = libs.versions.xtrasPackage.get()
+
 
 allprojects {
 

@@ -1,12 +1,12 @@
-package org.danbrough.kotlinxtras.wolfssl
+package org.danbrough.xtras.wolfssl
 
-import org.danbrough.kotlinxtras.XtrasDSLMarker
-import org.danbrough.kotlinxtras.hostTriplet
-import org.danbrough.kotlinxtras.library.XtrasLibrary
-import org.danbrough.kotlinxtras.library.xtrasCreateLibrary
-import org.danbrough.kotlinxtras.library.xtrasRegisterSourceTask
-import org.danbrough.kotlinxtras.log
-import org.danbrough.kotlinxtras.source.gitSource
+import org.danbrough.xtras.XtrasDSLMarker
+import org.danbrough.xtras.hostTriplet
+import org.danbrough.xtras.library.XtrasLibrary
+import org.danbrough.xtras.library.xtrasCreateLibrary
+import org.danbrough.xtras.library.xtrasRegisterSourceTask
+import org.danbrough.xtras.log
+import org.danbrough.xtras.source.gitSource
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.konan.target.KonanTarget

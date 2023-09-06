@@ -1,3 +1,4 @@
+
 plugins {
   `kotlin-dsl`
   `maven-publish`
@@ -23,9 +24,21 @@ group = libs.versions.xtrasPackage.get()
 version = libs.versions.xtrasPublishing.get()
 
 repositories {
-  maven(rootProject.layout.buildDirectory.dir("xtras/maven"))
+  maven("/usr/local/kotlinxtras/build/xtras/maven"){
+    name = "Xtras"
+  }
   maven("https://s01.oss.sonatype.org/content/groups/staging/")
   mavenCentral()
+}
+
+publishing {
+  repositories {
+    maven("/usr/local/kotlinxtras/build/xtras/maven"){
+      name = "Xtras"
+    }
+    maven("https://s01.oss.sonatype.org/content/groups/staging/")
+    mavenCentral()
+  }
 }
 
 dependencies {

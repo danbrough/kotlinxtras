@@ -1,17 +1,14 @@
 plugins {
-  //alias(libs.plugins.kotlinMultiplatform)
-  alias(libs.plugins.xtras)
   `kotlin-dsl`
+  alias(libs.plugins.xtras)
 }
 
 version = libs.versions.curl.get()
 
-
-
 gradlePlugin {
   plugins {
     create("curl") {
-      id = "org.danbrough.kotlinxtras.curl"
+      id = "$group.curl"
       implementationClass = "$group.curl.CurlPlugin"
     }
   }

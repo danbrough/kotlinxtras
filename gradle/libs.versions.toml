@@ -23,7 +23,6 @@ curl = "0.0.3-beta02"
 openssl = "0.0.3-beta02"
 dokka = "1.9.0"
 
-
 [libraries]
 
 org-danbrough-klog = "org.danbrough:klog:0.0.2-beta04"
