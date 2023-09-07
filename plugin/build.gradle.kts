@@ -24,7 +24,7 @@ group = libs.versions.xtrasPackage.get()
 version = libs.versions.xtrasPublishing.get()
 
 repositories {
-  maven("/usr/local/kotlinxtras/build/xtras/maven"){
+  maven("/usr/local/kotlinxtras/build/xtras/maven") {
     name = "Xtras"
   }
   maven("https://s01.oss.sonatype.org/content/groups/staging/")
@@ -33,12 +33,39 @@ repositories {
 
 publishing {
   repositories {
-    maven("/usr/local/kotlinxtras/build/xtras/maven"){
+    maven("/usr/local/kotlinxtras/build/xtras/maven") {
       name = "Xtras"
     }
     maven("https://s01.oss.sonatype.org/content/groups/staging/")
     mavenCentral()
   }
+
+  kotlin.sourceSets.findByName("main")?.kotlin?.also { srcDir ->
+    val sourcesJarTask = tasks.register<Jar>("sourcesJar${name.capitalize()}") {
+      archiveClassifier.set("sources")
+      from(srcDir)
+    }
+    publications.all {
+      if (this is MavenPublication)
+        artifact(sourcesJarTask)
+    }
+  }
+
+
+  /*
+        project.extensions.findByType<KotlinProjectExtension>()?.apply {
+        sourceSets.findByName("main")?.kotlin?.also { srcDir ->
+          val sourcesJarTask = tasks.register("sourcesJar${name.capitalize()}", Jar::class.java) {
+            archiveClassifier.set("sources")
+            from(srcDir)
+          }
+
+          publications.all {
+            if (this is MavenPublication)
+              artifact(sourcesJarTask)
+          }
+        }
+   */
 }
 
 dependencies {

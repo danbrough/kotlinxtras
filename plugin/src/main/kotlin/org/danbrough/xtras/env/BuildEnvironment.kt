@@ -104,7 +104,7 @@ open class BuildEnvironment : Cloneable {
 
     put("MAKE", "make -j${Runtime.getRuntime().availableProcessors() + 1}")
 
-    put("CFLAGS", "-O3 -pthread -Wno-macro-redefined -Wno-deprecated-declarations")
+    //put("CFLAGS", "-O3 -pthread -Wno-macro-redefined -Wno-deprecated-declarations")
 
     put("KONAN_BUILD", "1")
   }

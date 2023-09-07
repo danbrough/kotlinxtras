@@ -8,5 +8,8 @@ class XtrasPlugin : Plugin<Project> {
     project.log("applying XtrasPlugin to ${project.projectDir.absolutePath}")
 
 
+    project.afterEvaluate {
+      project.log("afterEvaluate in XtrasPlugin at ${project.projectDir.absolutePath}")
+    }
   }
 }

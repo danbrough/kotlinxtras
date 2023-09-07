@@ -14,8 +14,8 @@ org-jetbrains-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 [versions]
 
 kotlin = "1.9.10"
-xtras = "0.0.3-beta19"
-xtrasPublishing = "0.0.3-beta19"
+xtras = "0.0.4-beta01"
+xtrasPublishing = "0.0.4-beta01"
 xtrasPackage = "org.danbrough.xtras"
 wolfssl = "0.0.1-beta01"
 wolfssh = "0.0.1-beta01"

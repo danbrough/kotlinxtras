@@ -22,6 +22,9 @@ object WolfSSL {
 class WolfSSLPlugin : Plugin<Project> {
   override fun apply(target: Project) {
     target.log("WolfSSLPlugin.apply()")
+    target.afterEvaluate {
+      target.log("WolfSSLPlugin.afterEvaluate")
+    }
   }
 }
 

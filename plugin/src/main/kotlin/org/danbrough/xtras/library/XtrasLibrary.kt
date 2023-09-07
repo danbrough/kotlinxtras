@@ -121,6 +121,10 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
     cinteropsConfig = configure
   }
 
+  fun addBuildFlags(target: KonanTarget, env: MutableMap<String, Any>) {
+    env["CFLAGS"] = "${env["CFLAGS"] ?: ""} -I${libsDir(target)}/include"
+    env["LDFLAGS"] = "${env["LDFLAGS"] ?: ""} -L${libsDir(target)}/lib"
+  }
 
   override fun toString() = "XtrasLibrary[$libName:$version]"
 }
