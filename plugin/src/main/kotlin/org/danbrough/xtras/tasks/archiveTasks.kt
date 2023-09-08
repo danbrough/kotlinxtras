@@ -165,7 +165,7 @@ private fun XtrasLibrary.registerMavenArchiveTask(target: KonanTarget) =
 private fun XtrasLibrary.registerProvideArchiveTask(target: KonanTarget) {
   project.tasks.register<Task>(provideArchiveTaskName(target)) {
     val archive = archiveFile(target)
-    group = org.danbrough.xtras.XTRAS_TASK_GROUP
+    group = XTRAS_TASK_GROUP
     description = "Builds or downloads binary archive for $this to $archive"
 
     onlyIf {
@@ -173,9 +173,10 @@ private fun XtrasLibrary.registerProvideArchiveTask(target: KonanTarget) {
     }
 
     outputs.file(archive)
-    dependsOn(archiveTaskName(target))
     if (resolveBinariesFromMaven)
       dependsOn(provideMavenArchiveTaskName(target))
+    dependsOn(archiveTaskName(target))
+
   }
 }
 

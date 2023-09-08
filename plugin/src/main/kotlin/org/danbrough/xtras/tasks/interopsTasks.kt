@@ -115,6 +115,7 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
 
   project.tasks.withType(CInteropProcess::class.java) {
     libraryDeps.map{it.extractArchiveTaskName(konanTarget)}.forEach {
+      println("adding dependency on $it for $name")
       dependsOn(it)
     }
     dependsOn(extractArchiveTaskName(konanTarget))
@@ -124,7 +125,7 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
 
   if (generateConfig)
     project.tasks.register(generateInteropsTaskName()) {
-      group = org.danbrough.xtras.XTRAS_TASK_GROUP
+      group = XTRAS_TASK_GROUP
 
       if (config.headerFile != null && config.headers != null)
         throw Error("Only one of headersFile or headers should be specified for the cinterops config")

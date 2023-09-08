@@ -40,7 +40,7 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
 
 
   @XtrasDSLMarker
-  var publishingGroup: String = project.group?.toString() ?: XTRAS_PACKAGE
+  var publishingGroup: String = XTRAS_PACKAGE
 
   var sourceConfig: SourceConfig? = null
 
@@ -136,6 +136,10 @@ fun XtrasLibrary.xtrasRegisterSourceTask(
 ) =
   project.tasks.register<Exec>(name) {
     workingDir(sourcesDir(target))
+
+    onlyIf {
+      !archiveFile(target).exists()
+    }
 
     dependsOn(":${target.konanDepsTaskName}")
     dependsOn(extractSourceTaskName(target))

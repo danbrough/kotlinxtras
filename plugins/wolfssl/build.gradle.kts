@@ -10,7 +10,7 @@ plugins {
 
 
 xtrasBuildEnvironment {
-javaLanguageVersion = 8
+  javaLanguageVersion = 8
 }
 
 group = libs.versions.xtrasPackage.get()

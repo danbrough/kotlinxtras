@@ -13,7 +13,7 @@ annotation class XtrasDSLMarker
 
 
 
-const val XTRAS_PACKAGE = "org.danbrough.kotlinxtras"
+const val XTRAS_PACKAGE = "org.danbrough.xtras"
 
 const val XTRAS_PLUGIN_ID = "$XTRAS_PACKAGE.xtras"
 

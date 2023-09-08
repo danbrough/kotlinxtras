@@ -1,5 +1,6 @@
 package org.danbrough.xtras.wolfssl
 
+import org.danbrough.xtras.XTRAS_PACKAGE
 import org.danbrough.xtras.XtrasDSLMarker
 import org.danbrough.xtras.hostTriplet
 import org.danbrough.xtras.library.XtrasLibrary
@@ -36,6 +37,7 @@ fun Project.xtrasWolfSSL(
   commit: String = properties.getOrDefault("wolfssl.commit",  WOLFSSL_COMMIT).toString(),
   configure: XtrasLibrary.() -> Unit = {},
 ) = xtrasCreateLibrary(name, version) {
+  publishingGroup = XTRAS_PACKAGE
   gitSource(WolfSSL.sourceURL, commit)
   cinterops {
     headers = """
