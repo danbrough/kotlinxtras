@@ -81,6 +81,7 @@ fun Project.xtrasWolfSSL(
         "--enable-curve25519",
         "--enable-ed25519",
         "--enable-curve448",
+        "--enable-static",
         "--enable-des3",
         "--enable-ed448",
         "--enable-sha512",

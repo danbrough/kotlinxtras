@@ -15,15 +15,15 @@ plugins {
 
 val include: String? by settings
 
-rootProject.name = "kotlinxtras"
+rootProject.name = "xtras"
 
 includeBuild("plugin")
 
 
 if (include == null || include == "plugins") {
   listOf(
-    //"curl",
    "wolfssl",
+    "curl",
    // "wolfssh",
   //  "openssl",
   ).forEach {
