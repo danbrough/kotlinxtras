@@ -31,7 +31,7 @@ allprojects {
 
   publishing {
     repositories {
-      maven("/usr/local/kotlinxtras/build/xtras/maven") {
+      maven(rootProject.layout.buildDirectory.dir("xtras/maven")){
         name = "xtras"
       }
     }
