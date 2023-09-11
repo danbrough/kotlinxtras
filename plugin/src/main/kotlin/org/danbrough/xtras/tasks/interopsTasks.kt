@@ -115,7 +115,7 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
 
   project.tasks.withType(CInteropProcess::class.java) {
     libraryDeps.map{it.extractArchiveTaskName(konanTarget)}.forEach {
-      println("adding dependency on $it for $name")
+      //println("adding dependency on $it for $name")
       dependsOn(it)
     }
     dependsOn(extractArchiveTaskName(konanTarget))
@@ -144,7 +144,7 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
 
         config.defFile!!.printWriter().use { output ->
           //write the package
-          output.println("package = ${config.interopsPackage ?: "not_set"}")
+          output.println("package = ${config.interopsPackage}")
           output.println()
 
           //write the headers

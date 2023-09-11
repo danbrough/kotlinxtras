@@ -1,5 +1,11 @@
 package org.danbrough.xtras.library
 
+import org.danbrough.xtras.PROPERTY_BUILD_DIR
+import org.danbrough.xtras.PROPERTY_CINTEROPS_DIR
+import org.danbrough.xtras.PROPERTY_DOWNLOADS_DIR
+import org.danbrough.xtras.PROPERTY_LIBS_DIR
+import org.danbrough.xtras.PROPERTY_PACKAGES_DIR
+import org.danbrough.xtras.PROPERTY_SOURCE_DIR
 import org.danbrough.xtras.env.BuildEnvironment
 import org.danbrough.xtras.XTRAS_PACKAGE
 import org.danbrough.xtras.XTRAS_TASK_GROUP
@@ -24,7 +30,9 @@ import org.danbrough.xtras.xtrasLogsDir
 import org.danbrough.xtras.xtrasPackagesDir
 import org.danbrough.xtras.xtrasSourceDir
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
@@ -33,12 +41,34 @@ import java.io.File
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
 import java.io.Writer
+import java.util.Locale
 
 @Suppress("LeakingThis", "MemberVisibilityCanBePrivate")
 @XtrasDSLMarker
 open class XtrasLibrary(val project: Project, val libName: String, val version: String) {
   init {
     project.log("created $this for ${project.projectDir.absolutePath}")
+  }
+
+  enum class TaskName(val description: String) {
+    DOWNLOAD_SOURCE("Download source repository to $PROPERTY_DOWNLOADS_DIR"),
+
+    EXTRACT_SOURCE("Copy source from $PROPERTY_DOWNLOADS_DIR to $PROPERTY_SOURCE_DIR"),
+    PREPARE_SOURCE("Prepare source in $PROPERTY_SOURCE_DIR for the CONFIGURE task"),
+    CONFIGURE("Configure source in $PROPERTY_SOURCE_DIR for the BUILD task"),
+    BUILD("Build source in $PROPERTY_SOURCE_DIR and install in $PROPERTY_BUILD_DIR"),
+    CREATE_ARCHIVE("Create archive from $PROPERTY_BUILD_DIR in $PROPERTY_PACKAGES_DIR"),
+    EXTRACT_ARCHIVE("Extract archive from $PROPERTY_PACKAGES_DIR to $PROPERTY_LIBS_DIR"),
+    PROVIDE_ARCHIVE("Either build the archive or use PROPERTY_MAVEN_ARCHIVE to download to $PROPERTY_PACKAGES_DIR"),
+    PROVIDE_MAVEN_ARCHIVE("Download prebuilt archive from maven to $PROPERTY_PACKAGES_DIR"),
+    GENERATE_INTEROPS("Generate interops def file in $PROPERTY_CINTEROPS_DIR"),
+    ;
+
+    val taskName: String
+      get() = toString()
+
+    override fun toString() =
+      name.split("_").joinToString("") { it.lowercase(Locale.getDefault()).capitalized() }
   }
 
   interface SourceConfig
@@ -69,22 +99,8 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
   @XtrasDSLMarker
   var supportedTargets: List<KonanTarget> = emptyList()
 
-  fun xtrasTaskName(name: String, target: KonanTarget? = null) =
-    "xtras${name.capitalized()}${libName.capitalized()}${target?.platformName?.capitalized() ?: ""}"
-
-  fun downloadSourceTaskName() = xtrasTaskName("DownloadSource")
-  fun extractSourceTaskName(target: KonanTarget) = xtrasTaskName("ExtractSource", target)
-  fun prepareSourceTaskName(target: KonanTarget) = xtrasTaskName("PrepareSource", target)
-
-  fun configureTaskName(target: KonanTarget) = xtrasTaskName("configure", target)
-  fun buildTaskName(target: KonanTarget) = xtrasTaskName("build", target)
-  fun archiveTaskName(target: KonanTarget) = xtrasTaskName("archive", target)
-  fun extractArchiveTaskName(target: KonanTarget) = xtrasTaskName("extractArchive", target)
-  fun provideArchiveTaskName(target: KonanTarget) = xtrasTaskName("provideArchive", target)
-  fun provideMavenArchiveTaskName(target: KonanTarget) =
-    xtrasTaskName("provideMavenArchive", target)
-
-  fun generateInteropsTaskName() = xtrasTaskName("interops")
+  fun xtrasTaskName(name: String, libName: String? = null, target: KonanTarget? = null) =
+    "xtras${name.capitalized()}${libName?.capitalized() ?: ""}${target?.platformName?.capitalized() ?: ""}"
 
   fun archiveFileName(
     konanTarget: KonanTarget,
@@ -124,6 +140,24 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
     project.xtrasLogsDir.resolve("$libName/$version/${target.platformName}/$taskName.log")
   }
 
+  fun xtrasTaskName(name: TaskName, target: KonanTarget? = null) =
+    "xtras${name.taskName}${libName.capitalized()}${target?.platformName?.capitalized() ?: ""}"
+
+  fun downloadSourceTaskName() = xtrasTaskName(TaskName.DOWNLOAD_SOURCE)
+  fun extractSourceTaskName(target: KonanTarget) = xtrasTaskName(TaskName.EXTRACT_SOURCE, target)
+  fun prepareSourceTaskName(target: KonanTarget) = xtrasTaskName(TaskName.PREPARE_SOURCE, target)
+
+  fun configureTaskName(target: KonanTarget) = xtrasTaskName(TaskName.CONFIGURE, target)
+  fun buildTaskName(target: KonanTarget) = xtrasTaskName(TaskName.BUILD, target)
+  fun createArchiveTaskName(target: KonanTarget) = xtrasTaskName(TaskName.CREATE_ARCHIVE, target)
+  fun extractArchiveTaskName(target: KonanTarget) = xtrasTaskName(TaskName.EXTRACT_ARCHIVE, target)
+  fun provideArchiveTaskName(target: KonanTarget) = xtrasTaskName(TaskName.PROVIDE_ARCHIVE, target)
+  fun provideMavenArchiveTaskName(target: KonanTarget) =
+    xtrasTaskName(TaskName.PROVIDE_MAVEN_ARCHIVE, target)
+
+  fun generateInteropsTaskName() =
+    xtrasTaskName(TaskName.GENERATE_INTEROPS)
+
   internal var cinteropsConfig: (CInteropsConfig.() -> Unit)? = null
 
   @XtrasDSLMarker
@@ -150,12 +184,19 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
 }
 
 fun XtrasLibrary.xtrasRegisterSourceTask(
-  name: String,
+  task: XtrasLibrary.TaskName,
   target: KonanTarget,
   configure: Exec.() -> Unit
-) =
-  project.tasks.register<Exec>(name) {
+): String {
+
+  val extractSourceTaskName =
+    xtrasTaskName(XtrasLibrary.TaskName.EXTRACT_SOURCE.taskName, libName, target)
+
+
+  return registerXtrasTask<Exec>(task.taskName, target) {
     workingDir(sourcesDir(target))
+    description = task.description
+
 
     stdoutToLog(target)
 
@@ -164,23 +205,18 @@ fun XtrasLibrary.xtrasRegisterSourceTask(
     }
 
     dependsOn(":${target.konanDepsTaskName}")
-    dependsOn(extractSourceTaskName(target))
+    dependsOn(extractSourceTaskName)
     environment(buildEnvironment.getEnvironment(target))
     doFirst {
 
-      val outputWriter: (String) -> Unit = {
-
-      }
 
       project.log("Running ${commandLine.joinToString(" ")} for $libName in $workingDir")
 
       //project.log("ENV: $environment")
     }
-    group = XTRAS_TASK_GROUP
-
-
     configure()
   }
+}
 
 @XtrasDSLMarker
 fun Project.xtrasCreateLibrary(
@@ -216,5 +252,30 @@ private fun XtrasLibrary.registerTasks() {
   }
 
   registerGenerateInteropsTask()
+}
+
+inline fun <reified T : Task> XtrasLibrary.registerXtrasTask(
+  name: String,
+  target: KonanTarget? = null,
+  noinline configure: T.() -> Unit
+): String {
+
+  val taskName = xtrasTaskName(name, libName, target)
+  val generalTaskName = xtrasTaskName(name, libName)
+  println("registerXtrasTask: name:$name target:$target generalTaskName:$generalTaskName")
+
+  if (project.tasks.findByName(generalTaskName) == null)
+    project.tasks.register(generalTaskName) {
+      group = XTRAS_TASK_GROUP
+      description = "Runs ${generalTaskName}[Target] for all targets"
+    }
+
+  println("registerXtrasTask: registering task: $taskName")
+  project.tasks.register<T>(taskName) {
+    dependsOn(generalTaskName)
+    configure()
+  }
+
+  return taskName
 }
 

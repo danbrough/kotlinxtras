@@ -28,6 +28,7 @@ kotlin {
 
   if (HostManager.hostIsLinux && !project.runningInIDE) {
     linuxArm64()
+    mingwX64()
   }
 
   val commonMain by sourceSets.getting {
@@ -43,11 +44,6 @@ kotlin {
   targets.withType<KotlinNativeTarget> {
     compilations["main"].apply {
       defaultSourceSet.dependsOn(posixMain)
-/*      cinterops{
-        create("curl"){
-          defFile = project.rootProject.rootDir.resolve("build/xtras/cinterops/xtras_curl.def")
-        }
-      }*/
     }
     binaries {
 

@@ -52,14 +52,14 @@ internal fun XtrasLibrary.registerDownloadSourceGit() {
   val resetTaskName = "${downloadSourcesTaskName}_reset"
 
   project.tasks.register(downloadSourcesTaskName) {
-    group = org.danbrough.xtras.XTRAS_TASK_GROUP
+    group = XTRAS_TASK_GROUP
     outputs.dir(repoDir)
     dependsOn(resetTaskName)
   }
 
   project.tasks.register<Exec>("xtrasTags${libName.capitalized()}") {
     commandLine(buildEnvironment.binaries.git, "ls-remote", "-q", "--refs", "-t", config.url)
-    group = org.danbrough.xtras.XTRAS_TASK_GROUP
+    group = XTRAS_TASK_GROUP
     description = "Prints out the tags from the remote repository"
     val stdout = ByteArrayOutputStream()
     standardOutput = stdout

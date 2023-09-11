@@ -6,17 +6,11 @@ import java.io.PipedOutputStream
 plugins {
   alias(libs.plugins.kotlinMultiplatform) apply false
   alias(libs.plugins.org.jetbrains.dokka) apply false
-
-
   `maven-publish`
 }
 
-
-
-
 val publishingVersion: String = libs.versions.xtrasPublishing.get()
 val publishingGroup: String = libs.versions.xtrasPackage.get()
-
 
 allprojects {
 
@@ -65,14 +59,6 @@ subprojects {
   }
 }
 
-
-/*
-afterEvaluate {
-  tasks.findByPath(":plugin:javadocJar")?.also {
-    tasks.findByPath(":core:dokkaHtml")?.mustRunAfter(it)
-  }
-}
-*/
 fun MavenPublication.xtrasPom() {
   pom {
 

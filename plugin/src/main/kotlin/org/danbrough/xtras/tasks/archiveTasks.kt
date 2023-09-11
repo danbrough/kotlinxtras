@@ -29,7 +29,7 @@ fun XtrasLibrary.registerArchiveTasks(target: KonanTarget) {
 }
 
 private fun XtrasLibrary.registerArchiveTask(target: KonanTarget) =
-  project.tasks.register<Exec>(archiveTaskName(target)) {
+  project.tasks.register<Exec>(createArchiveTaskName(target)) {
     group = org.danbrough.xtras.XTRAS_TASK_GROUP
     description = "Outputs binary archive for $libName:${target.platformName}"
     val archive = archiveFile(target)
@@ -58,6 +58,39 @@ private fun XtrasLibrary.registerArchiveTask(target: KonanTarget) =
     )
   }
 
+/*
+private fun XtrasLibrary.registerArchiveTask(target: KonanTarget) =
+  project.tasks.register<Exec>(createArchiveTaskName(target)) {
+    group = org.danbrough.xtras.XTRAS_TASK_GROUP
+    description = "Outputs binary archive for $libName:${target.platformName}"
+    val archive = archiveFile(target)
+    if (!archive.exists())
+      dependsOn(buildTaskName(target))
+    onlyIf {
+      !archive.exists().also {
+        if (it) project.log("skipping $name as ${archive.absolutePath} exists.")
+      }
+    }
+    workingDir(buildDir(target))
+    shouldRunAfter(provideMavencreateArchiveTaskName(target))
+
+    doFirst {
+      project.log("creating archive ${archive.absolutePath} from $workingDir")
+    }
+    outputs.file(archive)
+    environment(buildEnvironment.getEnvironment(target))
+    commandLine(
+      buildEnvironment.binaries.tar,
+      "cvpfz",
+      archive.absolutePath,
+      "--exclude=**share",
+      "--exclude=**pkgconfig",
+      "./"
+    )
+  }
+
+ */
+
 
 
 const val extractAllTaskName = "xtrasExtractAll"
@@ -83,7 +116,7 @@ private fun XtrasLibrary.registerExtractArchiveTask(target: KonanTarget) {
 
 
     if (!archive.exists())
-      dependsOn(provideArchiveTaskName(target))
+      dependsOn(createArchiveTaskName(target))
 
     onlyIf {
       archive.exists()
@@ -175,7 +208,7 @@ private fun XtrasLibrary.registerProvideArchiveTask(target: KonanTarget) {
     outputs.file(archive)
     if (resolveBinariesFromMaven)
       dependsOn(provideMavenArchiveTaskName(target))
-    dependsOn(archiveTaskName(target))
+    dependsOn(createArchiveTaskName(target))
 
   }
 }
@@ -187,7 +220,7 @@ private fun XtrasLibrary.registerPublishArchiveTask(target: KonanTarget) {
       artifactId = "$libName${target.platformName.capitalized()}"
       version = this@registerPublishArchiveTask.version
       groupId = publishingGroup
-      val archiveTask = project.tasks.getByName(archiveTaskName(target))
+      val archiveTask = project.tasks.getByName(createArchiveTaskName(target))
       artifact(archiveTask.outputs.files.first()).builtBy(archiveTask)
     }
   }

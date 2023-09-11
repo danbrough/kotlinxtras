@@ -36,15 +36,14 @@ fun Project.xtrasCurl(
   configure()
 
   supportedTargets.forEach { target ->
-    val prepareSourceTask = prepareSourceTaskName(target)
-    xtrasRegisterSourceTask(prepareSourceTask, target) {
+    val prepareSourceTask = xtrasRegisterSourceTask(XtrasLibrary.TaskName.PREPARE_SOURCE, target) {
       outputs.file("configure")
       dependsOn(extractSourceTaskName(target))
       commandLine(buildEnvironment.binaries.autoreconf, "-fi")
     }
 
-    val configureTask = configureTaskName(target)
-    xtrasRegisterSourceTask(configureTask, target) {
+
+    val configureTask = xtrasRegisterSourceTask(XtrasLibrary.TaskName.CONFIGURE, target) {
       dependsOn(libraryDeps.map{it.extractArchiveTaskName(target)})
       dependsOn(prepareSourceTask)
       outputs.file(workingDir.resolve("Makefile"))
@@ -62,8 +61,8 @@ fun Project.xtrasCurl(
       commandLine(configureOptions)
     }
 
-    val buildTaskName = buildTaskName(target)
-    xtrasRegisterSourceTask(buildTaskName, target) {
+
+    xtrasRegisterSourceTask(XtrasLibrary.TaskName.BUILD, target) {
       dependsOn(configureTask)
       outputs.dir(buildDir(target))
       commandLine("make", "install")

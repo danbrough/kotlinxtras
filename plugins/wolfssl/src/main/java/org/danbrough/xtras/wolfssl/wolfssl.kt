@@ -56,15 +56,19 @@ fun Project.xtrasWolfSSL(
   configure()
 
   supportedTargets.forEach { target ->
-    val autogenTaskName = prepareSourceTaskName(target)
-    xtrasRegisterSourceTask(autogenTaskName, target) {
+
+
+    println("REGISTERING SOURCE TASK FOR WOLFSSL: $target")
+
+    val prepareSourceTask = xtrasRegisterSourceTask(XtrasLibrary.TaskName.PREPARE_SOURCE, target) {
       commandLine("./autogen.sh")
       outputs.file(workingDir.resolve("configure"))
     }
 
-    val configureTaskName = configureTaskName(target)
-    xtrasRegisterSourceTask(configureTaskName, target) {
-      dependsOn(autogenTaskName)
+    println("REGISTERED PREPARE TASK: $prepareSourceTask")
+
+    val configureSourceTask = xtrasRegisterSourceTask(XtrasLibrary.TaskName.CONFIGURE, target) {
+      dependsOn(prepareSourceTask)
       outputs.file(workingDir.resolve("Makefile"))
       val configureOptions = mutableListOf(
         "./configure",
@@ -138,11 +142,16 @@ fun Project.xtrasWolfSSL(
 
     }
 
-    val buildTaskName = buildTaskName(target)
-    xtrasRegisterSourceTask(buildTaskName, target) {
-      dependsOn(configureTaskName)
+
+    println("REGISTERED CONFIGURE TASK: $configureSourceTask")
+
+
+    xtrasRegisterSourceTask(XtrasLibrary.TaskName.BUILD, target) {
+      dependsOn(configureSourceTask)
       outputs.dir(buildDir(target))
       commandLine("make", "install")
+    }.also{
+      println("REGISTERED BUILD TASK: $it")
     }
   }
 }
