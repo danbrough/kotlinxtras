@@ -120,6 +120,10 @@ fun Project.xtrasWolfSSL(
           // configureOptions.add("--disable-asm")
         }
 
+        KonanTarget.MACOS_ARM64,KonanTarget.IOS_ARM64 -> {
+          configureOptions.add("--disable-asm")
+        }
+
         else -> {}
       }
 //      val configureOptions2 = mutableListOf(
