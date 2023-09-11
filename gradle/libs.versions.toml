@@ -26,7 +26,7 @@ dokka = "1.9.0"
 
 [libraries]
 
-org-danbrough-klog = "org.danbrough:klog:0.0.2-beta05"
+org-danbrough-klog = "org.danbrough:klog:0.0.2-beta06"
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin" }
 kotlin-stdlib-jdk8 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlin" }
