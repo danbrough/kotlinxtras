@@ -36,10 +36,10 @@ if (include == null || include == "binaries")
   include(":binaries")
 
 
-/*
+
 if (include == null || include == "demos"){
   listOf("curl").forEach {
     include(":demos:${it}_demo")
     project(":demos:${it}_demo").projectDir = rootDir.resolve("demos/$it")
   }
-}*/
+}

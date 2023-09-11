@@ -1,21 +1,22 @@
-import org.danbrough.kotlinxtras.curl.xtrasCurl
+import org.danbrough.xtras.curl.xtrasCurl
 import org.danbrough.xtras.declareHostTarget
 import org.danbrough.xtras.platformName
 import org.danbrough.xtras.runningInIDE
+import org.danbrough.xtras.wolfssl.xtrasWolfSSL
 import org.danbrough.xtras.tasks.konanDepsTaskName
-import org.danbrough.kotlinxtras.openssl.xtrasOpenSSL
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
-  alias(libs.plugins.kotlinXtras.openssl)
-  alias(libs.plugins.kotlinXtras.curl)
+  alias(libs.plugins.xtras.wolfssl)
+  alias(libs.plugins.xtras.curl)
 }
 
 
-val ssl = xtrasOpenSSL()
+val ssl = xtrasWolfSSL()
 
 xtrasCurl(ssl) {
   println("xtrasCurl.supportedTargets = $supportedTargets version:$sourceConfig")
@@ -49,7 +50,8 @@ kotlin {
       }*/
     }
     binaries {
-      executable("demo1") {
+
+      executable("demo1", buildTypes = setOf(NativeBuildType.DEBUG)) {
         entryPoint = "demo.demo1.main"
         runTask?.environment("CA_CERT_FILE", file("cacert.pem"))
         findProperty("args")?.also {
