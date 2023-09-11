@@ -55,7 +55,8 @@ fun Project.xtrasCurl(
         "--with-wolfssl=${ssl.libsDir(target)}",
         //"--with-ca-path=/etc/ssl/certs:/etc/security/cacerts:/etc/ca-certificates",
          "--with-ca-bundle=/etc/ssl/certs/ca-certificates.crt",
-        "--prefix=${buildDir(target)}"
+        "--prefix=${buildDir(target)}",
+        "--disable-ntlm",
       )
 
       commandLine(configureOptions)

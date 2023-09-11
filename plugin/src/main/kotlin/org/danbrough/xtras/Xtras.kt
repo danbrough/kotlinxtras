@@ -51,6 +51,7 @@ const val PROPERTY_BUILD_DIR = "$PROPERTY_XTRAS_DIR.build"
 
 const val PROPERTY_SOURCE_DIR = "$PROPERTY_XTRAS_DIR.src"
 
+const val PROPERTY_LOGS_DIR = "$PROPERTY_XTRAS_DIR.logs"
 
 const val PROPERTY_LIBS_DIR = "$PROPERTY_XTRAS_DIR.libs"
 
@@ -116,6 +117,15 @@ val Project.xtrasSourceDir: File
 val Project.xtrasPackagesDir: File
   get() = xtrasPath(PROPERTY_PACKAGES_DIR, "packages")
 
+
+/**
+ * Path to the xtras logs directory.
+ * This is where log output of build tasks are stored.
+ *
+ * Defaults to `project.xtrasDir.resolve("logs")`
+ */
+val Project.xtrasLogsDir: File
+  get() = xtrasPath(PROPERTY_LOGS_DIR, "logs")
 
 /**
  * Path to the xtras maven directory.

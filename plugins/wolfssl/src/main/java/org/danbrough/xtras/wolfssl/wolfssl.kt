@@ -33,8 +33,8 @@ class WolfSSLPlugin : Plugin<Project> {
 @XtrasDSLMarker
 fun Project.xtrasWolfSSL(
   name: String = WolfSSL.extensionName,
-  version: String = properties.getOrDefault("wolfssl.version",WOLFSSL_VERSION).toString(),
-  commit: String = properties.getOrDefault("wolfssl.commit",  WOLFSSL_COMMIT).toString(),
+  version: String = properties.getOrDefault("wolfssl.version", WOLFSSL_VERSION).toString(),
+  commit: String = properties.getOrDefault("wolfssl.commit", WOLFSSL_COMMIT).toString(),
   configure: XtrasLibrary.() -> Unit = {},
 ) = xtrasCreateLibrary(name, version) {
   publishingGroup = XTRAS_PACKAGE
@@ -43,10 +43,10 @@ fun Project.xtrasWolfSSL(
     headers = """
           #staticLibraries =  libcrypto.a libssl.a
           headers =  wolfssl/ssl.h wolfssl/openssl/ssl.h wolfssl/openssl/err.h wolfssl/openssl/bio.h wolfssl/openssl/evp.h
-          linkerOpts.linux = -ldl -lc -lm -lwolfssl 
-          linkerOpts.android = -ldl -lc -lm -lwolfssl
-          linkerOpts.macos = -ldl -lc -lm -lwolfssl 
-          linkerOpts.mingw = -lm -lwolfssl 
+          linkerOpts.linux = -ldl -lc -lm -lwolfssl  -lpthread
+          linkerOpts.android = -ldl -lc -lm -lwolfssl  -lpthread
+          linkerOpts.macos = -ldl -lc -lm -lwolfssl  -lpthread
+          linkerOpts.mingw = -lm -lwolfssl  -lpthread -c
           compilerOpts.android = -D__ANDROID_API__=21
           #compilerOpts =  -Wno-macro-redefined -Wno-deprecated-declarations  -Wno-incompatible-pointer-types-discards-qualifiers
           #compilerOpts = -static
@@ -75,8 +75,8 @@ fun Project.xtrasWolfSSL(
 //      "--enable-fortress",
 //      "--disable-debug",
 //      "--disable-ntru",
-//      "--disable-examples",
-//      "--enable-distro",
+        "--disable-examples",
+        //  "--enable-distro",
 //      "--enable-reproducible-build",
         "--enable-curve25519",
         "--enable-ed25519",
@@ -89,13 +89,15 @@ fun Project.xtrasWolfSSL(
         "--enable-altcertchains",
         "--enable-certreq",//        Enable cert request generation (default: disabled)
         "--enable-certext",//        Enable cert request extensions (default: disabled)
-    //  --enable-certgencache   Enable decoded cert caching (default: disabled)
+        //  --enable-certgencache   Enable decoded cert caching (default: disabled)
         //--enable-altcertchains  Enable using alternative certificate chains, only
         //   require leaf certificate to validate to trust root
         //--enable-testcert       Enable Test Cert (default: disabled)
         "--enable-certservice",
         "--enable-altcertchains",
 //      "--enable-writedup",
+        "--disable-crypttests",
+        "--disable-crypttests-libs",
 
         "--enable-opensslextra",
         //"--enable-openssh",
@@ -104,21 +106,29 @@ fun Project.xtrasWolfSSL(
         "--enable-certgen",
         "--enable-ssh",
         "--enable-wolfssh",
-        //"--disable-examples",
+        "--disable-examples",
         "--enable-postauth",
 
         )
 
-      when (target){
-        KonanTarget.MINGW_X64,KonanTarget.ANDROID_ARM32,KonanTarget.ANDROID_ARM64,KonanTarget.ANDROID_X86,KonanTarget.ANDROID_X64->{
+      when (target) {
+        KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64, KonanTarget.ANDROID_X86, KonanTarget.ANDROID_X64 -> {
           configureOptions.add("--enable-singlethreaded")
         }
+
         KonanTarget.LINUX_ARM32_HFP -> {
-         // configureOptions.add("--disable-asm")
+          // configureOptions.add("--disable-asm")
         }
+
         else -> {}
       }
-
+//      val configureOptions2 = mutableListOf(
+//        "./configure",
+//        "--host=${target.hostTriplet}",
+//        "--prefix=${buildDir(target)}",
+//        "--enable-all",
+//        "--disable-crl-monitor",
+//      )
       commandLine(configureOptions)
 
 

@@ -6,6 +6,7 @@ import org.danbrough.xtras.PROPERTY_CINTEROPS_DIR
 import org.danbrough.xtras.PROPERTY_DOCS_DIR
 import org.danbrough.xtras.PROPERTY_DOWNLOADS_DIR
 import org.danbrough.xtras.PROPERTY_LIBS_DIR
+import org.danbrough.xtras.PROPERTY_LOGS_DIR
 import org.danbrough.xtras.PROPERTY_NDK_DIR
 import org.danbrough.xtras.PROPERTY_PACKAGES_DIR
 import org.danbrough.xtras.PROPERTY_XTRAS_DIR
@@ -19,6 +20,7 @@ import org.danbrough.xtras.xtrasDir
 import org.danbrough.xtras.xtrasDocsDir
 import org.danbrough.xtras.xtrasDownloadsDir
 import org.danbrough.xtras.xtrasLibsDir
+import org.danbrough.xtras.xtrasLogsDir
 import org.danbrough.xtras.xtrasNdkDir
 import org.danbrough.xtras.xtrasPackagesDir
 import org.gradle.api.Project
@@ -250,6 +252,7 @@ open class BuildEnvironment : Cloneable {
                   $PROPERTY_PACKAGES_DIR:   ${project.xtrasPackagesDir}
                   $PROPERTY_DOCS_DIR:       ${project.xtrasDocsDir}
                   $PROPERTY_CINTEROPS_DIR:  ${project.xtrasCInteropsDir}
+                  $PROPERTY_LOGS_DIR:  ${project.xtrasLogsDir}
                   
                   
                 BuildEnvironment:

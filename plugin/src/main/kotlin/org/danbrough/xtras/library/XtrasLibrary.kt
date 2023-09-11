@@ -14,11 +14,13 @@ import org.danbrough.xtras.source.GitSourceConfig
 import org.danbrough.xtras.source.registerDownloadSourceGit
 import org.danbrough.xtras.tasks.CInteropsConfig
 import org.danbrough.xtras.tasks.konanDepsTaskName
+import org.danbrough.xtras.tasks.processStdout
 import org.danbrough.xtras.tasks.registerArchiveTasks
 import org.danbrough.xtras.tasks.registerGenerateInteropsTask
 import org.danbrough.xtras.tasks.registerKonanDepsTasks
 import org.danbrough.xtras.xtrasBuildDir
 import org.danbrough.xtras.xtrasLibsDir
+import org.danbrough.xtras.xtrasLogsDir
 import org.danbrough.xtras.xtrasPackagesDir
 import org.danbrough.xtras.xtrasSourceDir
 import org.gradle.api.Project
@@ -28,6 +30,9 @@ import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import java.io.PipedInputStream
+import java.io.PipedOutputStream
+import java.io.Writer
 
 @Suppress("LeakingThis", "MemberVisibilityCanBePrivate")
 @XtrasDSLMarker
@@ -114,6 +119,11 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
     project.xtrasPackagesDir.resolve(archiveFileName(target))
   }
 
+  @XtrasDSLMarker
+  var logFile: (taskName: String, target: KonanTarget) -> File = { taskName, target ->
+    project.xtrasLogsDir.resolve("$libName/$version/${target.platformName}/$taskName.log")
+  }
+
   internal var cinteropsConfig: (CInteropsConfig.() -> Unit)? = null
 
   @XtrasDSLMarker
@@ -127,6 +137,16 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
   }
 
   override fun toString() = "XtrasLibrary[$libName:$version]"
+
+  fun Exec.stdoutToLog(target: KonanTarget): Writer =
+    logFile(name, target).let { file ->
+      file.parentFile.also {
+        if (!it.exists()) it.mkdirs()
+      }
+      val writer = file.writer()
+      processStdout(writer, ::println)
+      writer
+    }
 }
 
 fun XtrasLibrary.xtrasRegisterSourceTask(
@@ -137,6 +157,8 @@ fun XtrasLibrary.xtrasRegisterSourceTask(
   project.tasks.register<Exec>(name) {
     workingDir(sourcesDir(target))
 
+    stdoutToLog(target)
+
     onlyIf {
       !archiveFile(target).exists()
     }
@@ -146,11 +168,17 @@ fun XtrasLibrary.xtrasRegisterSourceTask(
     environment(buildEnvironment.getEnvironment(target))
     doFirst {
 
+      val outputWriter: (String) -> Unit = {
+
+      }
+
       project.log("Running ${commandLine.joinToString(" ")} for $libName in $workingDir")
 
       //project.log("ENV: $environment")
     }
     group = XTRAS_TASK_GROUP
+
+
     configure()
   }
 
