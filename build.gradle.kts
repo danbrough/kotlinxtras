@@ -16,7 +16,9 @@ allprojects {
 
 
   repositories {
-    maven(rootProject.layout.buildDirectory.dir("xtras/maven"))
+    maven(property("xtras.dir.maven")?.toString() ?: file("maven")) {
+      name = "xtras"
+    }
     maven("https://s01.oss.sonatype.org/content/groups/staging/")
     mavenCentral()
   }
@@ -28,7 +30,7 @@ allprojects {
     extensions.findByType<PublishingExtension>()?.apply {
       println("found publishing for $name")
       repositories {
-        maven(rootProject.layout.buildDirectory.dir("xtras/maven")) {
+        maven(property("xtras.dir.maven")?.toString() ?: file("maven")) {
           name = "xtras"
         }
       }

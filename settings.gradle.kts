@@ -1,6 +1,6 @@
 pluginManagement {
   repositories {
-    maven(file("build/xtras/maven"))
+    settings.extra.properties["xtras.dir.maven"]?.also { maven(it) }
     maven("https://s01.oss.sonatype.org/content/groups/staging")
     mavenCentral()
     gradlePluginPortal()

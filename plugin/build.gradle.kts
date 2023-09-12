@@ -22,17 +22,14 @@ group = libs.versions.xtrasPackage.get()
 version = libs.versions.xtrasPublishing.get()
 
 repositories {
-  maven(file("../build/xtras/maven")) {
-    name = "Xtras"
-  }
   maven("https://s01.oss.sonatype.org/content/groups/staging/")
   mavenCentral()
 }
 
 publishing {
   repositories {
-	  maven(file("../build/xtras/maven")) {
-      name = "Xtras"
+    maven(property("xtras.dir.maven")?.toString() ?: file("../maven")) {
+      name = "xtras"
     }
     maven("https://s01.oss.sonatype.org/content/groups/staging/")
     mavenCentral()
