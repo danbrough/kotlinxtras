@@ -1,6 +1,6 @@
 pluginManagement {
   repositories {
-    settings.extra.properties["xtras.dir.maven"]?.also { maven(it) }
+    maven(settings.extra.properties["xtras.dir.maven"] ?: rootDir.resolve("maven"))
     maven("https://s01.oss.sonatype.org/content/groups/staging")
     mavenCentral()
     gradlePluginPortal()
