@@ -17,8 +17,6 @@ group = libs.versions.xtrasPackage.get()
 version = libs.versions.wolfssl.get()
 
 dependencies {
-  //add("compileOnly", kotlin("gradle-plugin"))
-  //add("compileOnly", kotlin("gradle-plugin-api"))
   implementation(libs.xtras.plugin)
   implementation(libs.org.danbrough.klog)
   implementation(libs.kotlin.gradle.plugin)

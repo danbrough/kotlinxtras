@@ -5,6 +5,7 @@ package org.danbrough.xtras
 import org.danbrough.xtras.env.BuildEnvironment
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import java.io.File
 import java.util.Locale
 
@@ -27,7 +28,7 @@ const val XTRAS_REPO_NAME = "xtras"
 
 const val PROPERTY_XTRAS_DIR = "xtras.dir"
 
-const val PROPERTY_NDK_DIR = "xtras.ndk"
+const val PROPERTY_NDK_DIR = "xtras.dir.ndk"
 
 /**
  * Location of the xtras packages directory
