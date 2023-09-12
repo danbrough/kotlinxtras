@@ -10,6 +10,7 @@ plugins {
   `kotlin-dsl`
   alias(libs.plugins.xtras.wolfssl)
   alias(libs.plugins.xtras.curl)
+  `maven-publish`
 }
 
 val deferToMaven = false

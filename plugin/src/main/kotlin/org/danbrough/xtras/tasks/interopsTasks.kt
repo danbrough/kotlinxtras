@@ -166,8 +166,6 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
         }
       }
 
-
-
       doLast {
         println("generated ${config.defFile}")
       }

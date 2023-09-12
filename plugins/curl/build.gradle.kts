@@ -6,6 +6,7 @@ plugins {
   //alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.xtras)
   `kotlin-dsl`
+  `maven-publish`
 }
 
 
@@ -16,11 +17,6 @@ xtrasBuildEnvironment {
 group = libs.versions.xtrasPackage.get()
 version = libs.versions.curl.get()
 
-repositories {
-  maven(project.xtrasMavenDir)
-  maven("https://s01.oss.sonatype.org/content/groups/staging/")
-  mavenCentral()
-}
 
 dependencies {
   //add("compileOnly", kotlin("gradle-plugin"))

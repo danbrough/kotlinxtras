@@ -2,6 +2,7 @@ plugins {
   //alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.kotlinXtras)
   `kotlin-dsl`
+  `maven-publish`
 }
 
 version = libs.versions.openssl.get()

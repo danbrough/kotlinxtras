@@ -1,7 +1,4 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import java.io.InputStreamReader
-import java.io.PipedInputStream
-import java.io.PipedOutputStream
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform) apply false
@@ -17,7 +14,6 @@ allprojects {
   group = publishingGroup
   version = publishingVersion
 
-  apply<MavenPublishPlugin>()
 
   repositories {
     maven(rootProject.layout.buildDirectory.dir("xtras/maven"))
@@ -25,10 +21,16 @@ allprojects {
     mavenCentral()
   }
 
-  publishing {
-    repositories {
-      maven(rootProject.layout.buildDirectory.dir("xtras/maven")){
-        name = "xtras"
+
+  afterEvaluate {
+    println("PROJECT IS: $name")
+
+    extensions.findByType<PublishingExtension>()?.apply {
+      println("found publishing for $name")
+      repositories {
+        maven(rootProject.layout.buildDirectory.dir("xtras/maven")) {
+          name = "xtras"
+        }
       }
     }
   }
