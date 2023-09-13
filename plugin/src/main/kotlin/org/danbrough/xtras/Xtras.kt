@@ -92,7 +92,7 @@ const val XTRAS_REPO_NAME = "xtras"
 
 
 private fun Project.xtrasPath(path: XtrasPath): File {
-  println("Project.xtrasPath::getting ${path.propertyName} from extra")
+  //println("Project.xtrasPath::getting ${path.propertyName} from extra")
   val pathValue =
     if (extra.has(path.propertyName))  extra[path.propertyName]?.toString() else null
 
