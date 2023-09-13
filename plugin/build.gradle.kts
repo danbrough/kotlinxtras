@@ -28,6 +28,7 @@ repositories {
 
 publishing {
   repositories {
+
     maven(property("xtras.dir.maven")?.toString() ?: file("../maven")) {
       name = "xtras"
     }

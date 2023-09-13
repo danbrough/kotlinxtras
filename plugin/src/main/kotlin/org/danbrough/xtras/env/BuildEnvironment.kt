@@ -2,17 +2,10 @@
 
 package org.danbrough.xtras.env
 
-import org.danbrough.xtras.PROPERTY_CINTEROPS_DIR
-import org.danbrough.xtras.PROPERTY_DOCS_DIR
-import org.danbrough.xtras.PROPERTY_DOWNLOADS_DIR
-import org.danbrough.xtras.PROPERTY_LIBS_DIR
-import org.danbrough.xtras.PROPERTY_LOGS_DIR
-import org.danbrough.xtras.PROPERTY_MAVEN_DIR
-import org.danbrough.xtras.PROPERTY_NDK_DIR
-import org.danbrough.xtras.PROPERTY_PACKAGES_DIR
-import org.danbrough.xtras.PROPERTY_XTRAS_DIR
+
 import org.danbrough.xtras.XTRAS_TASK_GROUP
 import org.danbrough.xtras.XtrasDSLMarker
+import org.danbrough.xtras.XtrasPath
 import org.danbrough.xtras.hostTriplet
 import org.danbrough.xtras.log
 import org.danbrough.xtras.projectProperty
@@ -248,20 +241,20 @@ open class BuildEnvironment : Cloneable {
                   $binaryPropertyPrefix.cmake:          ${binaries.cmake}
 
                 Paths:
-                  $PROPERTY_XTRAS_DIR:            ${project.xtrasDir}
-                  $PROPERTY_LIBS_DIR:       ${project.xtrasLibsDir}
-                  $PROPERTY_DOWNLOADS_DIR:  ${project.xtrasDownloadsDir}
-                  $PROPERTY_PACKAGES_DIR:   ${project.xtrasPackagesDir}
-                  $PROPERTY_DOCS_DIR:       ${project.xtrasDocsDir}
-                  $PROPERTY_CINTEROPS_DIR:  ${project.xtrasCInteropsDir}
-                  $PROPERTY_LOGS_DIR:  ${project.xtrasLogsDir}
-                  $PROPERTY_MAVEN_DIR:  ${project.xtrasMavenDir}
-                  $PROPERTY_NDK_DIR:  ${project.xtrasNdkDir}
+                  ${XtrasPath.XTRAS.propertyName}:        ${project.xtrasDir}
+                  ${XtrasPath.LIBS.propertyName}:       ${project.xtrasLibsDir}
+                  ${XtrasPath.DOWNLOADS.propertyName}:  ${project.xtrasDownloadsDir}
+                  ${XtrasPath.PACKAGES.propertyName}:   ${project.xtrasPackagesDir}
+                  ${XtrasPath.DOCS.propertyName}:       ${project.xtrasDocsDir}
+                  ${XtrasPath.INTEROPS.propertyName}:   ${project.xtrasCInteropsDir}
+                  ${XtrasPath.LOGS.propertyName}:       ${project.xtrasLogsDir}
+                  ${XtrasPath.MAVEN.propertyName}:      ${project.xtrasMavenDir}
+                  ${XtrasPath.NDK.propertyName}:        ${project.xtrasNdkDir}
                   
                   
                 BuildEnvironment:
                   androidNdkApiVersion:     $androidNdkApiVersion
-                  androidNdkDir:            $androidNdkDir ($PROPERTY_NDK_DIR)
+                  androidNdkDir:            $androidNdkDir (${XtrasPath.NDK.propertyName})
                   
                 """.trimIndent()
         )

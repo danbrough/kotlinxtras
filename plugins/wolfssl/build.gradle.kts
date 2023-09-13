@@ -3,7 +3,7 @@ import org.danbrough.xtras.xtrasBuildDir
 import org.danbrough.xtras.xtrasMavenDir
 
 plugins {
-  alias(libs.plugins.xtras)
+  id("org.danbrough.xtras")
   `kotlin-dsl`
   `maven-publish`
 }

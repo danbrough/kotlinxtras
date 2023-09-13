@@ -26,7 +26,7 @@ kotlin {
   jvm()
   declareHostTarget()
 
-  if (HostManager.hostIsLinux && !project.runningInIDE) {
+  if (HostManager.hostIsLinux && !runningInIDE) {
     linuxArm64()
     mingwX64()
   }

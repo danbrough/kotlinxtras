@@ -99,7 +99,7 @@ fun KotlinMultiplatformExtension.declareHostTarget(configure: KotlinNativeTarget
 
 fun XtrasLibrary.defaultSupportedTargets() = buildList {
 
-  if (project.runningInIDE) {
+  if (runningInIDE) {
     add(HostManager.host)
     return@buildList
   }

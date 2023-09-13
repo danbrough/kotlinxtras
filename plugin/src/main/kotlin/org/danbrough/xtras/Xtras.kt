@@ -1,17 +1,16 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
 package org.danbrough.xtras
 
 import org.danbrough.xtras.env.BuildEnvironment
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.extra
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import java.io.File
 import java.util.Locale
 
 annotation class XtrasDSLMarker
-
-
 
 
 const val XTRAS_PACKAGE = "org.danbrough.xtras"
@@ -24,49 +23,89 @@ const val XTRAS_BINARIES_PUBLISHING_GROUP = "$XTRAS_PACKAGE.xtras"
 
 const val XTRAS_TASK_GROUP = "xtras"
 
+enum class XtrasPath() {
+
+  /**
+   * Top level xtras directory where all other paths will reside by default
+   */
+  XTRAS,
+
+  /**
+   * Where binary archives are extract to for linking
+   */
+  LIBS,
+
+  /**
+   * Where compiled source is installed to
+   */
+  BUILD,
+
+  /**
+   * Where configure and build task output is written to
+   */
+  LOGS,
+
+  /**
+   * Where generated documentation is written to
+   */
+  DOCS,
+
+  /**
+   * Where source code is extracted to
+   */
+  SOURCE,
+
+  /**
+   * Where source archives and repos are downloaded to
+   */
+  DOWNLOADS,
+
+  /**
+   * Where binary archives are stored
+   */
+  PACKAGES,
+
+  /**
+   * Where the generated cinterop definition files are written to
+   */
+  INTEROPS,
+
+  /**
+   * Path of the local maven repository
+   */
+  MAVEN,
+
+  /**
+   * Path to the android ndk
+   */
+  NDK;
+
+  val propertyName: String
+    get() = if (this == XTRAS) "xtras.dir" else "xtras.dir.${name.lowercase()}"
+
+  override fun toString(): String = propertyName
+
+
+}
+
 const val XTRAS_REPO_NAME = "xtras"
 
-const val PROPERTY_XTRAS_DIR = "xtras.dir"
 
-const val PROPERTY_NDK_DIR = "xtras.dir.ndk"
+private fun Project.xtrasPath(path: XtrasPath): File {
+  println("Project.xtrasPath::getting ${path.propertyName} from extra")
+  val pathValue =
+    if (extra.has(path.propertyName))  extra[path.propertyName]?.toString() else null
 
-/**
- * Location of the xtras packages directory
- */
-const val PROPERTY_PACKAGES_DIR = "$PROPERTY_XTRAS_DIR.packages"
-
-
-/**
- * Location of the xtras packages directory
- */
-const val PROPERTY_MAVEN_DIR = "$PROPERTY_XTRAS_DIR.maven"
-
-/**
- * Location of the xtras downloads directory
- */
-const val PROPERTY_DOWNLOADS_DIR = "$PROPERTY_XTRAS_DIR.downloads"
-
-const val PROPERTY_DOCS_DIR = "$PROPERTY_XTRAS_DIR.docs"
-
-const val PROPERTY_BUILD_DIR = "$PROPERTY_XTRAS_DIR.build"
-
-const val PROPERTY_SOURCE_DIR = "$PROPERTY_XTRAS_DIR.src"
-
-const val PROPERTY_LOGS_DIR = "$PROPERTY_XTRAS_DIR.logs"
-
-const val PROPERTY_LIBS_DIR = "$PROPERTY_XTRAS_DIR.libs"
-
-const val PROPERTY_CINTEROPS_DIR = "$PROPERTY_XTRAS_DIR.cinterops"
-
-private fun Project.xtrasPath(name: String, defValue: String? = null,default:(String)->File = {error("property $it not found")}): File =
-  properties[name]?.toString()?.trim()?.let {
-    if (it.startsWith("./")){
-      project.rootDir.resolve(it.substringAfter("./"))
-    }
-    else project.file(it)
-  } ?: defValue?.let { rootProject.xtrasDir.resolve(it) }
-  ?: default(name)
- // ?: rootProject.layout.buildDirectory.dir("xtras").get().asFile
+  return if (pathValue == null)
+    if (path == XtrasPath.XTRAS)
+      error("${XtrasPath.XTRAS} not set")
+    else
+      xtrasPath(XtrasPath.XTRAS).resolve(path.name.lowercase())
+  else if (pathValue.startsWith("./"))
+    file(pathValue)
+  else File(pathValue)
+}
+// ?: rootProject.layout.buildDirectory.dir("xtras").get().asFile
 
 /**
  * Path to the top level xtras directory.
@@ -76,9 +115,7 @@ private fun Project.xtrasPath(name: String, defValue: String? = null,default:(St
  */
 
 val Project.xtrasDir: File
-  get() = xtrasPath(PROPERTY_XTRAS_DIR){
-    layout.buildDirectory.asFile.get().resolve("xtras")
-  }
+  get() = xtrasPath(XtrasPath.XTRAS)
 
 /**
  * Path to the xtras downloads directory.
@@ -87,7 +124,7 @@ val Project.xtrasDir: File
  * Defaults to `project.xtrasDir.resolve("downloads")`
  */
 val Project.xtrasDownloadsDir: File
-  get() = xtrasPath(PROPERTY_DOWNLOADS_DIR, "downloads")
+  get() = xtrasPath(XtrasPath.DOWNLOADS)
 
 
 /**
@@ -97,7 +134,7 @@ val Project.xtrasDownloadsDir: File
  * Defaults to `project.xtrasDir.resolve("build")`
  */
 val Project.xtrasBuildDir: File
-  get() = xtrasPath(PROPERTY_BUILD_DIR, "build")
+  get() = xtrasPath(XtrasPath.BUILD)
 
 
 /**
@@ -107,7 +144,7 @@ val Project.xtrasBuildDir: File
  * Defaults to `project.xtrasDir.resolve("src")`
  */
 val Project.xtrasSourceDir: File
-  get() = xtrasPath(PROPERTY_SOURCE_DIR, "src")
+  get() = xtrasPath(XtrasPath.SOURCE)
 
 /**
  * Path to the xtras packages directory.
@@ -116,7 +153,7 @@ val Project.xtrasSourceDir: File
  * Defaults to `project.xtrasDir.resolve("packages")`
  */
 val Project.xtrasPackagesDir: File
-  get() = xtrasPath(PROPERTY_PACKAGES_DIR, "packages")
+  get() = xtrasPath(XtrasPath.PACKAGES)
 
 
 /**
@@ -126,7 +163,7 @@ val Project.xtrasPackagesDir: File
  * Defaults to `project.xtrasDir.resolve("logs")`
  */
 val Project.xtrasLogsDir: File
-  get() = xtrasPath(PROPERTY_LOGS_DIR, "logs")
+  get() = xtrasPath(XtrasPath.LOGS)
 
 /**
  * Path to the xtras maven directory.
@@ -135,7 +172,7 @@ val Project.xtrasLogsDir: File
  * Defaults to `project.xtrasDir.resolve("maven")`
  */
 val Project.xtrasMavenDir: File
-  get() = xtrasPath(PROPERTY_MAVEN_DIR, "maven")
+  get() = xtrasPath(XtrasPath.MAVEN)
 
 
 /**
@@ -145,7 +182,7 @@ val Project.xtrasMavenDir: File
  * Defaults to `project.xtrasDir.resolve("cinterops")`
  */
 val Project.xtrasCInteropsDir: File
-  get() = xtrasPath(PROPERTY_CINTEROPS_DIR, "cinterops")
+  get() = xtrasPath(XtrasPath.INTEROPS)
 
 
 /**
@@ -155,7 +192,7 @@ val Project.xtrasCInteropsDir: File
  * Defaults to `project.xtrasDir.resolve("docs")`
  */
 val Project.xtrasDocsDir: File
-  get() = xtrasPath(PROPERTY_DOCS_DIR, "docs")
+  get() = xtrasPath(XtrasPath.DOCS)
 
 
 /**
@@ -165,7 +202,7 @@ val Project.xtrasDocsDir: File
  * Defaults to `project.xtrasDir.resolve("libs")`
  */
 val Project.xtrasLibsDir: File
-  get() = xtrasPath(PROPERTY_LIBS_DIR, "libs")
+  get() = xtrasPath(XtrasPath.LIBS)
 
 
 /**
@@ -173,7 +210,7 @@ val Project.xtrasLibsDir: File
  * Defaults to the environment variable ANDROID_NDK_ROOT then ANDROID_NDK_HOME
  */
 val Project.xtrasNdkDir: File
-  get() = xtrasPath(PROPERTY_NDK_DIR)
+  get() = xtrasPath(XtrasPath.NDK)
 
 
 fun String.capitalized() =

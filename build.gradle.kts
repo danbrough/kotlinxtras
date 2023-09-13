@@ -3,20 +3,22 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 plugins {
   alias(libs.plugins.kotlinMultiplatform) apply false
   alias(libs.plugins.org.jetbrains.dokka) apply false
+  alias(libs.plugins.xtras) apply false
   `maven-publish`
 }
 
 val publishingVersion: String = libs.versions.xtrasPublishing.get()
 val publishingGroup: String = libs.versions.xtrasPackage.get()
 
+
+
 allprojects {
 
   group = publishingGroup
   version = publishingVersion
 
-
   repositories {
-    maven(property("xtras.dir.maven")?.toString() ?: file("maven")) {
+    maven("/usr/local/xtras/maven") {
       name = "xtras"
     }
     maven("https://s01.oss.sonatype.org/content/groups/staging/")
@@ -30,7 +32,7 @@ allprojects {
     extensions.findByType<PublishingExtension>()?.apply {
       println("found publishing for $name")
       repositories {
-        maven(property("xtras.dir.maven")?.toString() ?: file("maven")) {
+        maven("/usr/local/xtras/maven") {
           name = "xtras"
         }
       }

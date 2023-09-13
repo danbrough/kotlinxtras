@@ -1,15 +1,11 @@
 package org.danbrough.xtras.library
 
-import org.danbrough.xtras.PROPERTY_BUILD_DIR
-import org.danbrough.xtras.PROPERTY_CINTEROPS_DIR
-import org.danbrough.xtras.PROPERTY_DOWNLOADS_DIR
-import org.danbrough.xtras.PROPERTY_LIBS_DIR
-import org.danbrough.xtras.PROPERTY_PACKAGES_DIR
-import org.danbrough.xtras.PROPERTY_SOURCE_DIR
+
 import org.danbrough.xtras.env.BuildEnvironment
 import org.danbrough.xtras.XTRAS_PACKAGE
 import org.danbrough.xtras.XTRAS_TASK_GROUP
 import org.danbrough.xtras.XtrasDSLMarker
+import org.danbrough.xtras.XtrasPath
 import org.danbrough.xtras.XtrasPlugin
 import org.danbrough.xtras.capitalized
 import org.danbrough.xtras.defaultSupportedTargets
@@ -51,17 +47,17 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
   }
 
   enum class TaskName(val description: String) {
-    DOWNLOAD_SOURCE("Download source repository to $PROPERTY_DOWNLOADS_DIR"),
+    DOWNLOAD_SOURCE("Download source repository to ${XtrasPath.DOWNLOADS}"),
 
-    EXTRACT_SOURCE("Copy source from $PROPERTY_DOWNLOADS_DIR to $PROPERTY_SOURCE_DIR"),
-    PREPARE_SOURCE("Prepare source in $PROPERTY_SOURCE_DIR for the CONFIGURE task"),
-    CONFIGURE("Configure source in $PROPERTY_SOURCE_DIR for the BUILD task"),
-    BUILD("Build source in $PROPERTY_SOURCE_DIR and install in $PROPERTY_BUILD_DIR"),
-    CREATE_ARCHIVE("Create archive from $PROPERTY_BUILD_DIR in $PROPERTY_PACKAGES_DIR"),
-    EXTRACT_ARCHIVE("Extract archive from $PROPERTY_PACKAGES_DIR to $PROPERTY_LIBS_DIR"),
-    PROVIDE_ARCHIVE("Either build the archive or use PROPERTY_MAVEN_ARCHIVE to download to $PROPERTY_PACKAGES_DIR"),
-    PROVIDE_MAVEN_ARCHIVE("Download prebuilt archive from maven to $PROPERTY_PACKAGES_DIR"),
-    GENERATE_INTEROPS("Generate interops def file in $PROPERTY_CINTEROPS_DIR"),
+    EXTRACT_SOURCE("Copy source from ${XtrasPath.DOWNLOADS} to ${XtrasPath.SOURCE}"),
+    PREPARE_SOURCE("Prepare source in ${XtrasPath.SOURCE} for the CONFIGURE task"),
+    CONFIGURE("Configure source in ${XtrasPath.SOURCE} for the BUILD task"),
+    BUILD("Build source in ${XtrasPath.SOURCE} and install in ${XtrasPath.BUILD}"),
+    CREATE_ARCHIVE("Create archive from ${XtrasPath.BUILD} in ${XtrasPath.PACKAGES}"),
+    EXTRACT_ARCHIVE("Extract archive from ${XtrasPath.PACKAGES} to ${XtrasPath.LIBS}"),
+    PROVIDE_ARCHIVE("Either build the archive or use PROPERTY_MAVEN_ARCHIVE to download to ${XtrasPath.PACKAGES}"),
+    PROVIDE_MAVEN_ARCHIVE("Download prebuilt archive from maven to ${XtrasPath.PACKAGES}"),
+    GENERATE_INTEROPS("Generate interops def file in ${XtrasPath.INTEROPS}"),
     ;
 
     val taskName: String

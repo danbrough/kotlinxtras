@@ -1,6 +1,6 @@
 pluginManagement {
   repositories {
-    maven(settings.extra.properties["xtras.dir.maven"] ?: rootDir.resolve("maven"))
+    maven("/usr/local/xtras/maven")
     maven("https://s01.oss.sonatype.org/content/groups/staging")
     mavenCentral()
     gradlePluginPortal()
@@ -16,6 +16,7 @@ plugins {
 val include: String? by settings
 
 rootProject.name = "xtras"
+
 
 includeBuild("plugin")
 
@@ -43,3 +44,4 @@ if (include == null || include == "demos"){
     project(":demos:${it}_demo").projectDir = rootDir.resolve("demos/$it")
   }
 }
+
