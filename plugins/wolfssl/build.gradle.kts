@@ -18,7 +18,6 @@ version = libs.versions.wolfssl.get()
 
 dependencies {
   implementation(libs.xtras.plugin)
-  implementation(libs.org.danbrough.klog)
   implementation(libs.kotlin.gradle.plugin)
 }
 

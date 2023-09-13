@@ -1,3 +1,4 @@
+import org.danbrough.xtras.xtrasMavenDir
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
@@ -10,7 +11,7 @@ plugins {
 val publishingVersion: String = libs.versions.xtrasPublishing.get()
 val publishingGroup: String = libs.versions.xtrasPackage.get()
 
-
+println("MAVEN DIR: $xtrasMavenDir")
 
 allprojects {
 

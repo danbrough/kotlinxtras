@@ -58,14 +58,11 @@ fun Project.xtrasWolfSSL(
   supportedTargets.forEach { target ->
 
 
-    println("REGISTERING SOURCE TASK FOR WOLFSSL: $target")
-
     val prepareSourceTask = xtrasRegisterSourceTask(XtrasLibrary.TaskName.PREPARE_SOURCE, target) {
       commandLine("./autogen.sh")
       outputs.file(workingDir.resolve("configure"))
     }
 
-    println("REGISTERED PREPARE TASK: $prepareSourceTask")
 
     val configureSourceTask = xtrasRegisterSourceTask(XtrasLibrary.TaskName.CONFIGURE, target) {
       dependsOn(prepareSourceTask)

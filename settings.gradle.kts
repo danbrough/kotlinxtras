@@ -19,6 +19,7 @@ rootProject.name = "xtras"
 
 
 includeBuild("plugin")
+//includeBuild("plugin_settings")
 
 
 if (include == null || include == "plugins") {
