@@ -13,8 +13,8 @@ import org.gradle.api.Project
 object Curl {
   const val extensionName = "curl"
   const val sourceURL = "https://github.com/curl/curl.git"
-  const val defaultVersion = "8.2.1"
-  const val defaultCommit = "curl-8_2_1"
+  const val defaultVersion = "8.3.0"
+  const val defaultCommit = "curl-8_3_0"
 }
 
 
