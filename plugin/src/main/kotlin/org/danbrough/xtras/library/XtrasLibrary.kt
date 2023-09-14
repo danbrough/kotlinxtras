@@ -275,3 +275,10 @@ inline fun <reified T : Task> XtrasLibrary.registerXtrasTask(
   return taskName
 }
 
+
+fun XtrasLibrary.libraryPath(target: KonanTarget):String =
+  (libraryDeps + this).joinToString(File.pathSeparator) {
+    it.libsDir(target).resolve("lib").absolutePath
+  }
+
+
