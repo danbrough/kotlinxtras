@@ -122,7 +122,14 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
         "linuxArm64" -> KonanTarget.LINUX_ARM64
         "macosArm64" -> KonanTarget.MACOS_ARM64
         "macosX64" -> KonanTarget.MACOS_X64
+        "iosArm64" -> KonanTarget.IOS_ARM64
+        "iosX64" -> KonanTarget.IOS_X64
+        "watchosArm64" -> KonanTarget.WATCHOS_ARM64
+        "watchosX64" -> KonanTarget.WATCHOS_X64
         "androidNativeArm64" -> KonanTarget.ANDROID_ARM64
+        "androidNativeArm32" -> KonanTarget.ANDROID_ARM32
+        "androidNativeX86" -> KonanTarget.ANDROID_X86
+        "androidNativeX64" -> KonanTarget.ANDROID_X64
         else -> error("Unhandled targetName: $targetName")
       }
       if (env.containsKey(SHARED_LIBRARY_PATH_NAME))
