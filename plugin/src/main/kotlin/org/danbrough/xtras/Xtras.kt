@@ -102,7 +102,7 @@ private fun Project.xtrasPath(path: XtrasPath): File {
     else
       xtrasPath(XtrasPath.XTRAS).resolve(path.name.lowercase())
   else if (pathValue.startsWith("./"))
-    file(pathValue)
+    rootProject.file(pathValue)
   else File(pathValue)
 }
 // ?: rootProject.layout.buildDirectory.dir("xtras").get().asFile

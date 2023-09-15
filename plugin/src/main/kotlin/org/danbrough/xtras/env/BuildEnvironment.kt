@@ -18,6 +18,7 @@ import org.danbrough.xtras.xtrasLogsDir
 import org.danbrough.xtras.xtrasMavenDir
 import org.danbrough.xtras.xtrasNdkDir
 import org.danbrough.xtras.xtrasPackagesDir
+import org.danbrough.xtras.xtrasSourceDir
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
 import org.gradle.kotlin.dsl.create
@@ -140,7 +141,7 @@ open class BuildEnvironment : Cloneable {
       KonanTarget.LINUX_ARM32_HFP -> {
         if (HostManager.hostIsLinux)
           clangArgs =
-            "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/arm-unknown-linux-gnueabihf-gcc-8.3.0-glibc-2.19-kernel-4.9-2 --sysroot=$konanDir/dependencies/arm-unknown-linux-gnueabihf-gcc-8.3.0-glibc-2.19-kernel-4.9-2/arm-unknown-linux-gnueabihf/sysroot"
+            "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/msys2-mingw-w64-x86_64-2 --sysroot=$konanDir/dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32"
       }
 
       KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64, KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_ARM64, KonanTarget.IOS_X64, KonanTarget.IOS_ARM64 -> {
@@ -150,7 +151,11 @@ open class BuildEnvironment : Cloneable {
       }
 
       KonanTarget.MINGW_X64 -> {
+        //clangArgs = "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/aarch64-unknown-linux-gnu-gcc-8.3.0-glibc-2.25-kernel-4.9-2 --sysroot=$konanDir/dependencies/aarch64-unknown-linux-gnu-gcc-8.3.0-glibc-2.25-kernel-4.9-2/aarch64-unknown-linux-gnu/sysroot"
 
+        put("CC","x86_64-w64-mingw32-cc")
+        put("AR","x86_64-w64-mingw32-ar")
+        put("RANLIB","x86_64-w64-mingw32-ranlib")
       }
 
       KonanTarget.ANDROID_X64, KonanTarget.ANDROID_X86, KonanTarget.ANDROID_ARM64, KonanTarget.ANDROID_ARM32 -> {
@@ -240,6 +245,7 @@ open class BuildEnvironment : Cloneable {
                   ${XtrasPath.XTRAS.propertyName}:        ${project.xtrasDir}
                   ${XtrasPath.LIBS.propertyName}:       ${project.xtrasLibsDir}
                   ${XtrasPath.DOWNLOADS.propertyName}:  ${project.xtrasDownloadsDir}
+                  ${XtrasPath.SOURCE.propertyName}:  ${project.xtrasSourceDir}
                   ${XtrasPath.PACKAGES.propertyName}:   ${project.xtrasPackagesDir}
                   ${XtrasPath.DOCS.propertyName}:       ${project.xtrasDocsDir}
                   ${XtrasPath.INTEROPS.propertyName}:   ${project.xtrasCInteropsDir}
