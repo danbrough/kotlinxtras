@@ -24,10 +24,10 @@ includeBuild("plugin")
 
 if (include == null || include == "plugins") {
   listOf(
-   "wolfssl",
+    "wolfssl",
     "curl",
-   // "wolfssh",
-  //  "openssl",
+    // "wolfssh",
+    //  "openssl",
   ).forEach {
     include(":plugins:$it")
     project(":plugins:$it").projectDir = rootDir.resolve("plugins/$it")
@@ -39,13 +39,13 @@ if (include == null || include == "binaries")
 
 
 
-if (include == null || include == "demos"){
-include(":test")
+if (include == null || include == "demos") {
+  include(":test")
 
-  listOf("curl").forEach {
-    include(":demos:${it}_demo")
-    project(":demos:${it}_demo").projectDir = rootDir.resolve("demos/$it")
-  }
+  /*  listOf("curl").forEach {
+      include(":demos:${it}_demo")
+      project(":demos:${it}_demo").projectDir = rootDir.resolve("demos/$it")
+    }*/
 }
 
 

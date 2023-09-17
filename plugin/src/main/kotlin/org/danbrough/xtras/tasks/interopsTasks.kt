@@ -147,7 +147,7 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
       //println("adding dependency on $it for $name")
       dependsOn(it)
     }
-    dependsOn(extractArchiveTaskName(konanTarget))
+    mustRunAfter(extractArchiveTaskName(konanTarget))
 
     dependsOn(generateInteropsTaskName())
   }
