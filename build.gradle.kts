@@ -1,3 +1,4 @@
+import org.danbrough.xtras.XTRAS_REPO_NAME
 import org.danbrough.xtras.xtrasMavenDir
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
@@ -11,7 +12,7 @@ plugins {
 val publishingVersion: String = libs.versions.xtrasPublishing.get()
 val publishingGroup: String = libs.versions.xtrasPackage.get()
 
-println("MAVEN DIR: $xtrasMavenDir")
+//println("MAVEN DIR: $xtrasMavenDir")
 
 allprojects {
 
@@ -19,8 +20,8 @@ allprojects {
   version = publishingVersion
 
   repositories {
-    maven("/usr/local/xtras/maven") {
-      name = "xtras"
+    maven(xtrasMavenDir) {
+      name = XTRAS_REPO_NAME
     }
     maven("https://s01.oss.sonatype.org/content/groups/staging/")
     mavenCentral()
@@ -28,13 +29,13 @@ allprojects {
 
 
   afterEvaluate {
-    println("PROJECT IS: $name")
+    //println("PROJECT IS: $name")
 
     extensions.findByType<PublishingExtension>()?.apply {
-      println("found publishing for $name")
+      //println("found publishing for $name")
       repositories {
-        maven("/usr/local/xtras/maven") {
-          name = "xtras"
+        maven(xtrasMavenDir) {
+          name = XTRAS_REPO_NAME
         }
       }
     }

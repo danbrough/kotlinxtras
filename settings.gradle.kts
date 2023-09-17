@@ -1,6 +1,17 @@
+
+
+
 pluginManagement {
   repositories {
-    maven("/usr/local/xtras/maven")
+    val xtrasMavenDir = settings.extra.properties.let { properties->
+      properties.getOrDefault("xtras.dir.maven",null)?.toString() ?:
+      properties.getOrDefault("xtras.dir",null)?.toString()?.let { it + File.separator + "maven" }
+      ?: error("Neither xtras.dir is not set")
+    }
+
+    println("XTRAS_MAVEN_DIR = $xtrasMavenDir")
+
+    maven(xtrasMavenDir)
     maven("https://s01.oss.sonatype.org/content/groups/staging")
     mavenCentral()
     gradlePluginPortal()
