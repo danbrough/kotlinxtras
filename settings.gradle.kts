@@ -6,7 +6,7 @@ pluginManagement {
     val xtrasMavenDir = settings.extra.properties.let { properties->
       properties.getOrDefault("xtras.dir.maven",null)?.toString() ?:
       properties.getOrDefault("xtras.dir",null)?.toString()?.let { it + File.separator + "maven" }
-      ?: error("Neither xtras.dir is not set")
+      ?: error("Gradle property xtras.dir is not set.")
     }
 
     println("XTRAS_MAVEN_DIR = $xtrasMavenDir")

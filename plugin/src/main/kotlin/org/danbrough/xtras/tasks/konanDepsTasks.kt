@@ -1,5 +1,6 @@
 package org.danbrough.xtras.tasks
 
+import org.danbrough.xtras.XTRAS_TASK_GROUP
 import org.danbrough.xtras.log
 import org.danbrough.xtras.platformName
 import org.gradle.api.Project
@@ -91,6 +92,7 @@ internal fun Project.registerKonanDepsTasks(target: KonanTarget) {
   ) {
     dependsOn(depsProjectTask)
     dir = depsProjectDir
+    group = XTRAS_TASK_GROUP
     tasks = listOf("compileKotlin${target.platformName.capitalized()}")
     doFirst {
       project.log("$name: running compileKotlin${target.platformName.capitalized()}")
