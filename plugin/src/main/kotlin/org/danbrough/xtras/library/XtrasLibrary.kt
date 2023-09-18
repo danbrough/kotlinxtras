@@ -229,7 +229,7 @@ fun Project.xtrasCreateLibrary(
       supportedTargets = defaultSupportedTargets()
     configure()
 
-    this@apply.registerTasks()
+    registerTasks()
   }
 }
 
@@ -260,17 +260,18 @@ inline fun <reified T : Task> XtrasLibrary.registerXtrasTask(
   val generalTaskName = xtrasTaskName(name, libName)
   println("registerXtrasTask: name:$name target:$target generalTaskName:$generalTaskName")
 
-  if (project.tasks.findByName(generalTaskName) == null)
-    project.tasks.register(generalTaskName) {
+  val generalTask = project.tasks.findByName(generalTaskName) ?:
+    project.tasks.create(generalTaskName) {
       group = XTRAS_TASK_GROUP
       description = "Runs ${generalTaskName}[Target] for all targets"
     }
 
   println("registerXtrasTask: registering task: $taskName")
   project.tasks.register<T>(taskName) {
-    dependsOn(generalTaskName)
     configure()
   }
+
+  generalTask.dependsOn(taskName)
 
   return taskName
 }
