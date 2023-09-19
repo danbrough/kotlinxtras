@@ -197,13 +197,17 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
     }
 
   project.tasks.withType(CInteropProcess::class.java) {
+    this.doFirst {
+      println("RUNNING CINTEROPS for $name")
+    }
     (libraryDeps + this@registerGenerateInteropsTask).map { it.extractArchiveTaskName(konanTarget) }.forEach {
       //println("adding dependency on $it for $name")
       dependsOn(it)
     }
 
 
-    mustRunAfter(generateInteropsTaskName())
+    if (generateConfig)
+      dependsOn(generateInteropsTaskName())
   }
 }
 

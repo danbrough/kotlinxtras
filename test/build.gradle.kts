@@ -9,13 +9,17 @@ plugins {
   alias(libs.plugins.xtras.curl)
 }
 
-val ssl = xtrasWolfSSL{
+val ssl = xtrasWolfSSL {
 
 }
 
-xtrasCurl(ssl){
+xtrasCurl(ssl) {
 }
 
+
+dependencies {
+  project(":binaries")
+}
 
 kotlin {
   linuxX64()
