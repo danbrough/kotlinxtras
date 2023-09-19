@@ -247,7 +247,9 @@ private fun XtrasLibrary.registerTasks() {
     registerArchiveTasks(it)
   }
 
-  registerGenerateInteropsTask()
+  project.afterEvaluate {
+    registerGenerateInteropsTask()
+  }
 }
 
 inline fun <reified T : Task> XtrasLibrary.registerXtrasTask(
@@ -260,8 +262,8 @@ inline fun <reified T : Task> XtrasLibrary.registerXtrasTask(
   val generalTaskName = xtrasTaskName(name, libName)
   //println("registerXtrasTask: name:$name target:$target generalTaskName:$generalTaskName")
 
-  val generalTask = project.tasks.findByName(generalTaskName) ?:
-    project.tasks.create(generalTaskName) {
+  val generalTask =
+    project.tasks.findByName(generalTaskName) ?: project.tasks.create(generalTaskName) {
       group = XTRAS_TASK_GROUP
       description = "Runs ${generalTaskName}[Target] for all targets"
     }
@@ -277,7 +279,7 @@ inline fun <reified T : Task> XtrasLibrary.registerXtrasTask(
 }
 
 
-fun XtrasLibrary.libraryPath(target: KonanTarget):String =
+fun XtrasLibrary.libraryPath(target: KonanTarget): String =
   (libraryDeps + this).joinToString(File.pathSeparator) {
     it.libsDir(target).resolve("lib").absolutePath
   }

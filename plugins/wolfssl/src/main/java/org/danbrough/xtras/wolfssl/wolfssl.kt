@@ -10,6 +10,7 @@ import org.danbrough.xtras.log
 import org.danbrough.xtras.source.gitSource
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 const val WOLFSSL_VERSION = "5.6.3"
@@ -59,7 +60,10 @@ fun Project.xtrasWolfSSL(
 
 
     val prepareSourceTask = xtrasRegisterSourceTask(XtrasLibrary.TaskName.PREPARE_SOURCE, target) {
-      commandLine("./autogen.sh")
+      if (HostManager.hostIsMingw) commandLine(
+        buildEnvironment.binaries.bash, "-c", "./autogen.sh"
+      )
+      else commandLine("./autogen.sh")
       outputs.file(workingDir.resolve("configure"))
     }
 
@@ -70,7 +74,7 @@ fun Project.xtrasWolfSSL(
       val configureOptions = mutableListOf(
         "./configure",
         "--host=${target.hostTriplet}",
-        "--prefix=${buildDir(target)}",
+        "--prefix=${buildDir(target).absolutePath.replace('\\', '/')}",
 //      "--disable-fasthugemath",
 //      "--disable-bump",
 //      "--enable-fortress",
@@ -121,7 +125,7 @@ fun Project.xtrasWolfSSL(
           // configureOptions.add("--disable-asm")
         }
 
-        KonanTarget.MACOS_ARM64,KonanTarget.IOS_ARM64 -> {
+        KonanTarget.MACOS_ARM64, KonanTarget.IOS_ARM64 -> {
           configureOptions.add("--disable-asm")
         }
 
@@ -134,7 +138,10 @@ fun Project.xtrasWolfSSL(
 //        "--enable-all",
 //        "--disable-crl-monitor",
 //      )
-      commandLine(configureOptions)
+      if (HostManager.hostIsMingw) commandLine(
+        buildEnvironment.binaries.bash, "-c", configureOptions.joinToString(" ")
+      )
+      else commandLine(configureOptions)
 
 
     }
@@ -147,7 +154,7 @@ fun Project.xtrasWolfSSL(
       dependsOn(configureSourceTask)
       outputs.dir(buildDir(target))
       commandLine("make", "install")
-    }.also{
+    }.also {
       println("REGISTERED BUILD TASK: $it")
     }
   }
