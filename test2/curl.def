@@ -1,0 +1,25 @@
+
+package = libcurl
+
+headers = curl/curl.h
+linkerOpts.linux = -l:libwolfssl.a -l:libcurl.a -lz
+linkerOpts.mingwX64 = -l:libwolfssl.a -l:libcurl.a -lz
+#linkerOpts =  -lz -lssl -lcrypto -lcurl
+staticLibraries.linux = libcurl.a libwolfssl.a
+staticLibraries.mingwX64 = libcurl.a libwolfssl.a
+
+#staticLibraries.android = libcurl.a
+
+
+compilerOpts.linux_arm64 = -I/home/dan/workspace/xtras/xtras/libs/curl/8.3.0/linuxArm64/include
+linkerOpts.linux_arm64 = -L/home/dan/workspace/xtras/xtras/libs/curl/8.3.0/linuxArm64/lib
+libraryPaths.linux_arm64 = /home/dan/workspace/xtras/xtras/libs/curl/8.3.0/linuxArm64/lib /home/dan/workspace/xtras/xtras/libs/wolfSSL/5.6.3/linuxArm64/lib
+
+compilerOpts.linux_x64 = -I/home/dan/workspace/xtras/xtras/libs/curl/8.3.0/linuxX64/include
+linkerOpts.linux_x64 = -L/home/dan/workspace/xtras/xtras/libs/curl/8.3.0/linuxX64/lib -L/home/dan/workspace/xtras/xtras/libs/wolfSSL/5.6.3/linuxX64/lib
+libraryPaths.linux_x64 = /home/dan/workspace/xtras/xtras/libs/curl/8.3.0/linuxX64/lib /home/dan/workspace/xtras/xtras/libs/wolfSSL/5.6.3/linuxX64/lib
+
+compilerOpts.mingw_x64 = -I/home/dan/workspace/xtras/xtras/libs/curl/8.3.0/mingwX64/include
+linkerOpts.mingw_x64 = -L/home/dan/workspace/xtras/xtras/libs/curl/8.3.0/mingwX64/lib -L/home/dan/workspace/xtras/xtras/libs/wolfSSL/5.6.3/mingwX64/lib
+libraryPaths.mingw_x64 = /home/dan/workspace/xtras/xtras/libs/curl/8.3.0/mingwX64/lib /home/dan/workspace/xtras/xtras/libs/wolfSSL/5.6.3/mingwX64/lib
+
