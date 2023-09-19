@@ -11,8 +11,6 @@ xtras-curl = { id = "org.danbrough.xtras.curl", version.ref = "curl" }
 xtras-wolfssh = { id = "org.danbrough.xtras.wolfssh", version.ref = "wolfssh" }
 xtras-openssl = { id = "org.danbrough.xtras.openssl", version.ref = "openssl" }
 
-
-
 [versions]
 
 kotlin = "1.9.10"

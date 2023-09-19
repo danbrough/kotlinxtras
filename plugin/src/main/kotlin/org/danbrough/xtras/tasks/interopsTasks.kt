@@ -105,7 +105,9 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
         val env = it.runTask!!.environment
         if (env.containsKey(SHARED_LIBRARY_PATH_NAME))
           env[SHARED_LIBRARY_PATH_NAME] =
-            env[SHARED_LIBRARY_PATH_NAME]!!.toString() + File.pathSeparatorChar + libraryPath(konanTarget)
+            env[SHARED_LIBRARY_PATH_NAME]!!.toString() + File.pathSeparatorChar + libraryPath(
+              konanTarget
+            )
         else
           env[SHARED_LIBRARY_PATH_NAME] = libsDir(konanTarget).resolve("lib")
         project.log("Setting $SHARED_LIBRARY_PATH_NAME for $konanTarget to ${env[SHARED_LIBRARY_PATH_NAME]}")
@@ -115,7 +117,7 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
     project.tasks.withType<KotlinNativeTest> {
       val env = environment.toMutableMap()
       project.log("predefined targets: ${KonanTarget.predefinedTargets.keys.joinToString(",")}")
-      val konanTarget = when (targetName){
+      val konanTarget = when (targetName) {
         "mingwX64" -> KonanTarget.MINGW_X64
         "linuxX64" -> KonanTarget.LINUX_X64
         "linuxArm32Hfp" -> KonanTarget.LINUX_ARM32_HFP
@@ -133,24 +135,20 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
         else -> error("Unhandled targetName: $targetName")
       }
       if (env.containsKey(SHARED_LIBRARY_PATH_NAME))
-        environment(SHARED_LIBRARY_PATH_NAME,
-          env[SHARED_LIBRARY_PATH_NAME]!!.toString() + File.pathSeparatorChar + libraryPath(konanTarget))
+        environment(
+          SHARED_LIBRARY_PATH_NAME,
+          env[SHARED_LIBRARY_PATH_NAME]!!.toString() + File.pathSeparatorChar + libraryPath(
+            konanTarget
+          )
+        )
       else
-        environment(SHARED_LIBRARY_PATH_NAME,libraryPath(konanTarget))
+        environment(SHARED_LIBRARY_PATH_NAME, libraryPath(konanTarget))
 
     }
   }
 
 
-  project.tasks.withType(CInteropProcess::class.java) {
-    libraryDeps.map { it.extractArchiveTaskName(konanTarget) }.forEach {
-      //println("adding dependency on $it for $name")
-      dependsOn(it)
-    }
-    mustRunAfter(extractArchiveTaskName(konanTarget))
 
-    dependsOn(generateInteropsTaskName())
-  }
 
   if (generateConfig)
     project.tasks.register(generateInteropsTaskName()) {
@@ -199,5 +197,15 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
         println("generated ${config.defFile}")
       }
     }
+
+  project.tasks.withType(CInteropProcess::class.java) {
+    (libraryDeps + this@registerGenerateInteropsTask).map { it.extractArchiveTaskName(konanTarget) }.forEach {
+      //println("adding dependency on $it for $name")
+      dependsOn(it)
+    }
+
+
+    mustRunAfter(generateInteropsTaskName())
+  }
 }
 

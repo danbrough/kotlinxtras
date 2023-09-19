@@ -107,13 +107,11 @@ private fun XtrasLibrary.registerExtractArchiveTask(target: KonanTarget) {
   extractAllTask.dependsOn(taskName)
 
   project.tasks.register<Exec>(taskName) {
-    group = org.danbrough.xtras.XTRAS_TASK_GROUP
+    group = XTRAS_TASK_GROUP
     description =
       "Extracts binary archive for $libName:${target.platformName} to ${libsDir(target)}"
     val archive = archiveFile(target)
     val libDir = libsDir(target)
-
-
 
     if (!archive.exists())
       dependsOn(createArchiveTaskName(target))

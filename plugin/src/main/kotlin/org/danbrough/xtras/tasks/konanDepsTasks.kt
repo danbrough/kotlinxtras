@@ -3,6 +3,7 @@ package org.danbrough.xtras.tasks
 import org.danbrough.xtras.XTRAS_TASK_GROUP
 import org.danbrough.xtras.log
 import org.danbrough.xtras.platformName
+import org.danbrough.xtras.xtrasDir
 import org.gradle.api.Project
 import org.gradle.api.tasks.GradleBuild
 import org.gradle.configurationcache.extensions.capitalized
@@ -20,8 +21,8 @@ internal fun Project.registerKonanDepsTasks(target: KonanTarget) {
 
   if (rootProject.tasks.findByName(target.konanDepsTaskName) != null) return
 
-  val depsProjectDir = File(System.getProperty("java.io.tmpdir")).resolve(
-    ".konandeps/xtrasKonanDeps${
+  val depsProjectDir = xtrasDir.resolve(
+    "konandeps/xtrasKonanDeps${
       target.platformName.replaceFirstChar {
         if (it.isLowerCase()) it.titlecase(
           Locale.getDefault()
