@@ -10,7 +10,6 @@ pluginManagement {
     }
 
     println("XTRAS_MAVEN_DIR = $xtrasMavenDir")
-
     maven(xtrasMavenDir)
     maven("https://s01.oss.sonatype.org/content/groups/staging")
     mavenCentral()

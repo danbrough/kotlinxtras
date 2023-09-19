@@ -258,7 +258,7 @@ inline fun <reified T : Task> XtrasLibrary.registerXtrasTask(
 
   val taskName = xtrasTaskName(name, libName, target)
   val generalTaskName = xtrasTaskName(name, libName)
-  println("registerXtrasTask: name:$name target:$target generalTaskName:$generalTaskName")
+  //println("registerXtrasTask: name:$name target:$target generalTaskName:$generalTaskName")
 
   val generalTask = project.tasks.findByName(generalTaskName) ?:
     project.tasks.create(generalTaskName) {
@@ -266,7 +266,7 @@ inline fun <reified T : Task> XtrasLibrary.registerXtrasTask(
       description = "Runs ${generalTaskName}[Target] for all targets"
     }
 
-  println("registerXtrasTask: registering task: $taskName")
+  //println("registerXtrasTask: registering task: $taskName")
   project.tasks.register<T>(taskName) {
     configure()
   }
