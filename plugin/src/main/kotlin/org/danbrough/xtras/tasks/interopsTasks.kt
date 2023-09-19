@@ -148,8 +148,6 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
   }
 
 
-
-
   if (generateConfig)
     project.tasks.register(generateInteropsTaskName()) {
       group = XTRAS_TASK_GROUP
