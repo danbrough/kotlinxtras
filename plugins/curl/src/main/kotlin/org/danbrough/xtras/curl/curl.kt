@@ -26,12 +26,12 @@ class CurlPlugin : Plugin<Project> {
 
 @XtrasDSLMarker
 fun Project.xtrasCurl(
-  ssl:XtrasLibrary,
+  ssl: XtrasLibrary,
   name: String = Curl.extensionName,
   curlVersion: String = properties.getOrDefault("$name.version", Curl.defaultVersion).toString(),
-  curlCommit: String = properties.getOrDefault("$name.commit",Curl.defaultCommit).toString(),
+  curlCommit: String = properties.getOrDefault("$name.commit", Curl.defaultCommit).toString(),
   configure: XtrasLibrary.() -> Unit = {},
-) = xtrasCreateLibrary(name, curlVersion,ssl) {
+) = xtrasCreateLibrary(name, curlVersion, ssl) {
   gitSource(Curl.sourceURL, curlCommit)
   configure()
 
@@ -44,7 +44,7 @@ fun Project.xtrasCurl(
 
 
     val configureTask = xtrasRegisterSourceTask(XtrasLibrary.TaskName.CONFIGURE, target) {
-      dependsOn(libraryDeps.map{it.extractArchiveTaskName(target)})
+      dependsOn(libraryDeps.map { it.extractArchiveTaskName(target) })
       dependsOn(prepareSourceTask)
       outputs.file(workingDir.resolve("Makefile"))
 
@@ -53,9 +53,10 @@ fun Project.xtrasCurl(
         "--host=${target.hostTriplet}",
         "--with-wolfssl=${ssl.libsDir(target)}",
         //"--with-ca-path=/etc/ssl/certs:/etc/security/cacerts:/etc/ca-certificates",
-         "--with-ca-bundle=/etc/ssl/certs/ca-certificates.crt",
+        "--with-ca-bundle=/etc/ssl/certs/ca-certificates.crt",
         "--prefix=${buildDir(target)}",
         "--disable-ntlm",
+        "--disable-ldap", "--disable-ldaps",
       )
 
       commandLine(configureOptions)
