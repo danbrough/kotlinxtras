@@ -63,7 +63,10 @@ fun Project.xtrasWolfSSL(
       doFirst {
         println("RUNNING AUTOGEN COMMAND: $commandLine")
       }
-      commandLine("./autogen.sh")
+      if (HostManager.hostIsMingw) commandLine(
+        buildEnvironment.binaries.bash, "-c", "./autogen.sh"
+      )
+      else commandLine("./autogen.sh")
       outputs.file(workingDir.resolve("configure"))
     }
 
@@ -138,7 +141,9 @@ fun Project.xtrasWolfSSL(
 //        "--enable-all",
 //        "--disable-crl-monitor",
 //      )
-
+      if (HostManager.hostIsMingw) commandLine(
+        buildEnvironment.binaries.bash, "-c", configureOptions.joinToString(" ")
+      )
       else commandLine(configureOptions)
 
 
@@ -151,7 +156,9 @@ fun Project.xtrasWolfSSL(
     xtrasRegisterSourceTask(XtrasLibrary.TaskName.BUILD, target) {
       dependsOn(configureSourceTask)
       outputs.dir(buildDir(target))
-      commandLine("make", "install")
+      if (HostManager.hostIsMingw) commandLine(
+        buildEnvironment.binaries.bash, "-c", "make install"
+      ) else commandLine("make", "install")
     }.also {
       println("REGISTERED BUILD TASK: $it")
     }

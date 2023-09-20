@@ -278,5 +278,5 @@ fun Project.xtrasBuildEnvironment(configure: BuildEnvironment.() -> Unit = {}): 
     configure()
   }
 
-private val File.filePath: String
+val File.filePath: String
   get() = absolutePath.replace('\\', '/')
