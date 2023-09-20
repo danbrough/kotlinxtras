@@ -92,7 +92,8 @@ open class BuildEnvironment : Cloneable {
   @XtrasDSLMarker
   var defaultEnvironment: Map<String, String> = buildMap {
 
-    put("PATH", basePath.joinToString(File.pathSeparator))
+    if (!HostManager.hostIsMingw) put("PATH", basePath.joinToString(File.pathSeparator))
+    else put("BASH_ENV", "/etc/profile")
 
     put("MAKE", "make -j${Runtime.getRuntime().availableProcessors()}")
 
@@ -143,9 +144,9 @@ open class BuildEnvironment : Cloneable {
       }
 
       KonanTarget.MINGW_X64 -> {
-        if (HostManager.hostIsMingw)
-          clangArgs =
-            "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/msys2-mingw-w64-x86_64-2   --sysroot=$konanDir/dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32"
+        /*     if (HostManager.hostIsMingw) clangArgs = "--target=${target.hostTriplet} --gcc-toolchain=${
+               konanDir.resolve("dependencies/msys2-mingw-w64-x86_64-2").filePath
+             }   --sysroot=${konanDir.resolve("dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32").filePath}"*/
 
         //clangArgs = "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/aarch64-unknown-linux-gnu-gcc-8.3.0-glibc-2.25-kernel-4.9-2 --sysroot=$konanDir/dependencies/aarch64-unknown-linux-gnu-gcc-8.3.0-glibc-2.25-kernel-4.9-2/aarch64-unknown-linux-gnu/sysroot"
 
@@ -156,10 +157,15 @@ open class BuildEnvironment : Cloneable {
 
       KonanTarget.ANDROID_X64, KonanTarget.ANDROID_X86, KonanTarget.ANDROID_ARM64, KonanTarget.ANDROID_ARM32 -> {
         //library.project.log("ADDING NDK TO PATH")
-        val archFolder = if (HostManager.hostIsLinux) "linux-x86_64" else "darwin-x86_64"
+        val archFolder = when {
+          HostManager.hostIsLinux -> "linux-x86_64"
+          HostManager.hostIsMac -> "darwin-x86_64"
+          HostManager.hostIsMingw -> "windows-x86_64"
+          else -> error("Unhandled host: ${HostManager.host}")
+        }
         put(
           "PATH",
-          "${androidNdkDir.resolve("toolchains/llvm/prebuilt/$archFolder/bin").absolutePath}:${
+          "${androidNdkDir.resolve("toolchains/llvm/prebuilt/$archFolder/bin").filePath}${File.pathSeparator}${
             get("PATH")
           }"
         )
@@ -272,3 +278,5 @@ fun Project.xtrasBuildEnvironment(configure: BuildEnvironment.() -> Unit = {}): 
     configure()
   }
 
+private val File.filePath: String
+  get() = absolutePath.replace('\\', '/')

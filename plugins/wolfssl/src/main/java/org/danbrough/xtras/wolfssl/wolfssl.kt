@@ -60,10 +60,10 @@ fun Project.xtrasWolfSSL(
 
 
     val prepareSourceTask = xtrasRegisterSourceTask(XtrasLibrary.TaskName.PREPARE_SOURCE, target) {
-      if (HostManager.hostIsMingw) commandLine(
-        buildEnvironment.binaries.bash, "-c", "./autogen.sh"
-      )
-      else commandLine("./autogen.sh")
+      doFirst {
+        println("RUNNING AUTOGEN COMMAND: $commandLine")
+      }
+      commandLine("./autogen.sh")
       outputs.file(workingDir.resolve("configure"))
     }
 
@@ -138,9 +138,7 @@ fun Project.xtrasWolfSSL(
 //        "--enable-all",
 //        "--disable-crl-monitor",
 //      )
-      if (HostManager.hostIsMingw) commandLine(
-        buildEnvironment.binaries.bash, "-c", configureOptions.joinToString(" ")
-      )
+
       else commandLine(configureOptions)
 
 

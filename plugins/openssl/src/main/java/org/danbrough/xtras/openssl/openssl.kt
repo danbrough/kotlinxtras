@@ -10,6 +10,7 @@ import org.danbrough.xtras.source.gitSource
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 const val OPENSSL_VERSION = "3.1.3"
@@ -27,12 +28,11 @@ class OpenSSLPlugin : Plugin<Project> {
 }
 
 
-
 @XtrasDSLMarker
 fun Project.xtrasOpenSSL(
   name: String = OpenSSL.extensionName,
-  version: String = properties.getOrDefault("openssl.version",OPENSSL_VERSION).toString(),
-  commit: String = properties.getOrDefault("openssl.commit",  OPENSSL_COMMIT).toString(),
+  version: String = properties.getOrDefault("openssl.version", OPENSSL_VERSION).toString(),
+  commit: String = properties.getOrDefault("openssl.commit", OPENSSL_COMMIT).toString(),
   configure: XtrasLibrary.() -> Unit = {},
 ) = xtrasCreateLibrary(name, version) {
   gitSource(OpenSSL.sourceURL, commit)
@@ -62,21 +62,32 @@ fun Project.xtrasOpenSSL(
       dependsOn(prepareSourceTask)
       outputs.file(workingDir.resolve("Makefile"))
      */
-    val configureTask =xtrasRegisterSourceTask(XtrasLibrary.TaskName.CONFIGURE, target) {
+    val configureTask = xtrasRegisterSourceTask(XtrasLibrary.TaskName.CONFIGURE, target) {
       dependsOn(libraryDeps.map { it.extractArchiveTaskName(target) })
       outputs.file(workingDir.resolve("Makefile"))
       val args = mutableListOf(
-        "./Configure", target.opensslPlatform, "no-tests", "threads", "--prefix=${buildDir(target)}" ,"--libdir=lib",
+        "./Configure",
+        target.opensslPlatform,
+        "no-tests",
+        "threads",
+        "--prefix=${buildDir(target).absolutePath.replace('\\', '/')}",
+        "--libdir=lib",
       )
 
       if (target.family == Family.ANDROID) args += "-D__ANDROID_API__=21"
-      else if (target.family == Family.MINGW) args += "--cross-compile-prefix=${target.hostTriplet}-"
-      environment("CFLAGS", "  -Wno-macro-redefined ")
+      /*      else if (target.family == Family.MINGW) args += "--cross-compile-prefix=${target.hostTriplet}-"
+            environment("CFLAGS", "  -Wno-macro-redefined ")*/
 
-      commandLine(args)
+      if (HostManager.hostIsMingw) commandLine(
+        buildEnvironment.binaries.bash, "-c", args.joinToString(" ")
+      )
+      else commandLine(args)
     }
 
-    val buildTaskName = xtrasRegisterSourceTask(XtrasLibrary.TaskName.BUILD, target) {
+    xtrasRegisterSourceTask(XtrasLibrary.TaskName.BUILD, target) {
+      doFirst {
+        project.log("running make install with CC=${environment["CC"]}")
+      }
       dependsOn(configureTask)
       outputs.dir(buildDir(target))
       commandLine("make", "install_sw")
