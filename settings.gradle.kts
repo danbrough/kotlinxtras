@@ -1,8 +1,10 @@
 pluginManagement {
   repositories {
     val xtrasMavenDir = settings.extra.properties.let { properties ->
-      properties.getOrDefault("xtras.dir.maven", null)?.toString() ?: properties.getOrDefault("xtras.dir", null)
-        ?.toString()?.let { File(it).resolve("maven").absolutePath } ?: error("Gradle property xtras.dir is not set.")
+      properties.getOrDefault("xtras.dir.maven", null)?.toString()
+        ?: properties.getOrDefault("xtras.dir", null)
+          ?.toString()?.let { File(it).resolve("maven").absolutePath }
+        ?: error("Gradle property xtras.dir is not set.")
     }
 
     println("XTRAS_MAVEN_DIR = $xtrasMavenDir")
@@ -30,10 +32,10 @@ includeBuild("plugin")
 
 if (include == null || include == "plugins") {
   listOf(
-    "wolfssl",
+    //"wolfssl",
     "curl",
     // "wolfssh",
-    //  "openssl",
+    "openssl",
   ).forEach {
     include(":plugins:$it")
     project(":plugins:$it").projectDir = rootDir.resolve("plugins/$it")

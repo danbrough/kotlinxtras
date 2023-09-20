@@ -51,12 +51,14 @@ fun Project.xtrasCurl(
       val configureOptions = mutableListOf(
         "./configure",
         "--host=${target.hostTriplet}",
-        "--with-wolfssl=${ssl.libsDir(target)}",
+        "--with-openssl=${ssl.libsDir(target)}",
         //"--with-ca-path=/etc/ssl/certs:/etc/security/cacerts:/etc/ca-certificates",
         "--with-ca-bundle=/etc/ssl/certs/ca-certificates.crt",
         "--prefix=${buildDir(target)}",
         "--disable-ntlm",
-        "--disable-ldap", "--disable-ldaps",
+        "--disable-ldap",
+        "--disable-ldaps",
+        "--without-zlib",
       )
 
       commandLine(configureOptions)
@@ -74,8 +76,8 @@ fun Project.xtrasCurl(
     interopsPackage = "libcurl"
     headers = """
       headers = curl/curl.h
-      linkerOpts = -lwolfssl -lcurl -lz 
-      #linkerOpts =  -lz -lssl -lcrypto -lcurl
+      #linkerOpts = -lwolfssl -lcurl -lz 
+      linkerOpts =  -lz -lssl -lcrypto -lcurl
       #staticLibraries.linux = libcurl.a
       #staticLibraries.android = libcurl.a
       

@@ -2,13 +2,13 @@
 import org.danbrough.xtras.curl.xtrasCurl
 import org.danbrough.xtras.env.xtrasBuildEnvironment
 import org.danbrough.xtras.log
-import org.danbrough.xtras.wolfssl.xtrasWolfSSL
+import org.danbrough.xtras.openssl.xtrasOpenSSL
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 
 plugins {
   `kotlin-dsl`
-  alias(libs.plugins.xtras.wolfssl)
+  alias(libs.plugins.xtras.openssl)
   alias(libs.plugins.xtras.curl)
   `maven-publish`
 }
@@ -21,12 +21,11 @@ xtrasBuildEnvironment {
 }
 
 
-val ssl = xtrasWolfSSL {
+val ssl = xtrasOpenSSL {
   resolveBinariesFromMaven = deferToMaven
-  project.log("xtrasWolfSSL configured")
+  project.log("xtrasOpenSSL configured")
 }
-
 
 xtrasCurl(ssl){
-
 }
+

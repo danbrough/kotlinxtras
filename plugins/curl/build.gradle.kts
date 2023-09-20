@@ -1,6 +1,4 @@
 import org.danbrough.xtras.env.xtrasBuildEnvironment
-import org.danbrough.xtras.xtrasBuildDir
-import org.danbrough.xtras.xtrasMavenDir
 
 plugins {
   //alias(libs.plugins.kotlinMultiplatform)

@@ -1,15 +1,29 @@
+import org.danbrough.xtras.env.xtrasBuildEnvironment
+
 plugins {
   //alias(libs.plugins.kotlinMultiplatform)
-  alias(libs.plugins.kotlinXtras)
+  alias(libs.plugins.xtras)
   `kotlin-dsl`
   `maven-publish`
 }
 
-version = libs.versions.openssl.get()
+
+xtrasBuildEnvironment {
+  javaLanguageVersion = 8
+}
+
+group = libs.versions.xtrasPackage.get()
+version = libs.versions.curl.get()
+
 
 dependencies {
-  implementation(project(":plugin"))
+  //add("compileOnly", kotlin("gradle-plugin"))
+  //add("compileOnly", kotlin("gradle-plugin-api"))
+  implementation(libs.xtras.plugin)
+  implementation(libs.kotlin.gradle.plugin)
 }
+
+
 
 gradlePlugin {
   plugins {

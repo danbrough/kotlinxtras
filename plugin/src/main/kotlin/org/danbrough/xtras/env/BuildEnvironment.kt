@@ -143,6 +143,10 @@ open class BuildEnvironment : Cloneable {
       }
 
       KonanTarget.MINGW_X64 -> {
+        if (HostManager.hostIsMingw)
+          clangArgs =
+            "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/msys2-mingw-w64-x86_64-2   --sysroot=$konanDir/dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32"
+
         //clangArgs = "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/aarch64-unknown-linux-gnu-gcc-8.3.0-glibc-2.25-kernel-4.9-2 --sysroot=$konanDir/dependencies/aarch64-unknown-linux-gnu-gcc-8.3.0-glibc-2.25-kernel-4.9-2/aarch64-unknown-linux-gnu/sysroot"
 
         //   put("CC", "x86_64-w64-mingw32-gcc")

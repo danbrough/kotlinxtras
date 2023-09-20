@@ -75,6 +75,7 @@ fun Project.xtrasWolfSSL(
         "./configure",
         "--host=${target.hostTriplet}",
         "--prefix=${buildDir(target).absolutePath.replace('\\', '/')}",
+
 //      "--disable-fasthugemath",
 //      "--disable-bump",
 //      "--enable-fortress",
@@ -91,26 +92,25 @@ fun Project.xtrasWolfSSL(
         "--enable-ed448",
         "--enable-sha512",
         "--with-max-rsa-bits=8192",
-        "--enable-altcertchains",
-        "--enable-certreq",//        Enable cert request generation (default: disabled)
-        "--enable-certext",//        Enable cert request extensions (default: disabled)
+        //"--enable-altcertchains",
+        //"--enable-certreq",//        Enable cert request generation (default: disabled)
+        //"--enable-certext",//        Enable cert request extensions (default: disabled)
         //  --enable-certgencache   Enable decoded cert caching (default: disabled)
         //--enable-altcertchains  Enable using alternative certificate chains, only
         //   require leaf certificate to validate to trust root
         //--enable-testcert       Enable Test Cert (default: disabled)
-        "--enable-certservice",
-        "--enable-altcertchains",
+        //"--enable-certservice",
 //      "--enable-writedup",
         "--disable-crypttests",
         "--disable-crypttests-libs",
 
-        "--enable-opensslextra",
+        //"--enable-opensslextra",
         //"--enable-openssh",
         //"--enable-libssh2",
-        "--enable-keygen",
-        "--enable-certgen",
-        "--enable-ssh",
-        "--enable-wolfssh",
+        //"--enable-keygen",
+        //"--enable-certgen",
+        //"--enable-ssh",
+        //"--enable-wolfssh",
         "--disable-examples",
         "--enable-postauth",
 

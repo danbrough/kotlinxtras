@@ -1,19 +1,19 @@
-package org.danbrough.kotlinxtras.openssl
+package org.danbrough.xtras.openssl
 
-import org.danbrough.kotlinxtras.XtrasDSLMarker
-import org.danbrough.kotlinxtras.hostTriplet
-import org.danbrough.kotlinxtras.library.XtrasLibrary
-import org.danbrough.kotlinxtras.library.xtrasCreateLibrary
-import org.danbrough.kotlinxtras.library.xtrasRegisterSourceTask
-import org.danbrough.kotlinxtras.log
-import org.danbrough.kotlinxtras.source.gitSource
+import org.danbrough.xtras.XtrasDSLMarker
+import org.danbrough.xtras.hostTriplet
+import org.danbrough.xtras.library.XtrasLibrary
+import org.danbrough.xtras.library.xtrasCreateLibrary
+import org.danbrough.xtras.library.xtrasRegisterSourceTask
+import org.danbrough.xtras.log
+import org.danbrough.xtras.source.gitSource
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-const val OPENSSL_VERSION = "3.1.2"
-const val OPENSSL_COMMIT = "openssl-3.1.2"
+const val OPENSSL_VERSION = "3.1.3"
+const val OPENSSL_COMMIT = "openssl-3.1.3"
 
 object OpenSSL {
   const val extensionName = "openSSL"
@@ -25,6 +25,7 @@ class OpenSSLPlugin : Plugin<Project> {
     target.log("OpenSSLLPlugin.apply()")
   }
 }
+
 
 
 @XtrasDSLMarker
@@ -55,12 +56,17 @@ fun Project.xtrasOpenSSL(
 
   supportedTargets.forEach { target ->
 
-    val configureTask = configureTaskName(target)
-    xtrasRegisterSourceTask(configureTask, target) {
+    /*
+        val configureTask = xtrasRegisterSourceTask(XtrasLibrary.TaskName.CONFIGURE, target) {
+      dependsOn(libraryDeps.map { it.extractArchiveTaskName(target) })
+      dependsOn(prepareSourceTask)
+      outputs.file(workingDir.resolve("Makefile"))
+     */
+    val configureTask =xtrasRegisterSourceTask(XtrasLibrary.TaskName.CONFIGURE, target) {
       dependsOn(libraryDeps.map { it.extractArchiveTaskName(target) })
       outputs.file(workingDir.resolve("Makefile"))
       val args = mutableListOf(
-        "./Configure", target.opensslPlatform, "no-tests", "threads", "--prefix=${buildDir(target)}"
+        "./Configure", target.opensslPlatform, "no-tests", "threads", "--prefix=${buildDir(target)}" ,"--libdir=lib",
       )
 
       if (target.family == Family.ANDROID) args += "-D__ANDROID_API__=21"
@@ -70,13 +76,13 @@ fun Project.xtrasOpenSSL(
       commandLine(args)
     }
 
-    val buildTaskName = buildTaskName(target)
-    xtrasRegisterSourceTask(buildTaskName, target) {
+    val buildTaskName = xtrasRegisterSourceTask(XtrasLibrary.TaskName.BUILD, target) {
       dependsOn(configureTask)
       outputs.dir(buildDir(target))
       commandLine("make", "install_sw")
       //"make install" requires pod2man which is in /usr/bin/core_perl on archlinux
       //environment("PATH","/usr/bin/core_perl:${environment["PATH"]}")
+
     }
   }
 }
