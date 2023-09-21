@@ -1,6 +1,7 @@
 package org.danbrough.xtras.curl
 
 import org.danbrough.xtras.XtrasDSLMarker
+import org.danbrough.xtras.env.filePath
 import org.danbrough.xtras.hostTriplet
 import org.danbrough.xtras.library.XtrasLibrary
 import org.danbrough.xtras.library.xtrasCreateLibrary
@@ -9,6 +10,7 @@ import org.danbrough.xtras.log
 import org.danbrough.xtras.source.gitSource
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.jetbrains.kotlin.konan.target.HostManager
 
 object Curl {
   const val extensionName = "curl"
@@ -39,29 +41,38 @@ fun Project.xtrasCurl(
     val prepareSourceTask = xtrasRegisterSourceTask(XtrasLibrary.TaskName.PREPARE_SOURCE, target) {
       outputs.file("configure")
       dependsOn(extractSourceTaskName(target))
-      commandLine(buildEnvironment.binaries.autoreconf, "-fi")
+      if (HostManager.hostIsMingw) commandLine(
+        buildEnvironment.binaries.bash, "-c", "${buildEnvironment.binaries.autoreconf} -fi"
+      )
+      else commandLine(buildEnvironment.binaries.autoreconf, "-fi")
     }
 
 
     val configureTask = xtrasRegisterSourceTask(XtrasLibrary.TaskName.CONFIGURE, target) {
       dependsOn(libraryDeps.map { it.extractArchiveTaskName(target) })
       dependsOn(prepareSourceTask)
+
       outputs.file(workingDir.resolve("Makefile"))
 
       val configureOptions = mutableListOf(
         "./configure",
         "--host=${target.hostTriplet}",
-        "--with-openssl=${ssl.libsDir(target)}",
+        "--with-openssl=${ssl.libsDir(target).filePath}",
         //"--with-ca-path=/etc/ssl/certs:/etc/security/cacerts:/etc/ca-certificates",
         "--with-ca-bundle=/etc/ssl/certs/ca-certificates.crt",
-        "--prefix=${buildDir(target)}",
+        "--prefix=${buildDir(target).filePath}",
         "--disable-ntlm",
         "--disable-ldap",
         "--disable-ldaps",
         "--without-zlib",
       )
 
-      commandLine(configureOptions)
+      if (HostManager.hostIsMingw) commandLine(
+        buildEnvironment.binaries.bash,
+        "-c",
+        configureOptions.joinToString(" ")
+      )
+      else commandLine(configureOptions)
     }
 
 

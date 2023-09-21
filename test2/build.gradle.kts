@@ -15,8 +15,8 @@ repositories {
 
 
 kotlin {
-  linuxX64()
-  linuxArm64()
+//  linuxX64()
+//  linuxArm64()
   mingwX64()
   jvm()
 
@@ -47,6 +47,13 @@ kotlin {
       binaries {
         executable("demo") {
           entryPoint = "demo.main"
+          if (project.hasProperty("url"))
+            runTask!!.args = listOf(project.property("url")!!.toString())
+          runTask!!.apply {
+            environment("PATH","/c/xtras/xtras/libs/curl/8.3.0/mingwX64/bin:${environment["PATH"]}")
+            environment("CA_CERT_FILE",project.file("cacert.pem"))
+
+          }
         }
       }
     }
