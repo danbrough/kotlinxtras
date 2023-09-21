@@ -42,21 +42,23 @@ private fun XtrasLibrary.registerArchiveTask(target: KonanTarget) =
         if (it) project.log("skipping $name as ${archive.absolutePath} exists.")
       }
     }
-    workingDir(buildDir(target))
+    val buildDir = buildDir(target)
+    workingDir(buildDir)
     shouldRunAfter(provideMavenArchiveTaskName(target))
 
     doFirst {
-      project.log("creating archive ${archive.absolutePath} from $workingDir")
+      project.log("creating archive ${archive.absolutePath} from $workingDir using $commandLine")
     }
     outputs.file(archive)
     environment(buildEnvironment.getEnvironment(target))
-    if (HostManager.hostIsMingw)
+    if (HostManager.hostIsMingw) {
       commandLine(
         "bash",
         "-c",
-        "${buildEnvironment.binaries.tar} cvpfz ${archive.filePath} --exclude=**share --exclude=**pkgconfig ./"
+        "${buildEnvironment.binaries.tar} -C ${buildDir.filePath} -cvpz -f ${archive.filePath} --exclude='**share' --exclude='**pkgconfig' ./"
       )
-    else
+      println("TAR COMMAND: ${buildEnvironment.binaries.tar} -C ${buildDir.filePath} -cvpz -f ${archive.filePath} --exclude='**share' --exclude='**pkgconfig' ./")
+    } else
       commandLine(
         buildEnvironment.binaries.tar,
         "cvpfz",

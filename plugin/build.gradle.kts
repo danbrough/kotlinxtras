@@ -6,7 +6,7 @@ plugins {
 }
 
 
-val javaLangVersion = 8
+val javaLangVersion = 11
 
 java {
   toolchain.languageVersion.set(JavaLanguageVersion.of(javaLangVersion))

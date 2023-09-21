@@ -81,13 +81,16 @@ open class BuildEnvironment : Cloneable {
   var androidNdkApiVersion = 21
 
 
+  @XtrasDSLMarker
+  var shellPath: File.() -> String = { absolutePath.replace('\\', '/') }
+
   /**
    * The java language version to apply to jvm and kotlin-jvm builds.
    * Not applied if null.
    * default: 8
    */
   @XtrasDSLMarker
-  var javaLanguageVersion: Int? = 8
+  var javaLanguageVersion: Int? = 11
 
   @XtrasDSLMarker
   var defaultEnvironment: Map<String, String> = buildMap {
@@ -143,8 +146,7 @@ open class BuildEnvironment : Cloneable {
         //put("LD", "lld")
       }
 
-      KonanTarget.MINGW_X64 -> {
-        /*     if (HostManager.hostIsMingw) clangArgs = "--target=${target.hostTriplet} --gcc-toolchain=${
+      KonanTarget.MINGW_X64 -> {/*     if (HostManager.hostIsMingw) clangArgs = "--target=${target.hostTriplet} --gcc-toolchain=${
                konanDir.resolve("dependencies/msys2-mingw-w64-x86_64-2").filePath
              }   --sysroot=${konanDir.resolve("dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32").filePath}"*/
 
@@ -279,4 +281,6 @@ fun Project.xtrasBuildEnvironment(configure: BuildEnvironment.() -> Unit = {}): 
   }
 
 val File.filePath: String
-  get() = absolutePath.replace('\\', '/')
+  get() = if (System.getenv("MSYSTEM") == "MINGW64") Runtime.getRuntime()
+    .exec(arrayOf("cygpath", "-u", absolutePath)).inputStream.readAllBytes().decodeToString().trim()
+  else absolutePath
