@@ -1,5 +1,4 @@
 import org.danbrough.xtras.XTRAS_REPO_NAME
-import org.danbrough.xtras.env.filePath
 import org.danbrough.xtras.xtrasMavenDir
 import org.danbrough.xtras.xtrasPom
 import org.gradle.api.tasks.testing.logging.TestLogEvent
@@ -70,14 +69,4 @@ subprojects {
 }
 
 
-tasks.create("thang") {
-  doFirst {
-    val dir =
-      if (project.hasProperty("dir")) File(
-        project.property("dir")!!.toString()
-      ) else File("/")
-    println("-Pdir=${dir.filePath}")
-
-  }
-}
 

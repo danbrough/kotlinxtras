@@ -1,7 +1,7 @@
 package org.danbrough.xtras.curl
 
 import org.danbrough.xtras.XtrasDSLMarker
-import org.danbrough.xtras.env.filePath
+import org.danbrough.xtras.env.cygpath
 import org.danbrough.xtras.hostTriplet
 import org.danbrough.xtras.library.XtrasLibrary
 import org.danbrough.xtras.library.xtrasCreateLibrary
@@ -57,10 +57,10 @@ fun Project.xtrasCurl(
       val configureOptions = mutableListOf(
         "./configure",
         "--host=${target.hostTriplet}",
-        "--with-openssl=${ssl.libsDir(target).filePath}",
-        //"--with-ca-path=/etc/ssl/certs:/etc/security/cacerts:/etc/ca-certificates",
-        "--with-ca-bundle=/etc/ssl/certs/ca-certificates.crt",
-        "--prefix=${buildDir(target).filePath}",
+        "--with-openssl=${ssl.libsDir(target).cygpath(buildEnvironment)}",
+        "--with-ca-path=/etc/ssl/certs:/etc/security/cacerts:/etc/ca-certificates:.",
+        //"--with-ca-bundle=/etc/ssl/certs/ca-certificates.crt",
+        "--prefix=${buildDir(target).cygpath(buildEnvironment)}",
         "--disable-ntlm",
         "--disable-ldap",
         "--disable-ldaps",

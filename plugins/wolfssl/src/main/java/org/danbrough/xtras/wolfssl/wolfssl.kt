@@ -2,7 +2,7 @@ package org.danbrough.xtras.wolfssl
 
 import org.danbrough.xtras.XTRAS_PACKAGE
 import org.danbrough.xtras.XtrasDSLMarker
-import org.danbrough.xtras.env.filePath
+import org.danbrough.xtras.env.cygpath
 import org.danbrough.xtras.hostTriplet
 import org.danbrough.xtras.library.XtrasLibrary
 import org.danbrough.xtras.library.xtrasCreateLibrary
@@ -78,7 +78,7 @@ fun Project.xtrasWolfSSL(
       val configureOptions = mutableListOf(
         "./configure",
         "--host=${target.hostTriplet}",
-        "--prefix=${buildDir(target).filePath}",
+        "--prefix=${buildDir(target).cygpath(buildEnvironment)}",
 
 //      "--disable-fasthugemath",
 //      "--disable-bump",

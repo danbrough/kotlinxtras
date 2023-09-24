@@ -46,6 +46,8 @@ data class Binaries(
   @XtrasDSLMarker var go: String = "go",
 
   @XtrasDSLMarker var bash: String = "bash",
+
+  @XtrasDSLMarker var cygpath: String = "cygpath",
 )
 
 val binaryProperty: Project.(String, String) -> String = { exe, defValue ->
@@ -167,7 +169,7 @@ open class BuildEnvironment : Cloneable {
         }
         put(
           "PATH",
-          "${androidNdkDir.resolve("toolchains/llvm/prebuilt/$archFolder/bin").filePath}${File.pathSeparator}${
+          "${androidNdkDir.resolve("toolchains/llvm/prebuilt/$archFolder/bin").cygpath}${File.pathSeparator}${
             get("PATH")
           }"
         )
@@ -224,6 +226,7 @@ open class BuildEnvironment : Cloneable {
       make = project.binaryProperty("make", make)
       cmake = project.binaryProperty("cmake", cmake)
       bash = project.binaryProperty("bash", bash)
+      cygpath = project.binaryProperty("cygpath", cygpath)
       autoreconf = project.binaryProperty("autoreconf", autoreconf)
     }
 
@@ -266,6 +269,28 @@ open class BuildEnvironment : Cloneable {
       }
     }
   }
+
+
+  enum class CygpathMode(val arg: String) {
+    WINDOWS("-w"), MIXED("-m"), UNIX("-u"), DOS("-d");
+  }
+
+  fun cygpath(
+    path: String,
+    mode: CygpathMode = if (HostManager.hostIsMingw) CygpathMode.UNIX else CygpathMode.MIXED
+  ): String =
+    Runtime.getRuntime().exec(arrayOf(binaries.cygpath, mode.arg, path)).inputStream.readAllBytes()
+      .decodeToString().trim()
+
+
+  fun cygpath(
+    file: File,
+    mode: CygpathMode = if (HostManager.hostIsMingw) CygpathMode.UNIX else CygpathMode.MIXED
+  ) = cygpath(file.absolutePath, mode)
+
+  val File.cygpath: String
+    get() = cygpath(this)
+
 }
 
 const val XTRAS_EXTN_BUILD_ENVIRONMENT = "xtrasBuildEnvironment"
@@ -280,7 +305,8 @@ fun Project.xtrasBuildEnvironment(configure: BuildEnvironment.() -> Unit = {}): 
     configure()
   }
 
-val File.filePath: String
-  get() = if (System.getenv("MSYSTEM") == "MINGW64") Runtime.getRuntime()
-    .exec(arrayOf("cygpath", "-u", absolutePath)).inputStream.readAllBytes().decodeToString().trim()
-  else absolutePath
+
+fun File.cygpath(buildEnvironment: BuildEnvironment) = buildEnvironment.cygpath(this)
+
+
+

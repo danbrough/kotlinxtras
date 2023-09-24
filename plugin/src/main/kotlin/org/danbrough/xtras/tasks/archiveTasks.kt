@@ -2,7 +2,7 @@ package org.danbrough.xtras.tasks
 
 import org.danbrough.xtras.XTRAS_TASK_GROUP
 import org.danbrough.xtras.capitalized
-import org.danbrough.xtras.env.filePath
+import org.danbrough.xtras.env.cygpath
 import org.danbrough.xtras.library.XtrasLibrary
 import org.danbrough.xtras.log
 import org.danbrough.xtras.platformName
@@ -55,9 +55,12 @@ private fun XtrasLibrary.registerArchiveTask(target: KonanTarget) =
       commandLine(
         "bash",
         "-c",
-        "${buildEnvironment.binaries.tar} -C ${buildDir.filePath} -cvpz -f ${archive.filePath} --exclude='**share' --exclude='**pkgconfig' ./"
+        "${buildEnvironment.binaries.tar} -C ${buildDir.cygpath(buildEnvironment)} -cvpz -f ${
+          archive.cygpath(
+            buildEnvironment
+          )
+        } --exclude='**share' --exclude='**pkgconfig' ./"
       )
-      println("TAR COMMAND: ${buildEnvironment.binaries.tar} -C ${buildDir.filePath} -cvpz -f ${archive.filePath} --exclude='**share' --exclude='**pkgconfig' ./")
     } else
       commandLine(
         buildEnvironment.binaries.tar,
