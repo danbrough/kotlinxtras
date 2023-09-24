@@ -43,7 +43,7 @@ if (include == null || include == "plugins") {
 }
 
 if (include == null || include == "binaries") include(":binaries")
-
+include(":test")
 
 //if (include == null || include == "demos") {
 //  //include(":test")

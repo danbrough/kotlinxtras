@@ -1,20 +1,24 @@
 import org.danbrough.xtras.curl.xtrasCurl
-import org.danbrough.xtras.wolfssl.xtrasWolfSSL
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
-  alias(libs.plugins.xtras.wolfssl)
+  alias(libs.plugins.xtras.openssl)
   alias(libs.plugins.xtras.curl)
 }
 
-val ssl = xtrasWolfSSL {
+val openSSLDir = rootDir.resolve("xtras/libs/openSSL/3.1.3")
+val curlDIR = rootDir.resolve("xtras/libs/openSSL/3.1.3")
+
+/*
+val ssl = xtrasOpenSSL {
 
 }
 
 xtrasCurl(ssl) {
 }
+*/
 
 
 dependencies {
@@ -23,9 +27,7 @@ dependencies {
 
 kotlin {
   linuxX64()
-  mingwX64()
-  linuxArm64()
-
+  //mingwX64()
 
   val commonMain by sourceSets.getting {
     dependencies {
@@ -50,12 +52,20 @@ kotlin {
   targets.withType<KotlinNativeTarget> {
     compilations["main"].apply {
       defaultSourceSet.dependsOn(nativeMain)
+      cinterops{
+        create("curl"){
+          packageName = "libcurl"
+          defFile = file("curl.def")
+        }
+      }
     }
     compilations["test"].apply {
       defaultSourceSet.dependsOn(nativeTest)
     }
 
-    this.binaries {
+
+
+    binaries {
       executable("demo", buildTypes = setOf(NativeBuildType.DEBUG)) {
         entryPoint = "demo.main"
         runTask?.environment("CA_CERT_FILE", file("cacert.pem"))

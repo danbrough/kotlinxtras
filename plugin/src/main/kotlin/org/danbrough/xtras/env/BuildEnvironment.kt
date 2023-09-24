@@ -277,16 +277,15 @@ open class BuildEnvironment : Cloneable {
 
   fun cygpath(
     path: String,
-    mode: CygpathMode = if (HostManager.hostIsMingw) CygpathMode.UNIX else CygpathMode.MIXED
   ): String =
-    Runtime.getRuntime().exec(arrayOf(binaries.cygpath, mode.arg, path)).inputStream.readAllBytes()
+    if (HostManager.hostIsMingw)
+    Runtime.getRuntime().exec(arrayOf(binaries.cygpath,CygpathMode.UNIX.arg, path)).inputStream.readAllBytes()
       .decodeToString().trim()
+  else
+    path
 
 
-  fun cygpath(
-    file: File,
-    mode: CygpathMode = if (HostManager.hostIsMingw) CygpathMode.UNIX else CygpathMode.MIXED
-  ) = cygpath(file.absolutePath, mode)
+  fun cygpath(file: File) = cygpath(file.absolutePath)
 
   val File.cygpath: String
     get() = cygpath(this)
