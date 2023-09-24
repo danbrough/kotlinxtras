@@ -27,7 +27,7 @@ dependencies {
 
 kotlin {
   linuxX64()
-  //mingwX64()
+  mingwX64()
 
   val commonMain by sourceSets.getting {
     dependencies {

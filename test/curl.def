@@ -2,12 +2,15 @@
 package = libcurl
 
 headers = curl/curl.h
-linkerOpts = -lssl -lcrypto -lcurl -lz
+linkerOpts.linux = -l:libssl.a -l:libcrypto.a -l:libcurl.a -lz
+linkerOpts.mingw = -l:libssl.a -l:libcrypto.a -l:libcurl.a -L:libzstd.a -lz
 # -lwolfssl  -Wl,-Bdynamic -lcurl  -Wl,-Bdynamic -lz  -Wl,-Bdynamic
 
 #linkerOpts.mingw = -l:libwolfssl.a -l:libcurl.a -l:libz.a
 #linkerOpts =  -lz -lssl -lcrypto -lcurl
-#staticLibraries.linux = libcurl.a libwolfssl.a
+staticLibraries.linux = libcurl.a libcrypto.a libssl.a
+staticLibraries.mingw = libcurl.a libcrypto.a libssl.a libzstd.a
+
 #staticLibraries.mingw_x64 = libcurl.a libwolfssl.a libz.a
 
 #staticLibraries.android = libcurl.a
@@ -22,6 +25,6 @@ linkerOpts.linux_x64 = -L/home/dan/workspace/xtras/xtras/libs/curl/8.3.0/linuxX6
 libraryPaths.linux_x64 = /home/dan/workspace/xtras/xtras/libs/curl/8.3.0/linuxX64/lib /home/dan/workspace/xtras/xtras/libs/openSSL/3.1.3/linuxX64/lib
 
 compilerOpts.mingw_x64 = -I/home/dan/workspace/xtras/xtras/libs/curl/8.3.0/mingwX64/include
-linkerOpts.mingw_x64 = -L/home/dan/workspace/xtras/xtras/libs/curl/8.3.0/mingwX64/lib -L/home/dan/workspace/xtras/xtras/libs/openSSL/3.1.3/mingwX64/lib
-libraryPaths.mingw_x64 = /home/dan/workspace/xtras/xtras/libs/curl/8.3.0/mingwX64/lib /home/dan/workspace/xtras/xtras/libs/openSSL/3.1.3/mingwX64/lib
+linkerOpts.mingw_x64 = -L/home/dan/workspace/xtras/xtras/libs/curl/8.3.0/mingwX64/lib -L/home/dan/workspace/xtras/xtras/libs/openSSL/3.1.3/mingwX64/lib -L/mnt/windows/msys/mingw64/lib/ -L/mnt/windows/msys/usr/lib
+libraryPaths.mingw_x64 = /home/dan/workspace/xtras/xtras/libs/curl/8.3.0/mingwX64/lib /home/dan/workspace/xtras/xtras/libs/openSSL/3.1.3/mingwX64/lib /mnt/windows/msys/mingw64/lib/ /mnt/windows/msys/usr/lib
 
