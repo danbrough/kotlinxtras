@@ -9,7 +9,7 @@ plugins {
 }
 
 val openSSLDir = rootDir.resolve("xtras/libs/openSSL/3.1.3")
-val curlDIR = rootDir.resolve("xtras/libs/openSSL/3.1.3")
+val curlDIR = rootDir.resolve("xtras/libs/curl/8.3.0")
 
 /*
 val ssl = xtrasOpenSSL {
@@ -20,13 +20,15 @@ xtrasCurl(ssl) {
 }
 */
 
+/*
 
 dependencies {
   project(":binaries")
 }
+*/
 
 kotlin {
-  linuxX64()
+  //linuxX64()
   mingwX64()
 
   val commonMain by sourceSets.getting {
@@ -50,10 +52,11 @@ kotlin {
   }
 
   targets.withType<KotlinNativeTarget> {
+    println("CONFIGURING TARGET: ${this.konanTarget}")
     compilations["main"].apply {
       defaultSourceSet.dependsOn(nativeMain)
-      cinterops{
-        create("curl"){
+      cinterops {
+        create("curl") {
           packageName = "libcurl"
           defFile = file("curl.def")
         }
@@ -68,7 +71,7 @@ kotlin {
     binaries {
       executable("demo", buildTypes = setOf(NativeBuildType.DEBUG)) {
         entryPoint = "demo.main"
-        runTask?.environment("CA_CERT_FILE", file("cacert.pem"))
+        runTask?.environment("CA_CERT_FILE", File("C:/xtras/test/cacert.pem"))
         findProperty("args")?.also {
           runTask?.args(it.toString())
         }

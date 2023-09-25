@@ -82,9 +82,9 @@ open class BuildEnvironment : Cloneable {
   @XtrasDSLMarker
   var androidNdkApiVersion = 21
 
-
-  @XtrasDSLMarker
-  var shellPath: File.() -> String = { absolutePath.replace('\\', '/') }
+//
+//  @XtrasDSLMarker
+//  var shellPath: File.() -> String = { absolutePath.replace('\\', '/') }
 
   /**
    * The java language version to apply to jvm and kotlin-jvm builds.
@@ -148,9 +148,13 @@ open class BuildEnvironment : Cloneable {
         //put("LD", "lld")
       }
 
-      KonanTarget.MINGW_X64 -> {/*     if (HostManager.hostIsMingw) clangArgs = "--target=${target.hostTriplet} --gcc-toolchain=${
-               konanDir.resolve("dependencies/msys2-mingw-w64-x86_64-2").filePath
-             }   --sysroot=${konanDir.resolve("dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32").filePath}"*/
+      KonanTarget.MINGW_X64 -> {
+
+//        put("CC", "x86_64-w64-mingw32-gcc")
+//
+//        if (HostManager.hostIsMingw) clangArgs = "--target=${target.hostTriplet} --gcc-toolchain=${
+//          konanDir.resolve("dependencies/msys2-mingw-w64-x86_64-2").cygpath
+//        }   --sysroot=${konanDir.resolve("dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32").cygpath}"
 
         //clangArgs = "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/aarch64-unknown-linux-gnu-gcc-8.3.0-glibc-2.25-kernel-4.9-2 --sysroot=$konanDir/dependencies/aarch64-unknown-linux-gnu-gcc-8.3.0-glibc-2.25-kernel-4.9-2/aarch64-unknown-linux-gnu/sysroot"
 
@@ -167,6 +171,8 @@ open class BuildEnvironment : Cloneable {
           HostManager.hostIsMingw -> "windows-x86_64"
           else -> error("Unhandled host: ${HostManager.host}")
         }
+
+
         put(
           "PATH",
           "${androidNdkDir.resolve("toolchains/llvm/prebuilt/$archFolder/bin").cygpath}${File.pathSeparator}${
@@ -279,10 +285,11 @@ open class BuildEnvironment : Cloneable {
     path: String,
   ): String =
     if (HostManager.hostIsMingw)
-    Runtime.getRuntime().exec(arrayOf(binaries.cygpath,CygpathMode.UNIX.arg, path)).inputStream.readAllBytes()
-      .decodeToString().trim()
-  else
-    path
+      Runtime.getRuntime()
+        .exec(arrayOf(binaries.cygpath, CygpathMode.UNIX.arg, path)).inputStream.readAllBytes()
+        .decodeToString().trim()
+    else
+      path
 
 
   fun cygpath(file: File) = cygpath(file.absolutePath)
