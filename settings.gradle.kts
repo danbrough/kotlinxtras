@@ -33,7 +33,7 @@ includeBuild("plugin")
 
 if (include == null || include == "plugins") {
   listOf(
-    "wolfssl",
+    //"wolfssl",
     "curl",
     // "wolfssh",
     "openssl",
@@ -45,7 +45,7 @@ if (include == null || include == "plugins") {
 
 if (include == null || include == "binaries"){
 	include(":binaries")
-	include(":test")
+	//include(":test")
 }
 
 //if (include == null || include == "demos") {

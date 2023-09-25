@@ -58,13 +58,7 @@ fun Project.xtrasCurl(
         "./configure",
         "--host=${target.hostTriplet}",
         "--with-openssl=${ssl.libsDir(target).cygpath(buildEnvironment)}",
-        "--with-ca-path=/etc/ssl/certs:/etc/security/cacerts:/etc/ca-certificates:.",
-        //"--with-ca-bundle=/etc/ssl/certs/ca-certificates.crt",
         "--prefix=${buildDir(target).cygpath(buildEnvironment)}",
-        "--disable-ntlm",
-        "--disable-ldap",
-        "--disable-ldaps",
-        "--without-zlib",
       )
 
       if (HostManager.hostIsMingw) commandLine(
