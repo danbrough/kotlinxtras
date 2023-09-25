@@ -31,18 +31,18 @@ fun KotlinMultiplatformExtension.declareSupportedTargets() {
     watchosArm64()
     watchosX64()
     // watchosX64()
-  } else {
+  } else if (HostManager.hostIsMingw) {
+    mingwX64()
+  } else if (HostManager.hostIsLinux){
     androidNativeX86()
     androidNativeX64()
     androidNativeArm32()
     androidNativeArm64()
-
-    mingwX64()
-
     linuxX64()
     linuxArm64()
     linuxArm32Hfp()
   }
+  else error("Can't compile anything for host: ${HostManager.host}")
 }
 
 

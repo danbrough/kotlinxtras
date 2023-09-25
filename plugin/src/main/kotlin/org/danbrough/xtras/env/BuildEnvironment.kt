@@ -143,7 +143,7 @@ open class BuildEnvironment : Cloneable {
       }
 
       KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64, KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_ARM64, KonanTarget.IOS_X64, KonanTarget.IOS_ARM64 -> {
-        put("CC", "clang")
+        //put("CC", "clang")
         //put("CXX", "g++")
         //put("LD", "lld")
       }

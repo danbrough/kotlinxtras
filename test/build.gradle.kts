@@ -8,8 +8,6 @@ plugins {
   alias(libs.plugins.xtras.curl)
 }
 
-val openSSLDir = rootDir.resolve("xtras/libs/openSSL/3.1.3")
-val curlDIR = rootDir.resolve("xtras/libs/curl/8.3.0")
 
 /*
 val ssl = xtrasOpenSSL {
