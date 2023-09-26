@@ -10,10 +10,11 @@ xtras-wolfssl = { id = "org.danbrough.xtras.wolfssl", version.ref = "wolfssl" }
 xtras-curl = { id = "org.danbrough.xtras.curl", version.ref = "curl" }
 xtras-wolfssh = { id = "org.danbrough.xtras.wolfssh", version.ref = "wolfssh" }
 xtras-openssl = { id = "org.danbrough.xtras.openssl", version.ref = "openssl" }
+xtras-mqtt = { id = "org.danbrough.xtras.mqtt", version.ref = "mqtt" }
 
 [versions]
 
-kotlin = "1.9.10"
+kotlin = "1.9.0"
 ##  ⬆ = "1.9.20-Beta"
 ##  ⬆ = "1.9.20-Beta2"
 xtras = "0.0.4-beta01"
@@ -21,6 +22,7 @@ xtrasPublishing = "0.0.4-beta01"
 xtrasPackage = "org.danbrough.xtras"
 wolfssl = "0.0.1-beta01"
 wolfssh = "0.0.1-beta01"
+mqtt = "0.0.1-beta01"
 curl = "0.0.3-beta02"
 openssl = "0.0.3-beta02"
 dokka = "1.9.0"
