@@ -59,20 +59,21 @@ fun Project.xtrasMQTT(
       doFirst {
         if (compileDir.exists()) {
           compileDir.deleteRecursively()
-          compileDir.mkdirs()
         }
+        compileDir.mkdirs()
       }
       workingDir(compileDir)
       outputs.file(compileDir.resolve("Makefile"))
-      dependsOn(libraryDeps.map { it.extractArchiveTaskName(target) })
+
       val cmakeArgs = listOf(
         buildEnvironment.binaries.cmake,
+        "-G", "Unix Makefiles",
         "-DCMAKE_INSTALL_PREFIX=${buildDir(target).cygpath(buildEnvironment)}",
         "-DPAHO_WITH_SSL=TRUE",
         "-DPAHO_BUILD_STATIC=TRUE",
         "-DPAHO_BUILD_SAMPLES=TRUE",
         "-DOPENSSL_ROOT_DIR=${ssl.libsDir(target).cygpath(buildEnvironment)}",
-        sourcesDir(target).cygpath(buildEnvironment)
+        ".."
       )
 
       commandLine(cmakeArgs)
