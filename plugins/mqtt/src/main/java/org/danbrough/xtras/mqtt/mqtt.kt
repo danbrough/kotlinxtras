@@ -9,6 +9,7 @@ import org.danbrough.xtras.log
 import org.danbrough.xtras.source.gitSource
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.jetbrains.kotlin.konan.target.Family
 
 
 object Mqtt {
@@ -34,6 +35,7 @@ fun Project.xtrasMQTT(
   configure: XtrasLibrary.() -> Unit = {},
 ) = xtrasCreateLibrary(name, version, ssl) {
 
+
   gitSource(Mqtt.sourceURL, commit)
 
 //  cinterops {
@@ -52,6 +54,8 @@ fun Project.xtrasMQTT(
 //  }
 
   configure()
+  
+
   supportedTargets.forEach { target ->
     val compileDir = sourcesDir(target).resolve("build")
     val configureTask = xtrasRegisterSourceTask(XtrasLibrary.TaskName.CONFIGURE, target) {
@@ -85,47 +89,5 @@ fun Project.xtrasMQTT(
       commandLine(buildEnvironment.binaries.make, "install")
     }
   }
-///*  supportedTargets.forEach { target ->
-//
-//    *//*
-//        val configureTask = xtrasRegisterSourceTask(XtrasLibrary.TaskName.CONFIGURE, target) {
-//      dependsOn(libraryDeps.map { it.extractArchiveTaskName(target) })
-//      dependsOn(prepareSourceTask)
-//      outputs.file(workingDir.resolve("Makefile"))
-//     *//*
-//    val configureTask = xtrasRegisterSourceTask(XtrasLibrary.TaskName.CONFIGURE, target) {
-//      dependsOn(libraryDeps.map { it.extractArchiveTaskName(target) })
-//      outputs.file(workingDir.resolve("Makefile"))
-//      val args = mutableListOf(
-//        "./Configure",
-//        target.opensslPlatform,
-//        "no-tests",
-//        "threads",
-//        "--prefix=${buildDir(target).absolutePath.replace('\\', '/')}",
-//        "--libdir=lib",
-//      )
-//
-//      if (target.family == Family.ANDROID) args += "-D__ANDROID_API__=21"
-//      *//*      else if (target.family == Family.MINGW) args += "--cross-compile-prefix=${target.hostTriplet}-"
-//            environment("CFLAGS", "  -Wno-macro-redefined ")*//*
-//
-//      if (HostManager.hostIsMingw) commandLine(
-//        buildEnvironment.binaries.bash, "-c", args.joinToString(" ")
-//      )
-//      else commandLine(args)
-//    }
-//
-//    xtrasRegisterSourceTask(XtrasLibrary.TaskName.BUILD, target) {
-//      doFirst {
-//        project.log("running make install with CC=${environment["CC"]}")
-//      }
-//      dependsOn(configureTask)
-//      outputs.dir(buildDir(target))
-//      commandLine("make", "install_sw")
-//      //"make install" requires pod2man which is in /usr/bin/core_perl on archlinux
-//      //environment("PATH","/usr/bin/core_perl:${environment["PATH"]}")
-//
-//    }
-//  }*/
 }
 
