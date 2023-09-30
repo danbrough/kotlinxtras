@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.Executable
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.io.PrintWriter
@@ -46,7 +45,12 @@ data class CInteropsConfig(
   /**
    * Extra header source code for the headersFile [headerFile]
    */
-  var headersSource: String? = null,
+  var headersSourceCode: String? = null,
+
+  /**
+   * Extra header source code for the headersFile [headerFile]
+   */
+  var headersSourceFile: File? = null,
 
   //writes output to the defs file for a konanTarget
   var writeTarget: CInteropsTargetWriter = defaultCInteropsTargetWriter,
@@ -85,7 +89,7 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
     null
   )
 
-  cinteropsConfig?.invoke(config)
+  cinteropsConfig.forEach { config.it() }
 
   val generateConfig = config.defFile == null
   if (generateConfig)
@@ -161,6 +165,9 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
 
       inputs.property("targets", supportedTargets)
 
+      config.headersSourceFile?.also {
+        inputs.file(it)
+      }
       outputs.file(config.defFile!!)
 
       //dependsOn(provideAllBinariesTaskName())
@@ -184,9 +191,13 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
             config.writeTarget(extensions, konanTarget, output)
           }
 
-          if (config.headersSource != null) {
+          if (config.headersSourceCode != null) {
+            if (config.headersSourceFile != null) error("both headerSourceCode and headerSourceFile are set.")
             output.println("---")
-            output.println(config.headersSource)
+            output.println(config.headersSourceCode)
+          } else if (config.headersSourceFile != null) {
+            output.println("---")
+            output.println(config.headersSourceFile!!.readText())
           }
         }
       }
@@ -200,10 +211,11 @@ fun XtrasLibrary.registerGenerateInteropsTask() {
     this.doFirst {
       println("RUNNING CINTEROPS for $name")
     }
-    (libraryDeps + this@registerGenerateInteropsTask).map { it.extractArchiveTaskName(konanTarget) }.forEach {
-      //println("adding dependency on $it for $name")
-      dependsOn(it)
-    }
+    (libraryDeps + this@registerGenerateInteropsTask).map { it.extractArchiveTaskName(konanTarget) }
+      .forEach {
+        //println("adding dependency on $it for $name")
+        dependsOn(it)
+      }
 
 
     if (generateConfig)

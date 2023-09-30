@@ -1,4 +1,3 @@
-
 pluginManagement {
   repositories {
     val xtrasMavenDir = settings.extra.properties.let { properties ->
@@ -17,7 +16,7 @@ pluginManagement {
 }
 
 plugins {
-  id("de.fayard.refreshVersions") version "0.60.2"
+  id("de.fayard.refreshVersions") version "0.60.3"
   id("org.gradle.toolchains.foojay-resolver-convention") version ("0.7.0")
 }
 
@@ -43,18 +42,21 @@ if (include == null || include == "plugins") {
   }
 }
 
-if (include == null || include == "binaries"){
-	include(":binaries")
-	//include(":test")
+if (include == null || include == "binaries") {
+  include(":binaries")
+  //include(":test")
 }
 
-//if (include == null || include == "demos") {
-//  //include(":test")
-//
-//  listOf("curl").forEach {
-//    include(":demos:${it}_demo")
-//    project(":demos:${it}_demo").projectDir = rootDir.resolve("demos/$it")
-//  }
-//}
+if (include == null || include == "demos") {
+  //include(":test")
+
+  listOf(
+    //"curl",
+    "mqtt",
+  ).forEach {
+    include(":demos:${it}_demo")
+    project(":demos:${it}_demo").projectDir = rootDir.resolve("demos/$it")
+  }
+}
 
 

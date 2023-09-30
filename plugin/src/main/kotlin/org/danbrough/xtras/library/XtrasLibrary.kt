@@ -154,11 +154,11 @@ open class XtrasLibrary(val project: Project, val libName: String, val version: 
   fun generateInteropsTaskName() =
     xtrasTaskName(TaskName.GENERATE_INTEROPS)
 
-  internal var cinteropsConfig: (CInteropsConfig.() -> Unit)? = null
+  internal var cinteropsConfig: List<CInteropsConfig.() -> Unit> = emptyList()
 
   @XtrasDSLMarker
   fun cinterops(configure: CInteropsConfig.() -> Unit) {
-    cinteropsConfig = configure
+    cinteropsConfig = cinteropsConfig + configure
   }
 
   fun addBuildFlags(target: KonanTarget, env: MutableMap<String, Any>) {

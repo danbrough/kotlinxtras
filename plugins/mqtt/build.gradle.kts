@@ -2,7 +2,7 @@ import org.danbrough.xtras.env.xtrasBuildEnvironment
 import org.danbrough.xtras.xtrasBuildDir
 
 plugins {
-  id("org.danbrough.xtras")
+  alias(libs.plugins.xtras)
   `kotlin-dsl`
   `maven-publish`
 }
@@ -13,7 +13,7 @@ xtrasBuildEnvironment {
 }
 
 group = libs.versions.xtrasPackage.get()
-version = libs.versions.wolfssl.get()
+version = libs.versions.mqtt.get()
 
 dependencies {
   implementation(libs.xtras.plugin)

@@ -14,8 +14,7 @@ xtras-mqtt = { id = "org.danbrough.xtras.mqtt", version.ref = "mqtt" }
 
 [versions]
 
-kotlin = "1.9.0"
-##  ⬆ = "1.9.10"
+kotlin = "1.9.10"
 ##  ⬆ = "1.9.20-Beta"
 ##  ⬆ = "1.9.20-Beta2"
 xtras = "0.0.4-beta01"

@@ -3,6 +3,7 @@ import org.danbrough.xtras.env.xtrasBuildEnvironment
 import org.danbrough.xtras.log
 import org.danbrough.xtras.mqtt.xtrasMQTT
 import org.danbrough.xtras.openssl.xtrasOpenSSL
+import org.jetbrains.kotlin.konan.target.Family
 
 
 plugins {
@@ -27,7 +28,8 @@ val ssl = xtrasOpenSSL {
 }
 
 xtrasMQTT(ssl) {
-
+  supportedTargets =
+    supportedTargets.filter { it.family.isAppleFamily || it.family == Family.LINUX }
 }
 
 xtrasCurl(ssl) {

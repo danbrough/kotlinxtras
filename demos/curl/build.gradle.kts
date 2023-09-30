@@ -2,7 +2,7 @@ import org.danbrough.xtras.curl.xtrasCurl
 import org.danbrough.xtras.declareHostTarget
 import org.danbrough.xtras.platformName
 import org.danbrough.xtras.runningInIDE
-import org.danbrough.xtras.wolfssl.xtrasWolfSSL
+import org.danbrough.xtras.openssl.xtrasOpenSSL
 import org.danbrough.xtras.tasks.konanDepsTaskName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
-  alias(libs.plugins.xtras.wolfssl)
+  alias(libs.plugins.xtras.openssl)
   alias(libs.plugins.xtras.curl)
 }
 
 
-val ssl = xtrasWolfSSL()
+val ssl = xtrasOpenSSL()
 
 xtrasCurl(ssl) {
   println("xtrasCurl.supportedTargets = $supportedTargets version:$sourceConfig")
@@ -64,9 +64,3 @@ tasks.create("runDemo1") {
 }
 
 
-tasks.create("test"){
-  dependsOn(KonanTarget.LINUX_ARM64.konanDepsTaskName)
-  doLast {
-    println("FINISHED TEST")
-  }
-}

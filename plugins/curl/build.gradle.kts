@@ -17,8 +17,6 @@ version = libs.versions.curl.get()
 
 
 dependencies {
-  //add("compileOnly", kotlin("gradle-plugin"))
-  //add("compileOnly", kotlin("gradle-plugin-api"))
   implementation(libs.xtras.plugin)
   implementation(libs.kotlin.gradle.plugin)
 }
