@@ -150,6 +150,10 @@ open class BuildEnvironment : Cloneable {
 
       KonanTarget.MINGW_X64 -> {
 
+//        if (HostManager.hostIsLinux) clangArgs =
+//          "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/msys2-mingw-w64-x86_64-2  " +
+//              " --sysroot=$konanDir/dependencies/msys2-mingw-w64-x86_64-2/x86_64-w64-mingw32"
+
 //        put("CC", "x86_64-w64-mingw32-gcc")
 //
 //        if (HostManager.hostIsMingw) clangArgs = "--target=${target.hostTriplet} --gcc-toolchain=${
@@ -158,9 +162,10 @@ open class BuildEnvironment : Cloneable {
 
         //clangArgs = "--target=${target.hostTriplet} --gcc-toolchain=$konanDir/dependencies/aarch64-unknown-linux-gnu-gcc-8.3.0-glibc-2.25-kernel-4.9-2 --sysroot=$konanDir/dependencies/aarch64-unknown-linux-gnu-gcc-8.3.0-glibc-2.25-kernel-4.9-2/aarch64-unknown-linux-gnu/sysroot"
 
-        //   put("CC", "x86_64-w64-mingw32-gcc")
+        put("CC", "x86_64-w64-mingw32-gcc")
         //put("AR", "x86_64-w64-mingw32-ar")
         //put("RANLIB", "x86_64-w64-mingw32-ranlib")
+        put("RC", "x86_64-w64-mingw32-windres")
       }
 
       KonanTarget.ANDROID_X64, KonanTarget.ANDROID_X86, KonanTarget.ANDROID_ARM64, KonanTarget.ANDROID_ARM32 -> {
