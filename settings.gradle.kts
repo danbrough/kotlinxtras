@@ -35,7 +35,7 @@ if (include == null || include == "plugins") {
     "curl",
     // "wolfssh",
     "openssl",
-    //"mqtt",
+    "mqtt",
   ).forEach {
     include(":plugins:$it")
     project(":plugins:$it").projectDir = rootDir.resolve("plugins/$it")
