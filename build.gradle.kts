@@ -33,8 +33,26 @@ allprojects {
     extensions.findByType<PublishingExtension>()?.apply {
       //println("found publishing for $name")
       repositories {
+
         maven(xtrasMavenDir) {
           name = XTRAS_REPO_NAME
+        }
+
+        /*
+        uploadArchives {
+    repositories.mavenDeployer {
+        configuration = configurations.deployerJars
+        repository(url: "scp://<url-of-your-webserver>/<path-to-maven-directory>") {
+            authentication(userName: "ssh-username", privateKey: "<path-to-private-key-file")
+        }
+    }
+}
+         */
+        maven("scp://maven/home/maven/m2") {
+          name = "M2"
+          credentials {
+
+          }
         }
       }
     }
