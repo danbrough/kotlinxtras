@@ -10,9 +10,6 @@ VERSION=1_1_1w
 VERSION=3.1.3
 
 
-
-
-
 export ANDROID_ABI=x86
 export OPENSSL=/home/dan/workspace/xtras/xtras/libs/openSSL/$VERSION/androidNativeX86
 

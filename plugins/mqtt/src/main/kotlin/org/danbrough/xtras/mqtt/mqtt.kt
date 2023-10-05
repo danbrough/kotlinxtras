@@ -10,7 +10,9 @@ import org.danbrough.xtras.log
 import org.danbrough.xtras.source.gitSource
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.utils.`is`
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 
 object Mqtt {
@@ -179,8 +181,11 @@ OPTS="-DPAHO_BUILD_DOCUMENTATION=FALSE -DPAHO_BUILD_SAMPLES=TRUE -DCMAKE_MINIMUM
             ssl.libsDir(target).resolve("lib").cygpath(buildEnvironment)
           }",
         )
-
-
+      } else if (target.family.isAppleFamily) {
+        if (target == KonanTarget.MACOS_X64)
+          cmakeArgs += "-DCMAKE_OSX_ARCHITECTURES=x86_64"
+        else if (target == KonanTarget.MACOS_ARM64)
+          cmakeArgs += "-DCMAKE_OSX_ARCHITECTURES=arm64"
       }
 
       cmakeArgs += ".."
