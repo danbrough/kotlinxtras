@@ -186,8 +186,36 @@ OPTS="-DPAHO_BUILD_DOCUMENTATION=FALSE -DPAHO_BUILD_SAMPLES=TRUE -DCMAKE_MINIMUM
           cmakeArgs += "-DCMAKE_OSX_ARCHITECTURES=x86_64"
         else if (target == KonanTarget.MACOS_ARM64)
           cmakeArgs += "-DCMAKE_OSX_ARCHITECTURES=arm64"
+      } else if (target.family == Family.MINGW) {
+        cmakeArgs += listOf(
+          "-DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc",
+          "-DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++",
+          "-DCMAKE_SYSTEM_NAME=Windows",
+          "-DCMAKE_SYSTEM_VERSION=1",
+
+          )
+        environment("RC", "windres")
       }
 
+      /*
+      # Name of the target platform
+SET(CMAKE_SYSTEM_NAME Windows)
+
+# Version of the system
+SET(CMAKE_SYSTEM_VERSION 1)
+
+# specify the cross compiler
+SET(CMAKE_C_COMPILER x86_64-w64-mingw32-gcc)
+SET(CMAKE_CXX_COMPILER x86_64-w64-mingw32-g++)
+SET(CMAKE_RC_COMPILER_ENV_VAR "RC")
+SET(CMAKE_RC_COMPILER "")
+SET(CMAKE_SHARED_LINKER_FLAGS
+    "-fdata-sections -ffunction-sections -Wl,--enable-stdcall-fixup -static-libgcc -static -lpthread" CACHE STRING "" FORCE)
+SET(CMAKE_EXE_LINKER_FLAGS
+    "-fdata-sections -ffunction-sections -Wl,--enable-stdcall-fixup -static-libgcc -static -lpthread" CACHE STRING "" FORCE)
+
+
+       */
       cmakeArgs += ".."
 
       commandLine(cmakeArgs)

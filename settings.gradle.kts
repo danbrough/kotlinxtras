@@ -46,17 +46,17 @@ if (include == null || include == "binaries") {
   include(":binaries")
   //include(":test")
 }
-
-if (include == null || include == "demos") {
-  //include(":test")
-
-  listOf(
-    //"curl",
-    "mqtt",
-  ).forEach {
-    include(":demos:${it}_demo")
-    project(":demos:${it}_demo").projectDir = rootDir.resolve("demos/$it")
-  }
-}
-
-
+//
+//if (include == null || include == "demos") {
+//  //include(":test")
+//
+//  listOf(
+//    //"curl",
+//    "mqtt",
+//  ).forEach {
+//    include(":demos:${it}_demo")
+//    project(":demos:${it}_demo").projectDir = rootDir.resolve("demos/$it")
+//  }
+//}
+//
+//
