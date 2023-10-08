@@ -19,6 +19,7 @@ allprojects {
   version = publishingVersion
 
   repositories {
+	maven("https://maven.danbrough.org")
     maven(xtrasMavenDir) {
       name = XTRAS_REPO_NAME
     }

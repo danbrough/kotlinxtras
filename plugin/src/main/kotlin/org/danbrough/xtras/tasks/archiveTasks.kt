@@ -70,6 +70,13 @@ private fun XtrasLibrary.registerArchiveTask(target: KonanTarget) =
         "--exclude=**pkgconfig",
         "./"
       )
+
+
+    doLast {
+      sourcesDir(target).deleteRecursively()
+      buildDir.deleteRecursively()
+    }
+
   }
 
 /*

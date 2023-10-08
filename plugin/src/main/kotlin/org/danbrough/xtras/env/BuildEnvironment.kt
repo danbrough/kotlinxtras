@@ -166,6 +166,14 @@ open class BuildEnvironment : Cloneable {
         //put("AR", "x86_64-w64-mingw32-ar")
         //put("RANLIB", "x86_64-w64-mingw32-ranlib")
         put("RC", "x86_64-w64-mingw32-windres")
+
+        /*
+             environment(
+          "RC",
+          //  buildEnvironment.konanDir.resolve("dependencies/msys2-mingw-w64-x86_64-2/bin/windres.exe")
+          "/usr/bin/x86_64-w64-mingw32-windres"
+        )
+         */
       }
 
       KonanTarget.ANDROID_X64, KonanTarget.ANDROID_X86, KonanTarget.ANDROID_ARM64, KonanTarget.ANDROID_ARM32 -> {
