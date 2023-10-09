@@ -13,8 +13,18 @@ version = "0.0.1-beta01"
 
 kotlin {
 
-  declareSupportedTargets()
+  macosX64()
+  macosArm64()
   jvm()
+  mingwX64()
+  linuxX64()
+  linuxArm64()
+  linuxArm32Hfp()
+  androidNativeArm64()
+  androidNativeArm32()
+  androidNativeX86()
+  androidNativeX64()
+
 
   val commonMain by sourceSets.getting
 
