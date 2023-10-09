@@ -1,4 +1,4 @@
-package org.danbrough.kotlinxtras
+package org.danbrough.xtras
 import platform.posix.size_t
 
 actual fun Int.toSizeT(): size_t = toUInt()
