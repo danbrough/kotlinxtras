@@ -15,6 +15,8 @@ kotlin {
 
   macosX64()
   macosArm64()
+  iosArm64()
+  iosX64()
   jvm()
   mingwX64()
   linuxX64()
