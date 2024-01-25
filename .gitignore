@@ -1,0 +1,13 @@
+**/build
+**/.idea
+local.properties
+**/.gradle
+.kotlin
+.konan
+.cache
+.bash_history
+.ssh
+/tmp
+/bak
+/xtras
+config.properties
